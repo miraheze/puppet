@@ -268,7 +268,7 @@ class CanaryChecker:
 
     def check(self, nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None,
               domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False,
-              port: int = 443, use_cert: bool = True) -> bool:
+              port: int = 443, use_cert: bool = True, exit_on_failure: bool = True) -> bool:
         if verify is False:
             os.environ['PYTHONWARNINGS'] = 'ignore:Unverified HTTPS request'
         if not Debug and not Host:
@@ -313,7 +313,9 @@ class CanaryChecker:
                 print(message)
             else:
                 os.system(message)
-            sys.exit(3)
+            if exit_on_failure:
+                sys.exit(3)
+            return False
         return up
 
 
@@ -322,8 +324,8 @@ _default_canary_checker = CanaryChecker()
 
 def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None,
              domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False,
-             port: int = 443, use_cert: bool = True) -> bool:
-    return _default_canary_checker.check(nolog, Debug=Debug, Host=Host, domain=domain, verify=verify, force=force, port=port, use_cert=use_cert)
+             port: int = 443, use_cert: bool = True, exit_on_failure: bool = True) -> bool:
+    return _default_canary_checker.check(nolog, Debug=Debug, Host=Host, domain=domain, verify=verify, force=force, port=port, use_cert=use_cert, exit_on_failure=exit_on_failure)
 
 
 class PathResolver:
@@ -554,38 +556,66 @@ def _apply_patch_plain(repo: str, patchfile: str, version: str) -> int:
 class RemoteDeployer:
     """Pushes a staged path or file out to a server fleet.
 
-    Servers are synced in parallel instead of one at a time, since a full
-    prod deploy can touch over twenty machines and there's no reason to make
-    server five wait on server four finishing.
+    The first server reached is treated as a canary: it's deployed to and
+    checked on its own before anything else goes out. Once that's healthy,
+    the rest of the fleet rolls out in fixed-size batches, in parallel within
+    each batch. If any server in a batch fails, later batches are skipped
+    entirely rather than deploying to a fleet that's already known to be broken.
     """
 
-    def __init__(self, rsync_builder: RsyncCommandBuilder, canary, hostname: str = HOSTNAME, max_workers: int = 8):
+    def __init__(self, rsync_builder: RsyncCommandBuilder, canary, hostname: str = HOSTNAME,
+                 batch_size: int = 3, max_workers: int = 8):
         self._rsync_builder = rsync_builder
         self._canary = canary
         self._hostname = hostname
+        self._batch_size = batch_size
         self._max_workers = max_workers
 
-    def _deploy_to_server(self, server: str, time_flag, path: str, recursive: bool, envinfo: Environment, nolog: bool, force: bool) -> int:
+    def _deploy_to_server(self, server: str, time_flag, path: str, recursive: bool, envinfo: Environment,
+                          nolog: bool, force: bool) -> tuple[str, int, bool]:
         print(f'Deploying {path} to {server}.')
         cmd = self._rsync_builder.build(time=time_flag, local=False, dest=path, server=server, recursive=recursive)
         ec = ShellExecutor.run(cmd)
-        self._canary.check(nolog, Debug=server, force=force, domain=envinfo.wikiurl)
+        healthy = self._canary.check(nolog, Debug=server, force=force, domain=envinfo.wikiurl, exit_on_failure=False)
         print(f'Deployed {path} to {server}.')
-        return ec  # noqa: R504
+        return server, ec, healthy
+
+    def _run_batch(self, batch: list[str], time_flag, path: str, recursive: bool, envinfo: Environment,
+                   nolog: bool, force: bool) -> list[tuple[str, int, bool]]:
+        if len(batch) == 1:
+            return [self._deploy_to_server(batch[0], time_flag, path, recursive, envinfo, nolog, force)]
+        with ThreadPoolExecutor(max_workers=min(self._max_workers, len(batch))) as pool:
+            futures = [
+                pool.submit(self._deploy_to_server, server, time_flag, path, recursive, envinfo, nolog, force)
+                for server in batch
+            ]
+            return [future.result() for future in as_completed(futures)]
+
+    def _batches(self, targets: list[str]):
+        """The first server goes out alone as a canary. Everything after that
+        ships in fixed-size groups."""
+        if not targets:
+            return
+        yield [targets[0]]
+        remaining = targets[1:]
+        for start in range(0, len(remaining), self._batch_size):
+            yield remaining[start:start + self._batch_size]
 
     def sync(self, time_flag, serverlist: list[str], path: str, envinfo: Environment, nolog: bool,
              recursive: bool = True, force: bool = False) -> int:
         print(f'Start {path} deploys.')
         targets = [server for server in serverlist if self._hostname != server.split('.')[0]]
 
-        codes = []
-        if targets:
-            with ThreadPoolExecutor(max_workers=min(self._max_workers, len(targets))) as pool:
-                futures = [
-                    pool.submit(self._deploy_to_server, server, time_flag, path, recursive, envinfo, nolog, force)
-                    for server in targets
-                ]
-                codes = [future.result() for future in as_completed(futures)]
+        codes: list[int] = []
+        for batch in self._batches(targets):
+            results = self._run_batch(batch, time_flag, path, recursive, envinfo, nolog, force)
+            codes.extend(ec for _, ec, _ in results)
+
+            failed = [server for server, ec, healthy in results if ec != 0 or not healthy]
+            if failed:
+                print(f'Deploy or canary check failed on: {", ".join(failed)}. Stopping before the remaining batches.')
+                print(f'Finished {path} deploys.')
+                sys.exit(3)
 
         print(f'Finished {path} deploys.')
         if not codes:
@@ -798,16 +828,16 @@ class DeploymentRunner:
         return self.exitcodes
 
     def _reset_state(self) -> None:
-        self.exitcodes = []
-        self.rsyncpaths = []
-        self.rsyncfiles = []
-        self.rsync = []
-        self.rebuild = []
-        self.postinstall = []
-        self.stage = []
-        self.newschema = []
-        self.tagsinfo = []
-        self.warnings = {}
+        self.exitcodes: list[int] = []
+        self.rsyncpaths: list[str] = []
+        self.rsyncfiles: list[str] = []
+        self.rsync: list[str] = []
+        self.rebuild: list[str] = []
+        self.postinstall: list[str] = []
+        self.stage: list[str] = []
+        self.newschema: list[str] = []
+        self.tagsinfo: list[str] = []
+        self.warnings: dict[str, bool] = {}
         self._needs_version_cache_rebuild = False
         self._runner = ''
         self._runner_staging = ''
