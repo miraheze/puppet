@@ -320,6 +320,14 @@ def test_construct_git_reset_hard() -> None:
     assert mwdeploy._construct_git_reset_hard('vendor', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/vendor reset --hard'
 
 
+def test_construct_git_fetch_pr() -> None:
+    assert mwdeploy._construct_git_fetch_pr('config', 42, 'pr-42') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ fetch origin +pull/42/head:pr-42'
+
+
+def test_construct_git_checkout() -> None:
+    assert mwdeploy._construct_git_checkout('config', 'pr-42') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ checkout pr-42'
+
+
 def test_construct_reset_mediawiki_rm_staging() -> None:
     assert mwdeploy._construct_reset_mediawiki_rm_staging('version') == 'sudo -u www-data rm -rf /srv/mediawiki-staging/version/'
 
@@ -373,10 +381,46 @@ class TestRemoteDeployer(unittest.TestCase):
         assert result == 0
 
     @patch.object(mwdeploy.ShellExecutor, 'run', side_effect=[0, 1])
-    def test_sync_surfaces_a_failing_server(self, mock_run):
-        result = self.deployer.sync(False, ['mw151', 'mw152', 'mw153'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
-        assert result != 0
+    def test_sync_stops_after_a_failing_batch(self, mock_run):
+        # canary server (mw152) succeeds, the next batch (mw153) fails
+        with pytest.raises(SystemExit) as excinfo:
+            self.deployer.sync(False, ['mw151', 'mw152', 'mw153'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
+        assert excinfo.value.code == 3
         assert mock_run.call_count == 2
+
+    @patch.object(mwdeploy.ShellExecutor, 'run', return_value=0)
+    def test_sync_stops_on_canary_failure_even_if_rsync_succeeds(self, mock_run):
+        canary = MagicMock()
+        canary.check.side_effect = [False, True, True]  # the lone canary server fails its check
+        deployer = mwdeploy.RemoteDeployer(self.rsync_builder, canary, hostname='mw151', batch_size=2)
+
+        with pytest.raises(SystemExit) as excinfo:
+            deployer.sync(False, ['mw151', 'mw152', 'mw153', 'mw154'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
+
+        assert excinfo.value.code == 3
+        assert mock_run.call_count == 1  # only the canary server was ever touched
+
+    def test_batches_puts_first_server_alone_then_fixed_size_groups(self):
+        deployer = mwdeploy.RemoteDeployer(self.rsync_builder, self.canary, hostname='build', batch_size=2)
+        batches = list(deployer._batches(['a', 'b', 'c', 'd', 'e']))
+        assert batches == [['a'], ['b', 'c'], ['d', 'e']]
+
+    def test_batches_single_target_is_just_the_canary(self):
+        batches = list(self.deployer._batches(['only']))
+        assert batches == [['only']]
+
+    def test_batches_no_targets_yields_nothing(self):
+        assert list(self.deployer._batches([])) == []
+
+
+def test_canary_check_reports_failure_without_exiting_when_asked():
+    # inside a batch, a canary failure has to come back as a value the
+    # RemoteDeployer can act on, not kill whichever worker thread hit it
+    checker = mwdeploy.CanaryChecker()
+    fake_response = MagicMock(status_code=500, text='nope', headers={})
+    with patch.object(checker._session, 'get', return_value=fake_response):
+        result = checker.check(nolog=True, Debug='mw151', domain='example.org', verify=False, use_cert=False, exit_on_failure=False)
+    assert result is False
 
 
 def test_build_loginfo_filters_falsy_and_unwraps_single_item_lists() -> None:
@@ -384,6 +428,55 @@ def test_build_loginfo_filters_falsy_and_unwraps_single_item_lists() -> None:
     runner = mwdeploy.DeploymentRunner(args)
     loginfo = runner._build_loginfo()
     assert loginfo == {'servers': 'mw151', 'versions': 'REL1_41'}
+
+
+def test_checkout_pr_fetches_then_checks_out_once() -> None:
+    args = argparse.Namespace(pr=42, pr_repo='config')
+    runner = mwdeploy.DeploymentRunner(args)
+    runner._reset_state()
+
+    with patch('mwdeploy.run_command', return_value=0) as mock_run_command:
+        runner._checkout_pr()
+        runner._checkout_pr()  # a repeat call (e.g. from a second --versions pass) should be a no-op
+
+    assert mock_run_command.call_count == 2
+    fetch_cmd, checkout_cmd = (call.args[0] for call in mock_run_command.call_args_list)
+    assert 'fetch origin +pull/42/head:pr-42' in fetch_cmd
+    assert 'checkout pr-42' in checkout_cmd
+    assert runner._pr_checked_out is True
+
+
+def test_checkout_pr_does_nothing_without_pr_flag() -> None:
+    args = argparse.Namespace(pr=None, pr_repo='config')
+    runner = mwdeploy.DeploymentRunner(args)
+    runner._reset_state()
+
+    with patch('mwdeploy.run_command') as mock_run_command:
+        runner._checkout_pr()
+
+    mock_run_command.assert_not_called()
+
+
+def test_upgrade_components_processes_more_than_one_batch() -> None:
+    # COMPONENT_FETCH_BATCH_SIZE is 20, so 25 items forces two batches through
+    # the loop instead of one
+    names = [f'Ext{i}' for i in range(25)]
+    args = argparse.Namespace(world=False, force=False, force_upgrade=False,
+                              skip_schema_confirm=True, show_tags=False, ignore_time=False)
+    runner = mwdeploy.DeploymentRunner(args)
+    runner._reset_state()
+
+    fake_fetch = staticmethod(lambda kind, name, _version: (name, f'{kind}/{name}', 'Already up to date.', None))  # noqa: U101
+    with patch('mwdeploy._git') as mock_git, \
+         patch('os.path.exists', return_value=True), \
+         patch.object(mwdeploy.DeploymentRunner, '_fetch_component', fake_fetch):
+        mock_git.is_repo.return_value = True
+        runner._upgrade_components('extensions', names, 'REL1_41')
+
+    # everything reported "already up to date", so nothing should have queued
+    # rsync work or recorded a failing exit code, across either batch
+    assert runner.exitcodes == []
+    assert runner.rsync == []
 
 
 def test_UpgradePackAction():
