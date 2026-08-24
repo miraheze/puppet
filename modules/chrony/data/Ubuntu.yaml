@@ -1,0 +1,6 @@
+chrony::leapseclist: ~
+chrony::leapsectz: right/UTC
+chrony::pools:
+  ntp.ubuntu.com:
+    - iburst
+    - maxsources 4

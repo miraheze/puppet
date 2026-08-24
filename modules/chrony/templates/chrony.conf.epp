@@ -1,0 +1,297 @@
+# This file is being maintained by Puppet. Do not edit.
+
+# NTP servers
+<% $servers.keys.sort.each |$server| { -%>
+<%   if $servers[$server].empty { -%>
+server <%= $server %>
+<%   } else { -%>
+server <%= $server %> <%= $servers[$server].join(' ') %>
+<%   } -%>
+<% } -%>
+<% $pools.keys.sort.each |$pool| { -%>
+<%   if $pools[$pool].empty { -%>
+pool <%= $pool %>
+<%   } else { -%>
+pool <%= $pool %> <%= $pools[$pool].join(' ') %>
+<%   } -%>
+<% } -%>
+<% $peers.keys.sort.each |$peer| { -%>
+<%   if $peers[$peer].empty { -%>
+peer <%= $peer %>
+<%   } else { -%>
+peer <%= $peer %> <%= $peers[$peer].join(' ') %>
+<%   } -%>
+<% } -%>
+<% if $chrony::sourcedir { -%>
+
+# The sourcedir directive is identical to the confdir directive, except the configuration files have the .sources suffix, they can only specify NTP sources.
+<%   Array($chrony::sourcedir, true).each |$dir| { -%>
+sourcedir <%= $dir %>
+<%   } -%>
+<% } -%>
+<% if $chrony::confdir { -%>
+
+# The confdir directive includes configuration files with the .conf suffix from a directory.
+<%   Array($chrony::confdir, true).each |$dir| { -%>
+confdir <%= $dir %>
+<%   } -%>
+<% } -%>
+<% if $chrony::stratumweight { -%>
+
+# How much distance should be added per stratum to the synchronisation distance when
+# chronyd selects the synchronisation source from available sources.
+stratumweight <%= $chrony::stratumweight %>
+<% } -%>
+
+# Record the rate at which the system clock gains/losses time.
+driftfile <%= $chrony::driftfile %>
+<% if $chrony::rtcsync { -%>
+
+# Enable kernel RTC synchronization.
+rtcsync
+<% } -%>
+<% if $chrony::makestep_seconds and $chrony::makestep_updates { -%>
+
+# In first <%= $chrony::makestep_updates %> updates step the system clock instead of slew
+# if the adjustment is larger than <%= $chrony::makestep_seconds %> seconds.
+makestep <%= $chrony::makestep_seconds %> <%= $chrony::makestep_updates %>
+<% } -%>
+<% unless $chrony::denyqueryhosts.empty { -%>
+
+# Deny client access.
+<%   $chrony::denyqueryhosts.each |$denied| { -%>
+deny <%= $denied %>
+<%   } -%>
+<% } -%>
+<% unless $chrony::queryhosts.empty { -%>
+
+# Allow client access.
+<%   $chrony::queryhosts.each |$allowed| { -%>
+allow <%= $allowed %>
+<%   } -%>
+<% } -%>
+<% if $chrony::cmdport { -%>
+cmdport <%= $chrony::cmdport %>
+<% } -%>
+<% unless $chrony::bindcmdaddress.empty { -%>
+
+<%  $chrony::bindcmdaddress.each |$addr| { -%>
+bindcmdaddress <%= $addr %>
+<%   } -%>
+<% } -%>
+<% $chrony::cmdacl.each |$acl| { -%>
+<%= $acl %>
+<% } -%>
+<% unless $chrony::bindaddress.empty { -%>
+
+# Bind to a specific address
+<%  $chrony::bindaddress.each |$addr| { -%>
+bindaddress <%= $addr %>
+<%   } -%>
+<% } -%>
+<% if $chrony::acquisitionport { -%>
+acquisitionport <%= $chrony::acquisitionport %>
+<% } -%>
+<%  $chrony::bindacqaddress.each |$addr| { -%>
+bindacqaddress <%= $addr %>
+<% } -%>
+<% if $chrony::initstepslew { -%>
+
+# Allow chronyd to make a rapid measurement of the system clock error at boot time,
+# and to correct the system clock by stepping before normal operation begins.
+initstepslew <%= $chrony::initstepslew %>
+<% } -%>
+<% if $chrony::port { -%>
+
+# http://chrony.tuxfamily.org/manual.html#port-directive
+port <%= $chrony::port %>
+<% } -%>
+<% if $chrony::ptpport { -%>
+
+# https://chrony-project.org/doc/latest/chrony.conf.html#ptpport
+ptpport <%= $chrony::ptpport %>
+<% } -%>
+<% if $chrony::ptpdomain { -%>
+
+# https://chrony-project.org/doc/latest/chrony.conf.html#ptpdomain
+ptpdomain <%= $chrony::ptpdomain %>
+<% } -%>
+<% if $chrony::local_stratum { -%>
+
+# Serve time even if not synchronized to any NTP server.
+local stratum <%= $chrony::local_stratum %><%= if $chrony::local_orphan {' orphan'} else {''} %>
+<% } -%>
+<% if $chrony::minsamples { -%>
+
+# https://chrony.tuxfamily.org/doc/3.4/chrony.conf.html#minsamples
+minsamples <%= $chrony::minsamples %>
+<% } -%>
+<% if $chrony::minsources { -%>
+
+# https://chrony.tuxfamily.org/doc/3.4/chrony.conf.html#minsources
+minsources <%= $chrony::minsources %>
+<% } -%>
+<% unless empty($chrony::config_keys) { -%>
+
+keyfile <%= $chrony::config_keys %>
+<% } -%>
+<% if $chrony::dumpdir { -%>
+
+# Save the measurement history for the servers to files on exit.
+dumponexit
+dumpdir <%= $chrony::dumpdir %>
+<% } -%>
+<% if $chrony::ntpsigndsocket { -%>
+ntpsigndsocket <%= $chrony::ntpsigndsocket %>
+<% } -%>
+<% unless $chrony::clientlog { -%>
+
+# Disable logging of client accesses.
+noclientlog
+<% } -%>
+<% if $chrony::clientloglimit { -%>
+
+# The clientlog size is limited to 512KB by default.  If you have many
+# clients, especially in many different subnets, you might want to
+# increase the limit.
+clientloglimit <%= $chrony::clientloglimit %>
+<% } -%>
+
+# Send a message to syslog if a clock adjustment is larger than the specified threshold
+logchange <%= $chrony::logchange %>
+<% if $chrony::mailonchange { -%>
+
+# Send mail if chronyd applied a correction exceeding given threshold.
+mailonchange <%= $chrony::mailonchange %> <%= $chrony::threshold %>
+<% } -%>
+
+logdir /var/log/chrony
+<% if $chrony::logbanner { -%>
+logbanner <%= $chrony::logbanner %>
+<% } -%>
+<% if $chrony::log_options { -%>
+log <%= $chrony::log_options %>
+<% } -%>
+<% unless $chrony::refclocks.empty { -%>
+
+<%   $chrony::refclocks.each |$driver| { -%>
+refclock <%= $driver.flatten.join(' ') %>
+<%   } -%>
+<% } -%>
+<% if $chrony::lock_all { -%>
+
+# Lock chrony to RAM.
+lock_all
+<% } -%>
+<% if $chrony::sched_priority { -%>
+sched_priority <%= $chrony::sched_priority %>
+<% } -%>
+<% if $chrony::leapsecmode { -%>
+
+# https://chrony.tuxfamily.org/doc/3.4/chrony.conf.html#leapsecmode
+leapsecmode <%= $chrony::leapsecmode %>
+<% } -%>
+<% if $chrony::leapsectz { -%>
+
+# https://chrony.tuxfamily.org/doc/3.4/chrony.conf.html#leapsectz
+leapsectz <%= $chrony::leapsectz %>
+<% } -%>
+<% if $chrony::leapseclist { -%>
+
+# https://chrony-project.org/doc/latest/chrony.conf.html#leapseclist
+leapseclist <%= $chrony::leapseclist %>
+<% } -%>
+<% if $chrony::maxdistance { -%>
+
+# https://chrony.tuxfamily.org/doc/3.4/chrony.conf.html#maxdistance
+maxdistance <%= $chrony::maxdistance %>
+<% } -%>
+<% if $chrony::maxupdateskew { -%>
+
+# https://chrony.tuxfamily.org/doc/3.4/chrony.conf.html#maxupdateskew
+maxupdateskew <%= $chrony::maxupdateskew %>
+<% } -%>
+<% if $chrony::maxslewrate { -%>
+
+# https://chrony.tuxfamily.org/doc/3.4/chrony.conf.html#maxslewrate
+maxslewrate <%= $chrony::maxslewrate %>
+<% } -%>
+<% if $chrony::ntsserverkey { -%>
+
+# https://chrony.tuxfamily.org/doc/4.0/chrony.conf.html#ntsserverkey
+ntsserverkey <%= $chrony::ntsserverkey %>
+<% } -%>
+<% if $chrony::ntsservercert { -%>
+
+# https://chrony.tuxfamily.org/doc/4.0/chrony.conf.html#ntsservercert
+ntsservercert <%= $chrony::ntsservercert %>
+<% } -%>
+<% if $chrony::ntsport { -%>
+
+# https://chrony.tuxfamily.org/doc/4.0/chrony.conf.html#ntsport
+ntsport <%= $chrony::ntsport %>
+<% } -%>
+<% if $chrony::maxntsconnections { -%>
+
+# https://chrony.tuxfamily.org/doc/4.0/chrony.conf.html#maxntsconnections
+maxntsconnections <%= $chrony::maxntsconnections %>
+<% } -%>
+<% if $chrony::ntsprocesses { -%>
+
+# https://chrony.tuxfamily.org/doc/4.0/chrony.conf.html#ntsprocesses
+ntsprocesses <%= $chrony::ntsprocesses %>
+<% } -%>
+<% if $chrony::ntsdumpdir { -%>
+
+# https://chrony.tuxfamily.org/doc/4.0/chrony.conf.html#ntsdumpdir
+ntsdumpdir <%= $chrony::ntsdumpdir %>
+<% } -%>
+<% if $chrony::ntsntpserver { -%>
+
+# https://chrony.tuxfamily.org/doc/4.0/chrony.conf.html#ntsntpserver
+ntsntpserver <%= $chrony::ntsntpserver %>
+<% } -%>
+<% if $chrony::ntsrotate { -%>
+
+# https://chrony.tuxfamily.org/doc/4.0/chrony.conf.html#ntsrotate
+ntsrotate <%= $chrony::ntsrotate %>
+<% } -%>
+<% if $chrony::ntstrustedcerts { -%>
+
+# https://chrony-project.org/doc/4.6.1/chrony.conf.html#ntstrustedcerts
+ntstrustedcerts <%= $chrony::ntstrustedcerts %>
+<% } -%>
+<% if $chrony::nocerttimecheck { -%>
+
+# https://chrony-project.org/doc/4.6.1/chrony.conf.html#nocerttimecheck
+nocerttimecheck <%= $chrony::nocerttimecheck %>
+<% } -%>
+<% if $chrony::nosystemcert { -%>
+
+# https://chrony-project.org/doc/4.6.1/chrony.conf.html#nosystemcert
+nosystemcert
+<% } -%>
+<% if $chrony::authselectmode { -%>
+
+# https://chrony-project.org/doc/4.6.1/chrony.conf.html#authselectmode
+authselectmode <%= $chrony::authselectmode %>
+<% } -%>
+<% if $chrony::smoothtime { -%>
+
+# https://chrony.tuxfamily.org/doc/3.4/chrony.conf.html#smoothtime
+smoothtime <%= $chrony::smoothtime %>
+<% } -%>
+<% if $chrony::rtconutc { -%>
+
+# https://chrony.tuxfamily.org/doc/3.4/chrony.conf.html#rtconutc
+rtconutc
+<% } -%>
+<% unless $chrony::hwtimestamps.empty { -%>
+
+# Enable hardware timestamping of NTP packets sent to and received from the specified
+# network interface. If the specified interface is *, chronyd will try to enable HW
+# timestamping on all available interfaces.
+<%   $chrony::hwtimestamps.each |$interface| { -%>
+hwtimestamp <%= $interface.flatten.join(' ') %>
+<%   } -%>
+<% } -%>

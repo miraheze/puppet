@@ -1,0 +1,5 @@
+---
+chrony::config_keys_group: chrony
+chrony::config_keys: /etc/chrony.keys
+chrony::config: /etc/chrony.conf
+chrony::wait_manage: true
