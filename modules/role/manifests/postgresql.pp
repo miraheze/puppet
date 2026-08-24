@@ -12,7 +12,7 @@ class role::postgresql {
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'postgresql':
         proto   => 'tcp',
-        port    => '5432',
+        port    => 5432,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }

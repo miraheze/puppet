@@ -190,7 +190,7 @@ class role::openldap (
     $firewall_rules = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'ldaps':
         proto  => 'tcp',
-        port   => '636',
+        port   => 636,
         srange => "(${firewall_rules})",
     }
 
@@ -200,7 +200,7 @@ class role::openldap (
     $firewall_rules_icinga = vmlib::generate_firewall_ip($subquery_2)
     firewall::service { 'ldap':
         proto  => 'tcp',
-        port   => '389',
+        port   => 389,
         srange => "(${firewall_rules_icinga})",
     }
 

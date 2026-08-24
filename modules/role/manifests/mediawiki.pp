@@ -27,27 +27,27 @@ class role::mediawiki (
 
         firewall::service { 'http':
             proto   => 'tcp',
-            port    => '80',
+            port    => 80,
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
 
         firewall::service { 'https':
             proto   => 'tcp',
-            port    => '443',
+            port    => 443,
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
     } else {
         firewall::service { 'http':
             proto   => 'tcp',
-            port    => '80',
+            port    => 80,
             notrack => true,
         }
 
         firewall::service { 'https':
             proto   => 'tcp',
-            port    => '443',
+            port    => 443,
             notrack => true,
         }
     }

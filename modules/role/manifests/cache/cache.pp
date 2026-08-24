@@ -22,27 +22,27 @@ class role::cache::cache (
 
         firewall::service { 'http':
             proto   => 'tcp',
-            port    => '80',
+            port    => 80,
             srange  => "(${cloudflare_firewall_rule})",
             notrack => true,
         }
 
         firewall::service { 'https':
             proto   => 'tcp',
-            port    => '443',
+            port    => 443,
             srange  => "(${cloudflare_firewall_rule})",
             notrack => true,
         }
     } else {
         firewall::service { 'http':
             proto   => 'tcp',
-            port    => '80',
+            port    => 80,
             notrack => true,
         }
 
         firewall::service { 'https':
             proto   => 'tcp',
-            port    => '443',
+            port    => 443,
             notrack => true,
         }
     }
@@ -56,7 +56,7 @@ class role::cache::cache (
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery_2)
     firewall::service { 'direct varnish access':
         proto   => 'tcp',
-        port    => '81',
+        port    => 81,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }

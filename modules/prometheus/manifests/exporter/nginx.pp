@@ -23,7 +23,7 @@ class prometheus::exporter::nginx {
     $firewall_rules = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus nginx':
         proto  => 'tcp',
-        port   => '9113',
+        port   => 9113,
         srange => "(${firewall_rules})",
     }
 }

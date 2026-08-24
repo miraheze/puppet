@@ -1,6 +1,9 @@
 # @summary allow incoming connections on the specific protocol and port
 # @param proto tcp or udp
-# @param port a single port, or a colon-separated range like '5900:5999'
+# @param port a single port, or an array of ports, for a rule that covers more than one
+#   discrete port. Exactly one of port or port_range must be given.
+# @param port_range a [low, high] tuple, both real port numbers. Exactly one of port or
+#   port_range must be given.
 # @param ensure the ensurable parameter
 # @param desc an optional description, added as a comment to the .nft file
 # @param prio fragments in a chain's directory load in filename order, this is the prefix
@@ -8,40 +11,40 @@
 #   coming from srange is allowed. a bare CIDR, a parenthesised space separated list, or
 #   an array.
 # @param drange same as srange, but for destination addresses
+# @param src_sets names of nftables::set resources to also allow traffic from, declared
+#   separately (see firewall::set). combined with srange as an OR - traffic is allowed
+#   if it matches srange or any of src_sets. if drange or dst_sets is also given, that
+#   combination is an AND - every (source, destination) pairing gets its own rule.
+# @param dst_sets same as src_sets, but for destination addresses
 # @param notrack if true, also exempt this port from connection tracking. this needs a
 #   rule in both prerouting (for the inbound request) and output (for the reply).
 define nftables::service (
-    Enum['tcp', 'udp']                       $proto,
-    Variant[Stdlib::Port, String[1]]         $port,
-    VMlib::Ensure                            $ensure  = present,
-    String                                   $desc    = '',
-    Integer[0, 99]                           $prio    = 10,
-    Optional[Variant[String, Array[String]]] $srange  = undef,
-    Optional[Variant[String, Array[String]]] $drange  = undef,
-    Boolean                                  $notrack = false,
+    VMlib::Protocol                          $proto,
+    Optional[Nftables::Port]                 $port       = undef,
+    Optional[Firewall::Portrange]            $port_range = undef,
+    VMlib::Ensure                            $ensure     = present,
+    String                                   $desc       = '',
+    Integer[0, 99]                           $prio       = 10,
+    Optional[Variant[String, Array[String]]] $srange     = undef,
+    Optional[Variant[String, Array[String]]] $drange     = undef,
+    Optional[Array[String[1]]]               $src_sets   = undef,
+    Optional[Array[String[1]]]               $dst_sets   = undef,
+    Boolean                                  $notrack    = false,
 ) {
-    $nft_port = regsubst(String($port), ':', '-', 'G')
+    $nft_port = nftables::port_stmt($port, $port_range)
 
-    if $srange == undef and $drange == undef {
+    $src_ips = nftables::normalize_range($srange)
+    $dst_ips = nftables::normalize_range($drange)
+
+    $l3_stmts = nftables::ip_stmt(4, $src_ips, $dst_ips, $src_sets, $dst_sets) +
+    nftables::ip_stmt(6, $src_ips, $dst_ips, $src_sets, $dst_sets)
+
+    if $l3_stmts.empty {
         $input_lines = ["${proto} dport ${nft_port} accept"]
     } else {
-        $srange_split = nftables::split_addrs($srange)
-        $drange_split = nftables::split_addrs($drange)
-
-        $input_lines = ['v4', 'v6'].map |$fam| {
-            $saddrs = $srange_split[$fam]
-            $daddrs = $drange_split[$fam]
-            $skip_family = ($srange != undef and $saddrs.empty) or ($drange != undef and $daddrs.empty)
-
-            if $skip_family {
-                undef
-            } else {
-                $ip_kw    = $fam ? { 'v4' => 'ip', default => 'ip6' }
-                $s_clause = $srange =~ Undef ? { true => '', default => " ${ip_kw} saddr { ${saddrs.join(', ')} }" }
-                $d_clause = $drange =~ Undef ? { true => '', default => " ${ip_kw} daddr { ${daddrs.join(', ')} }" }
-                "${proto} dport ${nft_port}${s_clause}${d_clause} accept"
-            }
-        }.filter |$line| { $line != undef }
+        $input_lines = $l3_stmts.map |$clauses| {
+            "${proto} dport ${nft_port} ${clauses.join(' ')} accept"
+        }
     }
 
     $content = @("CONTENT")

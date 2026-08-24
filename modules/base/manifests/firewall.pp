@@ -41,16 +41,28 @@ class base::firewall (
             rule => "saddr (${$block_abuse.join(' ')}) DROP;",
         }
 
-        $block_abuse_v4 = $block_abuse.filter |$ip| { $ip !~ /:/ }
-        $block_abuse_v6 = $block_abuse.filter |$ip| { $ip =~ /:/ }
+        $block_abuse_v4 = $block_abuse.filter |$ip| { $ip =~ Stdlib::IP::Address::V4 }
+        $block_abuse_v6 = $block_abuse.filter |$ip| { $ip =~ Stdlib::IP::Address::V6 }
 
-        $block_abuse_nft = ($block_abuse_v4.empty ? { true => [], default => ["ip saddr { ${block_abuse_v4.join(', ')} } drop"] }) +
-        ($block_abuse_v6.empty ? { true => [], default => ["ip6 saddr { ${block_abuse_v6.join(', ')} } drop"] })
+        nftables::set { 'ABUSE_NETS':
+            ips => $block_abuse,
+        }
 
-        nftables::rules { 'drop-abuse-net-wikitide':
-            prio  => 1,
-            chain => 'input',
-            rules => $block_abuse_nft,
+        # nftables::set only creates a family's set file if that family
+        # actually has members, even when declared overall, so a line
+        # here referencing an empty family's set would fail to load -
+        # only including the lines that have somewhere to point avoids
+        # that.
+        $block_abuse_lines = ($block_abuse_v4.empty ? { true => [], default => ['ip saddr @ABUSE_NETS_ipv4 drop'] }) +
+        ($block_abuse_v6.empty ? { true => [], default => ['ip6 saddr @ABUSE_NETS_ipv6 drop'] })
+
+        $joined_block_abuse_lines = $block_abuse_lines.join("\n")
+
+        nftables::file::input { 'drop-abuse-nets':
+            order   => 1,
+            content => @("CONTENT"/L)
+                ${joined_block_abuse_lines}
+                | CONTENT
         }
     }
 
@@ -74,7 +86,7 @@ class base::firewall (
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'nrpe':
         proto  => 'tcp',
-        port   => '5666',
+        port   => 5666,
         srange => "(${firewall_rules_str})",
     }
 
@@ -84,7 +96,7 @@ class base::firewall (
     $firewall_bastion_hosts = vmlib::generate_firewall_ip($subquery_2)
     firewall::service { 'ssh':
         proto  => 'tcp',
-        port   => '22',
+        port   => 22,
         srange => "(${firewall_bastion_hosts})",
     }
 
@@ -98,7 +110,7 @@ class base::firewall (
         dport => 68,
     }
 
-    nftables::rules { 'filter-bootp':
+    nftables::rules { 'filter_log_filter-bootp':
         prio  => 90,
         chain => 'input',
         rules => ['ip daddr 255.255.255.255 udp sport 67 udp dport 68 drop'],

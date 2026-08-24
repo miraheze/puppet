@@ -24,7 +24,7 @@ class role::redis {
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'redis':
         proto   => 'tcp',
-        port    => '6379',
+        port    => 6379,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }

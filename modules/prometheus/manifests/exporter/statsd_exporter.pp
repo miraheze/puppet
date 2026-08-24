@@ -84,7 +84,7 @@ class prometheus::exporter::statsd_exporter (
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus statsd-exporter':
         proto  => 'tcp',
-        port   => '9112',
+        port   => 9112,
         srange => "(${firewall_rules_str})",
     }
 }

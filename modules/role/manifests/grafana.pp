@@ -9,7 +9,7 @@ class role::grafana {
     if !defined(Firewall::Service['http']) {
         firewall::service { 'http':
             proto   => 'tcp',
-            port    => '80',
+            port    => 80,
             notrack => true,
         }
     }
@@ -17,7 +17,7 @@ class role::grafana {
     if !defined(Firewall::Service['https']) {
         firewall::service { 'https':
             proto   => 'tcp',
-            port    => '443',
+            port    => 443,
             notrack => true,
         }
     }

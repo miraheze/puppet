@@ -69,7 +69,7 @@ class prometheus::exporter::redis (
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus redis_exporter':
         proto  => 'tcp',
-        port   => '9121',
+        port   => 9121,
         srange => "(${firewall_rules_str})",
     }
 }

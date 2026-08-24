@@ -94,7 +94,7 @@ class prometheus::exporter::node (
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus node-exporter':
         proto  => 'tcp',
-        port   => '9100',
+        port   => 9100,
         srange => "(${firewall_rules_str})",
     }
 }

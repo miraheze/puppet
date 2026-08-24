@@ -40,7 +40,7 @@ class prometheus::exporter::memcached (
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus memcached_exporter':
         proto  => 'tcp',
-        port   => '9150',
+        port   => 9150,
         srange => "(${firewall_rules_str})",
     }
 }

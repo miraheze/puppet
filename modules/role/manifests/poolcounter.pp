@@ -18,7 +18,7 @@ class role::poolcounter {
     }
     firewall::service { 'poolcounter':
         proto   => 'tcp',
-        port    => '7531',
+        port    => 7531,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }

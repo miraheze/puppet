@@ -100,7 +100,7 @@ class role::db (
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'mariadb':
         proto   => 'tcp',
-        port    => '3306',
+        port    => 3306,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }

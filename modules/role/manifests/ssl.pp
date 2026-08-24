@@ -12,7 +12,7 @@ class role::ssl {
     if !defined(Firewall::Service['http']) {
         firewall::service { 'http':
             proto   => 'tcp',
-            port    => '80',
+            port    => 80,
             srange  => "(${firewall_srange})",
             notrack => true,
         }
@@ -21,7 +21,7 @@ class role::ssl {
     if !defined(Firewall::Service['https']) {
         firewall::service { 'https':
             proto   => 'tcp',
-            port    => '443',
+            port    => 443,
             srange  => "(${firewall_srange})",
             notrack => true,
         }
