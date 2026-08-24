@@ -80,7 +80,7 @@ class base::monitoring {
     }
 
     monitoring::nrpe { 'ntp peers':
-        command => '/usr/lib/nagios/plugins/check_chrony -w 0.1 -c 0.5',
+        command => '/usr/lib/nagios/plugins/check_chrony -w 50 -c 100',
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#NTP'
     }
 
