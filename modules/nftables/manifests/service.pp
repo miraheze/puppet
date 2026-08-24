@@ -11,6 +11,11 @@
 #   coming from srange is allowed. a bare CIDR, a parenthesised space separated list, or
 #   an array.
 # @param drange same as srange, but for destination addresses
+# @param src_sets names of nftables::set resources to also allow traffic from, declared
+#   separately (see firewall::set). combined with srange as an OR - traffic is allowed
+#   if it matches srange or any of src_sets. if drange or dst_sets is also given, that
+#   combination is an AND - every (source, destination) pairing gets its own rule.
+# @param dst_sets same as src_sets, but for destination addresses
 # @param notrack if true, also exempt this port from connection tracking. this needs a
 #   rule in both prerouting (for the inbound request) and output (for the reply).
 define nftables::service (
@@ -22,30 +27,24 @@ define nftables::service (
     Integer[0, 99]                           $prio       = 10,
     Optional[Variant[String, Array[String]]] $srange     = undef,
     Optional[Variant[String, Array[String]]] $drange     = undef,
+    Optional[Array[String[1]]]               $src_sets   = undef,
+    Optional[Array[String[1]]]               $dst_sets   = undef,
     Boolean                                  $notrack    = false,
 ) {
     $nft_port = nftables::port_stmt($port, $port_range)
 
-    if $srange == undef and $drange == undef {
+    $src_ips = nftables::normalize_range($srange)
+    $dst_ips = nftables::normalize_range($drange)
+
+    $l3_stmts = nftables::ip_stmt(4, $src_ips, $dst_ips, $src_sets, $dst_sets) +
+    nftables::ip_stmt(6, $src_ips, $dst_ips, $src_sets, $dst_sets)
+
+    if $l3_stmts.empty {
         $input_lines = ["${proto} dport ${nft_port} accept"]
     } else {
-        $srange_split = nftables::split_addrs($srange)
-        $drange_split = nftables::split_addrs($drange)
-
-        $input_lines = ['v4', 'v6'].map |$fam| {
-            $saddrs = $srange_split[$fam]
-            $daddrs = $drange_split[$fam]
-            $skip_family = ($srange != undef and $saddrs.empty) or ($drange != undef and $daddrs.empty)
-
-            if $skip_family {
-                undef
-            } else {
-                $ip_kw    = $fam ? { 'v4' => 'ip', default => 'ip6' }
-                $s_clause = $srange =~ Undef ? { true => '', default => " ${ip_kw} saddr { ${saddrs.join(', ')} }" }
-                $d_clause = $drange =~ Undef ? { true => '', default => " ${ip_kw} daddr { ${daddrs.join(', ')} }" }
-                "${proto} dport ${nft_port}${s_clause}${d_clause} accept"
-            }
-        }.filter |$line| { $line != undef }
+        $input_lines = $l3_stmts.map |$clauses| {
+            "${proto} dport ${nft_port} ${clauses.join(' ')} accept"
+        }
     }
 
     $content = @("CONTENT")

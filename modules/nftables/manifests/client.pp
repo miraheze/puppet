@@ -10,6 +10,8 @@
 # @param drange if not given, all destination addresses are allowed. otherwise only
 #   traffic towards drange is allowed. a bare CIDR, a parenthesised space separated
 #   list, or an array.
+# @param dst_sets names of nftables::set resources to also allow traffic towards,
+#   declared separately (see firewall::set). combined with drange as an OR.
 # @param notrack if true, also exempt this port from connection tracking. this needs a
 #   rule in output (for the outbound request), prerouting (for the reply), and an
 #   explicit input accept, since without conntrack state the usual
@@ -23,24 +25,25 @@ define nftables::client (
     String                                   $desc       = '',
     Integer[0, 99]                           $prio       = 10,
     Optional[Variant[String, Array[String]]] $drange     = undef,
+    Optional[Array[String[1]]]               $dst_sets   = undef,
     Boolean                                  $notrack    = false,
 ) {
     $nft_port = nftables::port_stmt($port, $port_range)
 
-    $drange_split = nftables::split_addrs($drange)
+    $dst_ips = nftables::normalize_range($drange)
 
-    if $drange == undef {
+    # a client rule has no source restriction concept, "source" is always
+    # this host, so src_ips/src_sets are fixed to undef here - only the
+    # destination side ever has a range or sets to combine.
+    $l3_stmts = nftables::ip_stmt(4, undef, $dst_ips, undef, $dst_sets) +
+    nftables::ip_stmt(6, undef, $dst_ips, undef, $dst_sets)
+
+    if $l3_stmts.empty {
         $output_lines = ["${proto} dport ${nft_port} accept"]
     } else {
-        $output_lines = ['v4', 'v6'].map |$fam| {
-            $daddrs = $drange_split[$fam]
-            if $daddrs.empty {
-                undef
-            } else {
-                $ip_kw = $fam ? { 'v4' => 'ip', default => 'ip6' }
-                "${proto} dport ${nft_port} ${ip_kw} daddr { ${daddrs.join(', ')} } accept"
-            }
-        }.filter |$line| { $line != undef }
+        $output_lines = $l3_stmts.map |$clauses| {
+            "${proto} dport ${nft_port} ${clauses.join(' ')} accept"
+        }
     }
 
     $content = @("CONTENT")

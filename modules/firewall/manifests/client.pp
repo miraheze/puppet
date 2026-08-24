@@ -9,6 +9,8 @@
 # @param prio the priority, meaning differs slightly by backend
 # @param drange if not given, all destination addresses are allowed, otherwise only
 #   traffic towards drange is allowed
+# @param dst_sets names of firewall::set resources to also allow traffic towards.
+#   additive with drange, not a further restriction of it.
 # @param notrack set the rule with no state tracking
 define firewall::client (
     VMlib::Protocol                          $proto,
@@ -18,6 +20,7 @@ define firewall::client (
     String                                   $desc       = '',
     Integer[0, 99]                           $prio       = 10,
     Optional[Variant[String, Array[String]]] $drange     = undef,
+    Optional[Array[String[1]]]               $dst_sets   = undef,
     Boolean                                  $notrack    = false,
 ) {
     if ($port == undef) == ($port_range == undef) {
@@ -32,13 +35,15 @@ define firewall::client (
         $ferm_port = $port
     }
 
+    $ferm_drange = firewall::ferm_range($drange, $dst_sets)
+
     ferm::client { $title:
         ensure  => $ensure,
         port    => $ferm_port,
         proto   => $proto,
         desc    => $desc,
         prio    => $prio,
-        drange  => $drange,
+        drange  => $ferm_drange,
         notrack => $notrack,
     }
 
@@ -50,6 +55,7 @@ define firewall::client (
         desc       => $desc,
         prio       => $prio,
         drange     => $drange,
+        dst_sets   => $dst_sets,
         notrack    => $notrack,
     }
 }

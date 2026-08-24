@@ -11,6 +11,10 @@
 #   coming from srange is allowed
 # @param drange if not given, all destination addresses are allowed, otherwise only
 #   traffic incoming to drange is allowed
+# @param src_sets names of firewall::set resources to also allow traffic from. additive
+#   with srange, not a further restriction of it.
+# @param dst_sets names of firewall::set resources to also allow traffic towards.
+#   additive with drange, not a further restriction of it.
 # @param notrack set the rule with no state tracking
 define firewall::service (
     VMlib::Protocol                          $proto,
@@ -21,6 +25,8 @@ define firewall::service (
     Integer[0, 99]                           $prio       = 10,
     Optional[Variant[String, Array[String]]] $srange     = undef,
     Optional[Variant[String, Array[String]]] $drange     = undef,
+    Optional[Array[String[1]]]               $src_sets   = undef,
+    Optional[Array[String[1]]]               $dst_sets   = undef,
     Boolean                                  $notrack    = false,
 ) {
     if ($port == undef) == ($port_range == undef) {
@@ -35,14 +41,22 @@ define firewall::service (
         $ferm_port = $port
     }
 
+    # ferm::service never needs to know sets exist: its saddr/daddr
+    # directive already accepts a literal address and a $SETNAME reference
+    # mixed in the same parenthesised list, so this just flattens whatever
+    # combination of srange/src_sets (and drange/dst_sets) was given into
+    # one ordinary ferm range string.
+    $ferm_srange = firewall::ferm_range($srange, $src_sets)
+    $ferm_drange = firewall::ferm_range($drange, $dst_sets)
+
     ferm::service { $title:
         ensure  => $ensure,
         port    => $ferm_port,
         proto   => $proto,
         desc    => $desc,
         prio    => $prio,
-        srange  => $srange,
-        drange  => $drange,
+        srange  => $ferm_srange,
+        drange  => $ferm_drange,
         notrack => $notrack,
     }
 
@@ -55,6 +69,8 @@ define firewall::service (
         prio       => $prio,
         srange     => $srange,
         drange     => $drange,
+        src_sets   => $src_sets,
+        dst_sets   => $dst_sets,
         notrack    => $notrack,
     }
 }
