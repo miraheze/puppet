@@ -23,6 +23,8 @@ from langcodes import tag_is_valid
 DEPLOYUSER = 'www-data'
 STAGING_ROOT = '/srv/mediawiki-staging'
 DEPLOYED_ROOT = '/srv/mediawiki'
+COMPONENT_FETCH_BATCH_SIZE = 20
+COMPONENT_FETCH_WORKERS = 10
 
 
 def _load_mw_versions() -> dict:
@@ -419,6 +421,14 @@ class GitCommandBuilder:
         option = ' --check' if check else ' --index'
         return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} apply{option} {patchfile}'
 
+    def fetch_pr(self, repo: str, pr_number: int, branch: str, version: str = '') -> str:
+        # the leading + forces the fetch to update the local branch even when
+        # the PR has been amended or rebased since the last time it was fetched
+        return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} fetch origin +pull/{pr_number}/head:{branch}'
+
+    def checkout(self, repo: str, branch: str, version: str = '') -> str:
+        return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} checkout {branch}'
+
     def is_repo(self, repo: str, version: str) -> bool:
         return os.path.isdir(os.path.join(self._paths.staging(repo, version), '.git'))
 
@@ -441,6 +451,14 @@ def _construct_git_reset_hard(repo: str, version: str = '') -> str:
 
 def _construct_git_apply(repo: str, patchfile: str, version: str = '', check: bool = False) -> str:
     return _git.apply(repo, patchfile, version, check)
+
+
+def _construct_git_fetch_pr(repo: str, pr_number: int, branch: str, version: str = '') -> str:
+    return _git.fetch_pr(repo, pr_number, branch, version)
+
+
+def _construct_git_checkout(repo: str, branch: str, version: str = '') -> str:
+    return _git.checkout(repo, branch, version)
 
 
 def _is_git_repo(repo: str, version: str) -> bool:
@@ -554,15 +572,6 @@ def _apply_patch_plain(repo: str, patchfile: str, version: str) -> int:
 
 
 class RemoteDeployer:
-    """Pushes a staged path or file out to a server fleet.
-
-    The first server reached is treated as a canary: it's deployed to and
-    checked on its own before anything else goes out. Once that's healthy,
-    the rest of the fleet rolls out in fixed-size batches, in parallel within
-    each batch. If any server in a batch fails, later batches are skipped
-    entirely rather than deploying to a fleet that's already known to be broken.
-    """
-
     def __init__(self, rsync_builder: RsyncCommandBuilder, canary, hostname: str = HOSTNAME,
                  batch_size: int = 3, max_workers: int = 8):
         self._rsync_builder = rsync_builder
@@ -592,8 +601,8 @@ class RemoteDeployer:
             return [future.result() for future in as_completed(futures)]
 
     def _batches(self, targets: list[str]):
-        """The first server goes out alone as a canary. Everything after that
-        ships in fixed-size groups."""
+        """The first server goes out alone. Everything after that ships in
+        fixed-size groups."""
         if not targets:
             return
         yield [targets[0]]
@@ -613,7 +622,7 @@ class RemoteDeployer:
 
             failed = [server for server, ec, healthy in results if ec != 0 or not healthy]
             if failed:
-                print(f'Deploy or canary check failed on: {", ".join(failed)}. Stopping before the remaining batches.')
+                print(f'Deploy or health check failed on: {", ".join(failed)}. Stopping before the remaining batches.')
                 print(f'Finished {path} deploys.')
                 sys.exit(3)
 
@@ -637,6 +646,7 @@ class DeploymentRunner:
     def __init__(self, args: argparse.Namespace):
         self.args = args
         self.envinfo = get_environment_info()
+        self._pr_checked_out = False
 
     def run(self, start: float) -> None:  # pragma: no cover
         args = self.args
@@ -715,6 +725,7 @@ class DeploymentRunner:
                 self.stage.append(_world_reset.run_puppet())
 
             self._pull_named_repos(version)
+            self._checkout_pr()
 
             if version:
                 self._upgrade_vendor(version)
@@ -884,6 +895,16 @@ class DeploymentRunner:
             except KeyError:
                 print(f'Failed to pull {repo} due to invalid name')
 
+    def _checkout_pr(self) -> None:
+        if not self.args.pr or self._pr_checked_out:
+            return
+        repo = self.args.pr_repo
+        branch = f'pr-{self.args.pr}'
+        print(f'Checking out PR #{self.args.pr} for {repo} as {branch}.')
+        self.exitcodes.append(run_command(_git.fetch_pr(repo, self.args.pr, branch)))
+        self.exitcodes.append(run_command(_git.checkout(repo, branch)))
+        self._pr_checked_out = True
+
     def _upgrade_vendor(self, version: str) -> None:
         if not self.args.upgrade_vendor:
             return
@@ -901,8 +922,7 @@ class DeploymentRunner:
     def _upgrade_components(self, kind: str, items: list[str], version: str) -> None:
         # non-git repos (or ones missing entirely) are handled right away, since
         # there's nothing to fetch. everything else is queued up and fetched in
-        # parallel, since a --upgrade-world run can mean pulling dozens of repos
-        # and there's no reason to do that one network round trip at a time.
+        # fixed-size batches.
         to_fetch = []
         for name in items:
             repo = f'{kind}/{name}'
@@ -923,13 +943,20 @@ class DeploymentRunner:
         if not to_fetch:
             return
 
-        with ThreadPoolExecutor(max_workers=min(8, len(to_fetch))) as pool:
-            fetched = list(pool.map(lambda name: self._fetch_component(kind, name, version), to_fetch))
+        total = len(to_fetch)
+        fetched_count = 0
+        for start in range(0, total, COMPONENT_FETCH_BATCH_SIZE):
+            batch = to_fetch[start:start + COMPONENT_FETCH_BATCH_SIZE]
+            with ThreadPoolExecutor(max_workers=min(COMPONENT_FETCH_WORKERS, len(batch))) as pool:
+                fetched = list(pool.map(lambda name: self._fetch_component(kind, name, version), batch))
 
-        # confirmation prompts, patch application, and rsync queueing all touch
-        # shared state, so they're replayed sequentially once every fetch is done
-        for name, repo, output, status in fetched:
-            self._process_component_fetch(name, repo, output, status, version)
+            fetched_count += len(batch)
+            print(f'Fetched {fetched_count}/{total} {kind}.')
+
+            # confirmation prompts, patch application, and rsync queueing all touch
+            # shared state, so a batch is fully processed before the next one starts
+            for name, repo, output, status in fetched:
+                self._process_component_fetch(name, repo, output, status, version)
 
     @staticmethod
     def _fetch_component(kind: str, name: str, version: str):
@@ -1073,6 +1100,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--pull', dest='pull')
     parser.add_argument('--branch', dest='branch')
+    parser.add_argument('--pr', dest='pr', type=int, help='check out this PR number instead of the default branch, in the repo named by --pr-repo')
+    parser.add_argument('--pr-repo', dest='pr_repo', default='config', help='repo --pr checks out a pull request branch in (default: config)')
     parser.add_argument('--reset-world', dest='reset_world', action='store_true')
     parser.add_argument('--upgrade-world', dest='upgrade_world', action='store_true')
     parser.add_argument('--upgrade-vendor', dest='upgrade_vendor', action='store_true')
