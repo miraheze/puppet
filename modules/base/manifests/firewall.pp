@@ -92,7 +92,7 @@ class base::firewall (
     $firewall_bastion_hosts = vmlib::generate_firewall_ip($subquery_2)
     firewall::service { 'ssh':
         proto  => 'tcp',
-        port   => 22],
+        port   => 22,
         srange => "(${firewall_bastion_hosts})",
     }
 
