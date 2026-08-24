@@ -44,6 +44,7 @@ class base::monitoring {
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_gdnsd_datacenters',
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run',
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_smart',
+            'ALL = NOPASSWD: /usr/sbin/ipmi-dcmi',
             'ALL = NOPASSWD: /usr/sbin/ipmi-sel',
             'ALL = NOPASSWD: /usr/sbin/ipmi-sensors',
         ],
