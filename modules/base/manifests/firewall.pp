@@ -58,7 +58,7 @@ class base::firewall (
 
         $joined_block_abuse_lines = $block_abuse_lines.join("\n")
 
-        nftables::file::input { 'drop-abuse-nets-wikitide':
+        nftables::file::input { 'drop-abuse-nets':
             order   => 1,
             content => @("CONTENT"/L)
                 ${joined_block_abuse_lines}
