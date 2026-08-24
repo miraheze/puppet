@@ -1,12 +1,6 @@
 # @summary declares a named nft set, referenced from rules elsewhere as @<name>_ipv4 / @<name>_ipv6
 # @param ips the member addresses, a mix of IPv4 and IPv6 is fine, each family becomes its own set
 # @param ensure the ensurable parameter
-#
-# Unlike Wikimedia's operations-puppet nftables::set, this only takes
-# already-resolved IP addresses, not hostnames - every srange/drange in this
-# codebase already arrives pre-resolved (via vmlib::generate_firewall_ip or a
-# static list), so there was nothing to gain from also supporting DNS
-# resolution at compile time.
 define nftables::set (
     Array[Stdlib::IP::Address] $ips,
     Enum['present', 'absent']  $ensure = present,
