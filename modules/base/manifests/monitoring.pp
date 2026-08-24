@@ -86,7 +86,7 @@ class base::monitoring {
     }
 
     monitoring::nrpe { 'chrony':
-        command => '/usr/lib/nagios/plugins/check_chrony -w 50 -c 100',
+        command => '/usr/lib/nagios/plugins/check_chrony -w 50 -c 100 -W 5 -C 10',
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Chrony'
     }
 
