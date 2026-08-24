@@ -41,10 +41,10 @@ class base::firewall (
             rule => "saddr (${$block_abuse.join(' ')}) DROP;",
         }
 
-        $block_abuse_v4 = $block_abuse.filter |$ip| { $ip !~ /:/ }
-        $block_abuse_v6 = $block_abuse.filter |$ip| { $ip =~ /:/ }
+        $block_abuse_v4 = $block_abuse.filter |$ip| { $ip =~ Stdlib::IP::Address::V4 }
+        $block_abuse_v6 = $block_abuse.filter |$ip| { $ip =~ Stdlib::IP::Address::V6 }
 
-        nftables::set { 'ABUSE_NET':
+        nftables::set { 'ABUSE_NETS':
             ips => $block_abuse,
         }
 
@@ -53,12 +53,16 @@ class base::firewall (
         # here referencing an empty family's set would fail to load -
         # only including the lines that have somewhere to point avoids
         # that.
-        $block_abuse_lines = ($block_abuse_v4.empty ? { true => [], default => ['ip saddr @ABUSE_NET_ipv4 drop'] }) +
-        ($block_abuse_v6.empty ? { true => [], default => ['ip6 saddr @ABUSE_NET_ipv6 drop'] })
+        $block_abuse_lines = ($block_abuse_v4.empty ? { true => [], default => ['ip saddr @ABUSE_NETS_ipv4 drop'] }) +
+        ($block_abuse_v6.empty ? { true => [], default => ['ip6 saddr @ABUSE_NETS_ipv6 drop'] })
 
-        nftables::file::input { 'drop-abuse-net-wikitide':
+        $joined_block_abuse_lines = $block_abuse_lines.join("\n")
+
+        nftables::file::input { 'drop-abuse-nets-wikitide':
             order   => 1,
-            content => $block_abuse_lines.join("\n"),
+            content => @("CONTENT"/L)
+                ${joined_block_abuse_lines}
+                | CONTENT
         }
     }
 
