@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Usage: dump-processlist <min-load>
+
+# Dumps FULL PROCESSLIST of the running mariadb instance into a file in the current working directory.
+# Only runs if the current load average exceeds the supplied min-load (defaults to 0).
+
+max=${1:-0}
+re='^[0-9]+(\.[0-9]+)?$'
+if [[ ! "$max" =~ $re ]]; then
+  max=0
+fi
+
+load=$(awk '{print $1}' /proc/loadavg)
+if awk "BEGIN {exit !($load > $max)}"; then
+  mariadb -e "SHOW FULL PROCESSLIST;" > "proclist_$(date +%Y%m%d_%H%M%S).txt"
+fi

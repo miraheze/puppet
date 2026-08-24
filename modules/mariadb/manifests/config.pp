@@ -15,6 +15,7 @@ class mariadb::config(
     String                $expire_logs_days             = '3',
     String                $sync_binlog                  = '1',
     String                $flush_log_at_trx_commit      = '1',
+    Integer               $wait_timeout                 = 3600,
 ) {
     $exporter_password = lookup('passwords::db::exporter')
     $ido_db_user_password = lookup('passwords::icinga_ido')
@@ -155,5 +156,36 @@ class mariadb::config(
             critical        => '90%',
             max_connections => $max_connections,
         } + $ssl,
+    }
+
+    file { '/var/log/mysql/proclist':
+        ensure  => directory,
+        owner   => 'mysql',
+        group   => 'mysql',
+        require => Package['mariadb-server'],
+    }
+
+    $load_critical = $facts['processors']['count'] * 2.0
+
+    file { '/usr/local/sbin/dump-processlist':
+        ensure => present,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0550',
+        source => 'puppet:///modules/mariadb/dump-processlist',
+    }
+
+    systemd::timer::job { 'mariadb-generate-processlist':
+        ensure             => present,
+        description        => "Automatically generate FULL PROCESSLIST files in /var/log/mariadb/proclist if the server load exceeds ${load_critical} (runs every minute).",
+        user               => 'root',
+        ignore_errors      => true,
+        monitoring_enabled => false,
+        logging_enabled    => false,
+        command            => "/usr/local/sbin/dump-processlist ${load_critical}",
+        working_directory  => '/var/log/mysql/proclist',
+        interval           => [
+            { 'start' => 'OnUnitActiveSec', 'interval' => '1min' },
+        ],
     }
 }

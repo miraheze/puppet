@@ -22,7 +22,7 @@ class RCBot(irc.IRCClient):
 
     def connectionMade(self):
         self.lineRate = None
-        self.sendLine('CAP REQ :sasl')
+        # self.sendLine('CAP REQ :sasl')
         self.lineRate = 1
         irc.IRCClient.connectionMade(self)
 
@@ -42,6 +42,10 @@ class RCBot(irc.IRCClient):
         print('sasl auth failed', params)
         self.quit('')
     irc_905 = irc_904
+
+    def lineReceived(self, line):
+        line = line.decode("utf-8", errors="replace")
+        irc.IRCClient.lineReceived(self, line)
 
     def signedOn(self):
         global recver

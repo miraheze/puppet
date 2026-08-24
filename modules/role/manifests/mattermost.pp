@@ -23,7 +23,7 @@ class role::mattermost {
     }
     -> class { 'mattermost':
         edition          => 'enterprise',
-        version          => '11.3.1',
+        version          => '11.10.0',
         override_options => {
             'TeamSettings'    => {
                 'SiteName'                  => 'WikiTide Foundation',
@@ -76,31 +76,19 @@ class role::mattermost {
         source => 'puppet:///modules/role/mattermost/nginx.conf',
     }
 
-    $firewall_rules_str = join(
-        query_facts('Class[Role::Mattermost]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery = @("PQL")
+    resources { type = 'Class' and title = 'Role::Mattermost' }
+    | PQL
+    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
-    ferm::service { 'postgresql':
+    firewall::service { 'postgresql':
         proto   => 'tcp',
         port    => '5432',
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }
 
-    ferm::service { 'mattermost':
+    firewall::service { 'mattermost':
         proto   => 'tcp',
         port    => '8065',
         srange  => "(${firewall_rules_str})",
@@ -110,38 +98,28 @@ class role::mattermost {
     $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
     $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
 
-    $firewall_rules_cloudflare_str = join(
-        $cloudflare_ipv4 + $cloudflare_ipv6 + query_facts('Class[Role::Varnish] or Class[Role::Cache::Cache] or Class[Role::Icinga2]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery_2 = @("PQL")
+    resources { type = 'Class' and title = 'Role::Icinga2' }
+    | PQL
+    $cf_ip = join($cloudflare_ipv4 + $cloudflare_ipv6, ' ')
+    $ip = vmlib::generate_firewall_ip($subquery_2)
+    $firewall_rules_cloudflare_str = "${cf_ip} ${ip}"
 
-    ferm::service { 'http':
+    firewall::service { 'http':
         proto   => 'tcp',
         port    => '80',
         # srange  => "(${$firewall_rules_cloudflare_str})",
         notrack => true,
     }
 
-    ferm::service { 'https':
+    firewall::service { 'https':
         proto   => 'tcp',
         port    => '443',
         # srange  => "(${$firewall_rules_cloudflare_str})",
         notrack => true,
     }
 
-    ferm::service { 'https-quic':
+    firewall::service { 'https-quic':
         proto   => 'udp',
         port    => '443',
         notrack => true,

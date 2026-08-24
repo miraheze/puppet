@@ -6,6 +6,7 @@ class mediawiki::packages {
     include mediawiki::firejail
 
     stdlib::ensure_packages([
+        'cgroup-tools',
         'djvulibre-bin',
         'dvipng',
         'espeak-ng-espeak',
@@ -29,7 +30,9 @@ class mediawiki::packages {
         'nodejs',
         'oggvideotools',
         'p7zip-full',
+        'pkexec',
         'ploticus',
+        'polkitd',
         'poppler-utils',
         'python3',
         'python3-minimal',

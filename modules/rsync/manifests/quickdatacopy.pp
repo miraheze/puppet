@@ -49,7 +49,7 @@ define rsync::quickdatacopy(
   Optional[String] $exclude = undef,
   Optional[Boolean] $delete = false,
   Boolean $server_uses_stunnel = false,  # Must match rsync::server::wrap_with_stunnel as looked up via hiera by the *server*!
-  Boolean $auto_ferm_ipv6 = true,
+  Boolean $auto_firewall_ipv6 = true,
   Optional[String] $chown = undef,
   Variant[
       Systemd::Timer::Schedule,
@@ -66,12 +66,12 @@ define rsync::quickdatacopy(
           include rsync::server
 
           rsync::server::module { $title:
-              ensure         => $ensure,
-              read_only      => 'yes',
-              path           => $module_path,
-              hosts_allow    => [$dest_host],
-              auto_ferm      => true,
-              auto_ferm_ipv6 => $auto_ferm_ipv6,
+              ensure             => $ensure,
+              read_only          => 'yes',
+              path               => $module_path,
+              hosts_allow        => [$dest_host],
+              auto_firewall      => true,
+              auto_firewall_ipv6 => $auto_firewall_ipv6,
           }
       }
       $_bwlimit = $bwlimit ? {

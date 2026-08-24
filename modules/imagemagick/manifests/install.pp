@@ -4,7 +4,7 @@
 class imagemagick::install {
     stdlib::ensure_packages(['imagemagick', 'webp'])
 
-    file { '/etc/ImageMagick-6/policy.xml':
+    file { '/etc/ImageMagick-7/policy.xml':
         ensure  => present,
         owner   => 'root',
         group   => 'root',

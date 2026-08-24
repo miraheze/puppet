@@ -17,23 +17,11 @@ class prometheus::exporter::nginx {
         subscribe => File['/etc/default/prometheus-nginx-exporter'],
     }
 
-    $firewall_rules = join(
-        query_facts('Class[Prometheus]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
-    ferm::service { 'prometheus nginx':
+    $subquery = @("PQL")
+    resources { type = 'Class' and title = 'Prometheus' }
+    | PQL
+    $firewall_rules = vmlib::generate_firewall_ip($subquery)
+    firewall::service { 'prometheus nginx':
         proto  => 'tcp',
         port   => '9113',
         srange => "(${firewall_rules})",

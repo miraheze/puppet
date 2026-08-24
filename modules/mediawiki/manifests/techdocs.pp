@@ -1,15 +1,6 @@
 # === Class mediawiki::techdocs
 class mediawiki::techdocs {
-    stdlib::ensure_packages('python3-mwparserfromhell')
-    stdlib::ensure_packages(
-        'GitPython',
-        {
-            provider        => 'pip3',
-            install_options => [ '--break-system-packages' ],
-            before          => File['/usr/local/bin/techdocs'],
-            require         => Package['python3-pip'],
-        },
-    )
+    stdlib::ensure_packages(['python3-git', 'python3-mwparserfromhell'])
 
     file { '/usr/local/bin/techdocs':
         ensure => present,

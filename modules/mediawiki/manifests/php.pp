@@ -3,7 +3,7 @@ class mediawiki::php (
     Float $fpm_workers_multiplier        = lookup('mediawiki::php::fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
     Integer $request_timeout             = lookup('mediawiki::php::request_timeout', {'default_value' => 240}),
     String $apc_shm_size                 = lookup('mediawiki::php::apc_shm_size', {'default_value' => '3072M'}),
-    VMlib::Php_version $php_version      = lookup('php::php_version', {'default_value' => '8.2'}),
+    VMlib::Php_version $php_version      = lookup('php::php_version', {'default_value' => '8.4'}),
     Boolean $enable_fpm                  = lookup('mediawiki::php::enable_fpm', {'default_value' => true}),
     Boolean $enable_request_profiling    = lookup('mediawiki::php::enable_request_profiling', {'default_value' => false}),
     Optional[Hash] $fpm_config           = lookup('mediawiki::php::fpm_config', {default_value => undef}),
@@ -17,7 +17,7 @@ class mediawiki::php (
         'date.timezone'          => 'UTC',
         'display_errors'         => 'stderr',
         'memory_limit'           => '500M',
-        'error_reporting'        => 'E_ALL & ~E_STRICT',
+        'error_reporting'        => 'E_ALL',
         'mysql'                  => { 'connect_timeout' => 3 },
         'default_socket_timeout' => 60,
     }
@@ -199,10 +199,10 @@ class mediawiki::php (
     }
 
     # Follow https://support.tideways.com/documentation/reference/tideways-xhprof/tideways-xhprof-extension.html
-    file { '/usr/lib/php/20220829/xhprof.so':
+    file { '/usr/lib/php/20240924/xhprof.so':
         ensure => $profiling_ensure,
         mode   => '0755',
-        source => 'puppet:///modules/mediawiki/php/xhprof.php82.so',
+        source => 'puppet:///modules/mediawiki/php/xhprof.php84.so',
         before => Php::Extension['xhprof'],
     }
 

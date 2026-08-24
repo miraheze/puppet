@@ -83,23 +83,11 @@ define prometheus::exporter::jmx (
         links   => 'follow',
     }
 
-    $firewall_rules_str = join(
-        query_facts('Class[Role::Prometheus]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
-    ferm::service { "prometheus ${port} jmx_exporter":
+    $subquery = @("PQL")
+    resources { type = 'Class' and title = 'Role::Prometheus' }
+    | PQL
+    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
+    firewall::service { "prometheus ${port} jmx_exporter":
         proto  => 'tcp',
         port   => $port,
         srange => "(${firewall_rules_str})",

@@ -499,6 +499,12 @@ sub vcl_recv {
 		return (pass);
 	}
 
+	# Do not cache requests from this domain
+	if (req.http.Host == "speedscope.wikitide.net") {
+		set req.backend_hint = speedscope211;
+		return (pass);
+	}
+
 	# Respect CloudFlare IPs for X-Forwarded-For configuration
 	if (client.ip ~ cloudflare_ips || client.ip ~ purge) {
 		if (req.http.CF-Connecting-IP) {
@@ -575,6 +581,7 @@ sub vcl_backend_response {
 
 	// Used for purging
 	set beresp.http.xkey = bereq.http.Host + bereq.url;
+	set beresp.http.time = std.strftime(now, "%Y-%m-%dT%H:%M:%SZ");
 
 	if (bereq.http.Cookie ~ "([sS]ession|Token)=") {
 		set bereq.http.Cookie = "Token=1";
@@ -746,6 +753,9 @@ sub vcl_deliver {
 		return(synth(resp.status));
 	}
 
+	// Used for purging, does not need to be delivered to user
+	unset resp.http.time;
+
 	if (req.method != "PURGE") {
 		// we copy through from beresp->resp->req here for the initial hit-for-pass case
 		if (resp.http.X-CDIS) {
@@ -839,8 +849,11 @@ sub vcl_deliver {
 	# Disable Google ad targeting (FLoC)
 	set resp.http.Permissions-Policy = "interest-cohort=(), browsing-topics=()";
 
-	# Content Security Policy
-	set resp.http.Content-Security-Policy = "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
+	# The CSP setting was moved from Varnish to MediaWiki. If MediaWiki somehow fails to set
+	# the header, fall back to using the old Varnish CSP.
+	if (resp.status != 304 && !resp.http.Content-Security-Policy) {
+		set resp.http.Content-Security-Policy = "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
+	}
 
 	# For a 500 error, do not set cookies
 	if (resp.status >= 500 && resp.http.Set-Cookie) {

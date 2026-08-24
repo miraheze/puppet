@@ -8,3 +8,4 @@ role::db::enable_bin_logs: false
 mariadb::version: '11.8'
 role::db::enable_ssl: false
 role::db::is_beta_db: false
+role::db::wait_timeout: 28800

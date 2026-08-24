@@ -88,6 +88,19 @@ class puppetserver(
         require   => Package['openvox-agent'],
     }
 
+    git::clone { 'mediawiki-patches-private':
+        ensure    => latest,
+        directory => '/etc/puppetlabs/puppet/mediawiki-repos/patches/private',
+        origin    => 'git@github.com:miraheze/mediawiki-patches-private',
+        ssh       => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.fsslc.wtnet:8080 %h %p\'',
+        require   => [
+            Package['openvox-agent'],
+            Git::Clone['mediawiki-repos'],
+            File['/var/lib/nagios/id_ed25519'],
+            File['/var/lib/nagios/id_ed25519.pub'],
+        ],
+    }
+
     git::clone { 'pywikibot-config':
         ensure    => latest,
         directory => '/etc/puppetlabs/puppet/pywikibot-config',
@@ -195,7 +208,7 @@ class puppetserver(
         require  => Package['openvox-server'],
     }
 
-    ferm::service { 'puppetserver':
+    firewall::service { 'puppetserver':
         proto => 'tcp',
         port  => '8140',
     }
@@ -296,6 +309,9 @@ class puppetserver(
             start    => 'OnCalendar',
             interval => '*-*-* *:00,30',
         },
+        logfile_basedir         => '/var/log',
+        logfile_name            => 'listdomains.log',
+        syslog_identifier       => 'listdomains',
         user                    => 'root',
         send_mail               => true,
         send_mail_only_on_error => true,

@@ -7,22 +7,18 @@ class role::swift (
     include ::swift
     include ::swift::ring
 
-    $firewall_rules_str = join(
-        query_facts('Class[Role::Swift] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion] or Class[Role::Varnish] or Class[Role::Cache::Cache]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery = @("PQL")
+    (resources { type = 'Class' and title = 'Role::Swift' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
+    resources { type = 'Class' and title = 'Role::Prometheus' } or
+    resources { type = 'Class' and title = 'Role::Bastion' } or
+    resources { type = 'Class' and title = 'Role::Varnish' } or
+    resources { type = 'Class' and title = 'Role::Cache::Cache' } or
+    resources { type = 'Class' and title = 'Role::Icinga2' })
+    | PQL
+    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
     $proxy = lookup('swift_proxy_enable', {'default_value' => false})
     if $proxy {
@@ -49,14 +45,14 @@ class role::swift (
             statsd_prefix => 'swift.containers.mw-media',
         }
 
-        ferm::service { 'http':
+        firewall::service { 'http':
             proto   => 'tcp',
             port    => '80',
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
 
-        ferm::service { 'https':
+        firewall::service { 'https':
             proto   => 'tcp',
             port    => '443',
             srange  => "(${firewall_rules_str})",
@@ -66,7 +62,7 @@ class role::swift (
         if lookup('swift_enable_memcache', {'default_value' => false}) {
             include role::memcached
 
-            ferm::service { 'swift_memcache_11211':
+            firewall::service { 'swift_memcache_11211':
                 proto   => 'tcp',
                 port    => '11211',
                 srange  => "(${firewall_rules_str})",
@@ -79,21 +75,21 @@ class role::swift (
     if $ac {
         include ::swift::ac
 
-        ferm::service { 'swift_account_6002':
+        firewall::service { 'swift_account_6002':
             proto   => 'tcp',
             port    => '6002',
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
 
-        ferm::service { 'swift_container_6001':
+        firewall::service { 'swift_container_6001':
             proto   => 'tcp',
             port    => '6001',
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
 
-        ferm::service { 'swift-rsync':
+        firewall::service { 'swift-rsync':
             proto   => 'tcp',
             port    => '873',
             notrack => true,
@@ -114,14 +110,14 @@ class role::swift (
             statsd_metric_prefix => "swift.${facts['networking']['hostname']}",
         }
 
-        ferm::service { 'swift_object_6000':
+        firewall::service { 'swift_object_6000':
             proto   => 'tcp',
             port    => '6000',
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
 
-        ferm::service { 'swift-rsync':
+        firewall::service { 'swift-rsync':
             proto   => 'tcp',
             port    => '873',
             notrack => true,

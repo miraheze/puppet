@@ -9,16 +9,19 @@ class role::db (
     Boolean $backup_sql = lookup('role::db::backup_sql', {'default_value' => true}),
     Boolean $enable_ssl = lookup('role::db::enable_ssl', {'default_value' => true}),
     Boolean $is_beta_db = lookup('role::db::is_beta_db', {'default_value' => false}),
+    Integer $wait_timeout = lookup('role::db::wait_timeout', {'default_value' => 3600}),
 ) {
     include mariadb::packages
     include prometheus::exporter::mariadb
 
     if ( $is_beta_db ) {
-        $mediawiki_password = lookup('passwords::db::mediawiki_beta')
-        $wikiadmin_password = lookup('passwords::db::wikiadmin_beta')
+        $mediawiki_password  = lookup('passwords::db::mediawiki_beta')
+        $wikiadmin_password  = lookup('passwords::db::wikiadmin_beta')
+        $bucketuser_password = lookup('passwords::db::bucketuser_beta')
     } else {
-        $mediawiki_password = lookup('passwords::db::mediawiki')
-        $wikiadmin_password = lookup('passwords::db::wikiadmin')
+        $mediawiki_password  = lookup('passwords::db::mediawiki')
+        $wikiadmin_password  = lookup('passwords::db::wikiadmin')
+        $bucketuser_password = lookup('passwords::db::bucketuser')
     }
     $matomo_password = lookup('passwords::db::matomo')
     $phorge_password = lookup('passwords::db::phorge')
@@ -44,6 +47,7 @@ class role::db (
         enable_bin_logs => $enable_bin_logs,
         enable_ssl      => $enable_ssl,
         enable_slow_log => $enable_slow_log,
+        wait_timeout    => $wait_timeout,
     }
 
     file { '/etc/mysql/wikitide/mediawiki-grants.sql':
@@ -71,29 +75,30 @@ class role::db (
         content => template('mariadb/grants/reports-grants.sql.erb'),
     }
 
-    if ( $is_beta_db ) {
-        $query_classes = 'Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]'
+    if ($is_beta_db) {
+        $subquery = @("PQL")
+        (resources { type = 'Class' and title = 'Role::Db' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
+        resources { type = 'Class' and title = 'Role::Icinga2' } or
+        resources { type = 'Class' and title = 'Role::Phorge' } or
+        resources { type = 'Class' and title = 'Role::Matomo' } or
+        resources { type = 'Class' and title = 'Role::Reports' })
+        | PQL
     } else {
-        $query_classes = 'Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]'
+        $subquery = @("PQL")
+        (resources { type = 'Class' and title = 'Role::Db' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
+        resources { type = 'Class' and title = 'Role::Icinga2' } or
+        resources { type = 'Class' and title = 'Role::Phorge' } or
+        resources { type = 'Class' and title = 'Role::Matomo' } or
+        resources { type = 'Class' and title = 'Role::Reports' })
+        | PQL
     }
-
-    $firewall_rules_str = join(
-        query_facts($query_classes, ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
-    ferm::service { 'mariadb':
+    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
+    firewall::service { 'mariadb':
         proto   => 'tcp',
         port    => '3306',
         srange  => "(${firewall_rules_str})",
@@ -126,7 +131,7 @@ class role::db (
     }
 
     # Backups
-    if $backup_sql {
+    if ($backup_sql) {
         $monthday_1 = fqdn_rand(13, 'sql-backups') + 1
         $monthday_15 = fqdn_rand(13, 'sql-backups') + 15
         backup::job { 'sql':

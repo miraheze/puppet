@@ -5,7 +5,7 @@ class reports {
     git::clone { 'TSPortal':
         directory => '/srv/TSPortal',
         origin    => 'https://github.com/miraheze/TSPortal',
-        branch    => 'v27',
+        branch    => 'v36',
         owner     => 'www-data',
         group     => 'www-data',
     }
@@ -30,7 +30,7 @@ class reports {
         'date.timezone'          => 'UTC',
         'display_errors'         => 'stderr',
         'memory_limit'           => lookup('php::cli::memory_limit', {'default_value' => '512M'}),
-        'error_reporting'        => 'E_ALL & ~E_STRICT',
+        'error_reporting'        => 'E_ALL',
         'mysql'                  => { 'connect_timeout' => 3 },
         'default_socket_timeout' => 60,
     }

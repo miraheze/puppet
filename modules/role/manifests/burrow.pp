@@ -26,31 +26,19 @@ class role::burrow {
         metrics_addr => '0.0.0.0:9500'
     }
 
-    $firewall_rules_str = join(
-        query_facts('Class[Role::Prometheus]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery = @("PQL")
+    resources { type = 'Class' and title = 'Role::Prometheus' }
+    | PQL
+    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
     # Burrow offers a HTTP REST API
-    ferm::service { 'burrow-main':
+    firewall::service { 'burrow-main':
         proto  => 'tcp',
         port   => 8100,
         srange => "(${firewall_rules_str})",
     }
 
-    ferm::service { 'burrow-main-exporter':
+    firewall::service { 'burrow-main-exporter':
         proto  => 'tcp',
         port   => 9500,
         srange => "(${firewall_rules_str})",

@@ -56,7 +56,13 @@ class prometheus (
         refreshonly => true,
     }
 
-    $servers = query_nodes('Class[Base]')
+    $pdb_query = @("PQL")
+        nodes[certname] {
+            resources {type = "Class" and title = "Base"}
+            order by certname
+        }
+    | PQL
+    $servers = puppetdb_query($pdb_query).map |$x| { $x['certname'] }
               .flatten()
               .unique()
               .sort()

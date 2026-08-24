@@ -26,6 +26,15 @@ del mw_versions
 
 DEPLOYUSER = 'www-data'
 
+patches = []
+try:
+    with open('/srv/mediawiki-staging/patches/public.json') as public:
+        patches += json.load(public)
+    with open('/srv/mediawiki-staging/patches/private.json') as private:
+        patches += json.load(private)
+except FileNotFoundError:
+    pass
+
 
 class Environment(TypedDict):
     wikidbname: str
@@ -91,7 +100,7 @@ def get_valid_extensions(versions: list[str]) -> list[str]:
     for version in versions:
         extensions_path = f'/srv/mediawiki-staging/{version}/extensions/'
         with os.scandir(extensions_path) as extensions:
-            valid_extensions += [extension.name for extension in extensions if os.path.isdir(os.path.join(extension.path, '.git'))]
+            valid_extensions += [extension.name for extension in extensions if extension.is_dir()]
     return sorted(valid_extensions)
 
 
@@ -100,7 +109,7 @@ def get_valid_skins(versions: list[str]) -> list[str]:
     for version in versions:
         skins_path = f'/srv/mediawiki-staging/{version}/skins/'
         with os.scandir(skins_path) as skins:
-            valid_skins += [skin.name for skin in skins if os.path.isdir(os.path.join(skin.path, '.git'))]
+            valid_skins += [skin.name for skin in skins if skin.is_dir()]
     return sorted(valid_skins)
 
 
@@ -285,7 +294,10 @@ def _get_staging_path(repo: str, version: str = '') -> str:
     return f'/srv/mediawiki-staging/{repos[repo]}/'
 
 
-def _get_deployed_path(repo: str) -> str:
+def _get_deployed_path(repo: str, version: str = '') -> str:
+    if version and ('extensions/' in repo or 'skins/' in repo or repo == 'vendor'):
+        return f'/srv/mediawiki/{version}/{repo}'
+
     return f'/srv/mediawiki/{repos[repo]}/'
 
 
@@ -342,6 +354,78 @@ def _construct_reset_mediawiki_run_puppet() -> str:
     return 'sudo puppet agent -tv'
 
 
+def _is_git_repo(repo: str, version: str) -> bool:
+    return os.path.isdir(os.path.join(_get_staging_path(repo, version), '.git'))
+
+
+def _construct_git_apply(repo: str, patchfile: str, version: str = '', check: bool = False) -> str:
+    extopt = ' --check' if check else ' --index'
+    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} apply{extopt} {patchfile}'
+
+
+def _apply_patch_git(repo: str, patchfile: str, version: str) -> int:
+    check = run_command(_construct_git_apply(repo, patchfile, version, True))
+    if check == 0:
+        return run_command(_construct_git_apply(repo, patchfile, version))
+
+    return check
+
+
+def _apply_patch_plain(repo: str, patchfile: str, version: str) -> int:
+    # For non-git repos (like those installed via composer)
+    return run_command(f'sudo -u {DEPLOYUSER} patch -p1 -N -d {_get_staging_path(repo, version)} -i {patchfile} -r -')
+
+
+def _patch_matches(patch: dict, repo: str, version: str) -> bool:
+    path = patch['path']
+    if path == repo and path in versions:
+        return True  # mw core patches
+    staging_path = _get_staging_path(repo, version)
+    if not staging_path.endswith(path):
+        return False
+
+    patch_versions = patch['versions']
+    if 'all' in patch_versions:
+        return True
+
+    return version in patch_versions and staging_path.endswith(f'{version}/{path}')
+
+
+def _apply_patches(repo: str, version: str = '') -> list[int]:
+    exitcodes = []
+    is_git = _is_git_repo(repo, version)
+
+    to_apply = [
+        patch for patch in patches
+        if _patch_matches(patch, repo, version)
+    ]
+
+    for patch in to_apply:
+        visibility = 'public' if patch['public'] else 'private'
+        patchfile = f"/srv/mediawiki-staging/patches/{visibility}/{patch['file']}"
+
+        if not os.path.isfile(patchfile):
+            print(f'WARNING: Patch file {patchfile} could not be found!')
+            continue
+
+        if is_git:
+            code = _apply_patch_git(repo, patchfile, version)
+        else:
+            code = _apply_patch_plain(repo, patchfile, version)
+
+        if code == 0:  # Handle bad codes here according to failureStrategy?
+            exitcodes.append(code)
+        else:
+            print(f"ERROR: Could not apply patch {patch['file']}")
+            if patch['failureStrategy'] == 'abort':
+                print('Aborting!')
+                sys.exit(1)
+            else:
+                print('Skipping patch...')
+
+    return exitcodes
+
+
 def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
     loginfo = {}
     for arg in vars(args).items():
@@ -364,7 +448,7 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
     if len(args.servers) > 1 and args.servers == get_environment_info()['servers']:
         loginfo['servers'] = 'all'
 
-    use_version = args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor
+    use_version = args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor or args.apply_patches
 
     if args.versions:
         if args.upgrade_extensions == get_valid_extensions(args.versions):
@@ -425,7 +509,7 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
 
 def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pragma: no cover
     envinfo = get_environment_info()
-    options = {'config': args.config and not version, 'world': args.world and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
+    options = {'config': args.config and not version, 'world': (args.world or args.reset_world) and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
     exitcodes = []
     rsyncpaths = []
     rsyncfiles = []
@@ -436,6 +520,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
     newschema = []
     tagsinfo = []  # type: list[str]
     warnings = {}
+    needs_version_cache_rebuild = False
 
     if HOSTNAME in args.servers:
         if version:
@@ -457,94 +542,65 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                             repo = version
                         else:
                             continue
-                    stage.append(_construct_git_pull(repo, branch=args.branch))
+                    exitcodes.append(run_command(_construct_git_pull(repo, branch=args.branch)))
+                    exitcodes.extend(_apply_patches(repo))
                 except KeyError:
                     print(f'Failed to pull {repo} due to invalid name')
 
         if version:
             if args.upgrade_vendor:
-                stage.append(_construct_git_reset_hard('vendor', version=version))
-                stage.append(_construct_git_pull('vendor', submodules=True, version=version))
+                exitcodes.append(run_command(_construct_git_reset_hard('vendor', version=version)))
+                exitcodes.append(run_command(_construct_git_pull('vendor', submodules=True, version=version)))
+                exitcodes.extend(_apply_patches('vendor', version))
                 if not args.world:
-                    stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet')
+                    stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 https_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet')
                     rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/vendor/*', dest=f'/srv/mediawiki/{version}/vendor/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/vendor/')
 
-            if args.upgrade_extensions:
-                for extension in args.upgrade_extensions:
-                    if not os.path.exists(_get_staging_path(f'extensions/{extension}', version)):
-                        print(f'{extension} does not exist for {version}. Skipping...')
-                        continue
-                    process = os.popen(_construct_git_pull(f'extensions/{extension}', submodules=True, quiet=False, version=version))
-                    output = process.read().strip()
-                    status = process.close()
-                    exitcode = 0
-                    if status and not args.force:
-                        exitcode = os.waitstatus_to_exitcode(status)
-                    exitcodes.append(exitcode)
-                    if exitcode == 0 and (args.force_upgrade or output != 'Already up to date.'):
-                        print(f'Upgrading {extension}')
-                        for file in get_changed_files_type(f'extensions/{extension}', version, 'schema change'):
-                            if not args.skip_schema_confirm and extension not in warnings:
-                                warnings[extension] = True
-                                print('WARNING: upgrade contains schema changes.')
-                                try:
-                                    if input('Type Y to confirm: ').upper() != 'Y':
-                                        exitcodes.append(run_command(_construct_git_reset_revert(f'extensions/{extension}', version)))
-                                        print('reverted')
-                                        continue
-                                    newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
-                                except KeyboardInterrupt:
-                                    run_command(_construct_git_reset_revert(f'extensions/{extension}', version))
-                                    print('reverted')
-                                    if tagsinfo:
-                                        print('TAGS:')
-                                        for info in tagsinfo:
-                                            print(info)
-                                    if newschema:
-                                        print('WARNING: NEW SCHEMA CHANGES DETECTED:')
-                                        for schema in newschema:
-                                            print(schema)
-                                    print('Operation aborted by user')
-                                    sys.exit(1)
-                        if args.show_tags:
-                            tags = get_change_tags(f'extensions/{extension}', version)
-                            if tags:
-                                tagsinfo.append(f'Tags for {extension}: {", ".join(sorted(tags))}')
-                        if not args.world:
-                            rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
-                            rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
-                    elif exitcode == 0:
-                        print(f'{extension} already up to date. Skipping...')
-                    else:
-                        print(f'Failed to upgrade {extension} (exit code: {exitcode}).')
+            for kind, items in (
+                ('extensions', args.upgrade_extensions),
+                ('skins', args.upgrade_skins),
+            ):
+                if not items:
+                    continue
 
-            if args.upgrade_skins:
-                for skin in args.upgrade_skins:
-                    if not os.path.exists(_get_staging_path(f'skins/{skin}', version)):
-                        print(f'{skin} does not exist for {version}. Skipping...')
+                for name in items:
+                    repo = f'{kind}/{name}'
+                    if not _is_git_repo(repo, version):
+                        print(f'Upgrading {name}')
+                        exitcodes.extend(_apply_patches(repo, version))
+                        if not args.world:
+                            rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/{repo}/*', dest=f'/srv/mediawiki/{version}/{repo}/'))
+                            rsyncpaths.append(f'/srv/mediawiki/{version}/{repo}/')
                         continue
-                    process = os.popen(_construct_git_pull(f'skins/{skin}', quiet=False, version=version))
+
+                    if not os.path.exists(_get_staging_path(repo, version)):
+                        print(f'{name} does not exist for {version}. Skipping...')
+                        continue
+
+                    process = os.popen(_construct_git_pull(repo, submodules=True, quiet=False, version=version))
                     output = process.read().strip()
                     status = process.close()
                     exitcode = 0
                     if status and not args.force:
                         exitcode = os.waitstatus_to_exitcode(status)
-                    exitcodes.append(exitcode)
+                        exitcodes.append(exitcode)
+
                     if exitcode == 0 and (args.force_upgrade or output != 'Already up to date.'):
-                        print(f'Upgrading {skin}')
-                        for file in get_changed_files_type(f'skins/{skin}', version, 'schema change'):
-                            if not args.skip_schema_confirm and skin not in warnings:
-                                warnings[skin] = True
+                        print(f'Upgrading {name}')
+                        exitcodes.extend(_apply_patches(repo, version))
+                        for file in get_changed_files_type(repo, version, 'schema change'):
+                            if not args.skip_schema_confirm and name not in warnings:
+                                warnings[name] = True
                                 print('WARNING: upgrade contains schema changes.')
                                 try:
                                     if input('Type Y to confirm: ').upper() != 'Y':
-                                        exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
+                                        exitcodes.append(run_command(_construct_git_reset_revert(repo, version)))
                                         print('reverted')
                                         continue
-                                    newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
+                                    newschema.append(f'/srv/mediawiki-staging/{version}/{repo}/{file}')
                                 except KeyboardInterrupt:
-                                    run_command(_construct_git_reset_revert(f'skins/{skin}', version))
+                                    run_command(_construct_git_reset_revert(repo, version))
                                     print('reverted')
                                     if tagsinfo:
                                         print('TAGS:')
@@ -556,17 +612,20 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                                             print(schema)
                                     print('Operation aborted by user')
                                     sys.exit(1)
+
                         if args.show_tags:
-                            tags = get_change_tags(f'skins/{skin}', version)
+                            tags = get_change_tags(repo, version)
                             if tags:
-                                tagsinfo.append(f'Tags for {skin}: {", ".join(sorted(tags))}')
+                                tagsinfo.append(f'Tags for {name}: {", ".join(sorted(tags))}')
+
                         if not args.world:
-                            rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
-                            rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
+                            rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/{repo}/*', dest=f'/srv/mediawiki/{version}/{repo}/'))
+                            rsyncpaths.append(f'/srv/mediawiki/{version}/{repo}/')
+                            needs_version_cache_rebuild = True
                     elif exitcode == 0:
-                        print(f'{skin} already up to date. Skipping...')
+                        print(f'{name} already up to date. Skipping...')
                     else:
-                        print(f'Failed to upgrade {skin} (exit code: {exitcode}).')
+                        print(f'Failed to upgrade {name} (exit code: {exitcode}).')
 
         for cmd in stage:  # setup env, git pull etc
             if 'composer' in cmd:
@@ -578,11 +637,34 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 if option == 'world':  # install steps for world
                     option = version
                     os.chdir(_get_staging_path(version))
-                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet'))
-                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
-                    rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
+                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 https_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet'))
+                    needs_version_cache_rebuild = True
                 rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog)
+
+        if version and needs_version_cache_rebuild:
+            rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
+            rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
+
+        if version and args.reset_world:  # complete reset_world by applying patches, after potential composer update
+            applied = []
+            for patch in patches:
+                if patch['path'] not in applied:
+                    exitcodes.extend(_apply_patches(patch['path'], version))
+                    applied.append(patch['path'])
+        non_zero_code(exitcodes, nolog=args.nolog)
+
+        if version and args.apply_patches:
+            for repo in args.apply_patches:
+                exitcodes.extend(_apply_patches(repo, version))
+                staging_path = _get_staging_path(repo, version)  # non-consistent behavior, ensure terminating /
+                staging_path = staging_path if staging_path.endswith('/') else staging_path + '/'
+                dest_path = _get_deployed_path(repo, version)
+                dest_path = dest_path if dest_path.endswith('/') else dest_path + '/'
+                rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'{staging_path}*', dest=dest_path))
+                rsyncpaths.append(dest_path)
+        non_zero_code(exitcodes, nolog=args.nolog)
+
         if args.files and not version:  # specfic extra files
             files = str(args.files).split(',')
             for file in files:
@@ -730,6 +812,14 @@ class ServersAction(argparse.Action):
         setattr(namespace, self.dest, input_servers)
 
 
+class ApplyPatchesAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
+        input_repos = values.split(',')
+        if not getattr(namespace, 'versions', None):
+            parser.error('--versions is required when using --apply-patches (--versions must come before --apply-patches)')
+        setattr(namespace, self.dest, input_repos)
+
+
 if __name__ == '__main__':
     start = time.time()
     parser = argparse.ArgumentParser(description='Process some integers.')
@@ -759,5 +849,6 @@ if __name__ == '__main__':
     parser.add_argument('--servers', dest='servers', action=ServersAction, required=True, help='server(s) to deploy to')
     parser.add_argument('--ignore-time', dest='ignore_time', action='store_true')
     parser.add_argument('--port', dest='port')
+    parser.add_argument('--apply-patches', dest='apply_patches', action=ApplyPatchesAction, help='repo(s) to apply patches to')
 
     run(parser.parse_args(), start)

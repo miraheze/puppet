@@ -61,23 +61,6 @@ class role::prometheus {
         port   => 9091,
     }
 
-    $cadvisor_job = [
-        {
-            'job_name'        => 'cadvisor',
-            'file_sd_configs' => [
-                {
-                    'files' => [ 'targets/cadvisor.yaml' ]
-                }
-            ]
-        }
-    ]
-
-    prometheus::class { 'cadvisor':
-        dest   => '/etc/prometheus/targets/cadvisor.yaml',
-        module => 'Prometheus::Exporter::Cadvisor',
-        port   => 4194,
-    }
-
     $fpm_job = [
         {
             'job_name' => 'fpm',
@@ -225,7 +208,6 @@ class role::prometheus {
         }
     ]
 
-
     $kafka_job = [
         {
             'job_name'        => 'kafka',
@@ -330,6 +312,23 @@ class role::prometheus {
         'file_sd_configs' => [
           { 'files' => [ 'targets/statsd_exporter.yaml' ] },
         ],
+        'metric_relabel_configs' => [
+          # These have very high cardinality, causing instability with prometheus
+          {
+            'action'        => 'drop',
+            'source_labels' => [ '__name__' ],
+            'regex'         => 'mediawiki_action_api_modules_latency_.*',
+          },
+          {
+            'action' => 'labeldrop',
+            'regex'  => 'path',
+          },
+          # Can remove once on MediaWiki 1.46
+          {
+            'action' => 'labeldrop',
+            'regex'  => 'wiki',
+          },
+        ],
       },
     ]
 
@@ -397,30 +396,18 @@ class role::prometheus {
             $blackbox_jobs, $fpm_job, $redis_job, $mariadb_job, $nginx_job,
             $apache_job, $puppetserver_job, $puppetdb_job, $memcached_job,
             $openldap_job, $elasticsearch_job, $statsd_exporter_job,
-            $varnish_job, $cadvisor_job, $pushgateway_job, $kafka_job,
-            $eventgate_job, $kafka_burrow_jobs, $cloudflare_job, $cache_haproxy_job,
+            $varnish_job, $pushgateway_job, $kafka_job, $eventgate_job,
+            $kafka_burrow_jobs, $cloudflare_job, $cache_haproxy_job,
             $php_mediawiki_job
         ].flatten,
     }
 
-    $firewall_grafana = join(
-        query_facts('Class[Role::Grafana]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery = @("PQL")
+    resources { type = 'Class' and title = 'Role::Grafana' }
+    | PQL
+    $firewall_grafana = vmlib::generate_firewall_ip($subquery)
 
-    ferm::service { 'prometheus':
+    firewall::service { 'prometheus':
         proto  => 'tcp',
         port   => '9090',
         srange => "(${firewall_grafana})",

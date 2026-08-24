@@ -3,8 +3,8 @@ global
 
 listen jobrunner
         option httpchk
-        http-check send meth GET  uri /rpc/RunSingleJob.php
-        http-check expect status 405
+        http-check send meth GET  uri /healthcheck.php
+        http-check expect status 204
         mode http
         bind :9007
         bind :::9007
@@ -21,8 +21,8 @@ listen jobrunner
 
 listen jobrunner_high
         option httpchk
-        http-check send meth GET  uri /rpc/RunSingleJob.php
-        http-check expect status 405
+        http-check send meth GET  uri /healthcheck.php
+        http-check expect status 204
         mode http
         bind :9008
         bind :::9008
@@ -39,8 +39,8 @@ listen jobrunner_high
 
 listen videoscaler
         option httpchk
-        http-check send meth GET  uri /rpc/RunSingleJob.php
-        http-check expect status 405
+        http-check send meth GET  uri /healthcheck.php
+        http-check expect status 204
         mode http
         bind :9009
         bind :::9009

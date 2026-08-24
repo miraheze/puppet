@@ -39,9 +39,8 @@ define postgresql::user(
 
     $_pgversion = $pgversion ? {
         undef   => $facts['os']['distro']['codename'] ? {
-            'bookworm' => 15,
-            'trixie'   => 17,
-            default    => fail("unsupported pgversion: ${pgversion}"),
+            'trixie' => 17,
+            default  => fail("unsupported pgversion: ${pgversion}"),
         },
         default => $pgversion,
     }
@@ -63,7 +62,7 @@ define postgresql::user(
         $xpath = "/files${pg_hba_file}/*[type='${type}'][database='${database}'][user='${user}'][address='${cidr}'][method='${_method}']"
     }
 
-    # Starting with Bookworm passwords are hashed with salted Scram-SHA256. The user is still tested for existance,
+    # Passwords are hashed with salted Scram-SHA256. The user is tested for existance,
     # but no password changes are supported T326325
     $password_md5    = md5("${password}${user}")
     $password_clause = "LIKE 'SCRAM-SHA-256\\\$4096:%'"

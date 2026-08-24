@@ -3,6 +3,7 @@
 // Database passwords
 $wgDBadminpassword = '<%= @wikiadmin_password %>';
 $wgDBpassword = '<%= @mediawiki_password %>';
+$wgBucketDBpassword = '<%= @bucketuser_password %>';
 
 // Redis AUTH password
 $wmgRedisPassword = '<%= @redis_password %>';
@@ -59,3 +60,6 @@ $wgMirahezeReportsWriteKey = '<%= @reports_write_key %>';
 
 // Google Translate API key for Meta
 $wmgTranslateGoogleTranslateMetaKey = '<%= @google_translate_apikey_meta %>';
+
+// Speedscope logging token
+$wgSpeedscopeToken = '<%= @speedscope_log_token %>';

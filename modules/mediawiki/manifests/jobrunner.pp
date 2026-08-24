@@ -79,29 +79,18 @@ class mediawiki::jobrunner {
         content  => template('mediawiki/jobrunner.conf.erb'),
     }
 
-    $firewall_rules_str = join(
-        query_facts('Class[Role::Changeprop] or Class[Role::Icinga2]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
-    ferm::service { 'jobrunner-9005':
+    $subquery = @("PQL")
+    (resources { type = 'Class' and title = 'Role::Changeprop' } or
+    resources { type = 'Class' and title = 'Role::Icinga2' })
+    | PQL
+    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
+    firewall::service { 'jobrunner-9005':
         proto   => 'tcp',
         port    => $port,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }
-    ferm::service { 'jobrunner-9006':
+    firewall::service { 'jobrunner-9006':
         proto   => 'tcp',
         port    => $local_only_port,
         srange  => "(${firewall_rules_str})",

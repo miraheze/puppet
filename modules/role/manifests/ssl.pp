@@ -2,25 +2,15 @@
 class role::ssl {
     include ::ssl
 
-    $firewall_srange = join(
-        query_facts('Class[Role::Varnish] or Class[Role::Cache::Cache] or Class[Role::Icinga2]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery = @("PQL")
+    (resources { type = 'Class' and title = 'Role::Varnish' } or
+    resources { type = 'Class' and title = 'Role::Cache::Cache' } or
+    resources { type = 'Class' and title = 'Role::Icinga2' })
+    | PQL
+    $firewall_srange = vmlib::generate_firewall_ip($subquery)
 
-    if !defined(Ferm::Service['http']) {
-        ferm::service { 'http':
+    if !defined(Firewall::Service['http']) {
+        firewall::service { 'http':
             proto   => 'tcp',
             port    => '80',
             srange  => "(${firewall_srange})",
@@ -28,8 +18,8 @@ class role::ssl {
         }
     }
 
-    if !defined(Ferm::Service['https']) {
-        ferm::service { 'https':
+    if !defined(Firewall::Service['https']) {
+        firewall::service { 'https':
             proto   => 'tcp',
             port    => '443',
             srange  => "(${firewall_srange})",

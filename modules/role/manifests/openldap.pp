@@ -177,44 +177,28 @@ class role::openldap (
         group  => 'root',
     }
 
-    $firewall_rules = join(
-        query_facts('Class[Role::Grafana] or Class[Role::Graylog] or Class[Role::Llm] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Openldap]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
-    ferm::service { 'ldaps':
+    $subquery = @("PQL")
+    (resources { type = 'Class' and title = 'Role::Grafana' } or
+    resources { type = 'Class' and title = 'Role::Graylog' } or
+    resources { type = 'Class' and title = 'Role::Llm' } or
+    resources { type = 'Class' and title = 'Role::Matomo' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
+    resources { type = 'Class' and title = 'Role::Openldap' })
+    | PQL
+    $firewall_rules = vmlib::generate_firewall_ip($subquery)
+    firewall::service { 'ldaps':
         proto  => 'tcp',
         port   => '636',
         srange => "(${firewall_rules})",
     }
-    $firewall_rules_icinga = join(
-        query_facts('Class[Role::Icinga2]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
-    ferm::service { 'ldap':
+
+    $subquery_2 = @("PQL")
+    resources { type = 'Class' and title = 'Role::Icinga2' }
+    | PQL
+    $firewall_rules_icinga = vmlib::generate_firewall_ip($subquery_2)
+    firewall::service { 'ldap':
         proto  => 'tcp',
         port   => '389',
         srange => "(${firewall_rules_icinga})",

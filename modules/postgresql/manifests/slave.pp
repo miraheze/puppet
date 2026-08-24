@@ -36,8 +36,7 @@ class postgresql::slave(
 ) {
 
     $pgversion = $facts['os']['distro']['codename'] ? {
-        'bookworm' => 15,
-        'trixie'   => 17,
+        'trixie' => 17,
     }
 
     $data_dir = "${root_dir}/${pgversion}/main"

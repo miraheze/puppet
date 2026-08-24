@@ -14,7 +14,7 @@
   "operatingsystem_support": [
     {"operatingsystem": "Archlinux"},
     {"operatingsystem": "CentOS","operatingsystemrelease": ["6","7","8"]},
-    {"operatingsystem": "Debian","operatingsystemrelease": ["8","9","10"]},
+    {"operatingsystem": "Debian","operatingsystemrelease": ["8","9","10","11","12","13"]},
     {"operatingsystem": "OracleLinux","operatingsystemrelease": ["6","7","8"]},
     {"operatingsystem": "RedHat","operatingsystemrelease": ["6","7","8"]},
     {"operatingsystem": "Scientific","operatingsystemrelease": ["6","7"]},

@@ -14,37 +14,25 @@ class base::dns (
     }
 
     if $forward_use_internal {
-        # Get rid when we no longer use debian bookworm
-        $forward_zones = 'wtnet=10.0.17.171, 10.in-addr.arpa=10.0.17.171, wikitide.net=10.0.17.171'
-        # For debian trixie+
-        $forward_zones_new = {
+        $forward_zones = {
             'wtnet'          => ['10.0.17.171'],
             '10.in-addr.arpa'=> ['10.0.17.171'],
             'wikitide.net'   => ['10.0.17.171'],
         }
     } else {
-        # Get rid when we no longer use debian bookworm
-        $forward_zones = 'wtnet=2602:294:0:b23::111;2001:41d0:801:2000::4089, 10.in-addr.arpa=2602:294:0:b23::111;2001:41d0:801:2000::4089, wikitide.net=2602:294:0:b23::111;2001:41d0:801:2000::4089'
-        # For debian trixie+
-        $forward_zones_new = {
+        $forward_zones = {
             'wtnet'          => ['2602:294:0:b23::111', '2001:41d0:801:2000::4089'],
             '10.in-addr.arpa'=> ['2602:294:0:b23::111', '2001:41d0:801:2000::4089'],
             'wikitide.net'   => ['2602:294:0:b23::111', '2001:41d0:801:2000::4089'],
         }
     }
 
-    if (versioncmp($facts['os']['release']['major'], '13') >= 0) {
-        $file_ext = 'yml'
-    } else {
-        $file_ext = 'conf'
-    }
-
-    file { "/etc/powerdns/recursor.${file_ext}":
+    file { '/etc/powerdns/recursor.yml':
         mode    => '0444',
         owner   => 'pdns',
         group   => 'pdns',
         notify  => Service['pdns-recursor'],
-        content => template("base/dns/recursor.${file_ext}.erb"),
+        content => template('base/dns/recursor.yml.erb'),
     }
 
     systemd::service { 'pdns-recursor':
@@ -54,7 +42,7 @@ class base::dns (
         content  => template('base/dns/override.conf.erb'),
         require  => [
           Package['pdns-recursor'],
-          File["/etc/powerdns/recursor.${file_ext}"]
+          File['/etc/powerdns/recursor.yml']
         ],
     }
 

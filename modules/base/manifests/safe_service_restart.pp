@@ -15,8 +15,16 @@ define base::safe_service_restart(
     Array[String] $nodes
 ) {
 
-    $cache_proxies = query_facts("Class['Role::Varnish'] or Class['Role::Cache::Varnish']", ['networking'])
-    $cache_nodes = $cache_proxies.values().map |$node_facts| { $node_facts['networking']['fqdn'] }.flatten().unique().sort()
+    $subquery = @("PQL")
+    (resources { type = 'Class' and title = 'Role::Varnish' } or
+    resources { type = 'Class' and title = 'Role::Cache::Varnish' })
+    | PQL
+    $cache_nodes = puppetdb::query_facts(
+        ['networking'],
+        $subquery
+    ).values().map |$_facts| {
+        $_facts['networking']['fqdn']
+    }.flatten.sort.unique
 
     $varnish_totp_secret = lookup('passwords::varnish::varnish_totp_secret')
 
