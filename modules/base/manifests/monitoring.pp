@@ -2,7 +2,7 @@
 class base::monitoring {
     include prometheus::exporter::node
 
-    $nagios_packages = [ 'monitoring-plugins', 'nagios-nrpe-server', ]
+    $nagios_packages = [ 'monitoring-plugins', 'monitoring-plugins-contrib', 'nagios-nrpe-server', ]
     package { $nagios_packages:
         ensure => present,
     }
@@ -80,7 +80,7 @@ class base::monitoring {
     }
 
     monitoring::nrpe { 'ntp peers':
-        command => '/usr/lib/nagios/plugins/check_ntp_peer -H localhost -w 0.05 -c 0.1 -W 5 -C 10',
+        command => '/usr/lib/nagios/plugins/check_chrony -w 0.1 -c 0.5',
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#NTP'
     }
 
