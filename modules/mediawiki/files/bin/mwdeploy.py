@@ -600,14 +600,12 @@ def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Envir
                      recursive: bool = True, force: bool = False) -> int:
     return _remote_deployer.sync(time, serverlist, path, envinfo, nolog, recursive=recursive, force=force)
 
-
 class DeploymentRunner:
     """Coordinates one mwdeploy invocation: local staging, then a fleet-wide rollout."""
 
     def __init__(self, args: argparse.Namespace):
         self.args = args
         self.envinfo = get_environment_info()
-
 
     def run(self, start: float) -> None:  # pragma: no cover
         args = self.args
