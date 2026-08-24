@@ -4,7 +4,7 @@
 # Renders a Prometheus JMX Exporter config file, declares
 # a prometheus::jmx_exporter_instance so that the prometheus server
 # will be configured to pull from this exporter instance,
-# and installs ferm rules to allow it to do so.
+# and installs firewall rules to allow it to do so.
 # The hostname:port combination, derived from the define's parameters, will
 # be used as Prometheus target (so metrics will be associated to it). This trick
 # should allow the configuration of multiple Prometheus targets on the same

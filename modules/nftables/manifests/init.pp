@@ -1,14 +1,3 @@
-# nftables is the successor to iptables/ferm for packet filtering on Linux.
-#
-# a static top level ruleset (files/main.nft) just flushes and includes every
-# *puppet.nft file it finds, in filename order. Fragments that belong
-# inside a specific base chain get dropped into that chain's own
-# directory (input/output/prerouting) instead of a single flat conf.d, so
-# a rule never needs to say which table or chain it targets, only which
-# directory. The actual base table with its policies and hooks is
-# deployed separately, by base::firewall.
-#
-# @param ensure present installs and enables nftables. absent purges it.
 class nftables (
     VMlib::Ensure $ensure = 'absent',
 ) {

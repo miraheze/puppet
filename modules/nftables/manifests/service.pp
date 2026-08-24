@@ -9,8 +9,7 @@
 #   an array.
 # @param drange same as srange, but for destination addresses
 # @param notrack if true, also exempt this port from connection tracking. this needs a
-#   rule in both prerouting (for the inbound request) and output (for the reply), the
-#   same as ferm's own NO_TRACK macro does.
+#   rule in both prerouting (for the inbound request) and output (for the reply)
 define nftables::service (
     Enum['tcp', 'udp']                       $proto,
     Variant[Stdlib::Port, String[1]]         $port,
