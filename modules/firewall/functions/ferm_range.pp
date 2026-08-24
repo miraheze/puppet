@@ -1,12 +1,4 @@
 # @summary builds a combined ferm range string from a literal range and/or named sets
-#
-# ferm's saddr/daddr directive accepts a parenthesised, space separated list
-# where each entry can be either a literal address/CIDR or a $SETNAME
-# reference to an @def declared elsewhere (see ferm::set), mixed freely in
-# the same list. This flattens whatever combination of literal range and
-# named sets a caller gave into that single ferm-syntax string, so
-# ferm::service/ferm::client never need to know sets exist at all - they
-# just see an ordinary range value, the same as they always have.
 function firewall::ferm_range(
     Optional[Variant[String, Array[String]]] $range,
     Optional[Array[String[1]]]               $sets = undef,
