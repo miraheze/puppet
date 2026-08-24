@@ -1,0 +1,11 @@
+---
+chrony::clientlog: true
+chrony::cmdacl:
+  - cmdallow 127.0.0.1
+chrony::config_keys_mode: '0644'
+chrony::config_keys: /etc/chrony.keys
+chrony::config: /etc/chrony.conf
+chrony::dumpdir: /var/lib/chrony
+chrony::rtconutc: true
+chrony::wait_manage: true
+chrony::options_file: /etc/sysconfig/chronyd
