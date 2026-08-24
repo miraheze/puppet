@@ -3,10 +3,10 @@
 # @param ensure the ensurable parameter
 define nftables::set (
     Array[Stdlib::IP::Address] $ips,
-    Enum['present', 'absent']  $ensure = present,
+    VMlib::Ensure              $ensure = present,
 ) {
-    $ipv4_addrs = $ips.filter |$ip| { $ip =~ Stdlib::IP::Address::V4 }
-    $ipv6_addrs = $ips.filter |$ip| { $ip =~ Stdlib::IP::Address::V6 }
+    $ipv4_addrs = $ips.flatten.unique.filter |$ip| { $ip =~ Stdlib::IP::Address::V4 }
+    $ipv6_addrs = $ips.flatten.unique.filter |$ip| { $ip =~ Stdlib::IP::Address::V6 }
 
     # each family's file is only ever present if that family actually has
     # members, even when $ensure is present overall, so a rule referencing
@@ -15,7 +15,7 @@ define nftables::set (
     $ensure_v4 = ($ensure == 'present' and !$ipv4_addrs.empty) ? { true => 'present', default => 'absent' }
     $ensure_v6 = ($ensure == 'present' and !$ipv6_addrs.empty) ? { true => 'present', default => 'absent' }
 
-    @file { "/etc/nftables/sets/${title}_ipv4.nft":
+    @file { "/etc/nftables/sets/${name}_ipv4.nft":
         ensure  => $ensure_v4,
         owner   => 'root',
         group   => 'root',
@@ -24,13 +24,13 @@ define nftables::set (
             'name'     => "${title}_ipv4",
             'set_type' => 'ipv4_addr',
             'addrs'    => $ipv4_addrs,
-            'interval' => $ipv4_addrs.any |$addr| { $addr =~ /\// },
+            'interval' => $ipv4_addrs.any |$addr| { '/' in $addr },
         }),
         require => File['/etc/nftables/sets'],
         tag     => 'nft',
     }
 
-    @file { "/etc/nftables/sets/${title}_ipv6.nft":
+    @file { "/etc/nftables/sets/${name}_ipv6.nft":
         ensure  => $ensure_v6,
         owner   => 'root',
         group   => 'root',
@@ -39,7 +39,7 @@ define nftables::set (
             'name'     => "${title}_ipv6",
             'set_type' => 'ipv6_addr',
             'addrs'    => $ipv6_addrs,
-            'interval' => $ipv6_addrs.any |$addr| { $addr =~ /\// },
+            'interval' => $ipv6_addrs.any |$addr| { '/' in $addr },
         }),
         require => File['/etc/nftables/sets'],
         tag     => 'nft',
