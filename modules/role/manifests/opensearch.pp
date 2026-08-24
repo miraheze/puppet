@@ -201,7 +201,7 @@ class role::opensearch (
         $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
         firewall::service { 'opensearch ssl':
             proto  => 'tcp',
-            port   => '443',
+            port   => 443,
             srange => "(${firewall_rules_str})",
         }
     }
@@ -216,13 +216,13 @@ class role::opensearch (
     $firewall_os_nodes = vmlib::generate_firewall_ip($subquery_2)
     firewall::service { 'opensearch data nodes to manager':
         proto  => 'tcp',
-        port   => '9200',
+        port   => 9200,
         srange => "(${firewall_os_nodes})",
     }
 
     firewall::service { 'opensearch manager access data nodes 9300 port':
         proto  => 'tcp',
-        port   => '9300',
+        port   => 9300,
         srange => "(${firewall_os_nodes})",
     }
 

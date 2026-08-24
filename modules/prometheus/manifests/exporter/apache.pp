@@ -21,7 +21,7 @@ class prometheus::exporter::apache {
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus apache exporter':
         proto  => 'tcp',
-        port   => '9117',
+        port   => 9117,
         srange => "(${firewall_rules_str})",
     }
 }

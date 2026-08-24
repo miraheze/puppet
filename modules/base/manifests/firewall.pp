@@ -82,7 +82,7 @@ class base::firewall (
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'nrpe':
         proto  => 'tcp',
-        port   => '5666',
+        port   => 5666,
         srange => "(${firewall_rules_str})",
     }
 
@@ -92,7 +92,7 @@ class base::firewall (
     $firewall_bastion_hosts = vmlib::generate_firewall_ip($subquery_2)
     firewall::service { 'ssh':
         proto  => 'tcp',
-        port   => '22',
+        port   => 22],
         srange => "(${firewall_bastion_hosts})",
     }
 

@@ -2,7 +2,7 @@
 # @param proto tcp or udp
 # @param port a single port, or an array of ports, for a rule that covers more than one
 #   discrete port. Exactly one of port or port_range must be given.
-# @param port_range a colon-separated range like '5900:5999'. Exactly one of port or
+# @param port_range a [low, high] tuple, both real port numbers. Exactly one of port or
 #   port_range must be given.
 # @param ensure the ensurable parameter
 # @param desc an optional description, added as a comment to the .nft file
@@ -16,26 +16,16 @@
 #   "ct state established,related accept" rule at the top of input never matches the
 #   reply traffic.
 define nftables::client (
-    Enum['tcp', 'udp']                       $proto,
+    VMlib::Protocol                          $proto,
     Optional[Nftables::Port]                 $port       = undef,
-    Optional[VMlib::Portrange]               $port_range = undef,
+    Optional[Firewall::Portrange]            $port_range = undef,
     VMlib::Ensure                            $ensure     = present,
     String                                   $desc       = '',
     Integer[0, 99]                           $prio       = 10,
     Optional[Variant[String, Array[String]]] $drange     = undef,
     Boolean                                  $notrack    = false,
 ) {
-    if ($port == undef) == ($port_range == undef) {
-        fail("nftables::client: ${title}: exactly one of port or port_range must be given")
-    }
-
-    if $port_range != undef {
-        $nft_port = regsubst($port_range, ':', '-', 'G')
-    } elsif $port =~ Array {
-        $nft_port = "{ ${port.join(', ')} }"
-    } else {
-        $nft_port = String($port)
-    }
+    $nft_port = nftables::port_stmt($port, $port_range)
 
     $drange_split = nftables::split_addrs($drange)
 

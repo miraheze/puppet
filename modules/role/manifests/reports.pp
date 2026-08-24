@@ -16,14 +16,14 @@ class role::reports {
 
     firewall::service { 'http':
         proto   => 'tcp',
-        port    => '80',
+        port    => 80,
         srange  => "(${firewall_srange})",
         notrack => true,
     }
 
     firewall::service { 'https':
         proto   => 'tcp',
-        port    => '443',
+        port    => 443,
         srange  => "(${firewall_srange})",
         notrack => true,
     }

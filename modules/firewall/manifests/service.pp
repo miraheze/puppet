@@ -2,7 +2,7 @@
 # @param proto tcp or udp
 # @param port a single port, or an array of ports, for a rule that covers more than one
 #   discrete port. Exactly one of port or port_range must be given.
-# @param port_range a colon-separated range like '5900:5999'. Exactly one of port or
+# @param port_range a [low, high] tuple, both real port numbers. Exactly one of port or
 #   port_range must be given.
 # @param ensure the ensurable parameter
 # @param desc an optional description, added as a comment
@@ -13,9 +13,9 @@
 #   traffic incoming to drange is allowed
 # @param notrack set the rule with no state tracking
 define firewall::service (
-    Enum['tcp', 'udp']                       $proto,
+    VMlib::Protocol                          $proto,
     Optional[Nftables::Port]                 $port       = undef,
-    Optional[VMlib::Portrange]               $port_range = undef,
+    Optional[Firewall::Portrange]            $port_range = undef,
     VMlib::Ensure                            $ensure     = present,
     String                                   $desc       = '',
     Integer[0, 99]                           $prio       = 10,
@@ -28,7 +28,7 @@ define firewall::service (
     }
 
     if $port_range != undef {
-        $ferm_port = $port_range
+        $ferm_port = "${port_range[0]}:${port_range[1]}"
     } elsif $port =~ Array {
         $ferm_port = "(${port.join(' ')})"
     } else {

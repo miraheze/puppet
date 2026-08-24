@@ -20,7 +20,7 @@ class role::chart {
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'chart':
         proto   => 'tcp',
-        port    => '6284',
+        port    => 6284,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }

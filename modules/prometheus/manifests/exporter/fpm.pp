@@ -24,7 +24,7 @@ class prometheus::exporter::fpm {
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus php-fpm':
         proto  => 'tcp',
-        port   => '9253',
+        port   => 9253,
         srange => "(${firewall_rules_str})",
     }
 }

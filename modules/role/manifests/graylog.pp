@@ -49,7 +49,7 @@ class role::graylog {
     $firewall_http_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'access graylog 443':
         proto  => 'tcp',
-        port   => '443',
+        port   => 443,
         srange => "(${firewall_http_rules_str})",
     }
 
@@ -60,7 +60,7 @@ class role::graylog {
     $firewall_syslog_rules_str = vmlib::generate_firewall_ip($subquery_2)
     firewall::service { 'graylog 12210':
         proto  => 'tcp',
-        port   => '12210',
+        port   => 12210,
         srange => "(${firewall_syslog_rules_str})",
     }
 
@@ -70,7 +70,7 @@ class role::graylog {
     $firewall_icinga_rules_str = vmlib::generate_firewall_ip($subquery_3)
     firewall::service { 'graylog 12201':
         proto  => 'tcp',
-        port   => '12201',
+        port   => 12201,
         srange => "(${firewall_icinga_rules_str})",
     }
 

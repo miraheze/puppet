@@ -210,7 +210,7 @@ class puppetserver(
 
     firewall::service { 'puppetserver':
         proto => 'tcp',
-        port  => '8140',
+        port  => 8140,
     }
 
     systemd::timer::job { 'git_pull_puppet':

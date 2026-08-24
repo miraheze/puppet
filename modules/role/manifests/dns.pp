@@ -18,14 +18,14 @@ class role::dns {
         proto   => 'udp',
         notrack => true,
         prio    => 5,
-        port    => '53',
+        port    => 53,
     }
 
     firewall::service { 'dns_tcp':
         proto   => 'tcp',
         notrack => true,
         prio    => 5,
-        port    => '53',
+        port    => 53,
     }
 
     system::role { 'dns':

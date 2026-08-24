@@ -8,7 +8,7 @@ class role::bastion {
 
     firewall::service { 'bastion-ssh-public':
         proto => 'tcp',
-        port  => '22',
+        port  => 22,
     }
 
     $squid_access_hosts_str = vmlib::generate_firewall_ip()
@@ -27,13 +27,13 @@ class role::bastion {
 
     firewall::service { 'bastion-squid':
         proto  => 'tcp',
-        port   => '8080',
+        port   => 8080,
         srange => "(${squid_access_hosts_internal})",
     }
 
     firewall::service { 'bastion-ntp':
         proto  => 'udp',
-        port   => '123',
+        port   => 123,
         srange => '10.0.0.0/8',
     }
 
@@ -52,7 +52,7 @@ class role::bastion {
 
     firewall::service { 'bastion-smtp-relay':
         proto  => 'tcp',
-        port   => '465',
+        port   => 465,
         srange => "(${squid_access_hosts_internal})",
     }
 }

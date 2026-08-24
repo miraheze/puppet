@@ -21,7 +21,7 @@ class role::puppetdb {
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'puppetdb port 8081':
         proto  => 'tcp',
-        port   => '8081',
+        port   => 8081,
         srange => "(${firewall_rules_str})",
     }
 

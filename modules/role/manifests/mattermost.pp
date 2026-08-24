@@ -83,14 +83,14 @@ class role::mattermost {
 
     firewall::service { 'postgresql':
         proto   => 'tcp',
-        port    => '5432',
+        port    => 5432,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }
 
     firewall::service { 'mattermost':
         proto   => 'tcp',
-        port    => '8065',
+        port    => 8065,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }
@@ -107,21 +107,21 @@ class role::mattermost {
 
     firewall::service { 'http':
         proto   => 'tcp',
-        port    => '80',
+        port    => 80,
         # srange  => "(${$firewall_rules_cloudflare_str})",
         notrack => true,
     }
 
     firewall::service { 'https':
         proto   => 'tcp',
-        port    => '443',
+        port    => 443,
         # srange  => "(${$firewall_rules_cloudflare_str})",
         notrack => true,
     }
 
     firewall::service { 'https-quic':
         proto   => 'udp',
-        port    => '443',
+        port    => 443,
         notrack => true,
     }
 

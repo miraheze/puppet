@@ -34,7 +34,7 @@ class prometheus::exporter::openldap {
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus openldap_exporter':
         proto  => 'tcp',
-        port   => '9142',
+        port   => 9142,
         srange => "(${firewall_rules_str})",
     }
 }

@@ -43,7 +43,7 @@ class ssl::web (
     firewall::service { 'icinga 5000':
         ensure => $ensure,
         proto  => 'tcp',
-        port   => '5000',
+        port   => 5000,
         srange => "(${firewall_rules_str})",
     }
 
