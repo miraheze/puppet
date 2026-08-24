@@ -6,6 +6,7 @@ base::firewall::provider: 'ferm'
 
 puppet_major_version: 8
 
+base::mail::relayhost: 'bastion.fsslc.wtnet'
 base::ntp_servers:
   - 'ntp.fsslc.wtnet'
 
