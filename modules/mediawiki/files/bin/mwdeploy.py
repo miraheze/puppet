@@ -520,6 +520,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
     newschema = []
     tagsinfo = []  # type: list[str]
     warnings = {}
+    needs_version_cache_rebuild = False
 
     if HOSTNAME in args.servers:
         if version:
@@ -620,8 +621,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                         if not args.world:
                             rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/{repo}/*', dest=f'/srv/mediawiki/{version}/{repo}/'))
                             rsyncpaths.append(f'/srv/mediawiki/{version}/{repo}/')
-                            rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
-                            rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
+                            needs_version_cache_rebuild = True
                     elif exitcode == 0:
                         print(f'{name} already up to date. Skipping...')
                     else:
@@ -638,10 +638,14 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     option = version
                     os.chdir(_get_staging_path(version))
                     exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 https_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet'))
-                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
-                    rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
+                    needs_version_cache_rebuild = True
                 rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog)
+
+        if version and needs_version_cache_rebuild:
+            rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
+            rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
+
         if version and args.reset_world:  # complete reset_world by applying patches, after potential composer update
             applied = []
             for patch in patches:
