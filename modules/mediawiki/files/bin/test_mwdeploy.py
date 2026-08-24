@@ -376,6 +376,7 @@ class TestRemoteDeployer(unittest.TestCase):
     def test_sync_surfaces_a_failing_server(self, mock_run):
         result = self.deployer.sync(False, ['mw151', 'mw152', 'mw153'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
         assert result != 0
+        assert mock_run.call_count == 2
 
 
 def test_build_loginfo_filters_falsy_and_unwraps_single_item_lists() -> None:
