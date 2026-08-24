@@ -104,7 +104,7 @@ class mediawiki {
     $google_translate_apikey_meta = lookup('passwords::mediawiki::google_translate_apikey_meta')
     $mediamoderation_apikey       = lookup('passwords::mediawiki::mediamoderation_apikey')
     $openai_apikey                = lookup('mediawiki::openai_apikey')
-    $openai_assistantid           = lookup('mediawiki::openai_assistantid')
+    $openai_instructions          = lookup('mediawiki::openai_instructions')
     $turnstile_sitekey            = lookup('mediawiki::turnstile_sitekey')
     $turnstile_secretkey          = lookup('mediawiki::turnstile_secretkey')
     $speedscope_log_token         = lookup('speedscope::log_token')
