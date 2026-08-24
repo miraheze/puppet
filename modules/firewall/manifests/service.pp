@@ -27,11 +27,6 @@ define firewall::service (
         fail("firewall::service: ${title}: exactly one of port or port_range must be given")
     }
 
-    # ferm::service stays untyped and just interpolates $port directly into
-    # its template, so it needs an already ferm-syntax-shaped value: a
-    # colon range passes straight through unchanged (ferm's own range
-    # syntax is the same colon shape), a port array becomes ferm's
-    # parenthesised list syntax, and a single port passes through as-is.
     if $port_range != undef {
         $ferm_port = $port_range
     } elsif $port =~ Array {
