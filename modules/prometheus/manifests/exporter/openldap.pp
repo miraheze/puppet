@@ -32,7 +32,7 @@ class prometheus::exporter::openldap {
     resources { type = 'Class' and title = 'Role::Prometheus' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'prometheus openldap_exporter':
+    firewall::service { 'prometheus openldap_exporter':
         proto  => 'tcp',
         port   => '9142',
         srange => "(${firewall_rules_str})",

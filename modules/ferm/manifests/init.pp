@@ -1,10 +1,14 @@
 # ferm is a frontend for iptables
 # https://wiki.debian.org/ferm
-class ferm {
+#
+# @param ensure present installs and enables ferm. absent purges it.
+class ferm (
+    VMlib::Ensure $ensure = 'present',
+) {
     # @resolve requires libnet-dns-perl
 
     file { '/etc/modprobe.d/nf_conntrack.conf':
-        ensure => present,
+        ensure => stdlib::ensure($ensure, 'file'),
         owner  => 'root',
         group  => 'root',
         mode   => '0444',
@@ -18,7 +22,7 @@ class ferm {
     # Add the nf_conntrack module via /etc/modules-load.d/ which loads
     #   them before systemd-sysctl.service is executed.
     file { '/etc/modules-load.d/conntrack.conf':
-        ensure  => present,
+        ensure  => stdlib::ensure($ensure, 'file'),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
@@ -27,77 +31,95 @@ class ferm {
         before  => Package['ferm', 'libnet-dns-perl', 'conntrack'],
     }
 
-    stdlib::ensure_packages(['ferm', 'libnet-dns-perl', 'conntrack'])
+    if $ensure == 'present' {
+        stdlib::ensure_packages(['ferm', 'libnet-dns-perl', 'conntrack'])
+    } else {
+        stdlib::ensure_packages(['libnet-dns-perl', 'conntrack'])
+        stdlib::ensure_packages(['ferm'], { 'ensure' => 'purged' })
+    }
 
     file {'/usr/local/sbin/ferm-status':
-        ensure  => file,
+        ensure  => stdlib::ensure($ensure, 'file'),
         mode    => '0550',
         owner   => 'root',
         group   => 'root',
         content => file('ferm/ferm_status.py')
     }
-    service { 'ferm':
-        ensure  => 'running',
-        status  => '/usr/local/sbin/ferm-status',
-        start   => '/bin/systemctl reload-or-restart ferm',
-        require => [
-            Package['ferm'],
-            File['/usr/local/sbin/ferm-status'],
-        ]
+
+    if $ensure == 'present' {
+        service { 'ferm':
+            ensure  => 'running',
+            status  => '/usr/local/sbin/ferm-status',
+            start   => '/bin/systemctl reload-or-restart ferm',
+            require => [
+                Package['ferm'],
+                File['/usr/local/sbin/ferm-status'],
+            ]
+        }
     }
 
     file { '/etc/ferm/ferm.conf':
-        ensure  => present,
+        ensure  => stdlib::ensure($ensure, 'file'),
         owner   => 'root',
         group   => 'root',
         mode    => '0400',
         source  => 'puppet:///modules/ferm/ferm.conf',
         require => Package['ferm'],
-        notify  => Service['ferm'],
     }
 
     file { '/etc/ferm/functions.conf' :
-        ensure  => present,
+        ensure  => stdlib::ensure($ensure, 'file'),
         owner   => 'root',
         group   => 'root',
         mode    => '0400',
         source  => 'puppet:///modules/ferm/functions.conf',
         require => Package['ferm'],
-        notify  => Service['ferm'],
     }
 
     file { '/etc/ferm/conf.d' :
-        ensure  => directory,
+        ensure  => stdlib::ensure($ensure, 'directory'),
         owner   => 'root',
         group   => 'adm',
         mode    => '0500',
         recurse => true,
         purge   => true,
         require => Package['ferm'],
-        notify  => Service['ferm'],
     }
 
     file { '/etc/default/ferm' :
-        ensure  => present,
+        ensure  => stdlib::ensure($ensure, 'file'),
         owner   => 'root',
         group   => 'root',
         mode    => '0400',
         source  => 'puppet:///modules/ferm/ferm.default',
         require => Package['ferm'],
-        notify  => Service['ferm'],
     }
 
-    # Starting with Bullseye iptables default to the nft backend, but for ferm
-    # we need the legacy backend
-    alternatives::select { 'iptables':
-        path => '/usr/sbin/iptables-legacy',
-    }
+    if $ensure == 'present' {
+        File['/etc/ferm/ferm.conf', '/etc/ferm/functions.conf', '/etc/ferm/conf.d', '/etc/default/ferm'] ~> Service['ferm']
 
-    alternatives::select { 'ip6tables':
-        path => '/usr/sbin/ip6tables-legacy',
-    }
+        # Starting with Bullseye iptables default to the nft backend, but for ferm
+        # we need the legacy backend
+        alternatives::select { 'iptables':
+            path => '/usr/sbin/iptables-legacy',
+        }
 
-    # the rules are virtual resources for cases where they are defined in a
-    # class but the host doesn't have the ferm class included
-    File <| tag == 'ferm' |>
+        alternatives::select { 'ip6tables':
+            path => '/usr/sbin/ip6tables-legacy',
+        }
+
+        # the rules are virtual resources for cases where they are defined in a
+        # class but the host doesn't have ferm enabled
+        File <| tag == 'ferm' |>
+    } else {
+        exec { 'revert iptables alternative to auto':
+            command => '/usr/bin/update-alternatives --auto iptables',
+            unless  => "/usr/bin/update-alternatives --query iptables | /bin/grep -q 'Status: auto'",
+        }
+
+        exec { 'revert ip6tables alternative to auto':
+            command => '/usr/bin/update-alternatives --auto ip6tables',
+            unless  => "/usr/bin/update-alternatives --query ip6tables | /bin/grep -q 'Status: auto'",
+        }
+    }
 }

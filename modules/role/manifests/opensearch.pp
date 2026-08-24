@@ -177,6 +177,16 @@ class role::opensearch (
             content => template('role/opensearch/nginx.conf.erb'),
             monitor => false,
         }
+        monitoring::services { 'HTTPS':
+            check_command => 'check_curl',
+            vars          => {
+                address          => $facts['networking']['interfaces']['ens19']['ip'],
+                http_vhost       => 'opensearch.wikitide.net',
+                http_ssl         => true,
+                http_ignore_body => true,
+                http_expect      => 'HTTP/1.1 200',
+            },
+        }
 
         ssl::wildcard { 'opensearch wildcard': }
 
@@ -189,7 +199,7 @@ class role::opensearch (
         resources { type = 'Class' and title = 'Role::Opensearch' })
         | PQL
         $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-        ferm::service { 'opensearch ssl':
+        firewall::service { 'opensearch ssl':
             proto  => 'tcp',
             port   => '443',
             srange => "(${firewall_rules_str})",
@@ -204,13 +214,13 @@ class role::opensearch (
     resources { type = 'Class' and title = 'Role::Opensearch' }
     | PQL
     $firewall_os_nodes = vmlib::generate_firewall_ip($subquery_2)
-    ferm::service { 'opensearch data nodes to manager':
+    firewall::service { 'opensearch data nodes to manager':
         proto  => 'tcp',
         port   => '9200',
         srange => "(${firewall_os_nodes})",
     }
 
-    ferm::service { 'opensearch manager access data nodes 9300 port':
+    firewall::service { 'opensearch manager access data nodes 9300 port':
         proto  => 'tcp',
         port   => '9300',
         srange => "(${firewall_os_nodes})",

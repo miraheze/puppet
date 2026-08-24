@@ -54,12 +54,6 @@ class mediawiki {
         mode   => '0755',
     }
 
-    file { '/srv/mediawiki/robots.php':
-        ensure  => 'present',
-        source  => 'puppet:///modules/mediawiki/robots.php',
-        require => File['/srv/mediawiki'],
-    }
-
     file { '/srv/mediawiki/favicon.php':
         ensure  => 'present',
         source  => 'puppet:///modules/mediawiki/favicon.php',
@@ -87,9 +81,11 @@ class mediawiki {
     if ( lookup('role::mediawiki::is_beta', {'default_value' => false}) ) {
         $wikiadmin_password       = lookup('passwords::mediawiki::wikiadmin_beta')
         $mediawiki_password       = lookup('passwords::mediawiki::mediawiki_beta')
+        $bucketuser_password      = lookup('passwords::mediawiki::bucketuser_beta')
     } else {
         $wikiadmin_password       = lookup('passwords::mediawiki::wikiadmin')
         $mediawiki_password       = lookup('passwords::mediawiki::mediawiki')
+        $bucketuser_password      = lookup('passwords::mediawiki::bucketuser')
     }
     $redis_password               = lookup('passwords::redis::master')
     $mediawiki_upgradekey         = lookup('passwords::mediawiki::upgradekey')
@@ -111,6 +107,7 @@ class mediawiki {
     $openai_assistantid           = lookup('mediawiki::openai_assistantid')
     $turnstile_sitekey            = lookup('mediawiki::turnstile_sitekey')
     $turnstile_secretkey          = lookup('mediawiki::turnstile_secretkey')
+    $speedscope_log_token         = lookup('speedscope::log_token')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
@@ -148,7 +145,7 @@ class mediawiki {
         source => 'puppet:///modules/mediawiki/bin/mwscript.py',
     }
 
-    $cookbooks = ['disable-puppet', 'enable-puppet', 'cycle-puppet', 'check-read-only']
+    $cookbooks = ['check-read-only', 'cleanup-old-mediawiki']
     $cookbooks.each |$cookbook| {
         file {"/usr/local/bin/${cookbook}":
             ensure => 'present',
@@ -157,7 +154,7 @@ class mediawiki {
         }
     }
 
-    $shells = ['sql', 'mweval', 'shell', 'sugit']
+    $shells = ['sql', 'mweval', 'shell', 'sugit', 'suwd']
     $shells.each |$shell| {
         file {"/usr/local/bin/${shell}":
             ensure => 'present',

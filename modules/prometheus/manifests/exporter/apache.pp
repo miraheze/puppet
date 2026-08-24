@@ -19,7 +19,7 @@ class prometheus::exporter::apache {
     resources { type = 'Class' and title = 'Prometheus' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'prometheus apache exporter':
+    firewall::service { 'prometheus apache exporter':
         proto  => 'tcp',
         port   => '9117',
         srange => "(${firewall_rules_str})",

@@ -17,7 +17,7 @@ class role::mathoid {
         | PQL
     }
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'mathoid':
+    firewall::service { 'mathoid':
         proto   => 'tcp',
         port    => '10044',
         srange  => "(${firewall_rules_str})",

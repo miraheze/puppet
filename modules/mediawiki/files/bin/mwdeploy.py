@@ -294,7 +294,10 @@ def _get_staging_path(repo: str, version: str = '') -> str:
     return f'/srv/mediawiki-staging/{repos[repo]}/'
 
 
-def _get_deployed_path(repo: str) -> str:
+def _get_deployed_path(repo: str, version: str = '') -> str:
+    if version and ('extensions/' in repo or 'skins/' in repo or repo == 'vendor'):
+        return f'/srv/mediawiki/{version}/{repo}'
+
     return f'/srv/mediawiki/{repos[repo]}/'
 
 
@@ -375,15 +378,17 @@ def _apply_patch_plain(repo: str, patchfile: str, version: str) -> int:
 
 def _patch_matches(patch: dict, repo: str, version: str) -> bool:
     path = patch['path']
+    if path == repo and path in versions:
+        return True  # mw core patches
     staging_path = _get_staging_path(repo, version)
     if not staging_path.endswith(path):
         return False
 
-    versions = patch['versions']
-    if 'all' in versions:
+    patch_versions = patch['versions']
+    if 'all' in patch_versions:
         return True
 
-    return version in versions and staging_path.endswith(f'{version}/{path}')
+    return version in patch_versions and staging_path.endswith(f'{version}/{path}')
 
 
 def _apply_patches(repo: str, version: str = '') -> list[int]:
@@ -443,7 +448,7 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
     if len(args.servers) > 1 and args.servers == get_environment_info()['servers']:
         loginfo['servers'] = 'all'
 
-    use_version = args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor
+    use_version = args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor or args.apply_patches
 
     if args.versions:
         if args.upgrade_extensions == get_valid_extensions(args.versions):
@@ -504,7 +509,7 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
 
 def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pragma: no cover
     envinfo = get_environment_info()
-    options = {'config': args.config and not version, 'world': args.world and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
+    options = {'config': args.config and not version, 'world': (args.world or args.reset_world) and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
     exitcodes = []
     rsyncpaths = []
     rsyncfiles = []
@@ -524,11 +529,6 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
         if version and args.reset_world:
             stage.append(_construct_reset_mediawiki_rm_staging(version))
             stage.append(_construct_reset_mediawiki_run_puppet())
-            applied = []
-            for patch in patches:
-                if patch['path'] not in applied:
-                    exitcodes.extend(_apply_patches(patch['path'], version))
-                    applied.append(patch['path'])
 
         pull = []
         if args.pull:
@@ -642,6 +642,25 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog)
+        if version and args.reset_world:  # complete reset_world by applying patches, after potential composer update
+            applied = []
+            for patch in patches:
+                if patch['path'] not in applied:
+                    exitcodes.extend(_apply_patches(patch['path'], version))
+                    applied.append(patch['path'])
+        non_zero_code(exitcodes, nolog=args.nolog)
+
+        if version and args.apply_patches:
+            for repo in args.apply_patches:
+                exitcodes.extend(_apply_patches(repo, version))
+                staging_path = _get_staging_path(repo, version)  # non-consistent behavior, ensure terminating /
+                staging_path = staging_path if staging_path.endswith('/') else staging_path + '/'
+                dest_path = _get_deployed_path(repo, version)
+                dest_path = dest_path if dest_path.endswith('/') else dest_path + '/'
+                rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'{staging_path}*', dest=dest_path))
+                rsyncpaths.append(dest_path)
+        non_zero_code(exitcodes, nolog=args.nolog)
+
         if args.files and not version:  # specfic extra files
             files = str(args.files).split(',')
             for file in files:
@@ -789,6 +808,14 @@ class ServersAction(argparse.Action):
         setattr(namespace, self.dest, input_servers)
 
 
+class ApplyPatchesAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
+        input_repos = values.split(',')
+        if not getattr(namespace, 'versions', None):
+            parser.error('--versions is required when using --apply-patches (--versions must come before --apply-patches)')
+        setattr(namespace, self.dest, input_repos)
+
+
 if __name__ == '__main__':
     start = time.time()
     parser = argparse.ArgumentParser(description='Process some integers.')
@@ -818,5 +845,6 @@ if __name__ == '__main__':
     parser.add_argument('--servers', dest='servers', action=ServersAction, required=True, help='server(s) to deploy to')
     parser.add_argument('--ignore-time', dest='ignore_time', action='store_true')
     parser.add_argument('--port', dest='port')
+    parser.add_argument('--apply-patches', dest='apply_patches', action=ApplyPatchesAction, help='repo(s) to apply patches to')
 
     run(parser.parse_args(), start)

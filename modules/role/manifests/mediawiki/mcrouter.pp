@@ -52,4 +52,16 @@ class role::mediawiki::mcrouter(
         chain => 'PREROUTING',
         rule  => 'proto tcp dport 11213 NOTRACK;',
     }
+
+    nftables::rules { 'skip_mcrouter_wancache_conntrack_out':
+        desc  => 'Skip outgoing connection tracking for mcrouter',
+        chain => 'output',
+        rules => ['tcp sport { 11213, 11211 } notrack'],
+    }
+
+    nftables::rules { 'skip_mcrouter_wancache_conntrack_in':
+        desc  => 'Skip incoming connection tracking for mcrouter',
+        chain => 'prerouting',
+        rules => ['tcp dport 11213 notrack'],
+    }
 }

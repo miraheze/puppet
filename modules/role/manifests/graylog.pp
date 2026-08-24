@@ -12,7 +12,7 @@ class role::graylog {
     class { 'mongodb::globals':
         manage_package_repo => true,
         repo_version        => lookup('mongodb_repo_version', {'default_value' => '8.0'}),
-        version             => lookup('mongodb_version', {'default_value' => '8.0.18'}),
+        version             => lookup('mongodb_version', {'default_value' => '8.0.23'}),
     }
     -> class { 'mongodb::server':
         bind_ip => ['127.0.0.1'],
@@ -22,10 +22,10 @@ class role::graylog {
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     class { 'graylog::repository':
         proxy   => $http_proxy,
-        version => '7.0',
+        version => '7.1',
     }
     -> class { 'graylog::server':
-        package_version        => '7.0.4-1',
+        package_version        => '7.1.5-1',
         config                 => {
             'password_secret'           => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'        => lookup('passwords::graylog::root_password_sha2'),
@@ -47,7 +47,7 @@ class role::graylog {
     resources { type = 'Class' and title = 'Role::Prometheus' })
     | PQL
     $firewall_http_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'access graylog 443':
+    firewall::service { 'access graylog 443':
         proto  => 'tcp',
         port   => '443',
         srange => "(${firewall_http_rules_str})",
@@ -58,7 +58,7 @@ class role::graylog {
     resources { type = 'Class' and title = 'Base' }
     | PQL
     $firewall_syslog_rules_str = vmlib::generate_firewall_ip($subquery_2)
-    ferm::service { 'graylog 12210':
+    firewall::service { 'graylog 12210':
         proto  => 'tcp',
         port   => '12210',
         srange => "(${firewall_syslog_rules_str})",
@@ -68,7 +68,7 @@ class role::graylog {
     resources { type = 'Class' and title = 'Role::Icinga2' }
     | PQL
     $firewall_icinga_rules_str = vmlib::generate_firewall_ip($subquery_3)
-    ferm::service { 'graylog 12201':
+    firewall::service { 'graylog 12201':
         proto  => 'tcp',
         port   => '12201',
         srange => "(${firewall_icinga_rules_str})",

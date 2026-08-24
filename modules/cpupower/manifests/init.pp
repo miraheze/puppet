@@ -1,0 +1,52 @@
+# SPDX-License-Identifier: Apache-2.0
+# @summary
+#   This class installs the linux-cpupower package and ensures a configured
+#   CPU frequency governor is set.
+# @param governor
+#   Which governor to use. Defaults to 'performance'. Run 'cpupower frequency-info -g'
+#   to obtain a list of available governors.
+# @example
+#
+#  class { 'cpupower':
+#    governor => 'powersave',
+#  }
+#
+class cpupower(
+    VMlib::Ensure $ensure = 'present',
+    String $governor = 'performance',
+) {
+    unless $facts['is_virtual'] {
+        stdlib::ensure_packages('linux-cpupower')
+
+        # Please note that Debian upstream is currently (Oct 2025) evaluating
+        # to include the systemd unit and config files in the package itself.
+        # See https://bugs-devel.debian.org/cgi-bin/bugreport.cgi?bug=894906
+        # for more info.
+        file { '/etc/default/cpupower':
+            content => "GOVERNOR=${governor}\n",
+            require => Package['linux-cpupower'],
+        }
+
+        file { '/usr/libexec/cpupower':
+            ensure => $ensure,
+            source => 'puppet:///modules/cpupower/cpupower.sh',
+            mode   => '0555',
+        }
+
+        systemd::service { 'cpupower':
+            ensure  => $ensure,
+            content => systemd_template('cpupower'),
+            restart => true,
+        }
+
+        # cpupower is a systemd unit where RemainAfterExit=yes is set.
+        # When the service resource was trying to "start" it, systemd would
+        # find it as already running, thus not changing the governor.
+        # cpupower will be reloaded if this is not the governor we are looking for
+        exec { 'cpupower_reload':
+            unless  => "/usr/bin/cpupower frequency-info -p | /bin/grep -wq ${governor}",
+            command => '/usr/bin/systemctl restart cpupower',
+            require => File['/etc/default/cpupower'],
+        }
+    }
+}

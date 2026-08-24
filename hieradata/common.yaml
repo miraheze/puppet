@@ -2,9 +2,12 @@ jobrunner: false
 jobrunner::intensive: false
 puppetserver: false
 
+base::firewall::provider: 'ferm'
+
 puppet_major_version: 8
 
-base::ntp_server: 'ntp.fsslc.wtnet'
+base::ntp_servers:
+  - 'ntp.fsslc.wtnet'
 
 mediawiki::multiversion::versions:
   '1.45':
@@ -175,6 +178,10 @@ varnish::backends:
     probe: false
     pool: false
     swiftpool: true
+  speedscope211:
+    port: 8208
+    probe: false
+    pool: false
 
 # Logging
 base::syslog::syslog_daemon: rsyslog
@@ -189,14 +196,14 @@ swift::storage::object_server_default_workers: 100
 
 role::swift::stats_reporter_host: swiftproxy171.fsslc.wtnet
 
-role::swift::expirer_host: 'swiftobject151.fsslc.wtnet'
+role::swift::expirer_host: 'swiftobject161.fsslc.wtnet'
 swift::storage::devices:
-  - swiftobject151
   - swiftobject161
   - swiftobject171
   - swiftobject181
   - swiftobject191
   - swiftobject201
+  - swiftobject211
 
 role::mediawiki::mcrouter::shards:
   wikitide:

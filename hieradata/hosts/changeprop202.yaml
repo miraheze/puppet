@@ -192,8 +192,6 @@ changeprop::latency_sensitive_jobs_config:
     concurrency: 5
 
 changeprop::semantic_mediawiki_jobs:
-  - SMWRefreshJob
-  - SMWUpdateJob
 #  - smw.changePropagationClassUpdate
 #  - smw.changePropagationDispatch
 #  - smw.changePropagationUpdate

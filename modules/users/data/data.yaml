@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [blankeclair, macfan, oa, petramagna, skye]
+    members: [blankeclair, macfan, oa, petramagna, skye, wwr]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service apache2 *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mcrouter *',
@@ -39,7 +39,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [blankeclair, macfan, oa, petramagna, skye, wwr]
+    members: [blankeclair, macfan, oa, petramagna, pixldev, skye, wwr]
     privileges: []
   ssl-admins:
     gid: 2006
@@ -50,7 +50,7 @@ groups:
   mediawiki-test-admins:
     gid: 2007
     description: sudo on the MediaWiki test server
-    members: [wwr]
+    members: [pixldev]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.4-fpm *',
@@ -145,8 +145,7 @@ users:
     uid: 1011
     name: rhinos
     realname: RhinosF1
-    ssh_keys: 
-       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID82KBMUQBwtVGYaeb3UJK/87MBlnXLL2H8uZEthls/m rhinos-miraheze@macbook
+    ssh_keys: []
   zppix:
     ensure: absent
     uid: 1012
@@ -228,7 +227,6 @@ users:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAMnceDgta9BYLmFqvaroH98PGJKAD0gfGu0EFQeWosc somerandomdeveloper
       - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIEMUaajN0cGxJVFiyZiB4HuzXrWOf9cfzO1XjKZJ/23aAAAABHNzaDo= Main
       - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIH3eLi1gI0KdIBsh/hMb9ChlVdMqDA0Oc+Ax3J6LT9spAAAABHNzaDo= Alt A
-      - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIIPiOslZCXG4kQqaP3dc/2K7e1qfQsqRU/b9oaiAN2UMAAAABHNzaDo= Alt C
   skye:
     ensure: present
     uid: 1024
@@ -249,3 +247,11 @@ users:
     ssh_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHAdu5/IGuxAZP/RgteTGfkx3/sfS5q8asB9pv+dSFMS wwr@linuxmint
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEA03LUbyQibJSlJM0XQSl6agA/GHWkoXz/WWAv9Ft3a wwr@wsl
+  pixldev:
+    ensure: present
+    uid: 1027
+    name: PixDeVl
+    realname: PixDeVl
+    ssh_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOHs/0a4J7OuWVgI8LNmo5GTZtQbaNdb7LkvidH11XZy pixldev@fedora
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPYfqH3k4MsvAd7C9gUzLmftIpgbrTF4Tf9KSgwr8cXY pixldev@iterm

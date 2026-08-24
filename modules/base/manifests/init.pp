@@ -44,6 +44,15 @@ class base (
         mode   => '0555',
     }
 
+    $cookbooks = ['cycle-puppet', 'disable-puppet', 'enable-puppet']
+    $cookbooks.each |$cookbook| {
+        file {"/usr/local/bin/${cookbook}":
+            ensure => 'present',
+            mode   => '0755',
+            source => "puppet:///modules/base/cookbooks/${cookbook}.py",
+        }
+    }
+
     if $http_proxy {
         file { '/etc/gitconfig':
             ensure  => present,
@@ -69,10 +78,10 @@ class base (
         },
     }
 
-    $ntp_server = lookup('base::ntp_server')
+    $ntp_servers = lookup('base::ntp_servers')
 
     class { 'ntp':
-        servers   => [ $ntp_server ],
+        servers   => $ntp_servers,
         config    => '/etc/ntpsec/ntp.conf',
         driftfile => '/var/lib/ntpsec/ntp.drift',
         restrict  => [

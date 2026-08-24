@@ -127,7 +127,7 @@ define systemd::timer::job (
     Boolean                                 $private_tmp               = false,
     Optional[Integer]                       $splay                     = undef,
     # TODO: set some sane default otherwise its infinite T324466
-    Optional[Integer]                       $timeout_start_sec         = undef,
+    Optional[Systemd::Timer::Interval]      $timeout_start_sec         = undef,
     Optional[String]                        $logfile_owner             = undef,
     Optional[String]                        $syslog_identifier         = undef,
     Optional[Integer]                       $max_runtime_seconds       = undef,

@@ -22,7 +22,7 @@ class prometheus::exporter::fpm {
     resources { type = 'Class' and title = 'Role::Prometheus' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'prometheus php-fpm':
+    firewall::service { 'prometheus php-fpm':
         proto  => 'tcp',
         port   => '9253',
         srange => "(${firewall_rules_str})",

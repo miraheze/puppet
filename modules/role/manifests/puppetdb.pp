@@ -19,7 +19,7 @@ class role::puppetdb {
     resources { type = 'Class' and title = 'Role::Icinga2' })
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'puppetdb port 8081':
+    firewall::service { 'puppetdb port 8081':
         proto  => 'tcp',
         port   => '8081',
         srange => "(${firewall_rules_str})",

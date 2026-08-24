@@ -33,6 +33,7 @@ expire_logs_days               = <%= @expire_logs_days %>
 sync_binlog                    = <%= @sync_binlog %>
 binlog_cache_size              = 10M
 slave_compressed_protocol      = 1
+slave_connections_needed_for_purge = 0
 <%- else -%>
 disable_log_bin
 <%- end -%>
@@ -60,7 +61,7 @@ query-cache-type               = 0
 query-cache-size               = 0
 thread_cache_size              = 300
 interactive_timeout            = 28800
-wait_timeout                   = 3600
+wait_timeout                   = <%= @wait_timeout %>
 
 innodb-flush-method            = O_DIRECT
 innodb_flush_neighbors         = 0

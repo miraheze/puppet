@@ -1,0 +1,83 @@
+{
+  "name": "puppet-icingadb",
+  "version": "4.0.1-rc0",
+  "author": "Vox Pupuli",
+  "summary": "Puppet module to manage IcingaDB and the IcingaDB Redis server",
+  "license": "Apache-2.0",
+  "source": "git://github.com/voxpupuli/puppet-icingadb",
+  "project_page": "https://github.com/voxpupuli/puppet-icingadb",
+  "issues_url": "https://github.com/voxpupuli/puppet-icingadb/issues",
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 6.6.0 < 10.0.0"
+    },
+    {
+      "name": "puppet/redis",
+      "version_requirement": ">= 8.2.0 < 13.0.0"
+    },
+    {
+      "name": "puppet/icinga",
+      "version_requirement": ">= 3.0.0 < 9.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "9",
+        "10"
+      ]
+    },
+    {
+      "operatingsystem": "OracleLinux",
+      "operatingsystemrelease": [
+        "8",
+        "9",
+        "10"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "8",
+        "9",
+        "10"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "11",
+        "12",
+        "13"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "22.04",
+        "24.04"
+      ]
+    },
+    {
+      "operatingsystem": "Fedora",
+      "operatingsystemrelease": [
+        "42",
+        "43"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "openvox",
+      "version_requirement": ">= 8.19.0 < 9.0.0"
+    }
+  ],
+  "tags": [
+    "icinga",
+    "icingadb",
+    "icingadb-redis",
+    "monitoring"
+  ]
+}

@@ -60,7 +60,7 @@ class prometheus::exporter::elasticsearch {
     resources { type = 'Class' and title = 'Role::Prometheus' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'prometheus es_exporter':
+    firewall::service { 'prometheus es_exporter':
         proto  => 'tcp',
         port   => '9206',
         srange => "(${firewall_rules_str})",

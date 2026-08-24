@@ -1,7 +1,7 @@
 # == Class: chart
 
 class chart inherits chart::params {
-    stdlib::ensure_packages(['nodejs'])
+    stdlib::ensure_packages('nodejs')
 
     group { $chart::group:
         ensure => present,
@@ -16,15 +16,13 @@ class chart inherits chart::params {
         home       => '/srv/chart',
         managehome => false,
         system     => true,
-        require    => [
-            Group[$chart::group]
-        ],
+        require    => Group[$chart::group],
     }
 
     git::clone { 'chart':
-        ensure             => 'latest',
+        ensure             => latest,
         directory          => '/srv/chart',
-        origin             => 'https://github.com/miraheze/chart-deploy.git',
+        origin             => 'https://github.com/miraheze/chart-deploy',
         branch             => 'main',
         owner              => $chart::user,
         group              => $chart::group,
@@ -51,19 +49,17 @@ class chart inherits chart::params {
         ensure         => present,
         content        => systemd_template('chart'),
         restart        => true,
+        require        => Git::Clone['chart'],
         service_params => {
             hasstatus  => true,
-            hasrestart => true
+            hasrestart => true,
         },
-        require        => [
-            Git::Clone['chart']
-        ]
     }
 
     monitoring::services { 'chart':
         check_command => 'tcp',
         vars          => {
-            tcp_port  => '6284',
+            tcp_port => '6284',
         },
     }
 }

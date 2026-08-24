@@ -188,7 +188,7 @@ class role::openldap (
     resources { type = 'Class' and title = 'Role::Openldap' })
     | PQL
     $firewall_rules = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'ldaps':
+    firewall::service { 'ldaps':
         proto  => 'tcp',
         port   => '636',
         srange => "(${firewall_rules})",
@@ -198,7 +198,7 @@ class role::openldap (
     resources { type = 'Class' and title = 'Role::Icinga2' }
     | PQL
     $firewall_rules_icinga = vmlib::generate_firewall_ip($subquery_2)
-    ferm::service { 'ldap':
+    firewall::service { 'ldap':
         proto  => 'tcp',
         port   => '389',
         srange => "(${firewall_rules_icinga})",

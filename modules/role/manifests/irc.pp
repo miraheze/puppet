@@ -13,7 +13,7 @@ class role::irc {
     include irc::pywikibot
 
     irc::relaybot { 'relaybot':
-        dotnet_version => '6.0',
+        dotnet_version => '10.0',
     }
 
     irc::ircrcbot { 'RCBot1' :
@@ -47,13 +47,13 @@ class role::irc {
     | PQL
     $firewall_irc_rules_str = vmlib::generate_firewall_ip($subquery)
 
-    ferm::service { 'ircrcbot':
+    firewall::service { 'ircrcbot':
         proto  => 'udp',
         port   => '5070',
         srange => "(${firewall_irc_rules_str})",
     }
 
-    ferm::service { 'ircrcbot2':
+    firewall::service { 'ircrcbot2':
         proto  => 'udp',
         port   => '5072',
         srange => "(${firewall_irc_rules_str})",
@@ -64,7 +64,7 @@ class role::irc {
     | PQL
     $firewall_all_rules_str = vmlib::generate_firewall_ip($subquery_2)
 
-    ferm::service { 'irclogserverbot':
+    firewall::service { 'irclogserverbot':
         proto  => 'udp',
         port   => '5071',
         srange => "(${firewall_all_rules_str})",
