@@ -1,12 +1,12 @@
 {
   "name": "puppetlabs-ntp",
-  "version": "10.1.0",
+  "version": "11.1.0",
   "author": "puppetlabs",
   "summary": "Installs, configures, and manages the NTP service.",
   "license": "Apache-2.0",
   "source": "https://github.com/puppetlabs/puppetlabs-ntp",
   "project_page": "https://github.com/puppetlabs/puppetlabs-ntp",
-  "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
+  "issues_url": "https://github.com/puppetlabs/puppetlabs-ntp/issues",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
@@ -49,7 +49,9 @@
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
         "10",
-        "11"
+        "11",
+        "12",
+        "13"
       ]
     },
     {
@@ -57,7 +59,8 @@
       "operatingsystemrelease": [
         "18.04",
         "20.04",
-        "22.04"
+        "22.04",
+        "24.04"
       ]
     },
     {
@@ -76,11 +79,11 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 7.0.0 < 9.0.0"
+      "version_requirement": ">= 8.0.0 < 9.0.0"
     }
   ],
   "description": "NTP Module for Debian, Ubuntu, CentOS, RHEL, OEL, Fedora, FreeBSD, ArchLinux, Amazon Linux and Gentoo.",
   "template-url": "https://github.com/puppetlabs/pdk-templates.git#main",
-  "template-ref": "heads/main-0-ge5b0114",
-  "pdk-version": "2.7.1"
+  "template-ref": "tags/3.2.0.4-0-g5d17ec1",
+  "pdk-version": "3.2.0"
 }
