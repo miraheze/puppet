@@ -79,9 +79,9 @@ class base::monitoring {
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#APT'
     }
 
-    monitoring::nrpe { 'ntp peers':
+    monitoring::nrpe { 'chrony':
         command => '/usr/lib/nagios/plugins/check_chrony -w 50 -c 100',
-        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#NTP'
+        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Chrony'
     }
 
     # Collect all NRPE command files
