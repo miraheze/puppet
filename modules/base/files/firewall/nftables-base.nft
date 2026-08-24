@@ -1,9 +1,7 @@
 # a default policy drop, at least for the input chain for now
 table inet base {
-	# named sets declared with nftables::set, referenced from rules
-	# elsewhere in this table with @setname. sets are scoped to the
-	# table that includes them, so this needs to come before anything
-	# that references one.
+
+    # Include all Puppet-managed sets
 	include "/etc/nftables/sets/*.nft"
 
 	chain prerouting {
