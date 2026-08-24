@@ -3,7 +3,7 @@
 # @param ensure the ensurable parameter
 define ferm::set (
     Array[Stdlib::IP::Address] $ips,
-    Enum['present', 'absent']  $ensure = present,
+    VMlib::Ensure              $ensure = present,
 ) {
     ferm::conf { "set_${title}":
         ensure  => $ensure,
