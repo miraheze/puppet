@@ -4,6 +4,7 @@
 # prefer making changes there if possible
 
 import argparse
+import contextlib
 import json
 import os
 import re
@@ -39,11 +40,8 @@ def _load_patches() -> list:
     loaded = []
     for visibility in ('public', 'private'):
         path = f'{STAGING_ROOT}/patches/{visibility}.json'
-        try:
-            with open(path) as handle:
-                loaded += json.load(handle)
-        except FileNotFoundError:
-            pass
+        with contextlib.suppress(FileNotFoundError), open(path) as handle:
+            loaded += json.load(handle)
     return loaded
 
 
@@ -388,7 +386,7 @@ _rsync_builder = RsyncCommandBuilder()
 
 
 def _construct_rsync_command(time, dest: str, recursive: bool = True, local: bool = True,
-                              location: Optional[str] = None, server: Optional[str] = None) -> str:
+                             location: Optional[str] = None, server: Optional[str] = None) -> str:
     return _rsync_builder.build(time, dest, recursive=recursive, local=local, location=location, server=server)
 
 
@@ -400,7 +398,7 @@ class GitCommandBuilder:
         self._deploy_user = deploy_user
 
     def pull(self, repo: str, submodules: bool = False, branch: Optional[str] = None,
-              quiet: bool = True, version: str = '') -> str:
+             quiet: bool = True, version: str = '') -> str:
         extra = ' '
         if submodules:
             extra += '--recurse-submodules '
@@ -427,7 +425,7 @@ _git = GitCommandBuilder(_paths)
 
 
 def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[str] = None,
-                         quiet: bool = True, version: str = '') -> str:
+                        quiet: bool = True, version: str = '') -> str:
     return _git.pull(repo, submodules=submodules, branch=branch, quiet=quiet, version=version)
 
 
@@ -573,10 +571,10 @@ class RemoteDeployer:
         ec = ShellExecutor.run(cmd)
         self._canary.check(nolog, Debug=server, force=force, domain=envinfo.wikiurl)
         print(f'Deployed {path} to {server}.')
-        return ec
+        return ec  # noqa: R504
 
     def sync(self, time_flag, serverlist: list[str], path: str, envinfo: Environment, nolog: bool,
-              recursive: bool = True, force: bool = False) -> int:
+             recursive: bool = True, force: bool = False) -> int:
         print(f'Start {path} deploys.')
         targets = [server for server in serverlist if self._hostname != server.split('.')[0]]
 
@@ -599,7 +597,7 @@ _remote_deployer = RemoteDeployer(_rsync_builder, _default_canary_checker)
 
 
 def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Environment, nolog: bool,
-                      recursive: bool = True, force: bool = False) -> int:
+                     recursive: bool = True, force: bool = False) -> int:
     return _remote_deployer.sync(time, serverlist, path, envinfo, nolog, recursive=recursive, force=force)
 
 
@@ -799,6 +797,7 @@ class DeploymentRunner:
 
         self._print_summary()
         return self.exitcodes
+
 
     def _reset_state(self) -> None:
         self.exitcodes = []
