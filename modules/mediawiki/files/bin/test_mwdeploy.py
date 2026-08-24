@@ -31,6 +31,9 @@ class TestTagFunctions(unittest.TestCase):
         self.assertTrue(all(isinstance(pattern, type(re.compile(''))) for pattern in tag_map.keys()))
         self.assertTrue(all(isinstance(tag, str) for tag in tag_map.values()))
 
+    def test_get_change_tag_map_is_cached(self):
+        self.assertIs(mwdeploy.get_change_tag_map(), mwdeploy.get_change_tag_map())
+
     @patch('os.popen')
     def test_get_changed_files(self, mock_popen):
         mock_popen.return_value.readlines.return_value = self.changed_files
@@ -122,6 +125,11 @@ def test_get_skins_in_pack():
     assert skins == ['MinervaNeue', 'MonoBook', 'Timeless', 'Vector']
 
 
+def test_component_packs_unknown_pack_returns_empty():
+    assert mwdeploy.ComponentPacks.extensions('does-not-exist') == []
+    assert mwdeploy.ComponentPacks.skins('does-not-exist') == []
+
+
 def test_non_zero_ec_only_one_zero() -> None:
     assert not mwdeploy.non_zero_code([0], leave=False)
 
@@ -140,6 +148,17 @@ def test_non_zero_ec_one_one() -> None:
 
 def test_non_zero_ec_only_one_one() -> None:
     assert mwdeploy.non_zero_code([1], leave=False)
+
+
+@patch('os.system', return_value=0)
+def test_shell_executor_run_parallel_preserves_order(mock_system) -> None:
+    codes = mwdeploy.ShellExecutor.run_parallel(['echo one', 'echo two', 'echo three'])
+    assert codes == [0, 0, 0]
+    assert mock_system.call_count == 3
+
+
+def test_shell_executor_run_parallel_empty_list() -> None:
+    assert mwdeploy.ShellExecutor.run_parallel([]) == []
 
 
 def test_check_up_no_debug_host() -> None:
@@ -165,6 +184,12 @@ def test_check_up_debug_fail() -> None:
 
 def test_check_up_debug_fail_force() -> None:
     assert mwdeploy.check_up(nolog=True, Debug='mwtask181', domain='httpstatuses.maor.io/500', force=True, use_cert=False)
+
+
+def test_canary_checker_reuses_a_single_session() -> None:
+    checker = mwdeploy.CanaryChecker()
+    assert isinstance(checker._session, mwdeploy.requests.Session)
+    assert checker._session is checker._session
 
 
 def test_get_staging_path() -> None:
@@ -301,6 +326,63 @@ def test_construct_reset_mediawiki_rm_staging() -> None:
 
 def test_construct_reset_mediawiki_run_puppet() -> None:
     assert mwdeploy._construct_reset_mediawiki_run_puppet() == 'sudo puppet agent -tv'
+
+
+def test_patch_matches_core_patch() -> None:
+    sample_patch = {'path': 'REL1_41', 'versions': ['all']}
+    with patch.dict(mwdeploy.versions, {'REL1_41': 'REL1_41'}, clear=True):
+        assert mwdeploy._patch_matches(sample_patch, 'REL1_41', 'REL1_41') is True
+
+
+def test_patch_matches_extension_patch_scoped_to_version() -> None:
+    sample_patch = {'path': 'extensions/Vector', 'versions': ['REL1_41']}
+    assert mwdeploy._patch_matches(sample_patch, 'extensions/Vector', 'REL1_41') is True
+    assert mwdeploy._patch_matches(sample_patch, 'extensions/Vector', 'REL1_42') is False
+
+
+def test_patch_matches_all_versions() -> None:
+    sample_patch = {'path': 'extensions/Vector', 'versions': ['all']}
+    assert mwdeploy._patch_matches(sample_patch, 'extensions/Vector', 'REL1_99') is True
+
+
+class TestRemoteDeployer(unittest.TestCase):
+    def setUp(self):
+        self.canary = MagicMock()
+        self.rsync_builder = mwdeploy.RsyncCommandBuilder()
+        self.deployer = mwdeploy.RemoteDeployer(self.rsync_builder, self.canary, hostname='mw151', max_workers=4)
+        self.envinfo = mwdeploy.Environment(wikidbname='testwiki', wikiurl='publictestwiki.com', servers=['mw151', 'mw152', 'mw153'])
+
+    @patch.object(mwdeploy.ShellExecutor, 'run', return_value=0)
+    def test_sync_skips_self_and_deploys_to_others(self, mock_run):
+        result = self.deployer.sync(False, ['mw151', 'mw152', 'mw153'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
+        assert result == 0
+        assert mock_run.call_count == 2
+        commands = [call.args[0] for call in mock_run.call_args_list]
+        assert any('@mw152.' in cmd for cmd in commands)
+        assert any('@mw153.' in cmd for cmd in commands)
+
+    @patch.object(mwdeploy.ShellExecutor, 'run', return_value=0)
+    def test_sync_continues_past_self_mid_list(self, mock_run):
+        self.deployer.sync(False, ['mw152', 'mw151', 'mw153'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
+        assert mock_run.call_count == 2
+        commands = [call.args[0] for call in mock_run.call_args_list]
+        assert not any('@mw151.' in cmd for cmd in commands)
+
+    def test_sync_with_no_remote_targets_returns_zero(self):
+        result = self.deployer.sync(False, ['mw151'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
+        assert result == 0
+
+    @patch.object(mwdeploy.ShellExecutor, 'run', side_effect=[0, 1])
+    def test_sync_surfaces_a_failing_server(self, mock_run):
+        result = self.deployer.sync(False, ['mw151', 'mw152', 'mw153'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
+        assert result != 0
+
+
+def test_build_loginfo_filters_falsy_and_unwraps_single_item_lists() -> None:
+    args = argparse.Namespace(pull=None, force=False, servers=['mw151'], versions=['REL1_41'], branch=None)
+    runner = mwdeploy.DeploymentRunner(args)
+    loginfo = runner._build_loginfo()
+    assert loginfo == {'servers': 'mw151', 'versions': 'REL1_41'}
 
 
 def test_UpgradePackAction():
