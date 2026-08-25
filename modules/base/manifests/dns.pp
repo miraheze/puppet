@@ -11,6 +11,7 @@ class base::dns (
     Array[String] $allow_from          = ['127.0.0.0/8', '10.0.0.0/8', '::1/128'],
     Integer       $listen_port         = 53,
     String        $monitor_address     = '127.0.0.1',
+    Array[String] $forward_zone_names  = ['wtnet', '10.in-addr.arpa', 'wikitide.net'],
 ) {
     stdlib::ensure_packages('pdns-recursor')
 
@@ -26,10 +27,8 @@ class base::dns (
         $forward_addresses = ['2602:294:0:b23::111', '2001:41d0:801:2000::4089']
     }
 
-    $zone_forwards = {
-        'wtnet'           => $forward_addresses,
-        '10.in-addr.arpa' => $forward_addresses,
-        'wikitide.net'    => $forward_addresses,
+    $zone_forwards = $forward_zone_names.reduce({}) |$memo, $zone| {
+        $memo + { $zone => $forward_addresses }
     }
 
     $root_forward_addresses = $recursor_addresses.empty ? {
@@ -37,9 +36,9 @@ class base::dns (
         default => $recursor_addresses,
     }
 
-    $forward_zones = $recurse ? {
-        true    => $zone_forwards,
-        default => $zone_forwards + { '.' => $root_forward_addresses },
+    $forward_zones_recurse = $recurse ? {
+        true    => {},
+        default => { '.' => $root_forward_addresses },
     }
 
     file { '/etc/powerdns/recursor.yml':
