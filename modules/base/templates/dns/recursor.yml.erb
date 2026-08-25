@@ -9,6 +9,7 @@ incoming:
 <% @listen_addresses.each do |addr| -%>
   - "<%= addr %>"
 <% end -%>
+  port: <%= @listen_port %>
   pdns_distributes_queries: false
   reuseport: true
   max_tcp_clients: 128
