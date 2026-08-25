@@ -6,12 +6,12 @@ define firewall::set (
     VMlib::Ensure               $ensure = present,
 ) {
     ferm::set { $title:
-        ips    => $ips,
         ensure => $ensure,
+        ips    => $ips,
     }
 
     nftables::set { $title:
-        ips    => $ips,
         ensure => $ensure,
+        ips    => $ips,
     }
 }

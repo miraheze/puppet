@@ -1,3 +1,21 @@
 users::groups:
   - dns-admins
 dns: true
+
+base::dns::enable_on_authoritative: true
+base::dns::do_ipv4: true
+base::dns::do_ipv6: true
+base::dns::forward_use_internal: true
+base::dns::listen_addresses:
+  - '10.0.17.171'
+base::dns::listen_port: 5300
+base::dns::allow_from:
+  - '127.0.0.0/8'
+  - '::1/128'
+  - '10.0.0.0/8'
+base::dns::monitor_address: '10.0.17.171'
+base::dns::resolvers:
+  - '2606:4700:4700::1111'
+  - '2606:4700:4700::1001'
+  - '1.1.1.1'
+  - '1.0.0.1'
