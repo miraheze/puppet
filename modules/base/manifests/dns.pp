@@ -4,6 +4,9 @@ class base::dns (
     Boolean       $do_ipv4             = false,
     Boolean       $do_ipv6             = false,
     Boolean       $forward_use_internal,
+    Boolean       $recurse             = true,
+    Array[String] $listen_addresses    = ['127.0.0.1', '::1'],
+    Array[String] $allow_from          = ['127.0.0.0/8', '10.0.0.0/8', '::1/128'],
 ) {
     stdlib::ensure_packages('pdns-recursor')
 
@@ -14,17 +17,20 @@ class base::dns (
     }
 
     if $forward_use_internal {
-        $forward_zones = {
-            'wtnet'          => ['10.0.17.171'],
-            '10.in-addr.arpa'=> ['10.0.17.171'],
-            'wikitide.net'   => ['10.0.17.171'],
-        }
+        $forward_addresses = ['10.0.17.171']
     } else {
-        $forward_zones = {
-            'wtnet'          => ['2602:294:0:b23::111', '2001:41d0:801:2000::4089'],
-            '10.in-addr.arpa'=> ['2602:294:0:b23::111', '2001:41d0:801:2000::4089'],
-            'wikitide.net'   => ['2602:294:0:b23::111', '2001:41d0:801:2000::4089'],
-        }
+        $forward_addresses = ['2602:294:0:b23::111', '2001:41d0:801:2000::4089']
+    }
+
+    $zone_forwards = {
+        'wtnet'           => $forward_addresses,
+        '10.in-addr.arpa' => $forward_addresses,
+        'wikitide.net'    => $forward_addresses,
+    }
+
+    $forward_zones = $recurse ? {
+        true    => $zone_forwards,
+        default => $zone_forwards + { '.' => $forward_addresses },
     }
 
     file { '/etc/powerdns/recursor.yml':
