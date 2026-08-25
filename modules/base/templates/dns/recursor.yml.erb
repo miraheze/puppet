@@ -37,7 +37,7 @@ recursor:
   forward_zones:
 <% @forward_zones.each do |zone, ips| -%>
   - zone: <%= zone %>
-    recurse: false
+    recurse: true
     forwarders:
 <% ips.each do |ip| -%>
       - <%= ip %>
