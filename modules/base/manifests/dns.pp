@@ -6,6 +6,7 @@ class base::dns (
     Boolean       $forward_use_internal,
     Boolean       $recurse             = true,
     Array[String] $recursor_addresses  = [],
+    Array[String] $resolvers           = [],
     Array[String] $listen_addresses    = ['127.0.0.1', '::1'],
     Array[String] $allow_from          = ['127.0.0.0/8', '10.0.0.0/8', '::1/128'],
     Integer       $listen_port         = 53,
