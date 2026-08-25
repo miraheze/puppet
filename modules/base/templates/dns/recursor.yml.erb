@@ -35,12 +35,21 @@ recursor:
   daemon: true
   extended_resolution_errors: true
   forward_zones:
-<% @forward_zones.each do |zone, ips| -%>
+<% @zone_forwards.each do |zone, ips| -%>
   - zone: <%= zone %>
-    recurse: true
     forwarders:
 <% ips.each do |ip| -%>
       - <%= ip %>
+<% end -%>
+<% end -%>
+<% unless @forward_zones_recurse.empty? -%>
+  forward_zones_recurse:
+<% @forward_zones_recurse.each do |zone, ips| -%>
+  - zone: <%= zone %>
+    forwarders:
+<% ips.each do |ip| -%>
+      - <%= ip %>
+<% end -%>
 <% end -%>
 <% end -%>
   hint_file: /usr/share/dns/root.hints
