@@ -70,7 +70,7 @@ class prometheus::exporter::mariadb {
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus mysqld_exporter':
         proto  => 'tcp',
-        port   => '9104',
+        port   => 9104,
         srange => "(${firewall_rules_str})",
     }
 }

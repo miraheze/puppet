@@ -320,4 +320,5 @@ role::cache::haproxy::extended_logging: true
 
 # base
 
+base::firewall::provider: 'both'
 base::syslog::rsyslog_udp_localhost: true

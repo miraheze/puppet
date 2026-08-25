@@ -12,7 +12,7 @@ class role::eventgate {
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'eventgate':
         proto   => 'tcp',
-        port    => '8192',
+        port    => 8192,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }
@@ -23,7 +23,7 @@ class role::eventgate {
     $firewall_rules_prometheus_str = vmlib::generate_firewall_ip($subquery_2)
     firewall::service { 'eventgate-prometheus':
         proto   => 'tcp',
-        port    => '9102',
+        port    => 9102,
         srange  => "(${firewall_rules_prometheus_str})",
         notrack => true,
     }

@@ -204,7 +204,7 @@ class varnish (
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { "${facts['networking']['fqdn']} varnish depool service port 5001":
         proto  => 'tcp',
-        port   => '5001',
+        port   => 5001,
         srange => "(${firewall_rules_str})",
     }
 

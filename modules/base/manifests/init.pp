@@ -18,10 +18,14 @@ class base (
     include users
 
     if lookup('dns') {
-        stdlib::ensure_packages(
-            'pdns-recursor',
-            { ensure => absent }
-        )
+        if lookup('base::dns::enable_on_authoritative', { 'default_value' => false }) {
+            include base::dns
+        } else {
+            stdlib::ensure_packages(
+                'pdns-recursor',
+                { ensure => absent }
+            )
+        }
     } else {
         include base::dns
     }
@@ -80,17 +84,13 @@ class base (
 
     $ntp_servers = lookup('base::ntp_servers')
 
-    class { 'ntp':
-        servers   => $ntp_servers,
-        config    => '/etc/ntpsec/ntp.conf',
-        driftfile => '/var/lib/ntpsec/ntp.drift',
-        restrict  => [
-            'default kod limited nomodify noquery',
-            '-6 default kod limited nomodify noquery',
-            '127.0.0.1',
-            '-6 ::1',
-            '10.0.0.0 mask 255.0.0.0 nomodify notrap',
-        ],
+    stdlib::ensure_packages('ntpsec', { ensure => purged })
+
+    class { 'chrony':
+        servers    => $ntp_servers,
+        config     => '/etc/chrony/chrony.conf',
+        driftfile  => '/var/lib/chrony/chrony.drift',
+        queryhosts => ['10.0.0.0/8'],
     }
 
     # Used by salt-user

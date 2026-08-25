@@ -3,7 +3,7 @@ class role::speedscope (
   String $bind_host = '127.0.0.1',
   Integer $port = 3000,
   String $image = 'ghcr.io/weirdgloop/speedscope-service',
-  String $version = 'main@sha256:46df2c52f0307c5bc0b6bf8d918026e4e408e5738c3e9d87a36e0f7ae0c48214',
+  String $version = 'main@sha256:2f1c2e2381f8e685bcc5433231bc69949d6d75cc59889522cf4804ea07ed84ef',
 ) {
   ssl::wildcard { 'speedscope wildcard': }
 
@@ -33,14 +33,14 @@ class role::speedscope (
 
   firewall::service { 'http':
     proto   => 'tcp',
-    port    => '80',
+    port    => 80,
     srange  => "(${firewall_rules_str})",
     notrack => true,
   }
 
   firewall::service { 'https':
     proto   => 'tcp',
-    port    => '443',
+    port    => 443,
     srange  => "(${firewall_rules_str})",
     notrack => true,
   }

@@ -15,6 +15,7 @@ define docker::compose(
     require => [
       Package['docker-ce-cli'],
       Package['docker-compose-plugin'],
+      Service['docker'],
     ],
   }
 }

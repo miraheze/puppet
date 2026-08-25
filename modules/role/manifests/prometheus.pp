@@ -409,7 +409,7 @@ class role::prometheus {
 
     firewall::service { 'prometheus':
         proto  => 'tcp',
-        port   => '9090',
+        port   => 9090,
         srange => "(${firewall_grafana})",
     }
 

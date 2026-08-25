@@ -62,7 +62,7 @@ class prometheus::exporter::elasticsearch {
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus es_exporter':
         proto  => 'tcp',
-        port   => '9206',
+        port   => 9206,
         srange => "(${firewall_rules_str})",
     }
 }

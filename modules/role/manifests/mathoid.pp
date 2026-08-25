@@ -19,7 +19,7 @@ class role::mathoid {
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'mathoid':
         proto   => 'tcp',
-        port    => '10044',
+        port    => 10044,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }

@@ -2,12 +2,14 @@ dnssec:
   validation: off
 incoming:
   allow_from:
-  - 127.0.0.0/8
-  - 10.0.0.0/8
-  - ::1/128
+<% @allow_from.each do |cidr| -%>
+  - <%= cidr %>
+<% end -%>
   listen:
-  - 127.0.0.1
-  - "::1"
+<% @listen_addresses.each do |addr| -%>
+  - "<%= addr %>"
+<% end -%>
+  port: <%= @listen_port %>
   pdns_distributes_queries: false
   reuseport: true
   max_tcp_clients: 128
@@ -33,12 +35,21 @@ recursor:
   daemon: true
   extended_resolution_errors: true
   forward_zones:
-<% @forward_zones.each do |zone, ips| -%>
+<% @zone_forwards.each do |zone, ips| -%>
   - zone: <%= zone %>
-    recurse: false
     forwarders:
 <% ips.each do |ip| -%>
       - <%= ip %>
+<% end -%>
+<% end -%>
+<% unless @forward_zones_recurse.empty? -%>
+  forward_zones_recurse:
+<% @forward_zones_recurse.each do |zone, ips| -%>
+  - zone: <%= zone %>
+    forwarders:
+<% ips.each do |ip| -%>
+      - <%= ip %>
+<% end -%>
 <% end -%>
 <% end -%>
   hint_file: /usr/share/dns/root.hints

@@ -2,7 +2,7 @@
 class base::monitoring {
     include prometheus::exporter::node
 
-    $nagios_packages = [ 'monitoring-plugins', 'nagios-nrpe-server', ]
+    $nagios_packages = [ 'monitoring-plugins', 'monitoring-plugins-contrib', 'nagios-nrpe-server', ]
     package { $nagios_packages:
         ensure => present,
     }
@@ -44,6 +44,7 @@ class base::monitoring {
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_gdnsd_datacenters',
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run',
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_smart',
+            'ALL = NOPASSWD: /usr/sbin/ipmi-dcmi',
             'ALL = NOPASSWD: /usr/sbin/ipmi-sel',
             'ALL = NOPASSWD: /usr/sbin/ipmi-sensors',
         ],
@@ -79,9 +80,9 @@ class base::monitoring {
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#APT'
     }
 
-    monitoring::nrpe { 'ntp peers':
-        command => '/usr/lib/nagios/plugins/check_ntp_peer -H localhost -w 0.05 -c 0.1 -W 5 -C 10',
-        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#NTP'
+    monitoring::nrpe { 'chrony':
+        command => '/usr/lib/nagios/plugins/check_chrony -w 50 -c 100 -W 5 -C 10',
+        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Chrony'
     }
 
     # Collect all NRPE command files

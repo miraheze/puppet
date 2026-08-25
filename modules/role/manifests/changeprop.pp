@@ -13,7 +13,7 @@ class role::changeprop {
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'changeprop':
         proto   => 'tcp',
-        port    => '7200',
+        port    => 7200,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }

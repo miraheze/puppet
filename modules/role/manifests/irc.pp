@@ -49,13 +49,13 @@ class role::irc {
 
     firewall::service { 'ircrcbot':
         proto  => 'udp',
-        port   => '5070',
+        port   => 5070,
         srange => "(${firewall_irc_rules_str})",
     }
 
     firewall::service { 'ircrcbot2':
         proto  => 'udp',
-        port   => '5072',
+        port   => 5072,
         srange => "(${firewall_irc_rules_str})",
     }
 
@@ -66,7 +66,7 @@ class role::irc {
 
     firewall::service { 'irclogserverbot':
         proto  => 'udp',
-        port   => '5071',
+        port   => 5071,
         srange => "(${firewall_all_rules_str})",
     }
 
