@@ -8,6 +8,7 @@ base::dns::do_ipv6: true
 base::dns::forward_use_internal: true
 base::dns::listen_addresses:
   - '10.0.17.171'
+base::dns::listen_port: 5300
 base::dns::allow_from:
   - '127.0.0.0/8'
   - '::1/128'
