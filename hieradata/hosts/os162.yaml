@@ -9,4 +9,5 @@ role::opensearch::manager_hosts:
   - os162
 opensearch::api_host: os162.fsslc.wtnet
 
+base::firewall::provider: 'both'
 base::syslog::rsyslog_udp_localhost: true
