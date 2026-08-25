@@ -15,8 +15,8 @@ class role::puppetdb {
     }
 
     firewall::service { 'puppetdb port 8081':
-        proto  => 'tcp',
-        port   => 8081,
+        proto    => 'tcp',
+        port     => 8081,
         src_sets => ['PUPPETSERVER_HOSTS', 'ICINGA2_HOSTS'],
     }
 

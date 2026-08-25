@@ -19,8 +19,8 @@ class prometheus::exporter::fpm {
     }
 
     firewall::service { 'prometheus php-fpm':
-        proto  => 'tcp',
-        port   => 9253,
+        proto    => 'tcp',
+        port     => 9253,
         src_sets => ['PROMETHEUS_HOSTS'],
     }
 }

@@ -197,8 +197,8 @@ class varnish (
     }
 
     firewall::service { "${facts['networking']['fqdn']} varnish depool service port 5001":
-        proto  => 'tcp',
-        port   => 5001,
+        proto    => 'tcp',
+        port     => 5001,
         src_sets => ['ICINGA2_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS'],
     }
 

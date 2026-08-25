@@ -27,8 +27,8 @@ class mediawiki::monitoring {
 
 
     firewall::service { 'php http port 9181':
-        proto  => 'tcp',
-        port   => 9181,
+        proto    => 'tcp',
+        port     => 9181,
         src_sets => ['PROMETHEUS_HOSTS'],
     }
 

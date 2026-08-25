@@ -78,17 +78,17 @@ class role::mattermost {
 
 
     firewall::service { 'postgresql':
-        proto   => 'tcp',
-        port    => 5432,
-        src_sets  => ['MATTERMOST_HOSTS'],
-        notrack => true,
+        proto    => 'tcp',
+        port     => 5432,
+        src_sets => ['MATTERMOST_HOSTS'],
+        notrack  => true,
     }
 
     firewall::service { 'mattermost':
-        proto   => 'tcp',
-        port    => 8065,
-        src_sets  => ['MATTERMOST_HOSTS'],
-        notrack => true,
+        proto    => 'tcp',
+        port     => 8065,
+        src_sets => ['MATTERMOST_HOSTS'],
+        notrack  => true,
     }
 
     $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)

@@ -79,8 +79,8 @@ class prometheus::exporter::statsd_exporter (
     }
 
     firewall::service { 'prometheus statsd-exporter':
-        proto  => 'tcp',
-        port   => 9112,
+        proto    => 'tcp',
+        port     => 9112,
         src_sets => ['PROMETHEUS_HOSTS'],
     }
 }

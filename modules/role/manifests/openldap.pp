@@ -178,14 +178,14 @@ class role::openldap (
     }
 
     firewall::service { 'ldaps':
-        proto  => 'tcp',
-        port   => 636,
+        proto    => 'tcp',
+        port     => 636,
         src_sets => ['GRAFANA_HOSTS', 'GRAYLOG_HOSTS', 'LLM_HOSTS', 'MATOMO_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'OPENLDAP_HOSTS'],
     }
 
     firewall::service { 'ldap':
-        proto  => 'tcp',
-        port   => 389,
+        proto    => 'tcp',
+        port     => 389,
         src_sets => ['ICINGA2_HOSTS'],
     }
 

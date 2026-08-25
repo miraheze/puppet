@@ -92,10 +92,10 @@ class role::kafka (
     }
 
     firewall::service { 'kafka':
-        proto   => 'tcp',
-        port    => 9092,
-        src_sets  => ['CHANGEPROP_HOSTS', 'EVENTGATE_HOSTS'],
-        notrack => true,
+        proto    => 'tcp',
+        port     => 9092,
+        src_sets => ['CHANGEPROP_HOSTS', 'EVENTGATE_HOSTS'],
+        notrack  => true,
     }
 
     system::role { 'kafka':

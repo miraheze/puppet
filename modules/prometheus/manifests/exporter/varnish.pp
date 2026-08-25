@@ -12,6 +12,6 @@ class prometheus::exporter::varnish (
     firewall::service { 'prometheus varnish_exporter':
         proto      => 'tcp',
         port_range => [Integer($listen_port), Integer($listen_port)],
-        src_sets     => ['PROMETHEUS_HOSTS'],
+        src_sets   => ['PROMETHEUS_HOSTS'],
     }
 }

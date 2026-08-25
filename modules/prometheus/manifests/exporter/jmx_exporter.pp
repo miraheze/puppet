@@ -112,8 +112,8 @@ define prometheus::exporter::jmx_exporter (
     }
 
     firewall::service { "prometheus ${port} jmx_exporter":
-        proto  => 'tcp',
-        port   => $port,
+        proto    => 'tcp',
+        port     => $port,
         src_sets => ['PROMETHEUS_HOSTS'],
     }
 }

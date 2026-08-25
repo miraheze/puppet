@@ -18,8 +18,8 @@ class prometheus::exporter::nginx {
     }
 
     firewall::service { 'prometheus nginx':
-        proto  => 'tcp',
-        port   => 9113,
+        proto    => 'tcp',
+        port     => 9113,
         src_sets => ['PROMETHEUS_CLASS_HOSTS'],
     }
 }

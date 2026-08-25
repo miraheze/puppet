@@ -89,8 +89,8 @@ class prometheus::exporter::node (
     }
 
     firewall::service { 'prometheus node-exporter':
-        proto  => 'tcp',
-        port   => 9100,
+        proto    => 'tcp',
+        port     => 9100,
         src_sets => ['PROMETHEUS_CLASS_HOSTS'],
     }
 }

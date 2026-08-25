@@ -183,9 +183,9 @@ class role::cache::haproxy(
     }
 
     firewall::service { "prometheus_${prometheus_port}":
-        proto   => 'tcp',
-        port    => $prometheus_port,
-        src_sets  => ['PROMETHEUS_CLASS_HOSTS'],
-        notrack => true,
+        proto    => 'tcp',
+        port     => $prometheus_port,
+        src_sets => ['PROMETHEUS_CLASS_HOSTS'],
+        notrack  => true,
     }
 }

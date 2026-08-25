@@ -29,14 +29,14 @@ class role::burrow {
 
     # Burrow offers a HTTP REST API
     firewall::service { 'burrow-main':
-        proto  => 'tcp',
-        port   => 8100,
+        proto    => 'tcp',
+        port     => 8100,
         src_sets => ['PROMETHEUS_HOSTS'],
     }
 
     firewall::service { 'burrow-main-exporter':
-        proto  => 'tcp',
-        port   => 9500,
+        proto    => 'tcp',
+        port     => 9500,
         src_sets => ['PROMETHEUS_HOSTS'],
     }
 }

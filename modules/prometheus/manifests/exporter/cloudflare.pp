@@ -17,8 +17,8 @@ class prometheus::exporter::cloudflare {
     }
 
     firewall::service { 'prometheus cloudflare exporter':
-        proto  => 'tcp',
-        port   => 9119,
+        proto    => 'tcp',
+        port     => 9119,
         src_sets => ['PROMETHEUS_HOSTS'],
     }
 }

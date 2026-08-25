@@ -42,10 +42,10 @@ class role::cache::cache (
     }
 
     firewall::service { 'direct varnish access':
-        proto   => 'tcp',
-        port    => 81,
-        src_sets  => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'CACHE_VARNISH_HOSTS'],
-        notrack => true,
+        proto    => 'tcp',
+        port     => 81,
+        src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'CACHE_VARNISH_HOSTS'],
+        notrack  => true,
     }
 
     system::role { 'cache':

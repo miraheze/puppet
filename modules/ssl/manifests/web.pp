@@ -37,9 +37,9 @@ class ssl::web (
     }
 
     firewall::service { 'icinga 5000':
-        ensure => $ensure,
-        proto  => 'tcp',
-        port   => 5000,
+        ensure   => $ensure,
+        proto    => 'tcp',
+        port     => 5000,
         src_sets => ['ICINGA2_HOSTS'],
     }
 

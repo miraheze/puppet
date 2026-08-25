@@ -57,8 +57,8 @@ class prometheus::exporter::elasticsearch {
     }
 
     firewall::service { 'prometheus es_exporter':
-        proto  => 'tcp',
-        port   => 9206,
+        proto    => 'tcp',
+        port     => 9206,
         src_sets => ['PROMETHEUS_HOSTS'],
     }
 }

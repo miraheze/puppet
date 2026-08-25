@@ -404,8 +404,8 @@ class role::prometheus {
 
 
     firewall::service { 'prometheus':
-        proto  => 'tcp',
-        port   => 9090,
+        proto    => 'tcp',
+        port     => 9090,
         src_sets => ['GRAFANA_HOSTS'],
     }
 

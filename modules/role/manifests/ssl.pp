@@ -5,19 +5,19 @@ class role::ssl {
 
     if !defined(Firewall::Service['http']) {
         firewall::service { 'http':
-            proto   => 'tcp',
-            port    => 80,
-            src_sets  => ['VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
-            notrack => true,
+            proto    => 'tcp',
+            port     => 80,
+            src_sets => ['VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
+            notrack  => true,
         }
     }
 
     if !defined(Firewall::Service['https']) {
         firewall::service { 'https':
-            proto   => 'tcp',
-            port    => 443,
-            src_sets  => ['VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
-            notrack => true,
+            proto    => 'tcp',
+            port     => 443,
+            src_sets => ['VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
+            notrack  => true,
         }
     }
 

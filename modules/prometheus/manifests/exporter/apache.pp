@@ -16,8 +16,8 @@ class prometheus::exporter::apache {
     }
 
     firewall::service { 'prometheus apache exporter':
-        proto  => 'tcp',
-        port   => 9117,
+        proto    => 'tcp',
+        port     => 9117,
         src_sets => ['PROMETHEUS_CLASS_HOSTS'],
     }
 }

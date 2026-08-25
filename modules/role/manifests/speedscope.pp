@@ -23,17 +23,17 @@ class role::speedscope (
 
 
   firewall::service { 'http':
-    proto   => 'tcp',
-    port    => 80,
-    src_sets  => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
-    notrack => true,
+    proto    => 'tcp',
+    port     => 80,
+    src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
+    notrack  => true,
   }
 
   firewall::service { 'https':
-    proto   => 'tcp',
-    port    => 443,
-    src_sets  => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
-    notrack => true,
+    proto    => 'tcp',
+    port     => 443,
+    src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
+    notrack  => true,
   }
 
   system::role { 'speedscope':

@@ -29,8 +29,8 @@ class prometheus::exporter::openldap {
     }
 
     firewall::service { 'prometheus openldap_exporter':
-        proto  => 'tcp',
-        port   => 9142,
+        proto    => 'tcp',
+        port     => 9142,
         src_sets => ['PROMETHEUS_HOSTS'],
     }
 }

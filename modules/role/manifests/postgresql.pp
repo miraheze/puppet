@@ -7,10 +7,10 @@ class role::postgresql {
     }
 
     firewall::service { 'postgresql':
-        proto   => 'tcp',
-        port    => 5432,
-        src_sets  => ['PUPPETSERVER_HOSTS'],
-        notrack => true,
+        proto    => 'tcp',
+        port     => 5432,
+        src_sets => ['PUPPETSERVER_HOSTS'],
+        notrack  => true,
     }
 
     system::role { 'postgresql':

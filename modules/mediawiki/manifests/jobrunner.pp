@@ -80,16 +80,16 @@ class mediawiki::jobrunner {
     }
 
     firewall::service { 'jobrunner-9005':
-        proto   => 'tcp',
-        port    => $port,
-        src_sets  => ['CHANGEPROP_HOSTS', 'ICINGA2_HOSTS'],
-        notrack => true,
+        proto    => 'tcp',
+        port     => $port,
+        src_sets => ['CHANGEPROP_HOSTS', 'ICINGA2_HOSTS'],
+        notrack  => true,
     }
     firewall::service { 'jobrunner-9006':
-        proto   => 'tcp',
-        port    => $local_only_port,
-        src_sets  => ['CHANGEPROP_HOSTS', 'ICINGA2_HOSTS'],
-        notrack => true,
+        proto    => 'tcp',
+        port     => $local_only_port,
+        src_sets => ['CHANGEPROP_HOSTS', 'ICINGA2_HOSTS'],
+        notrack  => true,
     }
 
     ['jobrunner.svc.fsslc.wtnet', 'jobrunner-high.svc.fsslc.wtnet', 'videoscaler.svc.fsslc.wtnet'].each |String $domain| {

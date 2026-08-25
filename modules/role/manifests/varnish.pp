@@ -42,7 +42,7 @@ class role::varnish (
             port     => 443,
             srange   => "(${cf_ip})",
             src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'ICINGA2_HOSTS'],
-            notrack => true,
+            notrack  => true,
         }
     } else {
         firewall::service { 'http':
@@ -59,10 +59,10 @@ class role::varnish (
     }
 
     firewall::service { 'direct varnish access':
-        proto   => 'tcp',
-        port    => 81,
-        src_sets  => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS'],
-        notrack => true,
+        proto    => 'tcp',
+        port     => 81,
+        src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS'],
+        notrack  => true,
     }
 
     system::role { 'varnish':

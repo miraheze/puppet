@@ -191,8 +191,8 @@ class role::opensearch (
         ssl::wildcard { 'opensearch wildcard': }
 
         firewall::service { 'opensearch ssl':
-            proto  => 'tcp',
-            port   => 443,
+            proto    => 'tcp',
+            port     => 443,
             src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'ICINGA2_HOSTS', 'GRAYLOG_HOSTS', 'OPENSEARCH_HOSTS'],
         }
     }
@@ -202,14 +202,14 @@ class role::opensearch (
     }
 
     firewall::service { 'opensearch data nodes to manager':
-        proto  => 'tcp',
-        port   => 9200,
+        proto    => 'tcp',
+        port     => 9200,
         src_sets => ['OPENSEARCH_HOSTS'],
     }
 
     firewall::service { 'opensearch manager access data nodes 9300 port':
-        proto  => 'tcp',
-        port   => 9300,
+        proto    => 'tcp',
+        port     => 9300,
         src_sets => ['OPENSEARCH_HOSTS'],
     }
 

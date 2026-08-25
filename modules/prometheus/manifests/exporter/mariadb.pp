@@ -65,8 +65,8 @@ class prometheus::exporter::mariadb {
     }
 
     firewall::service { 'prometheus mysqld_exporter':
-        proto  => 'tcp',
-        port   => 9104,
+        proto    => 'tcp',
+        port     => 9104,
         src_sets => ['PROMETHEUS_CLASS_HOSTS'],
     }
 }

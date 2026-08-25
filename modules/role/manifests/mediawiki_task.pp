@@ -17,17 +17,17 @@ class role::mediawiki_task (
     if $strict_firewall {
 
         firewall::service { 'http':
-            proto   => 'tcp',
-            port    => 80,
-            src_sets  => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'EVENTGATE_HOSTS', 'CHANGEPROP_HOSTS', 'ICINGA2_HOSTS'],
-            notrack => true,
+            proto    => 'tcp',
+            port     => 80,
+            src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'EVENTGATE_HOSTS', 'CHANGEPROP_HOSTS', 'ICINGA2_HOSTS'],
+            notrack  => true,
         }
 
         firewall::service { 'https':
-            proto   => 'tcp',
-            port    => 443,
-            src_sets  => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'EVENTGATE_HOSTS', 'CHANGEPROP_HOSTS', 'ICINGA2_HOSTS'],
-            notrack => true,
+            proto    => 'tcp',
+            port     => 443,
+            src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'EVENTGATE_HOSTS', 'CHANGEPROP_HOSTS', 'ICINGA2_HOSTS'],
+            notrack  => true,
         }
     } else {
         firewall::service { 'http':

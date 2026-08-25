@@ -39,21 +39,21 @@ class role::graylog {
 
     # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access
     firewall::service { 'access graylog 443':
-        proto  => 'tcp',
-        port   => 443,
+        proto    => 'tcp',
+        port     => 443,
         src_sets => ['BASTION_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'ICINGA2_HOSTS', 'PROMETHEUS_HOSTS'],
     }
 
     # syslog-ng > graylog 12210/tcp
     firewall::service { 'graylog 12210':
-        proto  => 'tcp',
-        port   => 12210,
+        proto    => 'tcp',
+        port     => 12210,
         src_sets => ['ALL_HOSTS'],
     }
 
     firewall::service { 'graylog 12201':
-        proto  => 'tcp',
-        port   => 12201,
+        proto    => 'tcp',
+        port     => 12201,
         src_sets => ['ICINGA2_HOSTS'],
     }
 

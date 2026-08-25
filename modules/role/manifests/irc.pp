@@ -42,21 +42,21 @@ class role::irc {
 
 
     firewall::service { 'ircrcbot':
-        proto  => 'udp',
-        port   => 5070,
+        proto    => 'udp',
+        port     => 5070,
         src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS'],
     }
 
     firewall::service { 'ircrcbot2':
-        proto  => 'udp',
-        port   => 5072,
+        proto    => 'udp',
+        port     => 5072,
         src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS'],
     }
 
 
     firewall::service { 'irclogserverbot':
-        proto  => 'udp',
-        port   => 5071,
+        proto    => 'udp',
+        port     => 5071,
         src_sets => ['ALL_HOSTS'],
     }
 

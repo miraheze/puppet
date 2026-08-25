@@ -64,8 +64,8 @@ class prometheus::exporter::redis (
     }
 
     firewall::service { 'prometheus redis_exporter':
-        proto  => 'tcp',
-        port   => 9121,
+        proto    => 'tcp',
+        port     => 9121,
         src_sets => ['PROMETHEUS_HOSTS'],
     }
 }

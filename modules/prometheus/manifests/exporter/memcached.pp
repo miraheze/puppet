@@ -35,8 +35,8 @@ class prometheus::exporter::memcached (
     }
 
     firewall::service { 'prometheus memcached_exporter':
-        proto  => 'tcp',
-        port   => 9150,
+        proto    => 'tcp',
+        port     => 9150,
         src_sets => ['PROMETHEUS_HOSTS'],
     }
 }
