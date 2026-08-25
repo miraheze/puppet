@@ -33,7 +33,8 @@ class speedscope (
     ensure  => present,
     content => epp('speedscope/speedscope.env.epp', {
       'port'      => $port,
-      'log_token' => $log_token
+      'log_token' => $log_token,
+      'http_proxy' => $http_proxy,
     }),
     owner   => 'root',
     group   => 'root',
