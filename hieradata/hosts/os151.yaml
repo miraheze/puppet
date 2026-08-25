@@ -9,6 +9,7 @@ role::opensearch::discovery_host:
 role::opensearch::manager_hosts:
   - os151
 
+base::firewall::provider: 'both'
 base::syslog::rsyslog_udp_localhost: true
 
 nginx::client_max_body_size: "0"
