@@ -11,6 +11,8 @@ services:
     ports:
       - "<%= $bind_host %>:<%= $port %>:3000"
     env_file: .env
+    # Don't run "npx prisma migrate deploy" for now until DNS works correctly in the container
+    command: ["sh", "-c", "node dist/src/server.js"]
     volumes:
       - "./speedscope.db:/data/speedscope.db:rw"
     logging:
