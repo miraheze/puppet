@@ -7,6 +7,7 @@ class base::dns (
     Boolean       $recurse             = true,
     Array[String] $listen_addresses    = ['127.0.0.1', '::1'],
     Array[String] $allow_from          = ['127.0.0.0/8', '10.0.0.0/8', '::1/128'],
+    String        $monitor_address     = '127.0.0.1',
 ) {
     stdlib::ensure_packages('pdns-recursor')
 
@@ -53,7 +54,7 @@ class base::dns (
     }
 
     monitoring::nrpe { 'PowerDNS Recursor':
-        command  => "/usr/lib/nagios/plugins/check_dns -s 127.0.0.1 -H ${facts['networking']['fqdn']}",
+        command  => "/usr/lib/nagios/plugins/check_dns -s ${monitor_address} -H ${facts['networking']['fqdn']}",
         docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#PowerDNS_Recursor',
         critical => true
     }
