@@ -1,1 +1,2 @@
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
+base::firewall::provider: 'both'
