@@ -2,12 +2,13 @@ dnssec:
   validation: off
 incoming:
   allow_from:
-  - 127.0.0.0/8
-  - 10.0.0.0/8
-  - ::1/128
+<% @allow_from.each do |cidr| -%>
+  - <%= cidr %>
+<% end -%>
   listen:
-  - 127.0.0.1
-  - "::1"
+<% @listen_addresses.each do |addr| -%>
+  - "<%= addr %>"
+<% end -%>
   pdns_distributes_queries: false
   reuseport: true
   max_tcp_clients: 128
