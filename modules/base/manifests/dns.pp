@@ -8,6 +8,7 @@ class base::dns (
     Array[String] $recursor_addresses  = [],
     Array[String] $listen_addresses    = ['127.0.0.1', '::1'],
     Array[String] $allow_from          = ['127.0.0.0/8', '10.0.0.0/8', '::1/128'],
+    Integer       $listen_port         = 53,
     String        $monitor_address     = '127.0.0.1',
 ) {
     stdlib::ensure_packages('pdns-recursor')
@@ -59,10 +60,33 @@ class base::dns (
         ],
     }
 
+    $recursor_check = $listen_port ? {
+        53      => "/usr/lib/nagios/plugins/check_dns -s ${monitor_address} -H ${facts['networking']['fqdn']}",
+        default => "/usr/bin/dig +time=2 +tries=1 @${monitor_address} -p ${listen_port} ${facts['networking']['fqdn']} A",
+    }
+
     monitoring::nrpe { 'PowerDNS Recursor':
-        command  => "/usr/lib/nagios/plugins/check_dns -s ${monitor_address} -H ${facts['networking']['fqdn']}",
+        command  => $recursor_check,
         docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#PowerDNS_Recursor',
         critical => true
+    }
+
+    if $listen_port != 53 {
+        firewall::service { 'pdns-recursor-alt-port-udp':
+            proto   => 'udp',
+            notrack => true,
+            prio    => 5,
+            port    => $listen_port,
+            srange  => $allow_from,
+        }
+
+        firewall::service { 'pdns-recursor-alt-port-tcp':
+            proto   => 'tcp',
+            notrack => true,
+            prio    => 5,
+            port    => $listen_port,
+            srange  => $allow_from,
+        }
     }
 
     file { '/etc/resolv.conf':
