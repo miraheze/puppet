@@ -5,6 +5,7 @@ class base::dns (
     Boolean       $do_ipv6             = false,
     Boolean       $forward_use_internal,
     Boolean       $recurse             = true,
+    Array[String] $recursor_addresses  = [],
     Array[String] $listen_addresses    = ['127.0.0.1', '::1'],
     Array[String] $allow_from          = ['127.0.0.0/8', '10.0.0.0/8', '::1/128'],
     String        $monitor_address     = '127.0.0.1',
@@ -29,9 +30,14 @@ class base::dns (
         'wikitide.net'    => $forward_addresses,
     }
 
+    $root_forward_addresses = $recursor_addresses.empty ? {
+        true    => $forward_addresses,
+        default => $recursor_addresses,
+    }
+
     $forward_zones = $recurse ? {
         true    => $zone_forwards,
-        default => $zone_forwards + { '.' => $forward_addresses },
+        default => $zone_forwards + { '.' => $root_forward_addresses },
     }
 
     file { '/etc/powerdns/recursor.yml':
