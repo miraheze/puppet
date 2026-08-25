@@ -17,13 +17,9 @@ class prometheus::exporter::nginx {
         subscribe => File['/etc/default/prometheus-nginx-exporter'],
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Prometheus' }
-    | PQL
-    $firewall_rules = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus nginx':
         proto  => 'tcp',
         port   => 9113,
-        srange => "(${firewall_rules})",
+        src_sets => ['PROMETHEUS_CLASS_HOSTS'],
     }
 }

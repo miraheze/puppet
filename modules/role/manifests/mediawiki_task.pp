@@ -15,30 +15,18 @@ class role::mediawiki_task (
     include role::mediawiki::php::restarts
 
     if $strict_firewall {
-        $subquery = @("PQL")
-        (resources { type = 'Class' and title = 'Role::Mediawiki' } or
-        resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
-        resources { type = 'Class' and title = 'Role::Varnish' } or
-        resources { type = 'Class' and title = 'Role::Cache::Cache' } or
-        resources { type = 'Class' and title = 'Role::Prometheus' } or
-        resources { type = 'Class' and title = 'Role::Bastion' } or
-        resources { type = 'Class' and title = 'Role::Eventgate' } or
-        resources { type = 'Class' and title = 'Role::Changeprop' } or
-        resources { type = 'Class' and title = 'Role::Icinga2' })
-        | PQL
-        $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
         firewall::service { 'http':
             proto   => 'tcp',
             port    => 80,
-            srange  => "(${firewall_rules_str})",
+            src_sets  => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'EVENTGATE_HOSTS', 'CHANGEPROP_HOSTS', 'ICINGA2_HOSTS'],
             notrack => true,
         }
 
         firewall::service { 'https':
             proto   => 'tcp',
             port    => 443,
-            srange  => "(${firewall_rules_str})",
+            src_sets  => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'EVENTGATE_HOSTS', 'CHANGEPROP_HOSTS', 'ICINGA2_HOSTS'],
             notrack => true,
         }
     } else {

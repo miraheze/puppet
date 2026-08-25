@@ -40,34 +40,24 @@ class role::irc {
         udp_port     => '5072',
     }
 
-    $subquery = @("PQL")
-    (resources { type = 'Class' and title = 'Role::Mediawiki' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_beta' })
-    | PQL
-    $firewall_irc_rules_str = vmlib::generate_firewall_ip($subquery)
 
     firewall::service { 'ircrcbot':
         proto  => 'udp',
         port   => 5070,
-        srange => "(${firewall_irc_rules_str})",
+        src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS'],
     }
 
     firewall::service { 'ircrcbot2':
         proto  => 'udp',
         port   => 5072,
-        srange => "(${firewall_irc_rules_str})",
+        src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS'],
     }
 
-    $subquery_2 = @("PQL")
-    resources { type = 'Class' and title = 'Base' }
-    | PQL
-    $firewall_all_rules_str = vmlib::generate_firewall_ip($subquery_2)
 
     firewall::service { 'irclogserverbot':
         proto  => 'udp',
         port   => 5071,
-        srange => "(${firewall_all_rules_str})",
+        src_sets => ['ALL_HOSTS'],
     }
 
     system::role { 'irc':

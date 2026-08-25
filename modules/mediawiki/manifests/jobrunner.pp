@@ -79,21 +79,16 @@ class mediawiki::jobrunner {
         content  => template('mediawiki/jobrunner.conf.erb'),
     }
 
-    $subquery = @("PQL")
-    (resources { type = 'Class' and title = 'Role::Changeprop' } or
-    resources { type = 'Class' and title = 'Role::Icinga2' })
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'jobrunner-9005':
         proto   => 'tcp',
         port    => $port,
-        srange  => "(${firewall_rules_str})",
+        src_sets  => ['CHANGEPROP_HOSTS', 'ICINGA2_HOSTS'],
         notrack => true,
     }
     firewall::service { 'jobrunner-9006':
         proto   => 'tcp',
         port    => $local_only_port,
-        srange  => "(${firewall_rules_str})",
+        src_sets  => ['CHANGEPROP_HOSTS', 'ICINGA2_HOSTS'],
         notrack => true,
     }
 

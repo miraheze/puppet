@@ -91,15 +91,10 @@ class role::kafka (
         require => Class['kafka::broker'],
     }
 
-    $subquery = @("PQL")
-    (resources { type = 'Class' and title = 'Role::Changeprop' } or
-    resources { type = 'Class' and title = 'Role::Eventgate' })
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'kafka':
         proto   => 'tcp',
         port    => 9092,
-        srange  => "(${firewall_rules_str})",
+        src_sets  => ['CHANGEPROP_HOSTS', 'EVENTGATE_HOSTS'],
         notrack => true,
     }
 

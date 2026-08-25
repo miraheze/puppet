@@ -6,6 +6,8 @@ class base::firewall (
         provider => $provider,
     }
 
+    include base::firewall::sets
+
     $ferm_active     = $provider in ['ferm', 'both']
     $nftables_active = $provider in ['nftables', 'both']
 
@@ -80,24 +82,16 @@ class base::firewall (
         content => file('base/firewall/nftables-base.nft'),
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Role::Icinga2' }
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'nrpe':
-        proto  => 'tcp',
-        port   => 5666,
-        srange => "(${firewall_rules_str})",
+        proto    => 'tcp',
+        port     => 5666,
+        src_sets => ['ICINGA2_HOSTS'],
     }
 
-    $subquery_2 = @("PQL")
-    resources { type = 'Class' and title = 'Base' }
-    | PQL
-    $firewall_bastion_hosts = vmlib::generate_firewall_ip($subquery_2)
     firewall::service { 'ssh':
-        proto  => 'tcp',
-        port   => 22,
-        srange => "(${firewall_bastion_hosts})",
+        proto    => 'tcp',
+        port     => 22,
+        src_sets => ['ALL_HOSTS'],
     }
 
     class { '::ulogd': }

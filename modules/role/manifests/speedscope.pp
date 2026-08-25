@@ -21,27 +21,18 @@ class role::speedscope (
     version   => $version,
   }
 
-  $subquery = @("PQL")
-    (resources { type = 'Class' and title = 'Role::MediaWiki' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
-    resources { type = 'Class' and title = 'Role::Varnish' } or
-    resources { type = 'Class' and title = 'Role::Cache::Cache' } or
-    resources { type = 'Class' and title = 'Role::Icinga2' })
-    | PQL
-  $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
   firewall::service { 'http':
     proto   => 'tcp',
     port    => 80,
-    srange  => "(${firewall_rules_str})",
+    src_sets  => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
     notrack => true,
   }
 
   firewall::service { 'https':
     proto   => 'tcp',
     port    => 443,
-    srange  => "(${firewall_rules_str})",
+    src_sets  => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
     notrack => true,
   }
 

@@ -196,16 +196,10 @@ class varnish (
         }
     }
 
-    $subquery = @("PQL")
-    (resources { type = 'Class' and title = 'Role::Icinga2' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_task' })
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { "${facts['networking']['fqdn']} varnish depool service port 5001":
         proto  => 'tcp',
         port   => 5001,
-        srange => "(${firewall_rules_str})",
+        src_sets => ['ICINGA2_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS'],
     }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {

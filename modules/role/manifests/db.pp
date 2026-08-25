@@ -75,34 +75,16 @@ class role::db (
         content => template('mariadb/grants/reports-grants.sql.erb'),
     }
 
-    if ($is_beta_db) {
-        $subquery = @("PQL")
-        (resources { type = 'Class' and title = 'Role::Db' } or
-        resources { type = 'Class' and title = 'Role::Mediawiki' } or
-        resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
-        resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
-        resources { type = 'Class' and title = 'Role::Icinga2' } or
-        resources { type = 'Class' and title = 'Role::Phorge' } or
-        resources { type = 'Class' and title = 'Role::Matomo' } or
-        resources { type = 'Class' and title = 'Role::Reports' })
-        | PQL
-    } else {
-        $subquery = @("PQL")
-        (resources { type = 'Class' and title = 'Role::Db' } or
-        resources { type = 'Class' and title = 'Role::Mediawiki' } or
-        resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
-        resources { type = 'Class' and title = 'Role::Icinga2' } or
-        resources { type = 'Class' and title = 'Role::Phorge' } or
-        resources { type = 'Class' and title = 'Role::Matomo' } or
-        resources { type = 'Class' and title = 'Role::Reports' })
-        | PQL
+    $db_src_sets = $is_beta_db ? {
+        true    => ['DB_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'ICINGA2_HOSTS', 'PHORGE_HOSTS', 'MATOMO_HOSTS', 'REPORTS_HOSTS'],
+        default => ['DB_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'ICINGA2_HOSTS', 'PHORGE_HOSTS', 'MATOMO_HOSTS', 'REPORTS_HOSTS'],
     }
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
+
     firewall::service { 'mariadb':
-        proto   => 'tcp',
-        port    => 3306,
-        srange  => "(${firewall_rules_str})",
-        notrack => true,
+        proto    => 'tcp',
+        port     => 3306,
+        src_sets => $db_src_sets,
+        notrack  => true,
     }
 
     # Create a user to allow db transfers between servers

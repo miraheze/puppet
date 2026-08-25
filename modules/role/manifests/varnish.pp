@@ -27,27 +27,21 @@ class role::varnish (
     if $restrict_firewall {
         $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
         $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
-        $subquery = @("PQL")
-        (resources { type = 'Class' and title = 'Role::Mediawiki' } or
-        resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
-        resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
-        resources { type = 'Class' and title = 'Role::Icinga2' })
-        | PQL
         $cf_ip = join($cloudflare_ipv4 + $cloudflare_ipv6, ' ')
-        $ip = vmlib::generate_firewall_ip($subquery)
-        $cloudflare_firewall_rule = "${cf_ip} ${ip}"
 
         firewall::service { 'http':
-            proto   => 'tcp',
-            port    => 80,
-            srange  => "(${cloudflare_firewall_rule})",
-            notrack => true,
+            proto    => 'tcp',
+            port     => 80,
+            srange   => "(${cf_ip})",
+            src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'ICINGA2_HOSTS'],
+            notrack  => true,
         }
 
         firewall::service { 'https':
-            proto   => 'tcp',
-            port    => 443,
-            srange  => "(${cloudflare_firewall_rule})",
+            proto    => 'tcp',
+            port     => 443,
+            srange   => "(${cf_ip})",
+            src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'ICINGA2_HOSTS'],
             notrack => true,
         }
     } else {
@@ -64,16 +58,10 @@ class role::varnish (
         }
     }
 
-    $subquery = @("PQL")
-    (resources { type = 'Class' and title = 'Role::Mediawiki' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_beta' })
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'direct varnish access':
         proto   => 'tcp',
         port    => 81,
-        srange  => "(${firewall_rules_str})",
+        src_sets  => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS'],
         notrack => true,
     }
 

@@ -78,13 +78,9 @@ class prometheus::exporter::statsd_exporter (
         ensure => running,
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Role::Prometheus' }
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus statsd-exporter':
         proto  => 'tcp',
         port   => 9112,
-        srange => "(${firewall_rules_str})",
+        src_sets => ['PROMETHEUS_HOSTS'],
     }
 }

@@ -38,40 +38,23 @@ class role::graylog {
     }
 
     # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access
-    $subquery = @("PQL")
-    (resources { type = 'Class' and title = 'Role::Bastion' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
-    resources { type = 'Class' and title = 'Role::Icinga2' } or
-    resources { type = 'Class' and title = 'Role::Prometheus' })
-    | PQL
-    $firewall_http_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'access graylog 443':
         proto  => 'tcp',
         port   => 443,
-        srange => "(${firewall_http_rules_str})",
+        src_sets => ['BASTION_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'ICINGA2_HOSTS', 'PROMETHEUS_HOSTS'],
     }
 
     # syslog-ng > graylog 12210/tcp
-    $subquery_2 = @("PQL")
-    resources { type = 'Class' and title = 'Base' }
-    | PQL
-    $firewall_syslog_rules_str = vmlib::generate_firewall_ip($subquery_2)
     firewall::service { 'graylog 12210':
         proto  => 'tcp',
         port   => 12210,
-        srange => "(${firewall_syslog_rules_str})",
+        src_sets => ['ALL_HOSTS'],
     }
 
-    $subquery_3 = @("PQL")
-    resources { type = 'Class' and title = 'Role::Icinga2' }
-    | PQL
-    $firewall_icinga_rules_str = vmlib::generate_firewall_ip($subquery_3)
     firewall::service { 'graylog 12201':
         proto  => 'tcp',
         port   => 12201,
-        srange => "(${firewall_icinga_rules_str})",
+        src_sets => ['ICINGA2_HOSTS'],
     }
 
     rsyslog::input::file { 'graylog':

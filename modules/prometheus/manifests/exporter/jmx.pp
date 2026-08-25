@@ -83,13 +83,9 @@ define prometheus::exporter::jmx (
         links   => 'follow',
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Role::Prometheus' }
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { "prometheus ${port} jmx_exporter":
         proto  => 'tcp',
         port   => $port,
-        srange => "(${firewall_rules_str})",
+        src_sets => ['PROMETHEUS_HOSTS'],
     }
 }

@@ -36,15 +36,11 @@ class ssl::web (
         restart => true,
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Role::Icinga2' }
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'icinga 5000':
         ensure => $ensure,
         proto  => 'tcp',
         port   => 5000,
-        srange => "(${firewall_rules_str})",
+        src_sets => ['ICINGA2_HOSTS'],
     }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {

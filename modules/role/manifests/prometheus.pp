@@ -402,15 +402,11 @@ class role::prometheus {
         ].flatten,
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Role::Grafana' }
-    | PQL
-    $firewall_grafana = vmlib::generate_firewall_ip($subquery)
 
     firewall::service { 'prometheus':
         proto  => 'tcp',
         port   => 9090,
-        srange => "(${firewall_grafana})",
+        src_sets => ['GRAFANA_HOSTS'],
     }
 
     system::role { 'prometheus':
