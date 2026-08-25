@@ -33,7 +33,7 @@ $wgCreateWikiOpenAIConfig = [
 	'dryrun' => true,
 	'apikey' => '<%= @openai_apikey %>',
 	'model' => 'gpt-5.6-luna',
-	'instructions' => '<%= @openai_instructions %>',
+	'instructions' => '<%= @openai_instructions.gsub('\\', '\\\\\\\\').gsub("'", "\\\\'") %>',
 ];
 
 // RequestCustomDomain settings
