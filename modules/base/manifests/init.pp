@@ -18,10 +18,14 @@ class base (
     include users
 
     if lookup('dns') {
-        stdlib::ensure_packages(
-            'pdns-recursor',
-            { ensure => absent }
-        )
+        if lookup('base::dns::enable_on_authoritative', { 'default_value' => false }) {
+            include base::dns
+        } else {
+            stdlib::ensure_packages(
+                'pdns-recursor',
+                { ensure => absent }
+            )
+        }
     } else {
         include base::dns
     }
