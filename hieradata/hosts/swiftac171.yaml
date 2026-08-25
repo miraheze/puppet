@@ -1,3 +1,4 @@
+base::firewall::provider: 'both'
 # Swift config
 
 swift_ac_enable: true
