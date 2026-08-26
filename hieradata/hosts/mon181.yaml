@@ -165,4 +165,5 @@ icingadb::redis::globals::log_dir: /var/log/icingadb-redis
 # Rest
 
 nginx::use_graylog: true
+base::firewall::provider: 'both'
 base::syslog::rsyslog_udp_localhost: true
