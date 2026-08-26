@@ -64,6 +64,11 @@ class speedscope (
     ],
   }
 
+  # Not required for the service, but can be useful for maintenance purposes.
+  package { 'sqlite3':
+    ensure => present,
+  }
+
   systemd::timer::job { 'speedscope_hourly_aggregation':
     ensure            => present,
     description       => 'Generates the hourly speedscope aggregation',

@@ -31,8 +31,11 @@ proxy_scheme_headers[] = "HTTP_X_URL_SCHEME"
 defaultHostnameIfEmpty = "wikitide.org"
 transport = "smtp"
 port = 465
-host = "ssl://smtp-relay.gmail.com"
+host = "ssl://bastion.fsslc.wtnet"
 encryption = "tls"
+ssl_disallow_self_signed = 0
+ssl_verify_peer = 0
+ssl_verify_peer_name = 0
 
 [Plugins]
 Plugins[] = "CoreVue"
