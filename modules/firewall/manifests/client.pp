@@ -37,6 +37,16 @@ define firewall::client (
 
     $ferm_drange = firewall::ferm_range($drange, $dst_sets)
 
+    if $dst_sets != undef {
+        $dst_sets.each |$set_name| {
+            unless defined(Firewall::Set[$set_name]) {
+                firewall::set { $set_name:
+                    ips => network::host_group($set_name),
+                }
+            }
+        }
+    }
+
     ferm::client { $title:
         ensure  => $ensure,
         port    => $ferm_port,

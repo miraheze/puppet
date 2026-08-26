@@ -49,6 +49,26 @@ define firewall::service (
     $ferm_srange = firewall::ferm_range($srange, $src_sets)
     $ferm_drange = firewall::ferm_range($drange, $dst_sets)
 
+    if $src_sets != undef {
+        $src_sets.each |$set_name| {
+            unless defined(Firewall::Set[$set_name]) {
+                firewall::set { $set_name:
+                    ips => network::host_group($set_name),
+                }
+            }
+        }
+    }
+
+    if $dst_sets != undef {
+        $dst_sets.each |$set_name| {
+            unless defined(Firewall::Set[$set_name]) {
+                firewall::set { $set_name:
+                    ips => network::host_group($set_name),
+                }
+            }
+        }
+    }
+
     ferm::service { $title:
         ensure  => $ensure,
         port    => $ferm_port,

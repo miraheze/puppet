@@ -6,8 +6,6 @@ class base::firewall (
         provider => $provider,
     }
 
-    include base::firewall::sets
-
     $ferm_active     = $provider in ['ferm', 'both']
     $nftables_active = $provider in ['nftables', 'both']
 
