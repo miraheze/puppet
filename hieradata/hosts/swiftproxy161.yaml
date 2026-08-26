@@ -1,3 +1,4 @@
+base::firewall::provider: 'both'
 nginx::client_max_body_size: "0"
 nginx::logrotate_number: 2
 
