@@ -18,3 +18,4 @@ http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
 # No longer used
 ssl::web::ensure: 'absent'
+base::firewall::provider: 'both'
