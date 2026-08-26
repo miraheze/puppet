@@ -19,3 +19,4 @@ base::dns::resolvers:
   - '2606:4700:4700::1001'
   - '1.1.1.1'
   - '1.0.0.1'
+base::firewall::provider: 'both'
