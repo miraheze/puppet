@@ -1,4 +1,4 @@
-function functionn::host_group(String[1] $set_name) >> Array[String[1]] {
+function network::host_group(String[1] $set_name) >> Array[String[1]] {
     $classes_by_set = {
         'ICINGA2_HOSTS'          => 'Role::Icinga2',
         'ALL_HOSTS'              => 'Base',
