@@ -1,3 +1,4 @@
+base::firewall::provider: 'both'
 role::memcached::threads: 8
 role::memcached::version: 'present'
 role::memcached::growth_factor: 1.15
