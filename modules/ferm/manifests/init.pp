@@ -46,16 +46,14 @@ class ferm (
         content => file('ferm/ferm_status.py')
     }
 
-    if $ensure == 'present' {
-        service { 'ferm':
-            ensure  => 'running',
-            status  => '/usr/local/sbin/ferm-status',
-            start   => '/bin/systemctl reload-or-restart ferm',
-            require => [
-                Package['ferm'],
-                File['/usr/local/sbin/ferm-status'],
-            ]
-        }
+    service { 'ferm':
+        ensure  => $ensure ? { 'present' => 'running', default => 'stopped' },
+        status  => '/usr/local/sbin/ferm-status',
+        start   => '/bin/systemctl reload-or-restart ferm',
+        require => [
+            Package['ferm'],
+            File['/usr/local/sbin/ferm-status'],
+        ]
     }
 
     file { '/etc/ferm/ferm.conf':
