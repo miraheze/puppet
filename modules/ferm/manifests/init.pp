@@ -47,7 +47,7 @@ class ferm (
     }
 
     service { 'ferm':
-        ensure  => $ensure ? { 'present' => 'running', default => 'stopped' },
+        ensure  => stdlib::ensure($ensure, 'service'),
         status  => '/usr/local/sbin/ferm-status',
         start   => '/bin/systemctl reload-or-restart ferm',
         require => [
