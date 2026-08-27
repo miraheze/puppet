@@ -58,6 +58,7 @@ class ferm (
 
     file { '/etc/ferm':
         ensure  => stdlib::ensure($ensure, 'directory'),
+        force   => true,
         purge   => true,
         recurse => true,
         require => Package['ferm'],
