@@ -26,6 +26,32 @@ class base::firewall (
         },
     }
 
+    stdlib::ensure_packages('conntrack')
+
+    file { '/etc/modprobe.d/nf_conntrack.conf':
+        ensure => present,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0444',
+        source => 'puppet:///modules/base/firewall/nf_conntrack.conf',
+    }
+
+    # The nf_conntrack kernel module is usually auto-loaded during firewall startup.
+    # But some additional configuration options for timewait handling are configured
+    #   via sysctl settings and if the firewall autoloads the kernel module after
+    #   systemd-sysctl.service has run, the sysctl settings are not applied.
+    # Add the nf_conntrack module via /etc/modules-load.d/ which loads
+    #   them before systemd-sysctl.service is executed.
+    file { '/etc/modules-load.d/conntrack.conf':
+        ensure  => present,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
+        content => "nf_conntrack\n",
+        require => File['/etc/modprobe.d/nf_conntrack.conf'],
+        before  => Package['conntrack'],
+    }
+
     # The sysctl value net.netfilter.nf_conntrack_buckets is read-only. It is configured
     # via a modprobe parameter, bump it manually for running systems
     exec { 'bump nf_conntrack hash table size':
