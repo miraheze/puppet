@@ -1,22 +1,24 @@
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
-role::opensearch::roles: ['cluster_manager', 'data', 'ingest']
+base::firewall::provider: 'both'
+base::syslog::rsyslog_udp_localhost: true
+
 role::opensearch::enable_exporter: false
+role::opensearch::roles: ['cluster_manager', 'data', 'ingest']
 role::opensearch::discovery_host:
   - os162.fsslc.wtnet
   - os202.fsslc.wtnet
 role::opensearch::manager_hosts:
   - os162
+role::opensearch::sudachi_dictionary: true
+
 opensearch::api_host: os162.fsslc.wtnet
-
-base::firewall::provider: 'both'
-base::syslog::rsyslog_udp_localhost: true
-
+opensearch::proxy_url: 'http://bastion.fsslc.wtnet:8080'
 opensearch::plugins:
   analysis-icu: {}
   analysis-nori: {}
   analysis-smartcn: {}
   analysis-stempel: {}
-  analysis-ukrainian: {}
   analysis-sudachi:
     url: 'https://github.com/WorksApplications/elasticsearch-sudachi/releases/download/v3.6.0/opensearch-2.19.4-analysis-sudachi-3.6.0.zip'
+  analysis-ukrainian: {}
