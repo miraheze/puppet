@@ -25,6 +25,23 @@ class base::firewall (
             'net.netfilter.nf_conntrack_tcp_timeout_time_wait' => 65,
         },
     }
+    
+    file { '/etc/modprobe.d/nf_conntrack.conf':
+        ensure => present,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0444',
+        source => 'puppet:///modules/base/firewall/nf_conntrack.conf',
+    }
+
+    file { '/etc/modules-load.d/conntrack.conf':
+        ensure  => present,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
+        content => "nf_conntrack\n",
+        require => File['/etc/modprobe.d/nf_conntrack.conf'],
+    }
 
     # The sysctl value net.netfilter.nf_conntrack_buckets is read-only. It is configured
     # via a modprobe parameter, bump it manually for running systems
