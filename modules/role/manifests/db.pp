@@ -12,6 +12,7 @@ class role::db (
     Integer $wait_timeout = lookup('role::db::wait_timeout', {'default_value' => 3600}),
 ) {
     include mariadb::packages
+    include mariadb::monitor_memory
     include prometheus::exporter::mariadb
 
     if ( $is_beta_db ) {
