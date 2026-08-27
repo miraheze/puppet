@@ -41,6 +41,13 @@ define firewall::service (
         $ferm_port = $port
     }
 
+    $provider        = lookup('base::firewall::provider', { 'default_value' => 'ferm' })
+    $ferm_active     = $provider in ['ferm', 'both']
+    $nftables_active = $provider in ['nftables', 'both']
+
+    $ferm_ensure     = $ferm_active ? { true => $ensure, default => 'absent' }
+    $nftables_ensure = $nftables_active ? { true => $ensure, default => 'absent' }
+
     # ferm::service never needs to know sets exist: its saddr/daddr
     # directive already accepts a literal address and a $SETNAME reference
     # mixed in the same parenthesised list, so this just flattens whatever
@@ -50,7 +57,7 @@ define firewall::service (
     $ferm_drange = firewall::ferm_range($drange, $dst_sets)
 
     ferm::service { $title:
-        ensure  => $ensure,
+        ensure  => $ferm_ensure,
         port    => $ferm_port,
         proto   => $proto,
         desc    => $desc,
@@ -61,7 +68,7 @@ define firewall::service (
     }
 
     nftables::service { $title:
-        ensure     => $ensure,
+        ensure     => $nftables_ensure,
         port       => $port,
         port_range => $port_range,
         proto      => $proto,
