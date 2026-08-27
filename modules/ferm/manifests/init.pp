@@ -56,6 +56,13 @@ class ferm (
         ]
     }
 
+    file { '/etc/ferm':
+        ensure  => stdlib::ensure($ensure, 'directory'),
+        purge   => true,
+        recurse => true,
+        require => Package['ferm'],
+    }
+
     file { '/etc/ferm/ferm.conf':
         ensure  => stdlib::ensure($ensure, 'file'),
         owner   => 'root',
