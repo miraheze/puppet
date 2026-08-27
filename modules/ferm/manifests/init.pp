@@ -6,11 +6,14 @@ class ferm (
     VMlib::Ensure $ensure = 'present',
 ) {
     # @resolve requires libnet-dns-perl
-
     if $ensure == 'present' {
         stdlib::ensure_packages(['ferm', 'libnet-dns-perl'])
     } else {
-        stdlib::ensure_packages('ferm', { 'ensure' => 'purged' })
+        stdlib::ensure_packages(['ferm', 'libnet-dns-perl'], { 'ensure' => 'purged' })
+    }
+
+    package { 'iptables':
+        ensure => stdlib::ensure($ensure, 'package'),
     }
 
     file {'/usr/local/sbin/ferm-status':
@@ -45,7 +48,7 @@ class ferm (
         group   => 'root',
         mode    => '0400',
         source  => 'puppet:///modules/ferm/ferm.conf',
-        require => Package['ferm'],
+        require => File['/etc/ferm'],
     }
 
     file { '/etc/ferm/functions.conf' :
@@ -54,7 +57,7 @@ class ferm (
         group   => 'root',
         mode    => '0400',
         source  => 'puppet:///modules/ferm/functions.conf',
-        require => Package['ferm'],
+        require => File['/etc/ferm'],
     }
 
     file { '/etc/ferm/conf.d' :
@@ -64,7 +67,7 @@ class ferm (
         mode    => '0500',
         recurse => true,
         purge   => true,
-        require => Package['ferm'],
+        require => File['/etc/ferm'],
     }
 
     file { '/etc/default/ferm' :
@@ -82,25 +85,17 @@ class ferm (
         # Starting with Bullseye iptables default to the nft backend, but for ferm
         # we need the legacy backend
         alternatives::select { 'iptables':
-            path => '/usr/sbin/iptables-legacy',
+            path    => '/usr/sbin/iptables-legacy',
+            require => Package['iptables'],
         }
 
         alternatives::select { 'ip6tables':
-            path => '/usr/sbin/ip6tables-legacy',
+            path    => '/usr/sbin/ip6tables-legacy',
+            require => Package['iptables'],
         }
 
         # the rules are virtual resources for cases where they are defined in a
         # class but the host doesn't have ferm enabled
         File <| tag == 'ferm' |>
-    } else {
-        exec { 'revert iptables alternative to auto':
-            command => '/usr/bin/update-alternatives --auto iptables',
-            unless  => "/usr/bin/update-alternatives --query iptables | /bin/grep -q 'Status: auto'",
-        }
-
-        exec { 'revert ip6tables alternative to auto':
-            command => '/usr/bin/update-alternatives --auto ip6tables',
-            unless  => "/usr/bin/update-alternatives --query ip6tables | /bin/grep -q 'Status: auto'",
-        }
     }
 }
