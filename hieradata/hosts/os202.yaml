@@ -13,6 +13,8 @@ base::syslog::rsyslog_udp_localhost: true
 base::dns::do_ipv4: true
 base::dns::forward_use_internal: true
 
+opensearch::proxy_url: 'http://bastion.fsslc.wtnet:8080'
+
 opensearch::plugins:
   analysis-icu: {}
   analysis-nori: {}
