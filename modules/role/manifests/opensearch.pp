@@ -5,6 +5,7 @@ class role::opensearch (
     $os_manager_hosts = lookup('role::opensearch::manager_hosts', {'default_value' => undef}),
     $use_tls = lookup('role::opensearch::use_tls', {'default_value' => false}),
     $enable_exporter = lookup('role::opensearch::enable_exporter', {'default_value' => true}),
+    Boolean $sudachi_dictionary = lookup('role::opensearch::sudachi_dictionary', {'default_value' => false}),
 ) {
     include java
 
@@ -50,6 +51,40 @@ class role::opensearch (
             'graylog-internal' => {
                 'source' => 'puppet:///modules/role/opensearch/index_template.json'
             }
+        }
+    }
+
+    if $sudachi_dictionary {
+        $http_proxy = lookup('http_proxy', {'default_value' => undef})
+        $sudachi_dict_env = $http_proxy ? {
+            undef   => [],
+            default => ["http_proxy=${http_proxy}", "https_proxy=${http_proxy}"],
+        }
+
+        stdlib::ensure_packages('unzip')
+
+        file { '/etc/opensearch/sudachi':
+            ensure  => directory,
+            owner   => 'opensearch',
+            group   => 'opensearch',
+            mode    => '0755',
+            require => File['/etc/opensearch'],
+        }
+
+        exec { 'download sudachi dictionary':
+            command     => '/bin/bash -c \'set -euo pipefail; /usr/bin/curl -sSL -o /tmp/sudachi-dict.zip "https://d2ej7fkh96fzlu.cloudfront.net/sudachidict/sudachi-dictionary-latest-core.zip"; /usr/bin/unzip -p /tmp/sudachi-dict.zip "*/system_core.dic" > /tmp/system_core.dic.tmp; /bin/mv /tmp/system_core.dic.tmp /etc/opensearch/sudachi/system_core.dic; /bin/rm -f /tmp/sudachi-dict.zip\'',
+            creates     => '/etc/opensearch/sudachi/system_core.dic',
+            environment => $sudachi_dict_env,
+            timeout     => 900,
+            require     => [Package['unzip'], File['/etc/opensearch/sudachi']],
+        }
+
+        file { '/etc/opensearch/sudachi/system_core.dic':
+            ensure  => file,
+            owner   => 'opensearch',
+            group   => 'opensearch',
+            mode    => '0644',
+            require => Exec['download sudachi dictionary'],
         }
     }
 

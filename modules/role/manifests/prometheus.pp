@@ -384,7 +384,7 @@ class role::prometheus {
 
     prometheus::class{ 'php_mediawiki':
         dest   => '/etc/prometheus/targets/php_mediawiki.yaml',
-        module => 'MediaWiki::Monitoring',
+        module => 'Mediawiki::Monitoring',
         port   => 9181,
     }
 
