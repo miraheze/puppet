@@ -11,7 +11,7 @@ base::dns::forward_use_internal: true
 base::dns::recurse: false
 base::dns::recursor_addresses:
   - '10.0.17.171:5300'
-base::firewall::provider: 'both'
+base::firewall::provider: 'nftables'
 
 jobrunner: true
 jobrunner::intensive: true
