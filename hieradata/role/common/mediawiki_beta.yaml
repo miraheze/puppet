@@ -8,9 +8,6 @@ contactgroups: ['infra', 'mediawiki']
 base::dns::do_ipv4: true
 base::dns::do_ipv6: false
 base::dns::forward_use_internal: true
-base::dns::recurse: false
-base::dns::recursor_addresses:
-  - '10.0.17.171:5300'
 base::firewall::provider: 'both'
 
 jobrunner: true
