@@ -12,8 +12,10 @@ class ferm (
         stdlib::ensure_packages(['ferm', 'libnet-dns-perl'], { 'ensure' => 'purged' })
     }
 
-    package { 'iptables':
-        ensure => stdlib::ensure($ensure, 'package'),
+    if lookup('ferm::manage_iptables', {'default_value' => true}) {
+        package { 'iptables':
+            ensure => stdlib::ensure($ensure, 'package'),
+        }
     }
 
     file {'/usr/local/sbin/ferm-status':
