@@ -29,6 +29,7 @@ class nftables (
 
     file { '/etc/nftables':
         ensure  => directory,
+        purge   => $ensure == 'present',
         recurse => true,
     }
 
@@ -45,6 +46,7 @@ class nftables (
     ['input', 'output', 'prerouting', 'sets'].each |$dir| {
         file { "/etc/nftables/${dir}":
             ensure  => directory,
+            purge   => $ensure == 'present',
             recurse => true,
             require => File['/etc/nftables'],
         }
