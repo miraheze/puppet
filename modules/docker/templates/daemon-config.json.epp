@@ -1,5 +1,6 @@
 <%- | String $http_proxy | -%>
 {
+ "firewall-backend": "nftables",
  "proxies": {
    "http-proxy": "<%= $http_proxy %>",
    "https-proxy": "<%= $http_proxy %>"

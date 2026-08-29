@@ -1,4 +1,4 @@
-# @summary a shim define to support a common interface between ferm::service and nftables::service
+# @summary a shim define to support a common interface between firewall services
 # @param proto tcp or udp
 # @param port a single port, or an array of ports, for a rule that covers more than one
 #   discrete port. Exactly one of port or port_range must be given.
@@ -33,21 +33,8 @@ define firewall::service (
         fail("firewall::service: ${title}: exactly one of port or port_range must be given")
     }
 
-    if $port_range != undef {
-        $ferm_port = "${port_range[0]}:${port_range[1]}"
-    } elsif $port =~ Array {
-        $ferm_port = "(${port.join(' ')})"
-    } else {
-        $ferm_port = $port
-    }
-
-    # ferm::service never needs to know sets exist: its saddr/daddr
-    # directive already accepts a literal address and a $SETNAME reference
-    # mixed in the same parenthesised list, so this just flattens whatever
-    # combination of srange/src_sets (and drange/dst_sets) was given into
-    # one ordinary ferm range string.
-    $ferm_srange = firewall::ferm_range($srange, $src_sets)
-    $ferm_drange = firewall::ferm_range($drange, $dst_sets)
+    $provider        = lookup('base::firewall::provider', { 'default_value' => 'nftables' })
+    $nftables_active = $provider in ['nftables', 'both']
 
     if $src_sets != undef {
         $src_sets.each |$set_name| {
@@ -69,19 +56,8 @@ define firewall::service (
         }
     }
 
-    ferm::service { $title:
-        ensure  => $ensure,
-        port    => $ferm_port,
-        proto   => $proto,
-        desc    => $desc,
-        prio    => $prio,
-        srange  => $ferm_srange,
-        drange  => $ferm_drange,
-        notrack => $notrack,
-    }
-
     nftables::service { $title:
-        ensure     => $ensure,
+        ensure     => $nftables_ensure,
         port       => $port,
         port_range => $port_range,
         proto      => $proto,

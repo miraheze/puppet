@@ -10,11 +10,6 @@ class role::varnish (
     # Temporarily disabling this due to
     # service keep being restarted on
     # puppet runs.
-    # ferm::conf { 'varnish-connlimits':
-    #    prio   => '01',
-    #    source => 'puppet:///modules/role/firewall/varnish-connlimits.conf'
-    # }
-    #
     # nftables::rules { 'varnish-connlimits':
     #    prio  => 1,
     #    chain => 'input',

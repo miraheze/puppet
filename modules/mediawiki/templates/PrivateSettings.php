@@ -32,7 +32,8 @@ $wgMediaModerationPhotoDNASubscriptionKey = '<%= @mediamoderation_apikey %>';
 $wgCreateWikiOpenAIConfig = [
 	'dryrun' => false,
 	'apikey' => '<%= @openai_apikey %>',
-	'assistantid' => '<%= @openai_assistantid %>',
+	'model' => 'gpt-5.6-luna',
+	'instructions' => '<%= @openai_instructions.gsub('\\', '\\\\\\\\').gsub("'", "\\\\'") %>',
 ];
 
 // RequestCustomDomain settings
