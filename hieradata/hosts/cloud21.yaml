@@ -1,2 +1,3 @@
 base::firewall::provider: 'nftables'
 ferm::manage_iptables: false # proxmox-ve needs to keep the iptables package
+ferm::manage_libnet_dns_perl: false # proxmox-ve needs to keep the libnet-dns-perl package
