@@ -1,6 +1,6 @@
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
-base::firewall::provider: 'both'
+base::firewall::provider: 'nftables'
 base::syslog::rsyslog_udp_localhost: true
 
 role::opensearch::enable_exporter: false
