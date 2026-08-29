@@ -2,4 +2,3 @@ users::groups:
   - dns-admins
 dns: true
 
-base::firewall::provider: 'nftables'

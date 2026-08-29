@@ -1,22 +1,12 @@
 # firewall for all servers
 class base::firewall (
-    Firewall::Provider $provider = lookup('base::firewall::provider', { 'default_value' => 'ferm' }),
+    Firewall::Provider $provider = lookup('base::firewall::provider', { 'default_value' => 'nftables' }),
 ) {
     class { 'firewall':
         provider => $provider,
     }
 
-    $ferm_active     = $provider in ['ferm', 'both']
     $nftables_active = $provider in ['nftables', 'both']
-
-    # Increase the size of conntrack table size (default is 65536)
-    sysctl::parameters { 'ferm_conntrack':
-        ensure => $ferm_active ? { true => 'present', default => 'absent' },
-        values => {
-            'net.netfilter.nf_conntrack_max'                   => 262144,
-            'net.netfilter.nf_conntrack_tcp_timeout_time_wait' => 65,
-        },
-    }
 
     sysctl::parameters { 'nftables_conntrack':
         ensure => $nftables_active ? { true => 'present', default => 'absent' },
@@ -62,11 +52,6 @@ class base::firewall (
     $block_abuse = split(file('/etc/puppetlabs/puppet/private/files/firewall/block_abuse'), /[\r\n]/)
 
     if $block_abuse != undef and $block_abuse != [] {
-        ferm::rule { 'drop-abuse-net-miaheze':
-            prio => '01',
-            rule => "saddr (${$block_abuse.join(' ')}) DROP;",
-        }
-
         $block_abuse_v4 = $block_abuse.filter |$ip| { $ip =~ Stdlib::IP::Address::V4 }
         $block_abuse_v6 = $block_abuse.filter |$ip| { $ip =~ Stdlib::IP::Address::V6 }
 
@@ -96,11 +81,6 @@ class base::firewall (
     # loopback, multicast and icmp always allowed. deployed for both
     # backends unconditionally, same as everything else here, since it's
     # only realized on a host that actually has that backend installed.
-    ferm::conf { 'main':
-        prio   => '02',
-        source => 'puppet:///modules/base/firewall/main-input-default-drop.conf',
-    }
-
     nftables::file { 'base':
         order   => 100,
         content => file('base/firewall/nftables-base.nft'),
@@ -129,22 +109,10 @@ class base::firewall (
     class { '::ulogd': }
 
     # Explicitly drop pxe/dhcp packets packets so they dont hit the log
-    ferm::filter_log { 'filter-bootp':
-        proto => 'udp',
-        daddr => '255.255.255.255',
-        sport => 67,
-        dport => 68,
-    }
-
     nftables::rules { 'filter_log_filter-bootp':
         prio  => 90,
         chain => 'input',
         rules => ['ip daddr 255.255.255.255 udp sport 67 udp dport 68 drop'],
-    }
-
-    ferm::rule { 'log-everything':
-        rule => "NFLOG mod limit limit 1/second limit-burst 5 nflog-prefix \"[fw-in-drop]\";",
-        prio => '98',
     }
 
     nftables::rules { 'log-everything':
@@ -161,28 +129,6 @@ class base::firewall (
     monitoring::nrpe { 'conntrack_table_size':
         command => '/usr/lib/nagios/plugins/check_conntrack 80 90',
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Conntrack_Table'
-    }
-
-    sudo::user { 'nagios_check_ferm':
-        ensure     => $ferm_active ? { true => 'present', default => 'absent' },
-        user       => 'nagios',
-        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_ferm' ],
-        require    => File['/usr/lib/nagios/plugins/check_ferm'],
-    }
-
-    file { '/usr/lib/nagios/plugins/check_ferm':
-        ensure => stdlib::ensure($ferm_active, 'file'),
-        source => 'puppet:///modules/base/firewall/check_ferm',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0555',
-    }
-
-    monitoring::nrpe { 'ferm_active':
-        ensure   => $ferm_active ? { true => 'present', default => 'absent' },
-        command  => '/usr/bin/sudo /usr/lib/nagios/plugins/check_ferm',
-        docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Ferm',
-        critical => true
     }
 
     sudo::user { 'nagios_check_nftables':

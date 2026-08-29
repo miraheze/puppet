@@ -39,20 +39,6 @@ class role::mediawiki::mcrouter(
         notify  => Exec['systemd daemon-reload for mcrouter.service (mcrouter)']
     }
 
-    ferm::rule { 'skip_mcrouter_wancache_conntrack_out':
-        desc  => 'Skip outgoing connection tracking for mcrouter',
-        table => 'raw',
-        chain => 'OUTPUT',
-        rule  => 'proto tcp sport (11213 11211) NOTRACK;',
-    }
-
-    ferm::rule { 'skip_mcrouter_wancache_conntrack_in':
-        desc  => 'Skip incoming connection tracking for mcrouter',
-        table => 'raw',
-        chain => 'PREROUTING',
-        rule  => 'proto tcp dport 11213 NOTRACK;',
-    }
-
     nftables::rules { 'skip_mcrouter_wancache_conntrack_out':
         desc  => 'Skip outgoing connection tracking for mcrouter',
         chain => 'output',

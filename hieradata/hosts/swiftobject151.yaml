@@ -1,4 +1,3 @@
-base::firewall::provider: 'nftables'
 # Swift config
 
 swift_object_enable: true

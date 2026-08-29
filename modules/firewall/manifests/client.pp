@@ -1,4 +1,4 @@
-# @summary a shim define to support a common interface between ferm::client and nftables::client
+# @summary a shim define to support a common interface between firewall clients
 # @param proto tcp or udp
 # @param port a single port, or an array of ports, for a rule that covers more than one
 #   discrete port. Exactly one of port or port_range must be given.
@@ -25,26 +25,6 @@ define firewall::client (
 ) {
     if ($port == undef) == ($port_range == undef) {
         fail("firewall::client: ${title}: exactly one of port or port_range must be given")
-    }
-
-    if $port_range != undef {
-        $ferm_port = "${port_range[0]}:${port_range[1]}"
-    } elsif $port =~ Array {
-        $ferm_port = "(${port.join(' ')})"
-    } else {
-        $ferm_port = $port
-    }
-
-    $ferm_drange = firewall::ferm_range($drange, $dst_sets)
-
-    ferm::client { $title:
-        ensure  => $ensure,
-        port    => $ferm_port,
-        proto   => $proto,
-        desc    => $desc,
-        prio    => $prio,
-        drange  => $ferm_drange,
-        notrack => $notrack,
     }
 
     nftables::client { $title:
