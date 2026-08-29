@@ -5,4 +5,4 @@ php::fpm::fpm_min_child: 8
 nginx::logrotate_number: 3
 
 redis::maxmemory: '1gb'
-base::firewall::provider: 'both'
+base::firewall::provider: 'nftables'
