@@ -1,1 +1,2 @@
 base::firewall::provider: 'nftables'
+ferm::manage_iptables: false # proxmox-ve needs to keep the iptables package
