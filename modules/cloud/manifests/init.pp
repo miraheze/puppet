@@ -27,7 +27,7 @@ class cloud {
         require     => Apt::Pin['proxmox_pin'],
     }
 
-    package { ['proxmox-ve', 'open-iscsi']:
+    package { ['proxmox-ve', 'proxmox-firewall', 'open-iscsi']:
         ensure  => present,
         require => Apt::Source['proxmox_apt']
     }
