@@ -1,4 +1,4 @@
-base::firewall::provider: 'both'
+base::firewall::provider: 'nftables'
 role::memcached::threads: 8
 role::memcached::version: 'present'
 role::memcached::growth_factor: 1.15

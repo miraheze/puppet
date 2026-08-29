@@ -1,2 +1,2 @@
 profile::openldap::ldap_host: 'ldap171.fsslc.wtnet'
-base::firewall::provider: 'both'
+base::firewall::provider: 'nftables'

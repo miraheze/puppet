@@ -313,4 +313,4 @@ redis::maxmemory_policy: volatile-lru
 
 base::dns::do_ipv4: true
 base::dns::forward_use_internal: true
-base::firewall::provider: 'both'
+base::firewall::provider: 'nftables'
