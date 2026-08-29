@@ -8,4 +8,3 @@ base::ntp_servers:
   - '3.debian.pool.ntp.org'
 base::dns::do_ipv4: true
 base::dns::do_ipv6: true
-base::firewall::provider: 'nftables'

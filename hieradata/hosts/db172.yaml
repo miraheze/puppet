@@ -5,4 +5,3 @@ mariadb::version: '11.8'
 role::db::enable_ssl: false
 mariadb::config::server_id: 5
 role::db::is_beta_db: true
-base::firewall::provider: 'nftables'

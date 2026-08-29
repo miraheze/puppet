@@ -1,5 +1,4 @@
 base::bots_hostname: 'bots171.public.fsslc.wtnet'
-base::firewall::provider: 'nftables'
 base::ntp_servers:
   - 'time.cloudflare.com'
 base::syslog::syslog_host: [ 'graylog161.public.fsslc.wtnet:12210' ]

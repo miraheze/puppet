@@ -320,5 +320,4 @@ role::cache::haproxy::extended_logging: true
 
 # base
 
-base::firewall::provider: 'nftables'
 base::syslog::rsyslog_udp_localhost: true
