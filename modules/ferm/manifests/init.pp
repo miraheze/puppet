@@ -8,8 +8,10 @@ class ferm (
     # @resolve requires libnet-dns-perl
     if $ensure == 'present' {
         stdlib::ensure_packages(['ferm', 'libnet-dns-perl'])
-    } else {
+    } elsif lookup('ferm::manage_libnet_dns_perl', {'default_value' => true}) {
         stdlib::ensure_packages(['ferm', 'libnet-dns-perl'], { 'ensure' => 'purged' })
+    } else {
+        stdlib::ensure_packages('ferm', { 'ensure' => 'purged' })
     }
 
     if lookup('ferm::manage_iptables', {'default_value' => true}) {
