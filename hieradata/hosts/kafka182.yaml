@@ -1,7 +1,7 @@
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 base::dns::do_ipv4: true
 base::dns::forward_use_internal: true
-base::firewall::provider: 'both'
+base::firewall::provider: 'nftables'
 
 zookeeper::id: '1'
 zookeeper::client_port: 2181
