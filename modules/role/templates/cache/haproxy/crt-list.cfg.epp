@@ -1,0 +1,5 @@
+<%- | Hash $certificates, Array $alpn, Array $ecdhe_curves | -%>
+<%- $certificates.each |$key, $value| { -%>
+/etc/ssl/private/<%= $key %>.crt [alpn <%= $alpn.join(",") %> curves <%= $ecdhe_curves.join(":") %>] <%= $value %>
+
+<%- } -%>

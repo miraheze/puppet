@@ -40,6 +40,6 @@ define prometheus::jmx_exporter_config (
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
-        content => template('prometheus/jmx_exporter_config.erb'),
+        content => epp('prometheus/jmx_exporter_config.epp', { 'resources' => $resources }),
     }
 }

@@ -9,7 +9,7 @@ class irc::cvtbot {
     if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01irc']) {
         file { '/etc/apt/apt.conf.d/01irc':
             ensure  => present,
-            content => template('irc/aptproxy.erb'),
+            content => epp('irc/aptproxy.epp', { 'http_proxy' => $http_proxy }),
             before  => Package['packages-microsoft-prod'],
         }
     }

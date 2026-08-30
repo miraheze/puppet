@@ -60,7 +60,7 @@ class puppetserver(
 
     file { '/etc/puppetlabs/puppet/puppet.conf':
         ensure  => present,
-        content => template('puppetserver/puppet.conf.erb'),
+        content => epp('puppetserver/puppet.conf.epp', { 'puppetserver_hostname' => $puppetserver_hostname, 'puppetdb_enable' => $puppetdb_enable }),
         require => Package['openvox-agent'],
         notify  => Service['puppetserver'],
     }

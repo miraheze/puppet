@@ -1,0 +1,17 @@
+<%- | Array[String] $host | -%>
+# Sample salt-ssh config file
+#web1:
+#  host: 192.168.42.1 # The IP addr or DNS hostname
+#  user: fred         # Remote executions will be executed as user fred
+#  passwd: foobarbaz  # The password to use for login, if omitted, keys are used
+#  sudo: True         # Whether to sudo to root, not enabled by default
+#web2:
+#  host: 192.168.42.2
+
+<%- $host.sort.each |$h| { -%>
+<%= $h %>:
+  host: <%= $h %>
+  user: salt-user
+  priv: /home/salt-user/.ssh/id_ed25519
+  sudo: True         # Whether to sudo to root, not enabled by default
+<%- } -%>

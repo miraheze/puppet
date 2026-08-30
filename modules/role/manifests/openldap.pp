@@ -157,7 +157,7 @@ class role::openldap (
     stdlib::ensure_packages('ldapvi')
 
     file { '/etc/ldapvi.conf':
-        content => template('role/openldap/ldapvi.conf.erb'),
+        content => epp('role/openldap/ldapvi.conf.epp', { 'ldap_host' => $ldap_host, 'ldapvi_password' => $ldapvi_password }),
         mode    => '0440',
         owner   => 'root',
         group   => 'root',

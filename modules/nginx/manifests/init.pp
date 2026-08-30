@@ -103,7 +103,7 @@ class nginx (
 
     logrotate::conf { 'nginx':
         ensure  => present,
-        content => template('nginx/logrotate.erb'),
+        content => epp('nginx/logrotate.epp', { 'logrotate_maxsize' => $logrotate_maxsize, 'logrotate_number' => $logrotate_number }),
     }
 
     # Include nginx prometheus exported on all hosts that use the nginx class

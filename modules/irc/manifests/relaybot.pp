@@ -12,7 +12,7 @@ define irc::relaybot (
     if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01irc']) {
         file { '/etc/apt/apt.conf.d/01irc':
             ensure  => present,
-            content => template('irc/aptproxy.erb'),
+            content => epp('irc/aptproxy.epp', { 'http_proxy' => $http_proxy }),
             before  => Package['packages-microsoft-prod'],
         }
     }
@@ -137,7 +137,7 @@ define irc::relaybot (
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
-        content => template("irc/relaybot/config-${title}.ini.erb"),
+        content => epp("irc/relaybot/config-${title}.ini.epp", { 'irc_password' => $irc_password, 'bot_token' => $bot_token, 'http_proxy' => $http_proxy }),
         require => Git::Clone["IRC-Discord-Relay-${title}"],
         notify  => Service[$title],
     }

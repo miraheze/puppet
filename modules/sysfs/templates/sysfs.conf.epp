@@ -1,0 +1,7 @@
+<%- | Hash $values | -%>
+# sysfs parameters managed by Puppet.
+<%= $values.keys.sort.map |$k| {
+  $v = $values[$k]
+  $vs = $v ? { Array => $v.join(' '), default => $v }
+  "${k} = ${vs}"
+}.join("\n") %>

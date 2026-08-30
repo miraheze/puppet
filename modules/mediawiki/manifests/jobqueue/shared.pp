@@ -78,7 +78,7 @@ class mediawiki::jobqueue::shared (
 
         httpd::site { 'jobrunner':
             priority => 1,
-            content  => template('mediawiki/jobrunner_legacy.conf.erb'),
+            content  => epp('mediawiki/jobrunner_legacy.conf.epp', { 'local_only_port' => $local_only_port, 'php_fpm_sock' => $php_fpm_sock }),
         }
     }
 
@@ -96,13 +96,13 @@ class mediawiki::jobqueue::shared (
 
     file { '/srv/jobrunner/jobrunner.json':
         ensure  => $ensure,
-        content => template('mediawiki/jobrunner.json.erb'),
+        content => epp('mediawiki/jobrunner.json.epp', { 'redis_server_ip' => $redis_server_ip, 'redis_password' => $redis_password }),
         require => Git::Clone['JobRunner'],
     }
 
     file { '/srv/jobrunner/jobchron.json':
         ensure  => $ensure,
-        content => template('mediawiki/jobchron.json.erb'),
+        content => epp('mediawiki/jobchron.json.epp', { 'redis_server_ip' => $redis_server_ip, 'redis_password' => $redis_password }),
         require => Git::Clone['JobRunner'],
     }
 }

@@ -11,7 +11,7 @@ class mediawiki::nginx {
 
     nginx::conf { 'mediawiki-includes':
         ensure  => present,
-        content => template('mediawiki/mediawiki-includes.conf.erb'),
+        content => epp('mediawiki/mediawiki-includes.conf.epp', { 'php_fpm_sock' => $php_fpm_sock }),
     }
 
     nginx::site { 'mediawiki':

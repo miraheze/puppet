@@ -31,7 +31,7 @@ define sysfs::parameters(
 ) {
     sysfs::conffile { $title:
         ensure   => $ensure,
-        content  => template('sysfs/sysfs.conf.erb'),
+        content  => epp('sysfs/sysfs.conf.epp', { 'values' => $values }),
         priority => $priority,
     }
 }

@@ -30,7 +30,7 @@ class mediawiki::deploy {
         }
 
         file { '/var/www/.ssh/known_hosts':
-            content => template('mediawiki/mw-user-known-hosts.erb'),
+            content => epp('mediawiki/mw-user-known-hosts.epp'),
             owner   => 'www-data',
             group   => 'www-data',
             mode    => '0644',

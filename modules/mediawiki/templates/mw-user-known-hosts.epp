@@ -1,0 +1,21 @@
+<%- | | -%>
+# Known hosts for remote sync
+# This file is managed by puppet
+<%- $resources = puppetdb_query([
+  'from',
+  'resources',
+  [
+    'and',
+    ['=', 'type', 'Sshkey'],
+    ['=', 'exported', true],
+    ['=', ['parameter', 'ensure'], 'present'],
+  ]
+])
+$sorted = $resources.sort |$a, $b| { $a['certname'] <=> $b['certname'] }
+-%>
+<%- $sorted.each |$resource| {
+  $parameters = $resource['parameters']
+  $aliases = Array($parameters['host_aliases']).filter |$el| { $el !~ /^---/ }.join(',')
+-%>
+<%= $resource['certname'] %>,<%= $aliases %> <%= $parameters['type'] %> <%= $parameters['key'] %>
+<%- } -%>

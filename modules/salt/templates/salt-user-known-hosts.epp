@@ -1,0 +1,20 @@
+<%- | | -%>
+# This file is managed by puppet
+<%- $resources = puppetdb_query([
+  'from',
+  'resources',
+  [
+    'and',
+    ['=', 'type', 'Sshkey'],
+    ['=', 'exported', true]
+  ]
+])
+$sorted = $resources.sort |$a, $b| { $a['certname'] <=> $b['certname'] }
+$present = $sorted.filter |$resource| { $resource['parameters']['ensure'] == 'present' }
+-%>
+<%- $present.each |$resource| {
+  $parameters = $resource['parameters']
+  $aliases = $parameters['host_aliases'].filter |$el| { $el !~ /^---/ }.join(',')
+-%>
+<%= $resource['certname'] %>,<%= $aliases %> <%= $parameters['type'] %> <%= $parameters['key'] %>
+<%- } -%>

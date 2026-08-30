@@ -1,0 +1,8 @@
+<%- | String $ldap_host, String $ldapvi_password | -%>
+profile default
+unpaged-help: yes
+ldap-conf: yes
+host: ldap://<%= $ldap_host %>
+user: cn=write-user,dc=miraheze,dc=org
+base: dc=miraheze,dc=org
+password: <%= $ldapvi_password %>

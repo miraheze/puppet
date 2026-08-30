@@ -160,7 +160,7 @@ class reports {
 
     file { '/srv/TSPortal/.env':
         ensure  => present,
-        content => template('reports/.env.erb'),
+        content => epp('reports/.env.epp', { 'app_key' => $app_key, 'password' => $password, 'reports_mediawiki_identifier' => $reports_mediawiki_identifier, 'reports_mediawiki_secret' => $reports_mediawiki_secret, 'reports_mattermost_webhook' => $reports_mattermost_webhook, 'reports_write_key' => $reports_write_key }),
         owner   => 'www-data',
         group   => 'www-data',
         require => Git::Clone['TSPortal'],

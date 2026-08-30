@@ -1,0 +1,5 @@
+<%- | Integer[0,11] $verbosity, Optional[String] $mbuf_size | -%>
+# Default settings for nutcracker.
+# This file is managed by Puppet.
+
+DAEMON_OPTS="--verbose=<%= $verbosity %><%- if $mbuf_size { %> --mbuf-size=<%= to_bytes($mbuf_size) %><%- } %>"

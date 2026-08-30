@@ -1,0 +1,143 @@
+<%- | String $php_fpm_sock | -%>
+index index.php index.html;
+
+location ~ ^/(\.git|config|landing|cache|stopforumspam|geoip) {
+        deny all;
+}
+
+location ~ ^/1\.\d\d/(cache|includes|maintenance|mw-config|sql|tests|vendor) {
+	deny all;
+}
+
+location ~ ^/1\.\d\d/(extensions|skins)/.*\.php {
+	deny all;
+}
+
+location ~ ^(?!\/wiki\/)[^?]+\.patch {
+	deny all;
+}
+
+# Cache certain non-static.wikitide.net static resources
+location ~ ^/1\.\d\d/((skins|resources)|extensions/[A-Za-z0-9]+.*)/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)(\?[0-9a-z]+\=)?$ {
+	expires 1d;
+}
+
+location /w/rest.php/ {
+	try_files $uri $uri/ /w/rest.php?$args;
+}
+
+location ~ ^/(w/)?\w+\.php {
+	include fastcgi_params;
+	fastcgi_index index.php;
+	fastcgi_split_path_info ^(.+?\.php)(.*)$;
+	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	fastcgi_buffers 32 32k;
+	fastcgi_buffer_size 64k;
+	fastcgi_pass unix:/run/<%= $php_fpm_sock %>;
+	fastcgi_connect_timeout 300;
+	fastcgi_send_timeout 300;
+	fastcgi_read_timeout 300;
+}
+
+location = /favicon.ico {
+	rewrite ^(.*)$ /favicon.php;
+}
+
+location = /apple-touch-icon.png {
+	rewrite ^(.*)$ /touch.php;
+}
+
+location ^~ /w/index.php {
+	include fastcgi_params;
+	fastcgi_param SCRIPT_FILENAME $document_root/w/index.php;
+	fastcgi_buffers 32 32k;
+	fastcgi_buffer_size 64k;
+	fastcgi_pass unix:/run/<%= $php_fpm_sock %>;
+	fastcgi_connect_timeout 300;
+	fastcgi_send_timeout 300;
+	fastcgi_read_timeout 300;
+
+	if ($request_uri ~ OAuth) {
+		# Skip OAuth requests to prevent
+		# things from breaking
+		break;
+	}
+
+	if ($request_method = POST) {
+		# Skip if it is a POST request,
+		# as it can cause issues otherwise
+		break;
+	}
+
+	if ($arg_action = raw) {
+		# T12214: Avoid an unnecessary redirect
+		break;
+	}
+
+	if ($arg_action = render) {
+		# T13404: Avoid an unnecessary redirect
+		break;
+	}
+
+	if ($args ~ "(^|&)search(=|&|$)") {
+		# T12682: Avoid breaking some search links
+		# (We don't use $arg_search here as there might be
+		# paths like "/w/index.php?search=&go=Go")
+		break;
+	}
+
+	rewrite ^ /w/decode.php$is_args$args last;
+}
+
+location = /wiki {
+	return 301 /wiki/$is_args$args;
+}
+
+location / {
+	try_files $uri $uri/ @wiki;
+}
+
+# Support SUL3-style API access via /<wiki>/w/api.php
+location ~ ^/[^/]+wiki(?:beta)?/w/api\.php$ {
+	rewrite ^/[^/]+wiki(?:beta)?/w/api\.php$ /w/api.php last;
+}
+
+# Support SUL3-style API access via /<wiki>/w/load.php
+location ~ ^/[^/]+wiki(?:beta)?/w/load\.php$ {
+	rewrite ^/[^/]+wiki(?:beta)?/w/load\.php$ /w/load.php last;
+}
+
+# Support SUL3-style resources access via /<wiki>/<version>/resources
+location ~ ^/[^/]+wiki(?:beta)?/1\.\d\d/resources {
+	rewrite ^/[^/]+wiki(?:beta)?/(1\.\d\d/resources.*)$ /$1 last;
+	expires 1d;
+}
+
+location @wiki {
+	include fastcgi_params;
+	fastcgi_param SCRIPT_FILENAME $document_root/w/index.php;
+	fastcgi_buffers 32 32k;
+	fastcgi_buffer_size 64k;
+	fastcgi_pass unix:/run/<%= $php_fpm_sock %>;
+	fastcgi_connect_timeout 300;
+	fastcgi_send_timeout 300;
+	fastcgi_read_timeout 300;
+}
+
+location ~ ^/m/(.*) {
+	return 301 /wiki/Special:UrlRedirector/$1;
+}
+
+location /sitemaps/ {
+	rewrite ^/sitemaps/(.+)/sitemaps/(.+)$ https://static.wikitide.net/$1/sitemaps/$2 permanent;
+}
+
+location /static/ {
+	rewrite ^/static/(.+)$ https://static.wikitide.net/$1 permanent;
+}
+
+# Redirect /entity/* to /wiki/Special:EntityData/*
+# Fixes T7174
+location ~ ^/entity/(.*) {
+	return 301 /wiki/Special:EntityData/$1;
+}

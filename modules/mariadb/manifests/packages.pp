@@ -8,7 +8,7 @@ class mariadb::packages(
     if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01mariadb']) {
         file { '/etc/apt/apt.conf.d/01mariadb':
             ensure  => present,
-            content => template('mariadb/aptproxy.erb'),
+            content => epp('mariadb/aptproxy.epp', { 'http_proxy' => $http_proxy }),
         }
     }
 
