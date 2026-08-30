@@ -22,7 +22,8 @@ ExecStart=/usr/bin/memcached \
           -u nobody \
           -c 25000 \
           -f <%= $growth_factor -%> \
-          <%- $extra_options.sort.each |$option, $value| { -%>
+          <%- $extra_options.keys.sort.each |$option| { -%>
+          <%- $value = $extra_options[$option] -%>
           <%= $option %> <%= $value %> \
           <%- } -%>
           <%- if $enable_tls { -%>
