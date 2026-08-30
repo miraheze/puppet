@@ -12,7 +12,7 @@ class puppetserver::puppetdb::client(
 
     file { '/etc/puppetlabs/puppet/puppetdb.conf':
         ensure  => present,
-        content => template('puppetserver/puppetdb.conf.erb'),
+        content => epp('puppetserver/puppetdb.conf.epp', { 'puppetdb_hostname' => $puppetdb_hostname }),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',

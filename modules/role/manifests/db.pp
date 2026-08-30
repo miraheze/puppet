@@ -58,12 +58,12 @@ class role::db (
 
     file { '/etc/mysql/wikitide/matomo-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/matomo-grants.sql.erb'),
+        content => epp('mariadb/grants/matomo-grants.sql.epp', { 'matomo_password' => $matomo_password }),
     }
 
     file { '/etc/mysql/wikitide/phorge-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/phorge-grants.sql.erb'),
+        content => epp('mariadb/grants/phorge-grants.sql.epp', { 'phorge_password' => $phorge_password }),
     }
 
     file { '/etc/mysql/wikitide/icinga2-grants.sql':
@@ -73,7 +73,7 @@ class role::db (
 
     file { '/etc/mysql/wikitide/reports-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/reports-grants.sql.erb'),
+        content => epp('mariadb/grants/reports-grants.sql.epp', { 'reports_password' => $reports_password }),
     }
 
     if ($is_beta_db) {

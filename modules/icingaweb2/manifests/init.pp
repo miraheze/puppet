@@ -144,7 +144,7 @@ class icingaweb2 (
 
     file { '/etc/icingaweb2/authentication.ini':
         ensure  => present,
-        content => template('icingaweb2/authentication.ini.erb'),
+        content => epp('icingaweb2/authentication.ini.epp'),
         owner   => 'www-data',
         group   => 'icingaweb2',
         require => File['/etc/icingaweb2'],
@@ -160,7 +160,7 @@ class icingaweb2 (
 
     file { '/etc/icingaweb2/groups.ini':
         ensure  => present,
-        content => template('icingaweb2/groups.ini.erb'),
+        content => epp('icingaweb2/groups.ini.epp'),
         owner   => 'www-data',
         group   => 'icingaweb2',
         require => File['/etc/icingaweb2'],
@@ -176,7 +176,7 @@ class icingaweb2 (
 
     file { '/etc/icingaweb2/roles.ini':
         ensure  => present,
-        content => template('icingaweb2/roles.ini.erb'),
+        content => epp('icingaweb2/roles.ini.epp'),
         owner   => 'www-data',
         group   => 'icingaweb2',
     }
@@ -239,7 +239,7 @@ class icingaweb2 (
 
     file { '/etc/icingaweb2/modules/icingadb/config.ini':
         ensure  => present,
-        content => template('icingaweb2/config.ini.erb'),
+        content => epp('icingaweb2/config.ini.epp'),
         owner   => 'www-data',
         group   => 'icingaweb2',
         require => File['/etc/icingaweb2/modules/icingadb'],
@@ -247,7 +247,7 @@ class icingaweb2 (
 
     file { '/etc/icingaweb2/modules/icingadb/commandtransports.ini':
         ensure  => present,
-        content => template('icingaweb2/commandtransports.ini.erb'),
+        content => epp('icingaweb2/commandtransports.ini.epp', { 'icingaweb2_api_password' => $icingaweb2_api_password }),
         owner   => 'www-data',
         group   => 'icingaweb2',
         require => File['/etc/icingaweb2/modules/icingadb'],

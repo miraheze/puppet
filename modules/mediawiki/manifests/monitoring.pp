@@ -13,7 +13,7 @@ class mediawiki::monitoring {
 
     nginx::site { 'php-admin':
         ensure  => present,
-        content => template('mediawiki/php-admin.conf.erb'),
+        content => epp('mediawiki/php-admin.conf.epp'),
     }
 
     ## Admin script

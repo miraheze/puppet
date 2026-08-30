@@ -79,7 +79,7 @@ class puppetdb(
         ensure  => present,
         owner   => 'root',
         group   => 'root',
-        content => template('puppetdb/puppetdb.erb'),
+        content => epp('puppetdb/puppetdb.epp', { 'jvm_opts' => $jvm_opts }),
     }
 
     ## Configuration

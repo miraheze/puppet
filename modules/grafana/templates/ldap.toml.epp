@@ -1,3 +1,4 @@
+<%- | String $ldap_password | -%>
 [[servers]]
 # Ldap server host (specify multiple hosts space separated)
 host = "ldap.wikitide.net"
@@ -16,7 +17,7 @@ root_ca_cert = "/etc/ssl/certs/ISRG_Root_X1.pem"
 bind_dn = "cn=write-user,dc=miraheze,dc=org"
 # Search user bind password
 # If the password contains # or ; you have to wrap it with triple quotes. Ex """#password;"""
-bind_password = '<%= @ldap_password %>'
+bind_password = '<%= $ldap_password %>'
 
 # User search filter, for example "(cn=%s)" or "(sAMAccountName=%s)" or "(uid=%s)"
 # Allow login from email or username, example "(|(sAMAccountName=%s)(userPrincipalName=%s))"

@@ -1,8 +1,9 @@
+<%- | String $phorge_password | -%>
 -- Grants for 'phorge'@''
 
 GRANT USAGE
     ON *.* TO 'phorge'@'%'
-    IDENTIFIED BY '<%= @phorge_password %>';
+    IDENTIFIED BY '<%= $phorge_password %>';
 
 GRANT ALL PRIVILEGES
     ON `phabricator%`.* TO 'phorge'@'%';

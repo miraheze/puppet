@@ -1,3 +1,4 @@
+<%- | String $swift_password | -%>
 export ST_AUTH="https://swift-lb.wikitide.net/auth/v1.0"
 export ST_USER=mw:media
-export ST_KEY=<%= @swift_password %>
+export ST_KEY=<%= $swift_password %>

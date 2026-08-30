@@ -33,7 +33,7 @@ class grafana (
     }
 
     file { '/etc/grafana/grafana.ini':
-        content => template('grafana/grafana.ini.erb'),
+        content => epp('grafana/grafana.ini.epp'),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
@@ -42,7 +42,7 @@ class grafana (
     }
 
     file { '/etc/grafana/ldap.toml':
-        content => template('grafana/ldap.toml.erb'),
+        content => epp('grafana/ldap.toml.epp', { 'ldap_password' => $ldap_password }),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',

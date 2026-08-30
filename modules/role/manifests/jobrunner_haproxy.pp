@@ -3,7 +3,7 @@ class role::jobrunner_haproxy (
 ) {
 
     class { '::haproxy':
-        config_content => template('role/jobrunner_haproxy/haproxy.cfg.erb'),
+        config_content => epp('role/jobrunner_haproxy/haproxy.cfg.epp'),
     }
 
     haproxy::site { 'lb':
@@ -13,7 +13,7 @@ class role::jobrunner_haproxy (
 
     rsyslog::conf { 'haproxy':
         priority => 20,
-        content  => template('role/jobrunner_haproxy/haproxy.rsyslog.conf.erb'),
+        content  => epp('role/jobrunner_haproxy/haproxy.rsyslog.conf.epp'),
     }
 
     ['9007', '9008', '9009'].each |String $port| {

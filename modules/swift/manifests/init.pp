@@ -44,7 +44,7 @@ class swift {
             recurse => true;
         '/etc/swift/swift.conf':
             ensure  => file,
-            content => template('swift/swift.conf.erb');
+            content => epp('swift/swift.conf.epp', { 'hash_path_suffix' => $hash_path_suffix });
         '/var/cache/swift':
             ensure => directory,
             mode   => '0755';
@@ -64,7 +64,7 @@ class swift {
     $swift_password = lookup('mediawiki::swift_password')
     file { '/etc/swift-env.sh':
         ensure  => 'present',
-        content => template('swift/swift-env.sh.erb'),
+        content => epp('swift/swift-env.sh.epp', { 'swift_password' => $swift_password }),
         mode    => '0755',
     }
 

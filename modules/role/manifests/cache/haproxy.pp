@@ -174,7 +174,7 @@ class role::cache::haproxy(
 
     rsyslog::conf { 'haproxy@tls':
         priority => 20,
-        content  => template('role/cache/haproxy/haproxy.rsyslog.conf.erb'),
+        content  => epp('role/cache/haproxy/haproxy.rsyslog.conf.epp'),
     }
 
     logrotate::conf { 'haproxy':
