@@ -2,7 +2,8 @@
 <%- $static_configs = $resources.map |$resource| {
   $labels = $resource['parameters']['labels']
   $targets = "${resource['parameters']['hostname']}:${resource['parameters']['port']}"
-  { 'targets' => [$targets], 'labels' => $labels }
+  $entry = { 'targets' => [$targets], 'labels' => $labels }
+  $entry
 } -%>
 # This file is managed by puppet
 <%= stdlib::to_yaml($static_configs) %>
