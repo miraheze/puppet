@@ -109,7 +109,7 @@ define burrow (
 
     systemd::service { "burrow-${title}":
         ensure    => present,
-        content   => systemd_template('burrow'),
+        content   => systemd_template('burrow', { 'title' => $title, 'config_dir' => $config_dir }),
         restart   => true,
         subscribe => File["${config_dir}/burrow.toml"],
         require   => [

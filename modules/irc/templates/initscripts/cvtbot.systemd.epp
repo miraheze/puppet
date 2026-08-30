@@ -1,0 +1,15 @@
+<%- | String $install_path, String $dotnet_version | -%>
+[Unit]
+Description=WikiTide IRC CVT bot
+
+[Service]
+Type=simple
+User=irc
+SyslogIdentifier=cvtbot
+ExecStart=/usr/bin/dotnet run --project <%= $install_path %>/src/CVTBot/CVTBot.csproj --configuration Release
+Restart=always
+WorkingDirectory=<%= $install_path %>/src/CVTBot/bin/Release/net<%= $dotnet_version %>
+Environment=HOME=<%= $install_path %>/src/CVTBot/bin/Release/net<%= $dotnet_version %>
+
+[Install]
+WantedBy=multi-user.target

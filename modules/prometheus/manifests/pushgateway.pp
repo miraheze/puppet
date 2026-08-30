@@ -24,7 +24,7 @@ class prometheus::pushgateway (
     systemd::service { 'prometheus-pushgateway':
         ensure         => $ensure,
         restart        => true,
-        content        => systemd_template('prometheus-pushgateway'),
+        content        => systemd_template('prometheus-pushgateway', { 'listen_port' => $listen_port }),
         service_params => {
             hasrestart => true,
         },

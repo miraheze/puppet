@@ -1,6 +1,7 @@
-<%#- SPDX-License-Identifier: Apache-2.0 -%>
+<%- | String $title, String $config_dir | -%>
+<%# SPDX-License-Identifier: Apache-2.0 -%>
 [Unit]
-Description=Burrow - Kafka <%= @title %> Consumer Offset Monitor
+Description=Burrow - Kafka <%= $title %> Consumer Offset Monitor
 
 [Service]
 User=burrow
@@ -8,9 +9,9 @@ User=burrow
 # Burrow creates this file. Setting PIDFile here manually
 # keeps systemd from creating its own pidfile that
 # conflicts with Burrow's.
-PIDFile=/var/log/burrow-<%= @title %>.pid
+PIDFile=/var/log/burrow-<%= $title %>.pid
 
-ExecStart=/usr/bin/Burrow --config-dir <%= @config_dir %>
+ExecStart=/usr/bin/Burrow --config-dir <%= $config_dir %>
 RuntimeDirectory=burrow
 
 LimitNOFILE=8192

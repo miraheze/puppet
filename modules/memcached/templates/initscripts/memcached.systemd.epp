@@ -1,0 +1,35 @@
+<%- | Array[String] $listen,
+      Stdlib::Port $port,
+      Integer $size,
+      Float $growth_factor,
+      Hash[String, Any] $extra_options,
+      Boolean $enable_tls,
+      Optional[Stdlib::Unixpath] $ssl_cert,
+      Optional[Stdlib::Unixpath] $ssl_key,
+      Integer $min_slab_size
+| -%>
+[Unit]
+Description=memcached daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/memcached \
+          <%- $listen.sort.each |$item| { -%>
+          -l <%= $item %> \
+          -p <%= $port -%> \
+          <%- } -%>
+          -m <%= $size %> \
+          -u nobody \
+          -c 25000 \
+          -f <%= $growth_factor -%> \
+          <%- $extra_options.sort.each |$option, $value| { -%>
+          <%= $option %> <%= $value %> \
+          <%- } -%>
+          <%- if $enable_tls { -%>
+          -Z -o ssl_chain_cert=<%= $ssl_cert %> \
+          -o ssl_key=<%= $ssl_key %> \
+          <%- } -%>
+          -n <%= $min_slab_size %>
+
+[Install]
+WantedBy=multi-user.target

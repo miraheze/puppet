@@ -144,7 +144,7 @@ define irc::relaybot (
 
     systemd::service { $title:
         ensure  => $ensure,
-        content => systemd_template('relaybot'),
+        content => systemd_template('relaybot', { 'title' => $title, 'install_path' => $install_path }),
         restart => true,
         require => [
             Git::Clone["IRC-Discord-Relay-${title}"],

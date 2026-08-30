@@ -5,7 +5,7 @@ class prometheus::exporter::varnish (
 
     systemd::service { 'prometheus-varnish-exporter':
         ensure  => present,
-        content => systemd_template('prometheus-varnish-exporter'),
+        content => systemd_template('prometheus-varnish-exporter', { 'listen_port' => $listen_port }),
         restart => true,
     }
 

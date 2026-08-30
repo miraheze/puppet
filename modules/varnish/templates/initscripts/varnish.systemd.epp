@@ -1,3 +1,4 @@
+<%- | String $reload_vcl_opts, Integer[1] $thread_pool_max, String $storage | -%>
 [Unit]
 Description=Varnish HTTP accelerator
 
@@ -16,26 +17,26 @@ Restart=on-failure
 KillMode=process
 Environment="MALLOC_CONF=thp:never,narenas:4"
 SyslogIdentifier=varnish
-ExecReload=/usr/local/sbin/reload-vcl <%= @reload_vcl_opts %>
+ExecReload=/usr/local/sbin/reload-vcl <%= $reload_vcl_opts %>
 # We start varnishd(1) without specifying a VCL file (-f ''). Use reload-vcl in
 # ExecStartPost to load and label separate VCL files first, and the main one
 # last. This is necessary given that the main VCL file might reference the
 # label of separate VCLs, and would otherwise fail to compile if loaded
 # directly with -f.
-ExecStartPost=/usr/local/sbin/reload-vcl <%= @reload_vcl_opts %> --start-child
+ExecStartPost=/usr/local/sbin/reload-vcl <%= $reload_vcl_opts %> --start-child
 ExecStart=/usr/sbin/varnishd \
 -P %t/%p.pid \
 -a :81 \
 -T localhost:6082 \
 -f '' \
 -p thread_pool_min=250 \
--p thread_pool_max=<%= @thread_pool_max -%> \
+-p thread_pool_max=<%= $thread_pool_max -%> \
 -p thread_pool_timeout=120 \
 -p vsl_reclen=2048 \
 -p workspace_backend=128k \
 -p vcc_allow_inline_c=true \
 -S /etc/varnish/secret \
-<%= @storage %> \
+<%= $storage %> \
 -p http_req_size=24576 \
 -p listen_depth=16384 -p vcc_err_unref=off \
 -p http_max_hdr=128 \
