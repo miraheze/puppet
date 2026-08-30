@@ -4,12 +4,14 @@ on:
     branches: [ main ]
     paths:
       - '**.pp'
+      - '**.epp'
       - '.github/**'
 
   pull_request:
     branches: [ main ]
     paths:
       - '**.pp'
+      - '**.epp'
       - '.github/**'
 
 jobs:
@@ -20,6 +22,20 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v7
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.2'
+
+    - name: Install Puppet
+      run: gem install puppet --no-document
+
+    - name: Validate EPP Templates
+      run: |
+        echo "Validating EPP files..."
+        # Find all .epp files and run puppet epp validate on them
+        find . -type f -name "*.epp" -exec puppet epp validate {} +
 
     - name: puppet-lint
       uses: scottbrenner/puppet-lint-action@v1.1.1
