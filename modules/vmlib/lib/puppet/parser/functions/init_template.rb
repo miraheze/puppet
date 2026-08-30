@@ -16,6 +16,6 @@ module Puppet::Parser::Functions
     params ||= {}
     module_name = lookupvar('module_name')
     tpl_arg = "#{module_name}/initscripts/#{tpl_name}.#{initsystem}.epp"
-    function_epp([tpl_arg, params])
+    call_function('epp', tpl_arg, params)
   end
 end
