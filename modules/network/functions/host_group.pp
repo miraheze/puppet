@@ -28,9 +28,23 @@ function network::host_group(String[1] $set_name) >> Array[String[1]] {
         'OPENSEARCH_HOSTS'       => 'Role::Opensearch',
     }
 
-    if !($set_name in $classes_by_set) {
-        fail("network::host_group: unknown set '${set_name}' - add it to modules/network/functions/host_group.pp")
+    $files_by_set = {
+        'CLOUDFLARE_HOSTS' => [
+            '/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4',
+            '/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6',
+        ],
+        'ABUSE_NETS' => [
+            '/etc/puppetlabs/puppet/private/files/firewall/block_abuse',
+        ],
     }
 
-    network::hosts_with_class($classes_by_set[$set_name])
+    if $set_name in $classes_by_set {
+        network::hosts_with_class($classes_by_set[$set_name])
+    } elsif $set_name in $files_by_set {
+        $files_by_set[$set_name].map |$path| {
+            split(file($path), /[\r\n]/)
+        }.flatten.filter |$ip| { $ip != '' }
+    } else {
+        fail("network::host_group: unknown set '${set_name}' - add it to modules/network/functions/host_group.pp")
+    }
 }

@@ -49,14 +49,16 @@ class base::firewall (
         onlyif  => "/bin/grep --invert-match --quiet '^32768$' /sys/module/nf_conntrack/parameters/hashsize",
     }
 
-    $block_abuse = split(file('/etc/puppetlabs/puppet/private/files/firewall/block_abuse'), /[\r\n]/)
+    $block_abuse = network::host_group('ABUSE_NETS')
 
-    if $block_abuse != undef and $block_abuse != [] {
+    if !$block_abuse.empty {
         $block_abuse_v4 = $block_abuse.filter |$ip| { $ip =~ Stdlib::IP::Address::V4 }
         $block_abuse_v6 = $block_abuse.filter |$ip| { $ip =~ Stdlib::IP::Address::V6 }
 
-        nftables::set { 'ABUSE_NETS':
-            ips => $block_abuse,
+        unless defined(Firewall::Set['ABUSE_NETS']) {
+            firewall::set { 'ABUSE_NETS':
+                ips => $block_abuse,
+            }
         }
 
         # nftables::set only creates a family's set file if that family

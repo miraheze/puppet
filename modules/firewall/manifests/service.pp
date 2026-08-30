@@ -33,9 +33,6 @@ define firewall::service (
         fail("firewall::service: ${title}: exactly one of port or port_range must be given")
     }
 
-    $provider        = lookup('base::firewall::provider', { 'default_value' => 'nftables' })
-    $nftables_active = $provider in ['nftables', 'both']
-
     if $src_sets != undef {
         $src_sets.each |$set_name| {
             unless defined(Firewall::Set[$set_name]) {
@@ -57,7 +54,7 @@ define firewall::service (
     }
 
     nftables::service { $title:
-        ensure     => $nftables_ensure,
+        ensure     => $ensure,
         port       => $port,
         port_range => $port_range,
         proto      => $proto,
