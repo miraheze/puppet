@@ -11,7 +11,11 @@
     ['=', ['parameter', 'ensure'], 'present'],
   ]
 ])
-$sorted = $resources.sort |$a, $b| { $a['certname'] <=> $b['certname'] }
+$sorted = $resources.sort |$a, $b| {
+  if $a['certname'] < $b['certname'] { -1 }
+  elsif $a['certname'] > $b['certname'] { 1 }
+  else { 0 }
+}
 -%>
 <%- $sorted.each |$resource| {
   $parameters = $resource['parameters']
