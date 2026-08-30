@@ -56,7 +56,7 @@ class prometheus::exporter::mariadb {
         mode    => '0400',
         owner   => 'prometheus',
         group   => 'prometheus',
-        content => template('prometheus/mysqld_exporter.cnf.erb'),
+        content => epp('prometheus/mysqld_exporter.cnf.epp', { 'exporter_password' => $exporter_password }),
         notify  => Service['prometheus-mysqld-exporter'],
     }
 

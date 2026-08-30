@@ -91,7 +91,7 @@ class postgresql::server(
 
         file { "/etc/postgresql/${_pgversion}/main/ssl.conf":
             ensure  => $ensure,
-            content => template('postgresql/ssl.conf.erb'),
+            content => epp('postgresql/ssl.conf.epp', { '_pgversion' => $_pgversion }),
             owner   => 'root',
             group   => 'root',
             mode    => '0444',

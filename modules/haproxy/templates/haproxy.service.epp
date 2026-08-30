@@ -1,3 +1,4 @@
+<%- | String $pid | -%>
 [Unit]
 Description=HAProxy Load Balancer
 Documentation=man:haproxy(1)
@@ -6,7 +7,7 @@ After=network.target syslog.service
 Wants=syslog.service
 
 [Service]
-Environment="CONFIG=/etc/haproxy/haproxy.cfg" "PIDFILE=<%=@pid%>"
+Environment="CONFIG=/etc/haproxy/haproxy.cfg" "PIDFILE=<%= $pid %>"
 EnvironmentFile=-/etc/default/haproxy
 ExecStartPre=/usr/sbin/haproxy -f ${CONFIG} -c -q $EXTRAOPTS
 ExecStart=/usr/sbin/haproxy -Ws -f ${CONFIG} -p $PIDFILE $EXTRAOPTS

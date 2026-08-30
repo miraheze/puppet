@@ -131,7 +131,7 @@ class irc::cvtbot {
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
-        content => template('irc/cvtbot/CVTBot.ini.erb'),
+        content => epp('irc/cvtbot/CVTBot.ini.epp', { 'password' => $password }),
         require => Git::Clone['CVTBot'],
         notify  => Service['cvtbot'],
     }

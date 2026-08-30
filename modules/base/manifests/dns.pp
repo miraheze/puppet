@@ -53,7 +53,7 @@ class base::dns (
         ensure   => present,
         override => true,
         restart  => true,
-        content  => template('base/dns/override.conf.erb'),
+        content  => epp('base/dns/override.conf.epp'),
         require  => [
           Package['pdns-recursor'],
           File['/etc/powerdns/recursor.yml']

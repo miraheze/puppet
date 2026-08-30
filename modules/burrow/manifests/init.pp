@@ -81,7 +81,7 @@ define burrow (
     $client_id = 'burrow-client',
     $httpserver_port = 8000,
     $lagcheck_intervals = 10,
-    $email_template = 'burrow/email.tmpl.erb',
+    $email_template = 'burrow/email.tmpl.epp',
     $consumer_groups_blacklist = '^(console-consumer-|python-kafka-consumer-|test_).*$',
 )
 {
@@ -99,7 +99,7 @@ define burrow (
     $email_template_path = "${config_dir}/email.tmpl"
     if $to_email {
         file { $email_template_path:
-            content => template($email_template),
+            content => epp($email_template, { 'lagcheck_intervals' => $lagcheck_intervals }),
         }
     }
 

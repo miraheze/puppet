@@ -1,8 +1,9 @@
+<%- | String $reports_password | -%>
 -- Grants for 'reports'@''
 
 GRANT USAGE
     ON *.* TO 'reports'@'%'
-    IDENTIFIED BY '<%= @reports_password %>';
+    IDENTIFIED BY '<%= $reports_password %>';
 
 GRANT ALL PRIVILEGES
     ON `reports`.* TO 'reports'@'%';

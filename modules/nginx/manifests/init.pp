@@ -21,7 +21,7 @@ class nginx (
     # We need to check the syntax before we reload
     systemd::unit { 'nginx.service':
         ensure   => present,
-        content  => template('nginx/nginx-systemd-override.conf.erb'),
+        content  => epp('nginx/nginx-systemd-override.conf.epp'),
         override => true,
         restart  => false,
     }

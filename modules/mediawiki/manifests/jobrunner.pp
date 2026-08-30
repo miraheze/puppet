@@ -19,7 +19,7 @@ class mediawiki::jobrunner {
     # Declare the proxies explicitly with retry=0
     httpd::conf { 'fcgi_proxies':
         ensure  => present,
-        content => template('mediawiki/fcgi_proxies.conf.erb')
+        content => epp('mediawiki/fcgi_proxies.conf.epp', { 'php_fpm_sock' => $php_fpm_sock })
     }
 
     class { 'httpd':

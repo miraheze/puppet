@@ -1,9 +1,10 @@
+<%- | String $puppetserver_hostname | -%>
 [main]
 vardir = /opt/puppetlabs/server/data/puppetserver
 reports = store
 
 [agent]
-server = <%= @puppetserver_hostname %>
+server = <%= $puppetserver_hostname %>
 daemonize = false
 http_connect_timeout = 60
 http_read_timeout = 960

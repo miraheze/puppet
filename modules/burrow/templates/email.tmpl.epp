@@ -1,3 +1,4 @@
+<%- | Integer $lagcheck_intervals | -%>
 From: {{.From}}
 To: {{.To}}
 Subject: [Burrow] Kafka Consumer Lag Alert
@@ -13,7 +14,7 @@ The WARNING status is usually not directly actionable but represents a note of s
 The Lag evaluation rules are available at: https://github.com/linkedin/Burrow/wiki/Consumer-Lag-Evaluation-Rules
 
 Lag check parameters:
-- intervals: <%= @lagcheck_intervals %>
+- intervals: <%= $lagcheck_intervals %>
 - offset commit interval: set on the consumer side
 
 {{range .Results}}{{if or (ne 0 .Status) (ne 5 .Status)}}

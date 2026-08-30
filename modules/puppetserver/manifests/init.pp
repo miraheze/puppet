@@ -32,7 +32,7 @@ class puppetserver(
 
     file { '/etc/default/puppetserver':
         ensure  => present,
-        content => template('puppetserver/puppetserver.erb'),
+        content => epp('puppetserver/puppetserver.epp', { 'puppetserver_java_opts' => $puppetserver_java_opts }),
         require => Package['openvox-server'],
         notify  => Service['puppetserver'],
     }

@@ -187,7 +187,7 @@ class mediawiki {
 
     file { '/etc/swift-env.sh':
         ensure  => 'present',
-        content => template('mediawiki/swift-env.sh.erb'),
+        content => epp('mediawiki/swift-env.sh.epp', { 'swift_password' => $swift_password }),
         mode    => '0755',
     }
 

@@ -1,7 +1,8 @@
-<%#- SPDX-License-Identifier: Apache-2.0 -%>
+<%- | String $hash_path_suffix | -%>
+<%# SPDX-License-Identifier: Apache-2.0 -%>
 [swift-hash]
 # random unique string that can never change (DO NOT LOSE)
-swift_hash_path_suffix = <%= @hash_path_suffix %>
+swift_hash_path_suffix = <%= $hash_path_suffix %>
 
 [storage-policy:0]
 name = Policy-0

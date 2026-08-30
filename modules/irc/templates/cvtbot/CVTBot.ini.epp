@@ -1,7 +1,8 @@
+<%- | String $password | -%>
 # User
 botnick=MirahezeCVTBot
 readerbotnick=CVTBotReader
-botpass=<%= @password %>
+botpass=<%= $password %>
 botrealname=MirahezeCVTBot
 # Server
 ircserver=irc.libera.chat

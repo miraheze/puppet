@@ -38,7 +38,7 @@ class base (
 
     file { '/usr/local/bin/logsalmsg':
         ensure  => present,
-        content => template('base/logsalmsg.erb'),
+        content => epp('base/logsalmsg.epp', { 'bots_hostname' => $bots_hostname }),
         mode    => '0555',
     }
 
@@ -60,7 +60,7 @@ class base (
     if $http_proxy {
         file { '/etc/gitconfig':
             ensure  => present,
-            content => template('base/git/gitconfig.erb'),
+            content => epp('base/git/gitconfig.epp', { 'http_proxy' => $http_proxy }),
         }
     }
 

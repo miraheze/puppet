@@ -60,7 +60,7 @@ class base::puppet (
         mode    => '0555',
         owner   => 'root',
         group   => 'root',
-        content => template('base/puppet/puppet-run.erb'),
+        content => epp('base/puppet/puppet-run.epp'),
         require => File['/var/log/puppet'],
     }
 
@@ -88,7 +88,7 @@ class base::puppet (
     if !lookup('puppetserver') {
         file { '/etc/puppetlabs/puppet/puppet.conf':
             ensure  => present,
-            content => template('base/puppet/puppet.conf.erb'),
+            content => epp('base/puppet/puppet.conf.epp', { 'puppetserver_hostname' => $puppetserver_hostname }),
             mode    => '0444',
             require => Package['openvox-agent'],
         }

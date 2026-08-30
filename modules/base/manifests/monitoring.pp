@@ -16,7 +16,7 @@ class base::monitoring {
 
     file { '/usr/lib/nagios/plugins/check_puppet_run':
         ensure  => present,
-        content => template('base/icinga/check_puppet_run.erb'),
+        content => epp('base/icinga/check_puppet_run.epp'),
         mode    => '0555',
     }
 

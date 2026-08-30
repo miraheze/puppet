@@ -15,7 +15,7 @@ class prometheus::exporter::redis (
         mode    => '0555',
         owner   => 'root',
         group   => 'root',
-        content => template('prometheus/redis/prometheus-jobqueue-stats.py.erb')
+        content => epp('prometheus/redis/prometheus-jobqueue-stats.py.epp', { 'redis_password' => $redis_password })
     }
 
     file { '/etc/redis_exporter':
@@ -36,7 +36,7 @@ class prometheus::exporter::redis (
 
     file { '/etc/default/prometheus-redis':
         ensure  => present,
-        content => template('prometheus/prometheus-redis-default.erb'),
+        content => epp('prometheus/prometheus-redis-default.epp', { 'redis_password' => $redis_password }),
         notify  => Service['prometheus-redis-exporter'],
     }
 

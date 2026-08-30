@@ -47,7 +47,7 @@ class mediawiki::shellbox {
 
     nginx::site { 'shellbox':
         ensure  => present,
-        content => template('mediawiki/shellbox.internal.erb'),
+        content => epp('mediawiki/shellbox.internal.epp', { 'shellbox_secretkey' => $shellbox_secretkey }),
     }
 
     php::fpm::pool { 'shellbox':

@@ -104,7 +104,7 @@ class mariadb::config(
 
     systemd::unit { 'mariadb.service':
         ensure   => present,
-        content  => template('mariadb/mariadb-systemd-override.conf.erb'),
+        content  => epp('mariadb/mariadb-systemd-override.conf.epp'),
         override => true,
         restart  => false,
     }
