@@ -9,7 +9,11 @@
     ['=', 'exported', true]
   ]
 ])
-$sorted = $resources.sort |$a, $b| { $a['certname'] <=> $b['certname'] }
+$sorted = $resources.sort |$a, $b| {
+  if $a['certname'] < $b['certname'] { -1 }
+  elsif $a['certname'] > $b['certname'] { 1 }
+  else { 0 }
+}
 $present = $sorted.filter |$resource| { $resource['parameters']['ensure'] == 'present' }
 -%>
 <%- $present.each |$resource| {
