@@ -545,7 +545,9 @@ def write_content_to_file(title, content):
     filename = title.replace(' ', '_').replace('/', '-') + '.md'
     filepath = os.path.join(sub_dir_path, filename)
     url = f"https://meta.miraheze.org/wiki/{title.replace(' ', '_')}"
-    header = f'---\ntitle: {title}\n---\n\n'
+
+    frontmatter_title = f'"{title}"' if ': ' in title else title
+    header = f'---\ntitle: {frontmatter_title}\n---\n\n'
     footer = f'\n\n----\n**[Go to Source &rarr;]({url})**'
 
     with open(filepath, 'w', encoding='utf-8') as file:
