@@ -34,8 +34,8 @@ jobs:
     - name: Validate EPP Templates
       run: |
         echo "Validating EPP files..."
-        # Find all .epp files and run puppet parser validate on them
-        find . -type f -name "*.epp" -exec puppet parser validate {} +
+        # Find all .epp files and run puppet epp validate on them
+        find . -type f -name "*.epp" -exec puppet epp validate {} +
 
     - name: puppet-lint
       uses: scottbrenner/puppet-lint-action@v1.1.1
