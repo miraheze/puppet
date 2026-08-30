@@ -99,7 +99,7 @@ class varnish (
 
     systemd::service { 'varnish':
         ensure         => present,
-        content        => systemd_template('varnish'),
+        content        => systemd_template('varnish', { 'reload_vcl_opts' => $reload_vcl_opts, 'thread_pool_max' => $thread_pool_max, 'storage' => $storage }),
         service_params => {
             enable  => true,
             require => [
@@ -120,7 +120,7 @@ class varnish (
     $varnish_totp_secret = lookup('passwords::varnish::varnish_totp_secret')
     systemd::service { 'varnish-depool':
         ensure  => present,
-        content => systemd_template('varnish-depool'),
+        content => systemd_template('varnish-depool', { 'varnish_totp_secret' => $varnish_totp_secret }),
         restart => true,
     }
 

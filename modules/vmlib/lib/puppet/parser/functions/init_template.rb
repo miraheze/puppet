@@ -5,13 +5,17 @@
 # Based on the value of the two mandatory arguments, the template path will be
 # determined as follows:
 #
-# ${module_name}/initscripts/${arg}.${initsystem}.erb
+# ${module_name}/initscripts/${arg}.${initsystem}.epp
+#
+# An optional third argument, a hash of parameters, is passed through to the
+# EPP template.
 #
 module Puppet::Parser::Functions
-  newfunction(:init_template, :type => :rvalue, :arity => 2) do |args|
-    tpl_name, initsystem = args
+  newfunction(:init_template, :type => :rvalue, :arity => -3) do |args|
+    tpl_name, initsystem, params = args
+    params ||= {}
     module_name = lookupvar('module_name')
-    tpl_arg = "#{module_name}/initscripts/#{tpl_name}.#{initsystem}.erb"
-    function_template([tpl_arg])
+    tpl_arg = "#{module_name}/initscripts/#{tpl_name}.#{initsystem}.epp"
+    call_function('epp', [tpl_arg, params])
   end
 end

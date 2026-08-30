@@ -138,7 +138,7 @@ class irc::cvtbot {
 
     systemd::service { 'cvtbot':
         ensure  => present,
-        content => systemd_template('cvtbot'),
+        content => systemd_template('cvtbot', { 'install_path' => $install_path, 'dotnet_version' => $dotnet_version }),
         restart => true,
         require => [
             Exec['CVTBot-build'],
