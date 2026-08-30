@@ -1,3 +1,3 @@
-<%- | Optional[String] $http_proxy | -%>
+<%- | String $http_proxy | -%>
 [http]
         proxy = <%= $http_proxy %>
