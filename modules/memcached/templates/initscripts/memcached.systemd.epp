@@ -16,12 +16,12 @@ After=network.target
 ExecStart=/usr/bin/memcached \
           <%- $listen.sort.each |$item| { -%>
           -l <%= $item %> \
-          -p <%= $port -%> \
+          -p <%= $port %> \
           <%- } -%>
           -m <%= $size %> \
           -u nobody \
           -c 25000 \
-          -f <%= $growth_factor -%> \
+          -f <%= $growth_factor %> \
           <%- $extra_options.keys.sort.each |$option| { -%>
           <%- $value = $extra_options[$option] -%>
           <%= $option %> <%= $value %> \
