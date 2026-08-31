@@ -35,7 +35,14 @@ class irc::irclogbot {
 
     file { '/etc/irclogbot/config.py':
         ensure  => present,
-        content => epp('irc/logbot/config.epp', { 'mirahezebots_password' => $mirahezebots_password, 'mirahezelogbot_password' => $mirahezelogbot_password, 'mirahezelogbot_consumer_token' => $mirahezelogbot_consumer_token, 'mirahezelogbot_consumer_secret' => $mirahezelogbot_consumer_secret, 'mirahezelogbot_access_token' => $mirahezelogbot_access_token, 'mirahezelogbot_access_secret' => $mirahezelogbot_access_secret }),
+        content => epp('irc/logbot/config.py.epp', {
+            'mirahezebots_password'          => $mirahezebots_password,
+            'mirahezelogbot_password'        => $mirahezelogbot_password,
+            'mirahezelogbot_consumer_token'  => $mirahezelogbot_consumer_token,
+            'mirahezelogbot_consumer_secret' => $mirahezelogbot_consumer_secret,
+            'mirahezelogbot_access_token'    => $mirahezelogbot_access_token,
+            'mirahezelogbot_access_secret'   => $mirahezelogbot_access_secret,
+        }),
         notify  => Service['logbot'],
     }
 
