@@ -37,6 +37,12 @@ jobs:
         # Find all .epp files and run puppet epp validate on them
         find . -type f -name "*.epp" -exec puppet epp validate {} +
 
+    - name: Validate Puppet Files
+      run: |
+        echo "Validating Puppet files..."
+        # Find all .pp files and run puppet parser validate on them
+        find . -type f -name "*.pp" -exec puppet parser validate {} +
+
     - name: puppet-lint
       uses: scottbrenner/puppet-lint-action@v1.1.1
       with:
