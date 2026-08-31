@@ -1,0 +1,18 @@
+*.html.epp     linguist-language=HTML
+*.css.epp      linguist-language=CSS
+*.js.epp       linguist-language=JavaScript
+*.json.epp     linguist-language=JSON
+
+*.php.epp      linguist-language=PHP
+*.py.epp       linguist-language=Python
+*.sh.epp       linguist-language=Shell
+*.rb.epp       linguist-language=Ruby
+*.ps1.epp      linguist-language=PowerShell
+
+*.yaml.epp     linguist-language=YAML
+*.yml.epp      linguist-language=YAML
+*.ini.epp      linguist-language=INI
+*.conf.epp     linguist-language=INI
+*.xml.epp      linguist-language=XML
+*.vcl.epp      linguist-language=VCL
+*.sql.epp      linguist-language=SQL
