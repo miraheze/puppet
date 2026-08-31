@@ -163,7 +163,7 @@ class httpd (
         # the main logs, and that apache gets restarted afterwards.
         logrotate::conf { 'apache2':
             ensure  => present,
-            content => template('httpd/logrotate.erb'),
+            content => epp('httpd/logrotate.epp', { 'period' => $period, 'rotate' => $rotate, 'enable_forensic_log' => $enable_forensic_log }),
         }
     }
     else {

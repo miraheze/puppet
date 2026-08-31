@@ -53,7 +53,7 @@ class role::db (
 
     file { '/etc/mysql/wikitide/mediawiki-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/mediawiki-grants.sql.erb'),
+        content => epp('mariadb/grants/mediawiki-grants.sql.epp', { 'mediawiki_password' => $mediawiki_password, 'bucketuser_password' => $bucketuser_password, 'wikiadmin_password' => $wikiadmin_password }),
     }
 
     file { '/etc/mysql/wikitide/matomo-grants.sql':
@@ -68,7 +68,7 @@ class role::db (
 
     file { '/etc/mysql/wikitide/icinga2-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/icinga2-grants.sql.erb'),
+        content => epp('mariadb/grants/icinga2-grants.sql.epp', { 'ido_db_user_password' => $ido_db_user_password, 'icingaweb2_db_user_password' => $icingaweb2_db_user_password }),
     }
 
     file { '/etc/mysql/wikitide/reports-grants.sql':

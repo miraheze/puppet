@@ -166,7 +166,7 @@ class matomo (
 
     file { '/srv/matomo/config/config.ini.php':
         ensure  => present,
-        content => template('matomo/config.ini.php.erb'),
+        content => epp('matomo/config.ini.php.epp', { 'matomo_db_host' => $matomo_db_host, 'password' => $password, 'salt' => $salt, 'ldap_password' => $ldap_password }),
         owner   => 'www-data',
         group   => 'www-data',
         require => Git::Clone['matomo'],

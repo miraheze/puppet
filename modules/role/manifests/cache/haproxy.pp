@@ -115,7 +115,7 @@ class role::cache::haproxy(
     $alpn = ['h2', 'http/1.1']
     file { '/etc/haproxy/crt-list.cfg':
         mode    => '0444',
-        content => template('role/cache/haproxy/crt-list.cfg.erb'),
+        content => epp('role/cache/haproxy/crt-list.cfg.epp', { 'certificates' => $certificates, 'alpn' => $alpn, 'ecdhe_curves' => $ecdhe_curves }),
         notify  => Service['haproxy'],
     }
 

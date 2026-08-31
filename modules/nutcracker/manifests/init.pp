@@ -54,7 +54,7 @@ class nutcracker(
             content      => template('nutcracker/nutcracker.yml.erb'),
             validate_cmd => '/usr/sbin/nutcracker --test-conf --conf-file %';
         '/etc/default/nutcracker':
-            content => template('nutcracker/default.erb');
+            content => epp('nutcracker/default.epp', { 'verbosity' => $verbosity, 'mbuf_size' => $mbuf_size });
     }
     service { 'nutcracker':
         ensure  => ensure_service($ensure),

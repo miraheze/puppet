@@ -255,7 +255,7 @@ class icingaweb2 (
 
     file { '/etc/icingaweb2/modules/icingadb/redis.ini':
         ensure  => present,
-        content => template('icingaweb2/redis.ini.erb'),
+        content => epp('icingaweb2/redis.ini.epp', { 'icingadb_redis_host' => $icingadb_redis_host, 'icingadb_redis_port' => $icingadb_redis_port, 'icingadb_redis_password' => $icingadb_redis_password }),
         owner   => 'www-data',
         group   => 'icingaweb2',
         require => File['/etc/icingaweb2/modules/icingadb'],

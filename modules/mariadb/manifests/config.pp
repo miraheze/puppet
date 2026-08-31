@@ -85,7 +85,7 @@ class mariadb::config(
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
-        content => template('mariadb/config/root.my.cnf.erb'),
+        content => epp('mariadb/config/root.my.cnf.epp', { 'password' => $password, 'enable_ssl' => $enable_ssl }),
     }
 
     file { '/var/tmp/mariadb':

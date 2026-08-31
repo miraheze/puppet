@@ -107,6 +107,6 @@ define systemd::syslog (
 
     logrotate::conf { $title:
         ensure  => $ensure,
-        content => template('systemd/logrotate.erb'),
+        content => epp('systemd/logrotate.epp', { 'title' => $title, 'local_logdir' => $local_logdir }),
     }
 }

@@ -12,7 +12,7 @@ class ollama (
     if $http_proxy {
         file { '/etc/apt/apt.conf.d/01ollama':
             ensure  => present,
-            content => template('ollama/aptproxy.erb'),
+            content => epp('ollama/aptproxy.epp', { 'http_proxy' => $http_proxy }),
         }
     }
 

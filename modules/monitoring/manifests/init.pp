@@ -30,7 +30,7 @@ class monitoring (
     if $http_proxy and !defined(File['/etc/apt/apt.conf.d/02mariadb']) {
         file { '/etc/apt/apt.conf.d/02mariadb':
             ensure  => present,
-            content => template('mariadb/aptproxy.erb'),
+            content => epp('mariadb/aptproxy.epp', { 'http_proxy' => $http_proxy }),
         }
     }
 

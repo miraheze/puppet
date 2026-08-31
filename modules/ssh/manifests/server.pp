@@ -33,7 +33,7 @@ class ssh::server (
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
-        content => template('ssh/sshd_config.erb'),
+        content => epp('ssh/sshd_config.epp', { 'listen_port' => $listen_port, 'permit_root' => $permit_root, 'ssh_authorized_keys_file' => $ssh_authorized_keys_file }),
     }
 
     if $facts['networking']['ip6'] == undef {

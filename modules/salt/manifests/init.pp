@@ -3,7 +3,7 @@ class salt {
     if $http_proxy {
         file { '/etc/apt/apt.conf.d/01salt':
             ensure  => present,
-            content => template('salt/apt/01salt.erb'),
+            content => epp('salt/apt/01salt.epp', { 'http_proxy' => $http_proxy }),
             before  => Apt::Source['salt_apt'],
         }
     }
@@ -46,7 +46,7 @@ class salt {
     | PQL
     $host = puppetdb_query($pdb_query).map |$x| { $x['certname'] }
     file { '/etc/salt/roster':
-        content => template('salt/roster.erb'),
+        content => epp('salt/roster.epp', { 'host' => $host }),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
@@ -71,7 +71,7 @@ class salt {
     }
 
     file { '/home/salt-user/.ssh/known_hosts':
-        content => template('salt/salt-user-known-hosts.erb'),
+        content => epp('salt/salt-user-known-hosts.epp'),
         owner   => 'salt-user',
         group   => 'salt-user',
         mode    => '0644',
@@ -92,7 +92,7 @@ class salt {
     }
 
     file { '/root/.ssh/known_hosts':
-        content => template('salt/salt-user-known-hosts.erb'),
+        content => epp('salt/salt-user-known-hosts.epp'),
         owner   => 'root',
         group   => 'root',
         mode    => '0644',

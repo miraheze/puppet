@@ -106,7 +106,7 @@ define rsync::quickdatacopy(
                   owner   => 'root',
                   group   => 'root',
                   mode    => '0755',
-                  content => template('rsync/quickdatacopy-ssl-wrapper.erb'),
+                  content => epp('rsync/quickdatacopy-ssl-wrapper.epp'),
               }
           }
           $quickdatacopy = @("SCRIPT")

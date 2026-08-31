@@ -70,7 +70,7 @@ class prometheus (
     file { '/etc/prometheus/targets/nodes.yaml':
         ensure  => present,
         mode    => '0444',
-        content => template('prometheus/nodes.erb')
+        content => epp('prometheus/nodes.epp', { 'servers' => $servers, 'port' => $port })
     }
 
     systemd::service { 'prometheus':
