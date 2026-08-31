@@ -4,7 +4,7 @@
 *.json.epp     linguist-language=JSON
 
 *.php.epp      linguist-language=PHP
-*.py.epp       linguist-language=Python
+*.py.epp       linguist-language=Python diff=python
 *.sh.epp       linguist-language=Shell
 *.rb.epp       linguist-language=Ruby
 *.ps1.epp      linguist-language=PowerShell
