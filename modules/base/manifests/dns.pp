@@ -24,7 +24,7 @@ class base::dns (
     if $forward_use_internal {
         $forward_addresses = ['10.0.17.171']
     } else {
-        $forward_addresses = ['2602:294:0:b23::111', '2001:41d0:801:2000::4089']
+        $forward_addresses = ['2602:294:0:b23::111', '2604:2dc0:121::1153']
     }
 
     $zone_forwards = $forward_zone_names.reduce({}) |$memo, $zone| {
