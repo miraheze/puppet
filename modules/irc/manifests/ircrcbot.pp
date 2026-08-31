@@ -12,7 +12,7 @@ define irc::ircrcbot(
 
     file { "/usr/local/bin/ircrcbot-${nickname}.py":
             ensure  => present,
-            content => epp('irc/ircrcbot.epp', { 'network' => $network, 'nickname' => $nickname, 'mirahezebots_password' => $mirahezebots_password, 'channel' => $channel, 'udp_port' => $udp_port, 'network_port' => $network_port }),
+            content => epp('irc/ircrcbot.py.epp', { 'network' => $network, 'nickname' => $nickname, 'mirahezebots_password' => $mirahezebots_password, 'channel' => $channel, 'udp_port' => $udp_port, 'network_port' => $network_port }),
             mode    => '0755',
             notify  => Service["ircrcbot-${nickname}"],
         }
