@@ -1,3 +1,4 @@
+# vim: syntax=python
 <%- | Boolean $use_gateway, String $pca_password | -%>
 <%- $cpu_third = $facts['processors']['count'] / 3
 $compress_threads = if $cpu_third > 1 { $cpu_third } else { 1 }
