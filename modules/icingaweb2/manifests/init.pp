@@ -168,7 +168,17 @@ class icingaweb2 (
 
     file { '/etc/icingaweb2/resources.ini':
         ensure  => present,
-        content => epp('icingaweb2/resources.ini.epp', { 'ldap_password' => $ldap_password, 'ido_db_host' => $ido_db_host, 'ido_db_name' => $ido_db_name, 'ido_db_user_name' => $ido_db_user_name, 'ido_db_user_password' => $ido_db_user_password, 'icingadb_db_host' => $icingadb_db_host, 'icingadb_db_name' => $icingadb_db_name, 'icingadb_db_user' => $icingadb_db_user, 'icingadb_db_user_password' => $icingadb_db_user_password }),
+        content => epp('icingaweb2/resources.ini.epp', {
+            'ldap_password'             => $ldap_password,
+            'ido_db_host'               => $ido_db_host,
+            'ido_db_name'               => $ido_db_name,
+            'ido_db_user_name'          => $ido_db_user_name,
+            'ido_db_user_password'      => $ido_db_user_password,
+            'icingadb_db_host'          => $icingadb_db_host,
+            'icingadb_db_name'          => $icingadb_db_name,
+            'icingadb_db_user'          => $icingadb_db_user,
+            'icingadb_db_user_password' => $icingadb_db_user_password,
+        }),
         owner   => 'www-data',
         group   => 'icingaweb2',
         require => File['/etc/icingaweb2'],
