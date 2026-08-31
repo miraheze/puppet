@@ -12,5 +12,5 @@
     "*.ini.epp": "ini",
     "*.conf.epp": "properties",
     "*.vcl.epp": "vcl"
-  },
+  }
 }
