@@ -15,3 +15,4 @@
 *.conf.epp     linguist-language=INI
 *.xml.epp      linguist-language=XML
 *.vcl.epp      linguist-language=VCL
+*.sql.epp      linguist-language=SQL
