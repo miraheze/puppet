@@ -11,6 +11,7 @@
     "*.json.epp": "json",
     "*.ini.epp": "ini",
     "*.conf.epp": "properties",
-    "*.vcl.epp": "vcl"
+    "*.vcl.epp": "vcl",
+    "*.sql.epp": "sql"
   }
 }
