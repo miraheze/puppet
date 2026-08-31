@@ -1,18 +1,18 @@
-*.html.epp     linguist-language=HTML
-*.css.epp      linguist-language=CSS
-*.js.epp       linguist-language=JavaScript
-*.json.epp     linguist-language=JSON
+*.html.epp     linguist-language=HTML          diff=html
+*.css.epp      linguist-language=CSS           diff=css
+*.js.epp       linguist-language=JavaScript    diff=javascript
+*.json.epp     linguist-language=JSON          diff=json
 
-*.php.epp      linguist-language=PHP
-*.py.epp       linguist-language=Python
-*.sh.epp       linguist-language=Shell
-*.rb.epp       linguist-language=Ruby
-*.ps1.epp      linguist-language=PowerShell
+*.php.epp      linguist-language=PHP           diff=php
+*.py.epp       linguist-language=Python        diff=python
+*.sh.epp       linguist-language=Shell         diff=bash
+*.rb.epp       linguist-language=Ruby          diff=ruby
+*.ps1.epp      linguist-language=PowerShell    diff=powershell
 
-*.yaml.epp     linguist-language=YAML
-*.yml.epp      linguist-language=YAML
+*.yaml.epp     linguist-language=YAML          diff=yaml
+*.yml.epp      linguist-language=YAML          diff=yaml
 *.ini.epp      linguist-language=INI
 *.conf.epp     linguist-language=INI
-*.xml.epp      linguist-language=XML
+*.xml.epp      linguist-language=XML           diff=xml
 *.vcl.epp      linguist-language=VCL
 *.sql.epp      linguist-language=SQL
