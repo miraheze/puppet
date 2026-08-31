@@ -67,7 +67,7 @@ class irc::pywikibot {
         owner   => 'pywikibot',
         group   => 'pywikibot',
         mode    => '0400',
-        content => epp('irc/pywikibot/user-config.epp', { 'consumer_token' => $consumer_token, 'consumer_secret' => $consumer_secret, 'access_token' => $access_token, 'access_secret' => $access_secret }),
+        content => epp('irc/pywikibot/user-config.py.epp', { 'consumer_token' => $consumer_token, 'consumer_secret' => $consumer_secret, 'access_token' => $access_token, 'access_secret' => $access_secret }),
         require => Git::Clone['Pywikibot-stable'],
     }
 
@@ -78,7 +78,7 @@ class irc::pywikibot {
         owner   => 'pywikibot',
         group   => 'pywikibot',
         mode    => '0644',
-        content => epp('irc/pywikibot/wikitide_family.epp', { 'family_langs' => $family_langs }),
+        content => epp('irc/pywikibot/wikitide_family.py.epp', { 'family_langs' => $family_langs }),
         require => Git::Clone['Pywikibot-stable'],
     }
 
