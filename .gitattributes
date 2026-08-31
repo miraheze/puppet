@@ -1,18 +1,18 @@
-*.html.epp     linguist-language=HTML          diff=html
-*.css.epp      linguist-language=CSS           diff=css
-*.js.epp       linguist-language=JavaScript    diff=javascript
-*.json.epp     linguist-language=JSON          diff=json
+*.html.epp     -diff linguist-language=HTML          diff=html
+*.css.epp      -diff linguist-language=CSS           diff=css
+*.js.epp       -diff linguist-language=JavaScript    diff=javascript
+*.json.epp     -diff linguist-language=JSON          diff=json
 
-*.php.epp      linguist-language=PHP           diff=php
-*.py.epp       linguist-language=Python        diff=python
-*.sh.epp       linguist-language=Shell         diff=bash
-*.rb.epp       linguist-language=Ruby          diff=ruby
-*.ps1.epp      linguist-language=PowerShell    diff=powershell
+*.php.epp      -diff linguist-language=PHP           diff=php
+*.py.epp       -diff linguist-language=Python        diff=python
+*.sh.epp       -diff linguist-language=Shell         diff=bash
+*.rb.epp       -diff linguist-language=Ruby          diff=ruby
+*.ps1.epp      -diff linguist-language=PowerShell    diff=powershell
 
-*.yaml.epp     linguist-language=YAML          diff=yaml
-*.yml.epp      linguist-language=YAML          diff=yaml
-*.ini.epp      linguist-language=INI
-*.conf.epp     linguist-language=INI
-*.xml.epp      linguist-language=XML           diff=xml
-*.vcl.epp      linguist-language=VCL
-*.sql.epp      linguist-language=SQL
+*.yaml.epp     -diff linguist-language=YAML          diff=yaml
+*.yml.epp      -diff linguist-language=YAML          diff=yaml
+*.ini.epp      -diff linguist-language=INI
+*.conf.epp     -diff linguist-language=INI
+*.xml.epp      -diff linguist-language=XML           diff=xml
+*.vcl.epp      -diff linguist-language=VCL
+*.sql.epp      -diff linguist-language=SQL
