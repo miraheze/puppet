@@ -26,7 +26,7 @@ class mariadb::config(
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
-        content => template($config),
+        content => epp($config, { 'datadir' => $datadir, 'tmpdir' => $tmpdir, 'server_id' => $server_id, 'enable_bin_logs' => $enable_bin_logs, 'expire_logs_days' => $expire_logs_days, 'sync_binlog' => $sync_binlog, 'max_connections' => $max_connections, 'wait_timeout' => $wait_timeout, 'flush_log_at_trx_commit' => $flush_log_at_trx_commit, 'innodb_buffer_pool_size' => $innodb_buffer_pool_size, 'enable_slow_log' => $enable_slow_log, 'enable_ssl' => $enable_ssl }),
     }
 
     file { '/etc/mysql':
@@ -77,7 +77,7 @@ class mariadb::config(
 
     file { '/etc/mysql/wikitide/default-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/default-grants.sql.erb'),
+        content => epp('mariadb/grants/default-grants.sql.epp', { 'password' => $password, 'icinga_password' => $icinga_password, 'exporter_password' => $exporter_password, 'mariadb_replica_password' => $mariadb_replica_password }),
         require => File['/etc/mysql/wikitide'],
     }
 

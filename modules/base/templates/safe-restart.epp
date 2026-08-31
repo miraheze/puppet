@@ -1,0 +1,9 @@
+<%- | String $title, Array[String] $nodes, Array[String] $cache_nodes, String $varnish_totp_secret | -%>
+#!/bin/bash
+
+<%- unless $nodes.any |$n| { $n == $facts['networking']['fqdn'] } or $nodes.length == 0 { -%>
+echo "Safe-restart is not needed here."
+systemctl restart <%= $title %>
+<%- else { -%>
+/usr/local/bin/safe-service-restart --api <%= $cache_nodes.map |$h| { "http://${h}:5001" }.join(' ') %> --services <%= $title %> --retries 10 --wait 5 --totp-secret <%= $varnish_totp_secret -%> $@
+<%- } -%>

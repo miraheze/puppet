@@ -1,0 +1,92 @@
+<%- | String $wikiadmin_password,
+      String $mediawiki_password,
+      String $bucketuser_password,
+      String $redis_password,
+      String $mediawiki_upgradekey,
+      String $mediawiki_secretkey,
+      String $hcaptcha_secretkey,
+      String $turnstile_sitekey,
+      String $turnstile_secretkey,
+      String $shellbox_secretkey,
+      String $matomotoken,
+      String $mediamoderation_apikey,
+      String $openai_apikey,
+      String $openai_instructions,
+      String $cloudflare_apikey,
+      String $cloudflare_zoneid,
+      String $global_discord_webhook_url,
+      String $discord_experimental_webhook,
+      String $ldap_password,
+      String $swift_password,
+      String $swift_temp_url_key,
+      String $reports_write_key,
+      String $google_translate_apikey_meta,
+      String $speedscope_log_token
+| -%>
+<%- $openai_instructions_escaped = regsubst(regsubst($openai_instructions, '\\\\', '\\\\\\\\', 'G'), '\'', '\\\\\'', 'G') -%>
+<?php
+
+// Database passwords
+$wgDBadminpassword = '<%= $wikiadmin_password %>';
+$wgDBpassword = '<%= $mediawiki_password %>';
+$wgBucketDBpassword = '<%= $bucketuser_password %>';
+
+// Redis AUTH password
+$wmgRedisPassword = '<%= $redis_password %>';
+
+// MediaWiki secret keys
+$wgUpgradeKey = '<%= $mediawiki_upgradekey %>';
+$wgSecretKey = '<%= $mediawiki_secretkey %>';
+
+// hCaptcha secret key
+$wgHCaptchaSecretKey = '<%= $hcaptcha_secretkey %>';
+
+// Turnstile keys
+$wgTurnstileSiteKey = '<%= $turnstile_sitekey %>';
+$wgTurnstileSecretKey = '<%= $turnstile_secretkey %>';
+
+// Shellbox secret key
+$wgShellboxSecretKey = '<%= $shellbox_secretkey %>';
+
+// Matomo token
+$wgMatomoAnalyticsTokenAuth = '<%= $matomotoken %>';
+
+// MediaModeration API key
+$wgMediaModerationPhotoDNASubscriptionKey = '<%= $mediamoderation_apikey %>';
+
+// OpenAI settings
+$wgCreateWikiOpenAIConfig = [
+	'dryrun' => false,
+	'apikey' => '<%= $openai_apikey %>',
+	'model' => 'gpt-5.6-luna',
+	'instructions' => '<%= $openai_instructions_escaped %>',
+];
+
+// RequestCustomDomain settings
+$wgRequestCustomDomainCloudflareConfig = [
+	'tlsversion' => '1.3',
+	'apikey' => '<%= $cloudflare_apikey %>',
+	'zoneid' => '<%= $cloudflare_zoneid %>',
+];
+
+// Extension:DiscordNotifications global webhook
+$wmgGlobalDiscordWebhookUrl = '<%= $global_discord_webhook_url %>';
+$wmgDiscordExperimentalWebhook = '<%= $discord_experimental_webhook %>';
+
+// writer-user password (ldap)
+$wmgLdapPassword = '<%= $ldap_password %>';
+
+// Swift password for mw
+$wmgSwiftPassword = '<%= $swift_password %>';
+
+// Swift temp URL key for mw
+$wmgSwiftTempUrlKey = '<%= $swift_temp_url_key %>';
+
+// Reports write key
+$wgMirahezeReportsWriteKey = '<%= $reports_write_key %>';
+
+// Google Translate API key for Meta
+$wmgTranslateGoogleTranslateMetaKey = '<%= $google_translate_apikey_meta %>';
+
+// Speedscope logging token
+$wgSpeedscopeToken = '<%= $speedscope_log_token %>';

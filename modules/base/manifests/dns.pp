@@ -46,7 +46,7 @@ class base::dns (
         owner   => 'pdns',
         group   => 'pdns',
         notify  => Service['pdns-recursor'],
-        content => template('base/dns/recursor.yml.erb'),
+        content => epp('base/dns/recursor.yml.epp', { 'allow_from' => $allow_from, 'listen_addresses' => $listen_addresses, 'listen_port' => $listen_port, 'do_ipv4' => $do_ipv4, 'do_ipv6' => $do_ipv6, 'query_local_address' => $query_local_address, 'zone_forwards' => $zone_forwards, 'forward_zones_recurse' => $forward_zones_recurse, 'threads' => $threads }),
     }
 
     systemd::service { 'pdns-recursor':
@@ -90,7 +90,7 @@ class base::dns (
     }
 
     file { '/etc/resolv.conf':
-        content => template('base/dns/resolv.conf.erb'),
+        content => epp('base/dns/resolv.conf.epp', { 'resolvers' => $resolvers, 'forward_use_internal' => $forward_use_internal }),
         require => Package['pdns-recursor'],
     }
 }

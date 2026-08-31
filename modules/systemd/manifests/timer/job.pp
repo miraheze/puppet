@@ -178,7 +178,7 @@ define systemd::timer::job (
 
     systemd::unit { "${title}.service":
         ensure  => $ensure,
-        content => template('systemd/timer_service.erb'),
+        content => epp('systemd/timer_service.epp', { 'title' => $title, 'description' => $description, 'after' => $after, 'path_exists' => $path_exists, 'user' => $user, 'group' => $group, 'private_tmp' => $private_tmp, 'environment' => $environment, 'environment_file' => $environment_file, 'syslog_identifier' => $syslog_identifier, 'slice' => $slice, 'timeout_start_sec' => $timeout_start_sec, 'send_mail' => $send_mail, 'send_mail_to' => $send_mail_to, 'send_mail_only_on_error' => $send_mail_only_on_error, 'ignore_errors' => $ignore_errors, 'command' => $command, 'exec_start_pre' => $exec_start_pre, 'max_runtime_seconds' => $max_runtime_seconds, 'stdin' => $stdin, 'stdout' => $stdout, 'stderr' => $stderr, 'working_directory' => $working_directory, 'success_exit_status' => $success_exit_status }),
     }
 
     systemd::timer { $title:
