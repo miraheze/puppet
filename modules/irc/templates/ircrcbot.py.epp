@@ -1,5 +1,11 @@
+<%- | String $network,
+      String $nickname,
+      String $mirahezebots_password,
+      String $channel,
+      String $udp_port,
+      String $network_port
+| -%>
 #!/usr/bin/python3
-<%- | String $network, String $nickname, String $mirahezebots_password, String $channel, String $udp_port, String $network_port | -%>
 
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor, ssl
