@@ -1,6 +1,6 @@
 # class: irc::irclogbot
 class irc::irclogbot {
-    include ::irc
+    include irc
 
     file { '/etc/irclogbot':
         ensure => directory,
@@ -53,6 +53,6 @@ class irc::irclogbot {
     }
 
     monitoring::nrpe { 'IRC Log Bot':
-        command => '/usr/lib/nagios/plugins/check_procs -a adminlogbot.py -c 1:1'
+        command => '/usr/lib/nagios/plugins/check_procs -a adminlogbot.py -c 1:1',
     }
 }
