@@ -15,7 +15,10 @@ define backup::job (
     if !defined(File['/usr/local/bin/wikitide-backup']) {
         file { '/usr/local/bin/wikitide-backup':
             mode    => '0555',
-            content => template('backup/wikitide-backup.py.erb'),
+            content => epp('backup/wikitide-backup.py.epp', {
+                'use_gateway'  => $use_gateway,
+                'pca_password' => $pca_password,
+            }),
         }
     }
 
