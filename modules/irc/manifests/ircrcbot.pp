@@ -1,21 +1,28 @@
 # type: irc::ircrcbot
 define irc::ircrcbot(
-    $nickname     = undef,
-    $network      = undef,
-    $network_port = '6697',
-    $channel      = undef,
-    $udp_port     = '5070',
+    $nickname,
+    $network,
+    $network_port,
+    $channel,
+    $udp_port,
 ) {
-    include ::irc
+    include irc
 
     $mirahezebots_password = lookup('passwords::irc::mirahezebots')
 
     file { "/usr/local/bin/ircrcbot-${nickname}.py":
-            ensure  => present,
-            content => epp('irc/ircrcbot.py.epp', { 'network' => $network, 'nickname' => $nickname, 'mirahezebots_password' => $mirahezebots_password, 'channel' => $channel, 'udp_port' => $udp_port, 'network_port' => $network_port }),
-            mode    => '0755',
-            notify  => Service["ircrcbot-${nickname}"],
-        }
+        ensure  => present,
+        content => epp('irc/ircrcbot.py.epp', {
+            'network'               => $network,
+            'nickname'              => $nickname,
+            'mirahezebots_password' => $mirahezebots_password,
+            'channel'               => $channel,
+            'udp_port'              => $udp_port,
+            'network_port'          => $network_port,
+        }),
+        mode    => '0755',
+        notify  => Service["ircrcbot-${nickname}"],
+    }
 
     systemd::service { "ircrcbot-${nickname}":
         ensure  => present,
@@ -24,6 +31,6 @@ define irc::ircrcbot(
     }
 
     monitoring::nrpe { "IRC RC Bot ${nickname}":
-        command => "/usr/lib/nagios/plugins/check_procs -a ircrcbot-${nickname}.py -c 1:1"
+        command => "/usr/lib/nagios/plugins/check_procs -a ircrcbot-${nickname}.py -c 1:1",
     }
 }
