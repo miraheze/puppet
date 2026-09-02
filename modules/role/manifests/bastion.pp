@@ -4,7 +4,6 @@ class role::bastion (
     include base
 
     if $higher_timeout {
-        include squid
         class { 'squid':
             config_source => 'puppet:///modules/role/bastion/squid.conf'
         }
