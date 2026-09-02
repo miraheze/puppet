@@ -7,26 +7,7 @@ define backup::job (
     Optional[String] $backup_params = undef,
     Stdlib::Absolutepath $logfile_basedir = '/var/log',
 ) {
-    stdlib::ensure_packages(['python3-fabric', 'python3-decorator'])
-
-    $pca_password = lookup('private::passwords::pca')
-    $use_gateway = lookup('backup::job::use_gateway', {'default_value' => true})
-
-    if !defined(File['/usr/local/bin/wikitide-backup']) {
-        file { '/usr/local/bin/wikitide-backup':
-            mode    => '0555',
-            content => epp('backup/wikitide-backup.py.epp', {
-                'use_gateway'  => $use_gateway,
-                'pca_password' => $pca_password,
-            }),
-        }
-    }
-
-    if !defined(File['/srv/backups']) {
-        file { '/srv/backups':
-            ensure => directory,
-        }
-    }
+    include ::backup
 
     if $backup_params {
         $params = $backup_params

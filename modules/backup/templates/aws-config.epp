@@ -1,0 +1,15 @@
+[default]
+region = us-east-va
+output = json
+endpoint_url = https://s3.us-east-va.io.cloud.ovh.us
+services = ovh-us-east-va
+
+[services ovh-us-east-va]
+s3 =
+  max_concurrent_requests = 4
+  endpoint_url = https://s3.us-east-va.io.cloud.ovh.us/
+  signature_version = s3v4
+
+s3api =
+  endpoint_url = https://s3.us-east-va.io.cloud.ovh.us/
+  
