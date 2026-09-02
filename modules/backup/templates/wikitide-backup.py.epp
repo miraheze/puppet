@@ -1,3 +1,4 @@
+<%- | Boolean $use_http_proxy | -%>
 <%- $cpu_third = $facts['processors']['count'] / 3
 $compress_threads = if $cpu_third > 1 { $cpu_third } else { 1 }
 -%>
@@ -120,8 +121,10 @@ def aws_environment():
     env['AWS_SHARED_CREDENTIALS_FILE'] = AWS_CREDENTIALS_FILE
     env['AWS_PROFILE'] = AWS_PROFILE
 
+    <% if $use_http_proxy { %>
     env['HTTP_PROXY'] = S3_PROXY
     env['HTTPS_PROXY'] = S3_PROXY
+    <% } %>
 
     return env
 

@@ -1,4 +1,6 @@
-class backup {
+class backup (
+    Boolean $use_http_proxy = lookup('backup::use_http_proxy', {'default_value' => true})
+) {
     stdlib::ensure_packages(['awscli', 'python3-fabric', 'python3-decorator'])
 
     $aws_access_key = lookup('private::passwords::backup::aws_access_key')
@@ -31,7 +33,9 @@ class backup {
 
     file { '/usr/local/bin/wikitide-backup':
         mode    => '0555',
-        content => epp('backup/wikitide-backup.py.epp'),
+        content => epp('backup/wikitide-backup.py.epp', {
+            'use_http_proxy' => $use_http_proxy,
+        }),
     }
 
     file { '/srv/backups':
