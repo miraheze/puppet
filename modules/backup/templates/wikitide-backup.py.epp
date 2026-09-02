@@ -523,6 +523,7 @@ def backup_phorge_db(dt: str):
                 '--output',
                 outputFileName,
             ],
+            shell=True,
             preexec_fn=os.setsid,
         )
 
@@ -724,13 +725,14 @@ def backup_grafana_db(dt: str):
     try:
         subprocess.check_call(
             f'/usr/bin/sqlite3 /var/lib/grafana/grafana.db ".backup \'/var/lib/grafana/grafana_backup.db\'"',
+            shell=True,
             preexec_fn=os.setsid,
         )
 
         create_tar(
             backup_db,
             outputFileName,
-            "grafana_backup.db",
+            'grafana_backup.db',
         )
 
         s3_upload(
