@@ -3,7 +3,6 @@ class backup (
 ) {
     stdlib::ensure_packages(['awscli', 'python3-fabric', 'python3-decorator'])
 
-    $use_http_proxy
     $aws_access_key = lookup('private::passwords::backup::aws_access_key')
     $aws_secret_key = lookup('private::passwords::backup::aws_secret_key')
 
