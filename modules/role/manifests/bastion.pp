@@ -1,5 +1,5 @@
 class role::bastion (
-    Optional[Bool] $higher_timeout = lookup('role::bastion::higher_timeout', {'default_value' => undef}),
+    Optional[Boolean] $higher_timeout = lookup('role::bastion::higher_timeout', {'default_value' => undef}),
 ) {
     include base
 
