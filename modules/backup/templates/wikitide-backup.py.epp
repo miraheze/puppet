@@ -516,13 +516,7 @@ def backup_phorge_db(dt: str):
 
     try:
         subprocess.check_call(
-            [
-                '/srv/phorge/phorge/bin/storage',
-                'dump',
-                '--compress',
-                '--output',
-                outputFileName,
-            ],
+            f"/srv/phorge/phorge/bin/storage dump --compress --output {outputFileName}",
             shell=True,
             preexec_fn=os.setsid,
         )
