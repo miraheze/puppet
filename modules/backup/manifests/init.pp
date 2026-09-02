@@ -25,7 +25,7 @@ class backup {
 
     file { '/etc/wikitide-backup/lifecycle.json':
         mode    => '0600',
-        source  => 'puppet:///modules/backup/lifecycle.json'
+        source  => 'puppet:///modules/backup/lifecycle.json',
         require => File['/etc/wikitide-backup']
     }
 
