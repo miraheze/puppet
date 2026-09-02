@@ -117,14 +117,12 @@ def aws_environment():
 
     env = os.environ.copy()
 
-    env["AWS_CONFIG_FILE"] = AWS_CONFIG_FILE
-    env["AWS_SHARED_CREDENTIALS_FILE"] = AWS_CREDENTIALS_FILE
-    env["AWS_PROFILE"] = AWS_PROFILE
-    # env["AWS_MAX_ATTEMPTS"] = 5
-    # env["AWS_RETRY_MODE"] = "adaptive"
+    env['AWS_CONFIG_FILE'] = AWS_CONFIG_FILE
+    env['AWS_SHARED_CREDENTIALS_FILE'] = AWS_CREDENTIALS_FILE
+    env['AWS_PROFILE'] = AWS_PROFILE
 
-    env["HTTP_PROXY"] = S3_PROXY
-    env["HTTPS_PROXY"] = S3_PROXY
+    env['HTTP_PROXY'] = S3_PROXY
+    env['HTTPS_PROXY'] = S3_PROXY
 
     return env
 
@@ -139,13 +137,13 @@ def aws_s3api_command(*arguments):
     """
 
     command = [
-        "/usr/bin/aws",
-        "s3api",
+        '/usr/bin/aws',
+        's3api',
     ]
 
     if AWS_PROFILE:
         command.extend([
-            "--profile",
+            '--profile',
             AWS_PROFILE,
         ])
 
@@ -169,12 +167,12 @@ def s3_upload(
     )
 
     command = [
-        "/usr/bin/aws",
-        "s3",
-        "cp",
+        '/usr/bin/aws',
+        's3',
+        'cp',
         local_file,
         f"s3://{S3_BUCKET}/{object_name}",
-        "--profile",
+        '--profile',
         AWS_PROFILE,
     ]
 
@@ -188,14 +186,14 @@ def s3_upload(
         return
 
     print(
-        "WARNING: aws s3 cp returned an error. "
-        "Checking whether the object was actually uploaded..."
+        'WARNING: aws s3 cp returned an error. '
+        'Checking whether the object was actually uploaded...'
     )
 
     try:
         metadata = s3_head(object_name)
         local_size = os.path.getsize(local_file)
-        remote_size = metadata["ContentLength"]
+        remote_size = metadata['ContentLength']
 
         if remote_size == local_size:
             print(
@@ -369,17 +367,17 @@ def set_lifecycle():
 
     subprocess.check_call(
         aws_s3api_command(
-            "put-bucket-lifecycle-configuration",
-            "--bucket",
+            'put-bucket-lifecycle-configuration',
+            '--bucket',
             S3_BUCKET,
-            "--lifecycle-configuration",
+            '--lifecycle-configuration',
             f"file://{LIFECYCLE_FILE}",
         ),
         env=aws_environment(),
         preexec_fn=os.setsid,
     )
 
-    print("Lifecycle policy updated successfully.")
+    print('Lifecycle policy updated successfully.')
 
 
 def list_lifecycle():
@@ -396,11 +394,11 @@ def list_lifecycle():
 
     result = subprocess.check_output(
         aws_s3api_command(
-            "get-bucket-lifecycle-configuration",
-            "--bucket",
+            'get-bucket-lifecycle-configuration',
+            '--bucket',
             S3_BUCKET,
-            "--output",
-            "json",
+            '--output',
+            'json',
         ),
         env=aws_environment(),
         text=True,
@@ -515,7 +513,7 @@ def backup_swift_account_container(dt: str):
 
 def backup_phorge_db(dt: str):
 
-    outputFileName = '/srv/backups/backup.sql.gz'
+    outputFileName = '/srv/backups/phorge.sql.gz'
 
     try:
         subprocess.check_call(
@@ -680,7 +678,6 @@ def backup_mattermost_db(dt: str):
             outputFileName,
             f"mattermost-db/{dt}.sql.gz",
         )
-
     finally:
         if os.path.exists(outputFileName):
             os.remove(outputFileName)
@@ -761,7 +758,6 @@ def backup_mediawiki_xml(
     def get_php_keys(file_path):
 
         try:
-
             command = (
                 "/usr/bin/php -r '"
                 f'$list = include "{file_path}"; '
@@ -783,7 +779,6 @@ def backup_mediawiki_xml(
             return output.strip().splitlines()
 
         except subprocess.CalledProcessError as e:
-
             print(
                 f"Error executing PHP: {e}"
             )
@@ -791,19 +786,16 @@ def backup_mediawiki_xml(
             return []
 
     if database is None:
-
         if os.path.exists(
-            "/srv/mediawiki/cache/databases.php"
+            '/srv/mediawiki/cache/databases.php'
         ):
 
             dbs = get_php_keys(
-                "/srv/mediawiki/cache/databases.php"
+                '/srv/mediawiki/cache/databases.php'
             )
-
         else:
-
             with open(
-                "/srv/mediawiki/cache/databases.json",
+                '/srv/mediawiki/cache/databases.json',
                 encoding="utf-8",
             ) as file:
 
@@ -812,16 +804,13 @@ def backup_mediawiki_xml(
                     ["combi"]
                     .keys()
                 )
-
     else:
-
         dbs = [database]
 
     for db in dbs:
-
         version = subprocess.check_output(
             [
-                "/usr/local/bin/getMWVersion",
+                '/usr/local/bin/getMWVersion',
                 db,
             ],
             text=True,
@@ -829,24 +818,20 @@ def backup_mediawiki_xml(
 
         runner = (
             f"/srv/mediawiki/{version}/"
-            "maintenance/run.php"
+            'maintenance/run.php'
         )
 
-        output = (
-            f"/srv/backups/"
-            f"{db}.xml.gz"
-        )
+        output = f"/srv/backups/{db}.xml.gz"
 
         try:
-
             subprocess.check_call(
                 (
                     f"/usr/bin/php {runner} "
                     f"/srv/mediawiki/{version}/"
-                    "maintenance/dumpBackup.php "
-                    "--logs "
-                    "--uploads "
-                    "--full "
+                    'maintenance/dumpBackup.php '
+                    '--logs '
+                    '--uploads '
+                    '--full '
                     f'--output="gzip:{output}" '
                     f"--wiki {db}"
                 ),
@@ -856,23 +841,16 @@ def backup_mediawiki_xml(
 
             s3_upload(
                 output,
-                (
-                    "mediawiki-xml/"
-                    f"{db}/{dt}.xml.gz"
-                ),
+                f"mediawiki-xml/{db}/{dt}.xml.gz"
             )
-
         except subprocess.CalledProcessError as e:
-
             print(
                 f"WARNING: encountered "
                 f"CalledProcessError backing up "
                 f"{db}, returned code "
                 f"{e.returncode}"
             )
-
         finally:
-
             if os.path.exists(output):
                 os.remove(output)
 
@@ -885,7 +863,6 @@ def backup(
     source: str,
     database: str,
 ):
-
     dt = datetime.now().strftime(
         "%Y-%m-%d"
     )
@@ -897,33 +874,33 @@ def backup(
         f"for date {dt}..."
     )
 
-    if source == "private":
+    if source == 'private':
         backup_private(dt)
-    elif source == "sslkeys":
+    elif source == 'sslkeys':
         backup_sslkeys(dt)
-    elif source == "swift-account-container":
+    elif source == 'swift-account-container':
         backup_swift_account_container(dt)
-    elif source == "phorge_db":
+    elif source == 'phorge_db':
         backup_phorge_db(dt)
-    elif source == "phorge_images":
+    elif source == 'phorge_images':
         backup_phorge_images(dt)
-    elif source == "sql":
+    elif source == 'sql':
         backup_sql(
             dt,
             database,
         )
-    elif source == "grafana":
+    elif source == 'grafana':
         backup_grafana_db(dt)
-    elif source == "mediawiki-xml":
+    elif source == 'mediawiki-xml':
         backup_mediawiki_xml(
             dt,
             database,
         )
-    elif source == "mattermost-data":
+    elif source == 'mattermost-data':
         backup_mattermost_data(dt)
-    elif source == "mattermost-db":
+    elif source == 'mattermost-db':
         backup_mattermost_db(dt)
-    elif source == "puppetdb":
+    elif source == 'puppetdb':
         backup_puppetdb(dt)
     else:
         raise ValueError(
@@ -947,65 +924,61 @@ def get_backup_object(
 ):
 
     if source in {
-        "private",
-        "sslkeys",
-        "swift-account-container",
-        "mattermost-data",
+        'private',
+        'sslkeys',
+        'swift-account-container',
+        'mattermost-data',
     }:
-
         return (
             f"{source}/{dt}.tar.gz"
         )
 
-    if source == "mediawiki-xml":
+    if source == 'mediawiki-xml':
         if database is None:
             raise ValueError(
-                "--database is required for "
-                "mediawiki-xml downloads"
+                '--database is required for '
+                'mediawiki-xml downloads'
             )
 
         return (
-            "mediawiki-xml/"
-            f"{database}/{dt}.xml.gz"
+            f"mediawiki-xml/{database}/{dt}.xml.gz"
         )
 
-    if source == "grafana":
+    if source == 'grafana':
         return (
-            "sql/grafana/"
-            f"{dt}.tar.gz"
+            f"sql/grafana/{dt}.tar.gz"
         )
 
     if source == "sql":
         if database is None:
             raise ValueError(
-                "--database is required for "
-                "sql downloads"
+                '--database is required for '
+                'sql downloads'
             )
 
         return (
-            f"sql/{database}/"
-            f"{dt}.sql.gz"
+            f"sql/{database}/{dt}.sql.gz"
         )
 
     if source in {
-        "mattermost-db",
-        "puppetdb",
+        'mattermost-db',
+        'puppetdb',
     }:
         return (
             f"{source}/{dt}.sql.gz"
         )
 
-    if source == "phorge_db":
+    if source == 'phorge_db':
         return (
             f"phorge/{dt}_db.sql.gz"
         )
 
-    if source == "phorge_images":
+    if source == 'phorge_images':
         return (
             f"phorge/{dt}_images.tar.gz"
         )
 
-    if source == "test":
+    if source == 'test':
         return (
             f"test/{dt}.iso"
         )
@@ -1063,8 +1036,7 @@ def find_backups(
         )
     elif source == "mediawiki-xml" and database:
         prefix = (
-            f"mediawiki-xml/"
-            f"{database}/"
+            f"mediawiki-xml/{database}/"
         )
     else:
         prefix = f"{source}/"
@@ -1073,7 +1045,7 @@ def find_backups(
         prefix
     )
 
-    if source == "sql" and database:
+    if source == 'sql' and database:
         for backup_item in backups:
             filename = backup_item[
                 len(prefix):
@@ -1081,10 +1053,10 @@ def find_backups(
 
             print(
                 filename.removesuffix(
-                    ".sql.gz"
+                    '.sql.gz'
                 )
             )
-    elif source == "mediawiki-xml" and database:
+    elif source == 'mediawiki-xml' and database:
         for backup_item in backups:
             filename = backup_item[
                 len(prefix):
@@ -1092,7 +1064,7 @@ def find_backups(
 
             print(
                 filename.removesuffix(
-                    ".xml.gz"
+                    '.xml.gz'
                 )
             )
     else:
@@ -1106,21 +1078,21 @@ def find_backups(
 
 if __name__ == "__main__":
 
-    if args.action == "set-lifecycle":
+    if args.action == 'set-lifecycle':
         set_lifecycle()
-    elif args.action == "list-lifecycle":
+    elif args.action == 'list-lifecycle':
         list_lifecycle()
-    elif args.action == "backup":
+    elif args.action == 'backup':
         if not args.type:
             parser.error(
-                "backup requires a backup type"
+                'backup requires a backup type'
             )
 
         backup(
             args.type,
             args.database,
         )
-    elif args.action == "download":
+    elif args.action == 'download':
         if not args.type:
             parser.error(
                 "download requires a backup type"
@@ -1128,8 +1100,8 @@ if __name__ == "__main__":
 
         if not args.date:
             parser.error(
-                "--date is required when "
-                "downloading a file"
+                '--date is required when '
+                'downloading a file'
             )
 
         download(
@@ -1137,10 +1109,10 @@ if __name__ == "__main__":
             args.date,
             args.database,
         )
-    elif args.action == "find":
+    elif args.action == 'find':
         if not args.type:
             parser.error(
-                "find requires a backup type"
+                'find requires a backup type'
             )
 
         find_backups(
