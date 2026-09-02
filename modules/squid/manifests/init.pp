@@ -1,5 +1,8 @@
 # clas squid
-class squid {
+class squid (
+    Optional[String[1]]          $config_content = undef,
+    Optional[Stdlib::Filesource] $config_source  = 'puppet:///modules/squid/squid.conf',
+) {
     package { 'squid':
         ensure => present,
     }
@@ -9,7 +12,8 @@ class squid {
         mode    => '0444',
         owner   => 'root',
         group   => 'root',
-        source  => 'puppet:///modules/squid/squid.conf',
+        source  => $config_source,
+        content => $config_content,
         require => Package['squid'],
     }
 

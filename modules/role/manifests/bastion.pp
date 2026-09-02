@@ -1,6 +1,15 @@
-class role::bastion {
+class role::bastion (
+    Optional[String] $higher_timeout = lookup('role::bastion::higher_timeout', {'default_value' => undef}),
+) {
     include base
-    include squid
+
+    if $higher_timeout {
+        class { 'squid':
+            config_source => 'puppet:///modules/role/bastion/squid.conf'
+        }
+    } else {
+        include squid
+    }
 
     system::role { 'bastion':
         description => 'core access bastion host'
