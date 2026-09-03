@@ -41,16 +41,6 @@
       }
     },
     {
-      "ID": "expire-sql",
-      "Status": "Enabled",
-      "Filter": {
-        "Prefix": "sql/"
-      },
-      "Expiration": {
-        "Days": 35
-      }
-    },
-    {
       "ID": "expire-sql-mhglobal",
       "Status": "Enabled",
       "Filter": {
@@ -58,6 +48,16 @@
       },
       "Expiration": {
         "Days": 7
+      }
+    },
+    {
+      "ID": "expire-sql",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "sql/"
+      },
+      "Expiration": {
+        "Days": 35
       }
     },
     {
