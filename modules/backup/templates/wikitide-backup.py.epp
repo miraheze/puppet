@@ -1028,13 +1028,9 @@ def find_backups(
     database: str,
 ):
 
-    if source == "sql" and database:
+    if database:
         prefix = (
-            f"sql/{database}/"
-        )
-    elif source == "mediawiki-xml" and database:
-        prefix = (
-            f"mediawiki-xml/{database}/"
+            f"{source}/{database}"
         )
     else:
         prefix = f"{source}/"
