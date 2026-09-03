@@ -1029,11 +1029,9 @@ def find_backups(
 ):
 
     if database:
-        prefix = (
-            f"{source}/{database}"
-        )
+        prefix = f"{source}/{database}"
     else:
-        prefix = f"{source}/"
+        prefix = f"{source}"
 
     backups = s3_list(
         prefix
