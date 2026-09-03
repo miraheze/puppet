@@ -248,27 +248,30 @@ def s3_download(
     if prefix is not None:
         if destination is None:
             destination = '.'
-
+    
         print(
-            f"Downloading all objects under "
-            f"'{prefix}' to '{destination}'..."
+            f"Downloading all objects matching "
+            f"prefix '{prefix}' to '{destination}'..."
         )
-
+    
         subprocess.check_call(
             [
                 '/usr/bin/aws',
                 's3',
                 'cp',
-                f"s3://{S3_BUCKET}/{prefix}",
+                f's3://{S3_BUCKET}/',
                 destination,
                 '--recursive',
+                '--exclude',
+                '*',
+                '--include',
+                f'{prefix}*',
                 '--profile',
                 AWS_PROFILE,
             ],
             env=aws_environment(),
             preexec_fn=os.setsid,
         )
-
         return
 
     if object_name is None:
