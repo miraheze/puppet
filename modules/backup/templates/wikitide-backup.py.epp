@@ -234,14 +234,47 @@ def s3_upload(
 # ============================================================================
 
 def s3_download(
-    object_name: str,
+    object_name: str = None,
     local_file: str = None,
+    prefix: str = None,
+    destination: str = None,
 ):
     """
-    Download an object using the AWS S3 CLI.
+    Download an object or all objects below an S3 prefix.
 
-    aws s3 cp handles the transfer automatically.
+    When prefix is specified, aws s3 cp --recursive is used.
     """
+
+    if prefix is not None:
+        if destination is None:
+            destination = '.'
+
+        print(
+            f"Downloading all objects under "
+            f"'{prefix}' to '{destination}'..."
+        )
+
+        subprocess.check_call(
+            [
+                '/usr/bin/aws',
+                's3',
+                'cp',
+                f"s3://{S3_BUCKET}/{prefix}",
+                destination,
+                '--recursive',
+                '--profile',
+                AWS_PROFILE,
+            ],
+            env=aws_environment(),
+            preexec_fn=os.setsid,
+        )
+
+        return
+
+    if object_name is None:
+        raise ValueError(
+            'Either object_name or prefix is required'
+        )
 
     if local_file is None:
         local_file = os.path.basename(object_name)
