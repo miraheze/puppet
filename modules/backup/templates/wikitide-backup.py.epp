@@ -106,7 +106,11 @@ parser.add_argument(
 parser.add_argument(
     '--prefix',
     dest='prefix',
-    help='S3 object prefix to search for',
+    help=(
+        'S3 object prefix to find or download. '
+        'For find, lists all matching objects. '
+        'For download, downloads all objects under the prefix.'
+    ),
 )
 
 args = parser.parse_args()
