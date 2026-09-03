@@ -51,6 +51,16 @@
       }
     },
     {
+      "ID": "expire-sql",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "sql/mhglobal/"
+      },
+      "Expiration": {
+        "Days": 7
+      }
+    },
+    {
       "ID": "expire-mediawiki-xml",
       "Status": "Enabled",
       "Filter": {
