@@ -51,7 +51,7 @@
       }
     },
     {
-      "ID": "expire-sql",
+      "ID": "expire-sql-mhglobal",
       "Status": "Enabled",
       "Filter": {
         "Prefix": "sql/mhglobal/"
