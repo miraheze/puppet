@@ -10,6 +10,7 @@ mariadb::version: '11.8'
 role::db::enable_ssl: false
 mariadb::config::server_id: 8
 role::db::is_beta_db: false
+role::db::backup_sql: false
 role::db::enable_bin_logs: false
 base::dns::do_ipv4: true
 base::dns::forward_use_internal: true
