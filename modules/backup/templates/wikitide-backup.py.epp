@@ -1043,31 +1043,8 @@ def find_backups(
         prefix
     )
 
-    if source == 'sql' and database:
-        for backup_item in backups:
-            filename = backup_item[
-                len(prefix):
-            ]
-
-            print(
-                filename.removesuffix(
-                    '.sql.gz'
-                )
-            )
-    elif source == 'mediawiki-xml' and database:
-        for backup_item in backups:
-            filename = backup_item[
-                len(prefix):
-            ]
-
-            print(
-                filename.removesuffix(
-                    '.xml.gz'
-                )
-            )
-    else:
-        for backup_item in backups:
-            print(backup_item)
+    for backup_item in backups:
+        print(backup_item)
 
 
 # ============================================================================
