@@ -1000,24 +1000,35 @@ def download(
     source: str,
     dt: str,
     database: str,
+    prefix: str = None,
 ):
 
     start = time.time()
 
-    print(
-        f"Downloading backup of '{source}' "
-        f"for date {dt}..."
-    )
+    if prefix is not None:
+        print(
+            f"Downloading backups under "
+            f"prefix '{prefix}'..."
+        )
 
-    object_name = get_backup_object(
-        source,
-        dt,
-        database,
-    )
+        s3_download(
+            prefix=prefix,
+        )
+    else:
+        print(
+            f"Downloading backup of '{source}' "
+            f"for date {dt}..."
+        )
 
-    s3_download(
-        object_name
-    )
+        object_name = get_backup_object(
+            source,
+            dt,
+            database,
+        )
+
+        s3_download(
+            object_name=object_name,
+        )
 
     print(
         f"Completed! This took "
@@ -1075,22 +1086,31 @@ if __name__ == "__main__":
             args.database,
         )
     elif args.action == 'download':
-        if not args.type:
-            parser.error(
-                "download requires a backup type"
+        if args.prefix:
+            download(
+                args.type,
+                args.date,
+                args.database,
+                args.prefix,
             )
+        else:
+            if not args.type:
+                parser.error(
+                    'download requires either a backup type '
+                    'or --prefix'
+                )
 
-        if not args.date:
-            parser.error(
-                '--date is required when '
-                'downloading a file'
+            if not args.date:
+                parser.error(
+                    '--date is required when '
+                    'downloading a file'
+                )
+
+            download(
+                args.type,
+                args.date,
+                args.database,
             )
-
-        download(
-            args.type,
-            args.date,
-            args.database,
-        )
     elif args.action == 'find':
         if not args.type and not args.prefix:
             parser.error(
