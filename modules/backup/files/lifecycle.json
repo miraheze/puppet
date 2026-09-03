@@ -57,7 +57,7 @@
         "Prefix": "sql/mhglobal/"
       },
       "Expiration": {
-        "Days": 14
+        "Days": 7
       }
     },
     {
