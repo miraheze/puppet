@@ -248,12 +248,12 @@ def s3_download(
     if prefix is not None:
         if destination is None:
             destination = '.'
-    
+
         print(
             f"Downloading all objects matching "
             f"prefix '{prefix}' to '{destination}'..."
         )
-    
+
         subprocess.check_call(
             [
                 '/usr/bin/aws',
