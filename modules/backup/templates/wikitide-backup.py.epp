@@ -103,6 +103,12 @@ parser.add_argument(
     help='Specific database to download or backup',
 )
 
+parser.add_argument(
+    '--prefix',
+    dest='prefix',
+    help='S3 object prefix to search for',
+)
+
 args = parser.parse_args()
 
 
@@ -1026,12 +1032,19 @@ def download(
 def find_backups(
     source: str,
     database: str,
+    prefix: str = None,
 ):
 
-    if database:
-        prefix = f"{source}/{database}"
-    else:
-        prefix = f"{source}"
+    if prefix is None:
+        if source is None:
+            raise ValueError(
+                'Either --prefix or type is required'
+            )
+
+        if database:
+            prefix = f"{source}/{database}"
+        else:
+            prefix = f"{source}/"
 
     backups = s3_list(
         prefix
@@ -1079,12 +1092,14 @@ if __name__ == "__main__":
             args.database,
         )
     elif args.action == 'find':
-        if not args.type:
+        if not args.type and not args.prefix:
             parser.error(
-                'find requires a backup type'
+                'find requires either a backup type '
+                'or --prefix'
             )
 
         find_backups(
             args.type,
             args.database,
+            args.prefix,
         )
