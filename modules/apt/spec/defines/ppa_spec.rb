@@ -4,7 +4,7 @@ require 'spec_helper'
 
 def ppa_exec_params(user, repo, distro = 'trusty', environment = [])
   [
-    environment:,
+    environment: environment,
     command: "/opt/puppetlabs/puppet/cache/add-apt-repository-#{user}-ubuntu-#{repo}-#{distro}.sh",
     logoutput: 'on_failure',
   ]
@@ -50,6 +50,8 @@ describe 'apt::ppa' do
     'ppa:foo/bar1.0',
     'ppa:foo10/bar10',
     'ppa:foo-/bar_',
+    'ppa:foo/bar+',
+    'ppa:foo+/bar',
   ].each do |value|
     describe 'valid resource names' do
       let :facts do
