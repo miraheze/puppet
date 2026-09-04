@@ -38,7 +38,7 @@ jobs:
         echo "Validating Ruby code with PDK..."
         export RUBYOPT="-rjson"
         echo '{"name": "miraheze-puppet", "version": "0.1.0", "author": "miraheze", "summary": "CI Stub", "license": "GPL-3.0-or-later", "source": "https://github.com", "dependencies": [], "operating_system_support": [], "requirements": [{"name": "puppet", "version_requirement": ">= 8.0.0"}]}' > metadata.json
-        pdk validate ruby || true
+        pdk validate ruby --puppet-version=9 || true
         rm metadata.json
 
     - name: Validate EPP Templates
