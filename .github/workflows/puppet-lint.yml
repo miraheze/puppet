@@ -30,7 +30,7 @@ jobs:
       with:
         ruby-version: '4.0'
 
-    - name: Install PDK and Puppet
+    - name: Install OpenVox
       run: gem install openvox --pre --no-document
 
     - name: Validate Ruby
@@ -41,7 +41,7 @@ jobs:
           for file in $RUBY_FILES; do
             if ! ruby -c "$file" >/dev/null 2>&1; then
               echo "Error in file: $file"
-              ruby -c "$file"
+              ruby -w -c "$file" || true
               STATUS=1
             fi
           done
