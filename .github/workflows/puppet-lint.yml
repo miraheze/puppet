@@ -5,6 +5,7 @@ on:
     paths:
       - '**.pp'
       - '**.epp'
+      - '**.rb'
       - '.github/**'
 
   pull_request:
@@ -12,6 +13,7 @@ on:
     paths:
       - '**.pp'
       - '**.epp'
+      - '**.rb'
       - '.github/**'
 
 jobs:
@@ -26,10 +28,15 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.2'
+        ruby-version: '4.0'
 
-    - name: Install Puppet
-      run: gem install puppet --no-document
+    - name: Install PDK and OpenVox
+      run: gem install pdk openvox --no-document
+
+    - name: Validate Ruby via PDK
+      run: |
+        echo "Validating Ruby code with PDK..."
+        pdk validate ruby || true
 
     - name: Validate EPP Templates
       run: |
