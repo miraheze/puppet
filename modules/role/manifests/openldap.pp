@@ -177,31 +177,16 @@ class role::openldap (
         group  => 'root',
     }
 
-    $subquery = @("PQL")
-    (resources { type = 'Class' and title = 'Role::Grafana' } or
-    resources { type = 'Class' and title = 'Role::Graylog' } or
-    resources { type = 'Class' and title = 'Role::Llm' } or
-    resources { type = 'Class' and title = 'Role::Matomo' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
-    resources { type = 'Class' and title = 'Role::Openldap' })
-    | PQL
-    $firewall_rules = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'ldaps':
-        proto  => 'tcp',
-        port   => 636,
-        srange => "(${firewall_rules})",
+        proto    => 'tcp',
+        port     => 636,
+        src_sets => ['GRAFANA_HOSTS', 'GRAYLOG_HOSTS', 'LLM_HOSTS', 'MATOMO_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'OPENLDAP_HOSTS'],
     }
 
-    $subquery_2 = @("PQL")
-    resources { type = 'Class' and title = 'Role::Icinga2' }
-    | PQL
-    $firewall_rules_icinga = vmlib::generate_firewall_ip($subquery_2)
     firewall::service { 'ldap':
-        proto  => 'tcp',
-        port   => 389,
-        srange => "(${firewall_rules_icinga})",
+        proto    => 'tcp',
+        port     => 389,
+        src_sets => ['ICINGA2_HOSTS'],
     }
 
     file { '/usr/local/sbin/restart_openldap':

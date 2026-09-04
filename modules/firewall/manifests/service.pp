@@ -33,13 +33,28 @@ define firewall::service (
         fail("firewall::service: ${title}: exactly one of port or port_range must be given")
     }
 
-    $provider        = lookup('base::firewall::provider', { 'default_value' => 'nftables' })
-    $nftables_active = $provider in ['nftables', 'both']
+    if $src_sets != undef {
+        $src_sets.each |$set_name| {
+            unless defined(Firewall::Set[$set_name]) {
+                firewall::set { $set_name:
+                    ips => network::host_group($set_name),
+                }
+            }
+        }
+    }
 
-    $nftables_ensure = $nftables_active ? { true => $ensure, default => 'absent' }
+    if $dst_sets != undef {
+        $dst_sets.each |$set_name| {
+            unless defined(Firewall::Set[$set_name]) {
+                firewall::set { $set_name:
+                    ips => network::host_group($set_name),
+                }
+            }
+        }
+    }
 
     nftables::service { $title:
-        ensure     => $nftables_ensure,
+        ensure     => $ensure,
         port       => $port,
         port_range => $port_range,
         proto      => $proto,

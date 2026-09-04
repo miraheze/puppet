@@ -182,14 +182,10 @@ class role::cache::haproxy(
         source => 'puppet:///modules/role/cache/haproxy/logrotate',
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Prometheus' }
-    | PQL
-    $firewall_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { "prometheus_${prometheus_port}":
-        proto   => 'tcp',
-        port    => $prometheus_port,
-        srange  => "(${firewall_str})",
-        notrack => true,
+        proto    => 'tcp',
+        port     => $prometheus_port,
+        src_sets => ['PROMETHEUS_CLASS_HOSTS'],
+        notrack  => true,
     }
 }

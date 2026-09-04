@@ -6,15 +6,11 @@ class role::postgresql {
         use_ssl  => lookup('postgresql::ssl', {'default_value' => false}),
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Role::Puppetserver' }
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'postgresql':
-        proto   => 'tcp',
-        port    => 5432,
-        srange  => "(${firewall_rules_str})",
-        notrack => true,
+        proto    => 'tcp',
+        port     => 5432,
+        src_sets => ['PUPPETSERVER_HOSTS'],
+        notrack  => true,
     }
 
     system::role { 'postgresql':

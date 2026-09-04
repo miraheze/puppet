@@ -26,21 +26,17 @@ class role::burrow {
         metrics_addr => '0.0.0.0:9500'
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Role::Prometheus' }
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
     # Burrow offers a HTTP REST API
     firewall::service { 'burrow-main':
-        proto  => 'tcp',
-        port   => 8100,
-        srange => "(${firewall_rules_str})",
+        proto    => 'tcp',
+        port     => 8100,
+        src_sets => ['PROMETHEUS_HOSTS'],
     }
 
     firewall::service { 'burrow-main-exporter':
-        proto  => 'tcp',
-        port   => 9500,
-        srange => "(${firewall_rules_str})",
+        proto    => 'tcp',
+        port     => 9500,
+        src_sets => ['PROMETHEUS_HOSTS'],
     }
 }

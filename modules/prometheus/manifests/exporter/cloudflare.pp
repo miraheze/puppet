@@ -16,13 +16,9 @@ class prometheus::exporter::cloudflare {
         content => systemd_template('cloudflare'),
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Role::Prometheus' }
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus cloudflare exporter':
-        proto  => 'tcp',
-        port   => 9119,
-        srange => "(${firewall_rules_str})",
+        proto    => 'tcp',
+        port     => 9119,
+        src_sets => ['PROMETHEUS_HOSTS'],
     }
 }

@@ -8,24 +8,18 @@ class role::matomo {
     }
     include ::matomo
 
-    $subquery = @("PQL")
-    (resources { type = 'Class' and title = 'Role::Varnish' } or
-    resources { type = 'Class' and title = 'Role::Cache::Cache' } or
-    resources { type = 'Class' and title = 'Role::Icinga2' })
-    | PQL
-    $firewall_srange = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'http':
-        proto   => 'tcp',
-        port    => 80,
-        srange  => "(${firewall_srange})",
-        notrack => true,
+        proto    => 'tcp',
+        port     => 80,
+        src_sets => ['VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
+        notrack  => true,
     }
 
     firewall::service { 'https':
-        proto   => 'tcp',
-        port    => 443,
-        srange  => "(${firewall_srange})",
-        notrack => true,
+        proto    => 'tcp',
+        port     => 443,
+        src_sets => ['VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
+        notrack  => true,
     }
 
     system::role { 'matomo':
