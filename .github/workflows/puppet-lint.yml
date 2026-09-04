@@ -31,15 +31,20 @@ jobs:
         ruby-version: '4.0'
 
     - name: Install PDK and Puppet
-      run: gem install pdk openvox --pre --no-document
+      run: gem install openvox --pre --no-document
 
-    - name: Validate Ruby via PDK
+    - name: Validate Ruby
       run: |
-        echo "Validating Ruby code with PDK..."
-        export RUBYOPT="-rjson"
-        echo '{"name": "miraheze-puppet", "version": "0.1.0", "author": "miraheze", "summary": "CI Stub", "license": "GPL-3.0-or-later", "source": "https://github.com", "dependencies": [], "operating_system_support": [], "requirements": [{"name": "puppet", "version_requirement": ">= 8.0.0"}]}' > metadata.json
-        pdk validate ruby --puppet-version=9 || true
-        rm metadata.json
+        RUBY_FILES=$(find . -type f -name "*.rb" -not -path "*/.bundle/*" -not -path "*/vendor/*")
+        if [ ! -z "$RUBY_FILES" ]; then
+          STATUS=0
+          for file in $RUBY_FILES; do
+            ruby -c "$file" || STATUS=1
+          done
+          if [ $STATUS -ne 0 ]; then
+            exit 1
+          fi
+        fi
 
     - name: Validate EPP Templates
       run: |
