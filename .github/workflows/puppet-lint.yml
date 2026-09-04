@@ -31,7 +31,7 @@ jobs:
         ruby-version: '4.0'
 
     - name: Install PDK and Puppet
-      run: gem install pdk puppet --no-document
+      run: gem install pdk puppet --pre --no-document
 
     - name: Validate Ruby via PDK
       run: |
