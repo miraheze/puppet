@@ -31,7 +31,9 @@ jobs:
         ruby-version: '4.0'
 
     - name: Install PDK and OpenVox
-      run: gem install pdk openvox --no-document
+      run: |
+        gem install pdk openvox --no-document
+        gem uninstall json_pure -a -x || true
 
     - name: Validate Ruby via PDK
       run: |
