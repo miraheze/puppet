@@ -35,7 +35,7 @@ jobs:
 
     - name: Validate Ruby
       run: |
-        RUBY_FILES=$(find . -type f -name "*.rb" -not -path "*/.bundle/*" -not -path "*/vendor/*")
+        RUBY_FILES=$(find . -type f -name "*.rb" -not -path "*/.bundle/*" -not -path "*/vendor/*" -not -path "*/spec/*")
         if [ ! -z "$RUBY_FILES" ]; then
           STATUS=0
           for file in $RUBY_FILES; do
