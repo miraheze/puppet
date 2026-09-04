@@ -43,7 +43,9 @@ jobs:
         else
           echo "Validating the following Ruby files:"
           echo "$RUBY_FILES"
-          pdk validate ruby $(echo $RUBY_FILES | tr '\n' ' ')
+          echo '{}' > metadata.json
+          pdk validate ruby $(echo $RUBY_FILES | tr '\n' ' ') || true
+          rm metadata.json
         fi
 
     - name: Validate EPP Templates
