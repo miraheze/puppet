@@ -31,15 +31,13 @@ jobs:
         ruby-version: '4.0'
 
     - name: Install PDK and OpenVox
-      run: |
-        gem install pdk openvox --no-document
-        gem uninstall json_pure -a -x || true
+      run: gem install pdk openvox --no-document
 
     - name: Validate Ruby via PDK
       run: |
         echo "Validating Ruby code with PDK..."
         export RUBYOPT="-rjson"
-        echo '{}' > metadata.json
+        echo '{"name": "miraheze-puppet", "version": "0.1.0", "author": "miraheze", "summary": "CI Stub", "license": "GPL-3.0-or-later", "source": "https://github.com", "dependencies": [], "operating_system_support": [], "requirements": [{"name": "puppet", "version_requirement": ">= 8.0.0"}]}' > metadata.json
         pdk validate ruby || true
         rm metadata.json
 
