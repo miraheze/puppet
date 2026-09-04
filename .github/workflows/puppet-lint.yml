@@ -31,9 +31,7 @@ jobs:
         ruby-version: '4.0'
 
     - name: Install PDK and Puppet
-      run: |
-        gem install facter --no-document
-        gem install pdk openvox --pre --no-document
+      run: gem install pdk openvox --pre --no-document
 
     - name: Validate Ruby via PDK
       run: |
