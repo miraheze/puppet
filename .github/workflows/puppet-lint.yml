@@ -33,7 +33,7 @@ jobs:
     - name: Install PDK and Puppet
       run: |
         gem install facter --no-document
-        gem install pdk puppet --pre --no-document
+        gem install pdk openvox --pre --no-document
 
     - name: Validate Ruby via PDK
       run: |
