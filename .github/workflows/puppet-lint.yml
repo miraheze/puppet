@@ -39,9 +39,9 @@ jobs:
         if [ ! -z "$RUBY_FILES" ]; then
           STATUS=0
           for file in $RUBY_FILES; do
-            OUTPUT=$(ruby -c "$file" 2>&1)
-            if [ $? -ne 0 ]; then
-              echo "$file: $OUTPUT"
+            if ! ruby -c "$file" >/dev/null 2>&1; then
+              echo "Error in file: $file"
+              ruby -c "$file"
               STATUS=1
             fi
           done
