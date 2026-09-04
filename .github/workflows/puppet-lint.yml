@@ -39,9 +39,10 @@ jobs:
         if [ ! -z "$RUBY_FILES" ]; then
           STATUS=0
           for file in $RUBY_FILES; do
-            if ! ruby -w -c "$file" >/dev/null 2>&1; then
+            OUTPUT=$(cat "$file" | ruby -w -c 2>&1)
+            if [[ ! "$OUTPUT" =~ "Syntax OK" ]]; then
               echo "Error in file: $file"
-              ruby -w -c < "$file" || true
+              echo "$OUTPUT"
               STATUS=1
             fi
           done
