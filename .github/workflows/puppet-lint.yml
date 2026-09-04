@@ -39,7 +39,11 @@ jobs:
         if [ ! -z "$RUBY_FILES" ]; then
           STATUS=0
           for file in $RUBY_FILES; do
-            ruby -c "$file" || STATUS=1
+            OUTPUT=$(ruby -c "$file" 2>&1)
+            if [ $? -ne 0 ]; then
+              echo "$file: $OUTPUT"
+              STATUS=1
+            fi
           done
           if [ $STATUS -ne 0 ]; then
             exit 1
