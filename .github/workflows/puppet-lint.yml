@@ -38,6 +38,7 @@ jobs:
     - name: Validate Ruby via PDK
       run: |
         echo "Validating Ruby code with PDK..."
+        export RUBYOPT="-rjson"
         echo '{}' > metadata.json
         pdk validate ruby || true
         rm metadata.json
