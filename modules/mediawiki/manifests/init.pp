@@ -111,7 +111,32 @@ class mediawiki {
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
-        content => epp('mediawiki/PrivateSettings.php.epp', { 'wikiadmin_password' => $wikiadmin_password, 'mediawiki_password' => $mediawiki_password, 'bucketuser_password' => $bucketuser_password, 'redis_password' => $redis_password, 'mediawiki_upgradekey' => $mediawiki_upgradekey, 'mediawiki_secretkey' => $mediawiki_secretkey, 'hcaptcha_secretkey' => $hcaptcha_secretkey, 'turnstile_sitekey' => $turnstile_sitekey, 'turnstile_secretkey' => $turnstile_secretkey, 'shellbox_secretkey' => $shellbox_secretkey, 'matomotoken' => $matomotoken, 'mediamoderation_apikey' => $mediamoderation_apikey, 'openai_apikey' => $openai_apikey, 'openai_instructions' => $openai_instructions, 'cloudflare_apikey' => $cloudflare_apikey, 'cloudflare_zoneid' => $cloudflare_zoneid, 'global_discord_webhook_url' => $global_discord_webhook_url, 'discord_experimental_webhook' => $discord_experimental_webhook, 'ldap_password' => $ldap_password, 'swift_password' => $swift_password, 'swift_temp_url_key' => $swift_temp_url_key, 'reports_write_key' => $reports_write_key, 'google_translate_apikey_meta' => $google_translate_apikey_meta, 'speedscope_log_token' => $speedscope_log_token }),
+        content => epp('mediawiki/PrivateSettings.php.epp', {
+            'bucketuser_password'          => $bucketuser_password,
+            'cloudflare_apikey'            => $cloudflare_apikey,
+            'cloudflare_zoneid'            => $cloudflare_zoneid,
+            'discord_experimental_webhook' => $discord_experimental_webhook,
+            'global_discord_webhook_url'   => $global_discord_webhook_url,
+            'google_translate_apikey_meta' => $google_translate_apikey_meta,
+            'hcaptcha_secretkey'           => $hcaptcha_secretkey,
+            'ldap_password'                => $ldap_password,
+            'matomotoken'                  => $matomotoken,
+            'mediawiki_password'           => $mediawiki_password,
+            'mediawiki_secretkey'          => $mediawiki_secretkey,
+            'mediawiki_upgradekey'         => $mediawiki_upgradekey,
+            'mediamoderation_apikey'       => $mediamoderation_apikey,
+            'openai_apikey'                => $openai_apikey,
+            'openai_instructions'          => $openai_instructions,
+            'redis_password'               => $redis_password,
+            'reports_write_key'            => $reports_write_key,
+            'shellbox_secretkey'           => $shellbox_secretkey,
+            'speedscope_log_token'         => $speedscope_log_token,
+            'swift_password'               => $swift_password,
+            'swift_temp_url_key'           => $swift_temp_url_key,
+            'turnstile_secretkey'          => $turnstile_secretkey,
+            'turnstile_sitekey'            => $turnstile_sitekey,
+            'wikiadmin_password'           => $wikiadmin_password,
+        }),
         require => File['/srv/mediawiki/config'],
     }
 
