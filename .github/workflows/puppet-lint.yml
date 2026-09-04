@@ -30,8 +30,8 @@ jobs:
       with:
         ruby-version: '4.0'
 
-    - name: Install PDK and OpenVox
-      run: gem install pdk openvox --no-document
+    - name: Install PDK and Puppet
+      run: gem install pdk puppet --no-document
 
     - name: Validate Ruby via PDK
       run: |
