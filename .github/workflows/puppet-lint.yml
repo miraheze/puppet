@@ -35,8 +35,16 @@ jobs:
 
     - name: Validate Ruby via PDK
       run: |
-        echo "Validating Ruby code with PDK..."
-        pdk validate ruby || true
+        echo "Searching for Ruby files..."
+        RUBY_FILES=$(find . -type f -name "*.rb" -not -path "*/.bundle/*" -not -path "*/vendor/*")
+
+        if [ -z "$RUBY_FILES" ]; then
+          echo "No Ruby files found to validate."
+        else
+          echo "Validating the following Ruby files:"
+          echo "$RUBY_FILES"
+          pdk validate ruby --a-targets $(echo $RUBY_FILES | tr '\n' ' ') || true
+        fi
 
     - name: Validate EPP Templates
       run: |
