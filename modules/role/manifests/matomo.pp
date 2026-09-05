@@ -1,6 +1,6 @@
 # role: matomo
 class role::matomo (
-    String $enable_redis = lookup('role::matomo::enable_redis', {'default_value' => false}),
+    Boolean $enable_redis = lookup('role::matomo::enable_redis', {'default_value' => false}),
 ) {
 
     if $enable_redis {
