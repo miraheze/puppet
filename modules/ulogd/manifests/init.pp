@@ -81,7 +81,7 @@ class ulogd (
   }
   file {$config_file:
     ensure  => file,
-    content => template('ulogd/etc/ulogd.conf.erb'),
+    content => epp('ulogd/etc/ulogd.conf.epp', { 'logfile' => $logfile, 'log_level' => $log_level, 'nflog' => $nflog, 'nfct' => $nfct, 'acct' => $acct, 'sync' => $sync, 'logemu_logfile' => $logemu_logfile, 'logemu_nfct_logfile' => $logemu_nfct_logfile, 'json_logfile' => $json_logfile, 'json_nfct_logfile' => $json_nfct_logfile, 'oprint_logfile' => $oprint_logfile, 'gprint_logfile' => $gprint_logfile, 'xml_directory' => $xml_directory, 'pcap_logfile' => undef, 'nacct_logfile' => undef, 'syslog_facility' => $syslog_facility, 'syslog_level' => $syslog_level }),
     notify  => Service['ulogd2'],
   }
   service {'ulogd2':

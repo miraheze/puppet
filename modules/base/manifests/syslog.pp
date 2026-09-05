@@ -35,17 +35,17 @@ class base::syslog (
                 stdlib::ensure_packages('rsyslog-gnutls')
 
                 rsyslog::conf { 'remote_syslog_rule':
-                        content  => template('base/rsyslog/remote_syslog_rule.conf.erb'),
+                        content  => epp('base/rsyslog/remote_syslog_rule.conf.epp', { 'syslog_host' => $syslog_host, 'syslog_queue_size' => $syslog_queue_size }),
                         priority => 10,
                 }
 
                 rsyslog::conf { 'remote_syslog_rule_parse_json':
-                        content  => template('base/rsyslog/remote_syslog_rule_parse_json.conf.erb'),
+                        content  => epp('base/rsyslog/remote_syslog_rule_parse_json.conf.epp', { 'syslog_host' => $syslog_host, 'syslog_queue_size' => $syslog_queue_size }),
                         priority => 10,
                 }
 
                 rsyslog::conf { 'remote_syslog':
-                        content  => template('base/rsyslog/remote_syslog.conf.erb'),
+                        content  => epp('base/rsyslog/remote_syslog.conf.epp', { 'syslog_host' => $syslog_host, 'syslog_queue_size' => $syslog_queue_size }),
                         priority => 30,
                 }
 

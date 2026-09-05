@@ -104,7 +104,22 @@ define burrow (
     }
 
     file { "${config_dir}/burrow.toml":
-        content => template('burrow/burrow.toml.erb'),
+        content => epp('burrow/burrow.toml.epp', {
+            'title'                     => $title,
+            'zookeeper_hosts'           => $zookeeper_hosts,
+            'zookeeper_port'            => $zookeeper_port,
+            'kafka_api_version'         => $kafka_api_version,
+            'kafka_brokers'             => $kafka_brokers,
+            'kafka_brokers_port'        => $kafka_brokers_port,
+            'consumer_groups_blacklist' => $consumer_groups_blacklist,
+            'httpserver_port'           => $httpserver_port,
+            'to_email'                  => $to_email,
+            'alert_whitelist'           => $alert_whitelist,
+            'email_template_path'       => $email_template_path,
+            'from_email'                => $from_email,
+            'smtp_server'               => $smtp_server,
+            'smtp_server_port'          => $smtp_server_port,
+        }),
     }
 
     systemd::service { "burrow-${title}":

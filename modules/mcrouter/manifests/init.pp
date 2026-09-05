@@ -127,7 +127,7 @@ class mcrouter(
 
     file { '/etc/default/mcrouter':
         ensure  => $ensure,
-        content => template('mcrouter/default.erb'),
+        content => epp('mcrouter/default.epp', { 'port' => $port, 'region' => $region, 'cluster' => $cluster, 'cross_region_timeout_ms' => $cross_region_timeout_ms, 'cross_cluster_timeout_ms' => $cross_cluster_timeout_ms, 'num_proxies' => $num_proxies, 'probe_delay_initial_ms' => $probe_delay_initial_ms, 'disable_tko_tracking' => $disable_tko_tracking, 'timeouts_until_tko' => $timeouts_until_tko }),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',

@@ -6,13 +6,20 @@ class irc::irclogserverbot(
     $channel      = undef,
     $udp_port     = '5071',
 ) {
-    include ::irc
+    include irc
 
     $mirahezebots_password = lookup('passwords::irc::mirahezebots')
 
     file { '/usr/local/bin/irclogserverbot.py':
         ensure  => present,
-        content => template('irc/ircrcbot.py'),
+        content => epp('irc/ircrcbot.py.epp', {
+            'network'               => $network,
+            'nickname'              => $nickname,
+            'mirahezebots_password' => $mirahezebots_password,
+            'channel'               => $channel,
+            'udp_port'              => $udp_port,
+            'network_port'          => $network_port,
+        }),
         mode    => '0755',
         notify  => Service['irclogserverbot'],
     }
@@ -24,6 +31,6 @@ class irc::irclogserverbot(
     }
 
     monitoring::nrpe { 'IRC Log Server Bot':
-        command => '/usr/lib/nagios/plugins/check_procs -a irclogserverbot.py -c 1:1'
+        command => '/usr/lib/nagios/plugins/check_procs -a irclogserverbot.py -c 1:1',
     }
 }

@@ -24,7 +24,7 @@ define mariadb::instance(
     Optional[String]                    $pid_file = "/var/run/mysqld/mysqld.${title}.pid",
     Optional[String]                    $error_log = "/var/log/mysql/mysql-error.${title}.log",
     Optional[Variant[String, Boolean]]  $innodb_buffer_pool_size = false,
-    Optional[String]                    $template = 'mariadb/config/instance.cnf.erb',
+    Optional[String]                    $template = 'mariadb/config/instance.cnf.epp',
     Optional[Integer]                   $read_only = 1,
     Boolean                             $enable_bin_logs = true,
 ) {
@@ -46,7 +46,7 @@ define mariadb::instance(
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
-        content => template($template),
+        content => epp($template, { 'title' => $title, 'datadir' => $datadir, 'tmpdir' => $tmpdir, 'socket' => $socket, 'port' => $port, 'error_log' => $error_log, 'innodb_buffer_pool_size' => $innodb_buffer_pool_size, 'read_only' => $read_only, 'pid_file' => $pid_file }),
     }
 
     $icinga_password = lookup('passwords::db::icinga')
