@@ -225,19 +225,10 @@ class role::opensearch (
 
         ssl::wildcard { 'opensearch wildcard': }
 
-        $subquery = @("PQL")
-        (resources { type = 'Class' and title = 'Role::Mediawiki' } or
-        resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
-        resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
-        resources { type = 'Class' and title = 'Role::Icinga2' } or
-        resources { type = 'Class' and title = 'Role::Graylog' } or
-        resources { type = 'Class' and title = 'Role::Opensearch' })
-        | PQL
-        $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
         firewall::service { 'opensearch ssl':
-            proto  => 'tcp',
-            port   => 443,
-            srange => "(${firewall_rules_str})",
+            proto    => 'tcp',
+            port     => 443,
+            src_sets => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'ICINGA2_HOSTS', 'GRAYLOG_HOSTS', 'OPENSEARCH_HOSTS'],
         }
     }
 
@@ -245,20 +236,16 @@ class role::opensearch (
         include prometheus::exporter::elasticsearch
     }
 
-    $subquery_2 = @("PQL")
-    resources { type = 'Class' and title = 'Role::Opensearch' }
-    | PQL
-    $firewall_os_nodes = vmlib::generate_firewall_ip($subquery_2)
     firewall::service { 'opensearch data nodes to manager':
-        proto  => 'tcp',
-        port   => 9200,
-        srange => "(${firewall_os_nodes})",
+        proto    => 'tcp',
+        port     => 9200,
+        src_sets => ['OPENSEARCH_HOSTS'],
     }
 
     firewall::service { 'opensearch manager access data nodes 9300 port':
-        proto  => 'tcp',
-        port   => 9300,
-        srange => "(${firewall_os_nodes})",
+        proto    => 'tcp',
+        port     => 9300,
+        src_sets => ['OPENSEARCH_HOSTS'],
     }
 
     system::role { 'opensearch':

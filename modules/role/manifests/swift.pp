@@ -7,18 +7,6 @@ class role::swift (
     include ::swift
     include ::swift::ring
 
-    $subquery = @("PQL")
-    (resources { type = 'Class' and title = 'Role::Swift' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
-    resources { type = 'Class' and title = 'Role::Prometheus' } or
-    resources { type = 'Class' and title = 'Role::Bastion' } or
-    resources { type = 'Class' and title = 'Role::Varnish' } or
-    resources { type = 'Class' and title = 'Role::Cache::Cache' } or
-    resources { type = 'Class' and title = 'Role::Icinga2' })
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
     $proxy = lookup('swift_proxy_enable', {'default_value' => false})
     if $proxy {
@@ -46,27 +34,27 @@ class role::swift (
         }
 
         firewall::service { 'http':
-            proto   => 'tcp',
-            port    => 80,
-            srange  => "(${firewall_rules_str})",
-            notrack => true,
+            proto    => 'tcp',
+            port     => 80,
+            src_sets => ['SWIFT_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
+            notrack  => true,
         }
 
         firewall::service { 'https':
-            proto   => 'tcp',
-            port    => 443,
-            srange  => "(${firewall_rules_str})",
-            notrack => true,
+            proto    => 'tcp',
+            port     => 443,
+            src_sets => ['SWIFT_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
+            notrack  => true,
         }
 
         if lookup('swift_enable_memcache', {'default_value' => false}) {
             include role::memcached
 
             firewall::service { 'swift_memcache_11211':
-                proto   => 'tcp',
-                port    => 11211,
-                srange  => "(${firewall_rules_str})",
-                notrack => true,
+                proto    => 'tcp',
+                port     => 11211,
+                src_sets => ['SWIFT_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
+                notrack  => true,
             }
         }
     }
@@ -76,24 +64,24 @@ class role::swift (
         include ::swift::ac
 
         firewall::service { 'swift_account_6002':
-            proto   => 'tcp',
-            port    => 6002,
-            srange  => "(${firewall_rules_str})",
-            notrack => true,
+            proto    => 'tcp',
+            port     => 6002,
+            src_sets => ['SWIFT_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
+            notrack  => true,
         }
 
         firewall::service { 'swift_container_6001':
-            proto   => 'tcp',
-            port    => 6001,
-            srange  => "(${firewall_rules_str})",
-            notrack => true,
+            proto    => 'tcp',
+            port     => 6001,
+            src_sets => ['SWIFT_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
+            notrack  => true,
         }
 
         firewall::service { 'swift-rsync':
-            proto   => 'tcp',
-            port    => 873,
-            notrack => true,
-            srange  => "(${firewall_rules_str})",
+            proto    => 'tcp',
+            port     => 873,
+            notrack  => true,
+            src_sets => ['SWIFT_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
         }
     }
 
@@ -111,17 +99,17 @@ class role::swift (
         }
 
         firewall::service { 'swift_object_6000':
-            proto   => 'tcp',
-            port    => 6000,
-            srange  => "(${firewall_rules_str})",
-            notrack => true,
+            proto    => 'tcp',
+            port     => 6000,
+            src_sets => ['SWIFT_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
+            notrack  => true,
         }
 
         firewall::service { 'swift-rsync':
-            proto   => 'tcp',
-            port    => 873,
-            notrack => true,
-            srange  => "(${firewall_rules_str})",
+            proto    => 'tcp',
+            port     => 873,
+            notrack  => true,
+            src_sets => ['SWIFT_HOSTS', 'MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'MEDIAWIKI_BETA_HOSTS', 'PROMETHEUS_HOSTS', 'BASTION_HOSTS', 'VARNISH_HOSTS', 'CACHE_CACHE_HOSTS', 'ICINGA2_HOSTS'],
         }
     }
 

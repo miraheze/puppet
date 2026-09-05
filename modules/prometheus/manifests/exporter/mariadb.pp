@@ -64,13 +64,9 @@ class prometheus::exporter::mariadb {
         ensure => running,
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Prometheus' }
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus mysqld_exporter':
-        proto  => 'tcp',
-        port   => 9104,
-        srange => "(${firewall_rules_str})",
+        proto    => 'tcp',
+        port     => 9104,
+        src_sets => ['PROMETHEUS_CLASS_HOSTS'],
     }
 }
