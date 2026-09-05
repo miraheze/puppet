@@ -1,11 +1,16 @@
 # role: matomo
-class role::matomo {
+class role::matomo (
+    Boolean $enable_redis = lookup('role::matomo::enable_redis', {'default_value' => false}),
+) {
 
-    include prometheus::exporter::redis
-    class { '::redis':
-        maxmemory_policy => 'allkeys-lru',
-        password         => lookup('passwords::redis::master')
+    if $enable_redis {
+        include prometheus::exporter::redis
+        class { '::redis':
+            maxmemory_policy => 'allkeys-lru',
+            password         => lookup('passwords::redis::master')
+        }
     }
+
     include ::matomo
 
     $subquery = @("PQL")
@@ -25,6 +30,17 @@ class role::matomo {
         proto   => 'tcp',
         port    => 443,
         srange  => "(${firewall_srange})",
+        notrack => true,
+    }
+
+    $subquery_for_redis = @("PQL")
+    (resources { type = 'Class' and title = 'Role::Matomo' })
+    | PQL
+    $firewall_srange_redis = vmlib::generate_firewall_ip($subquery_for_redis)
+    firewall::service { 'redis':
+        proto   => 'tcp',
+        port    => 6379,
+        srange  => "(${firewall_srange_redis})",
         notrack => true,
     }
 

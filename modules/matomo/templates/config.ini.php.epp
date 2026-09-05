@@ -28,6 +28,10 @@ proxy_scheme_headers[] = "HTTP_X_FORWARDED_PROTO"
 proxy_scheme_headers[] = "HTTP_X_FORWARDED_SCHEME"
 proxy_scheme_headers[] = "HTTP_X_URL_SCHEME"
 
+[proxy]
+host = bastion.fsslc.wtnet
+port = 8080
+
 [mail]
 defaultHostnameIfEmpty = "wikitide.org"
 transport = "smtp"

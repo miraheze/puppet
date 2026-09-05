@@ -1,0 +1,114 @@
+{
+  "Rules": [
+    {
+      "ID": "expire-private",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "private/"
+      },
+      "Expiration": {
+        "Days": 28
+      }
+    },
+    {
+      "ID": "expire-sslkeys",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "sslkeys/"
+      },
+      "Expiration": {
+        "Days": 28
+      }
+    },
+    {
+      "ID": "expire-swift-account-container",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "swift-account-container/"
+      },
+      "Expiration": {
+        "Days": 28
+      }
+    },
+    {
+      "ID": "expire-phorge",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "phorge/"
+      },
+      "Expiration": {
+        "Days": 28
+      }
+    },
+    {
+      "ID": "expire-sql-mhglobal",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "sql/mhglobal/"
+      },
+      "Expiration": {
+        "Days": 7
+      }
+    },
+    {
+      "ID": "expire-sql",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "sql/"
+      },
+      "Expiration": {
+        "Days": 35
+      }
+    },
+    {
+      "ID": "expire-mediawiki-xml",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "mediawiki-xml/"
+      },
+      "Expiration": {
+        "Days": 91
+      }
+    },
+    {
+      "ID": "expire-mattermost-data",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "mattermost-data/"
+      },
+      "Expiration": {
+        "Days": 28
+      }
+    },
+    {
+      "ID": "expire-mattermost-db",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "mattermost-db/"
+      },
+      "Expiration": {
+        "Days": 28
+      }
+    },
+    {
+      "ID": "expire-puppetdb",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "puppetdb/"
+      },
+      "Expiration": {
+        "Days": 28
+      }
+    },
+    {
+      "ID": "abort-incomplete-multipart-uploads",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": ""
+      },
+      "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 1
+      }
+    }
+  ]
+}
