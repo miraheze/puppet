@@ -197,7 +197,7 @@ class matomo (
         },
         '4' => {
             interval => '*-*-* 04/8:03:00',
-            ensure   => 'absent',
+            ensure   => 'present',
             host     => 'matomo211',
         },
     }
