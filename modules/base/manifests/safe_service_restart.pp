@@ -31,7 +31,12 @@ define base::safe_service_restart(
     # This file will be created independently of the presence of pools to remove or not.
     file { "/usr/local/sbin/restart-${title}":
         ensure  => present,
-        content => epp('base/safe-restart.epp', { 'title' => $title, 'nodes' => $nodes, 'cache_nodes' => $cache_nodes, 'varnish_totp_secret' => $varnish_totp_secret }),
+        content => epp('base/safe-restart.epp', {
+            'title'               => $title,
+            'nodes'               => $nodes,
+            'cache_nodes'         => $cache_nodes,
+            'varnish_totp_secret' => $varnish_totp_secret,
+        }),
         owner   => 'root',
         group   => 'root',
         mode    => '0555',
