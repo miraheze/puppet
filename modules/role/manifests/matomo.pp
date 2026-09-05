@@ -28,6 +28,17 @@ class role::matomo {
         notrack => true,
     }
 
+    $subquery_for_redis = @("PQL")
+    (resources { type = 'Class' and title = 'Role::Matomo' })
+    | PQL
+    $firewall_srange = vmlib::generate_firewall_ip($subquery)
+    firewall::service { 'redis':
+        proto   => 'tcp',
+        port    => 6379,
+        srange  => "(${firewall_srange})",
+        notrack => true,
+    }
+
     system::role { 'matomo':
         description => 'analytics server',
     }
