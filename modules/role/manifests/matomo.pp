@@ -36,7 +36,7 @@ class role::matomo (
     $subquery_for_redis = @("PQL")
     (resources { type = 'Class' and title = 'Role::Matomo' })
     | PQL
-    $firewall_srange_redis = vmlib::generate_firewall_ip($subquery)
+    $firewall_srange_redis = vmlib::generate_firewall_ip($subquery_for_redis)
     firewall::service { 'redis':
         proto   => 'tcp',
         port    => 6379,
