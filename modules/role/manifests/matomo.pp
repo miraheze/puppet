@@ -1,11 +1,16 @@
 # role: matomo
-class role::matomo {
+class role::matomo (
+    String $enable_redis = lookup('role::matomo::enable_redis', {'default_value' => false}),
+) {
 
-    include prometheus::exporter::redis
-    class { '::redis':
-        maxmemory_policy => 'allkeys-lru',
-        password         => lookup('passwords::redis::master')
+    if $enable_redis {
+        include prometheus::exporter::redis
+        class { '::redis':
+            maxmemory_policy => 'allkeys-lru',
+            password         => lookup('passwords::redis::master')
+        }
     }
+
     include ::matomo
 
     $subquery = @("PQL")
