@@ -70,6 +70,12 @@ sub vcl_init {
 <%- if property['swiftpool'] -%>
 	swift.add_backend(<%= name %>, 100);
 <%- end -%>
+
+	new matomo = directors.random();
+<%- @backends.each_pair do | name, property | -%>
+<%- if property['matomopool'] -%>
+	matomo.add_backend(<%= name %>, 100);
+<%- end -%>
 <%- end -%>
 }
 
@@ -460,7 +466,7 @@ sub vcl_recv {
 
 	# Only cache js files from Matomo
 	if (req.http.Host == "analytics.wikitide.net") {
-		set req.backend_hint = matomo151;
+		set req.backend_hint = matomo.backend();
 
 		# Yes, we only care about this file
 		if (req.url ~ "^/matomo.js") {
