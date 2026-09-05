@@ -1,6 +1,9 @@
+base::dns::do_ipv4: true
+base::dns::do_ipv6: false
+base::dns::forward_use_internal: true
+
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
-role::matomo::enable_redis: true
 php::fpm::fpm_workers_multiplier: 1.5
 php::fpm::fpm_min_child: 8
 nginx::logrotate_number: 3
