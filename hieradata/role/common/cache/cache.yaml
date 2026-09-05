@@ -137,6 +137,7 @@ role::cache::haproxy::varnish_backends:
     port: 8203
     probe: false
     pool: false
+    matomopool: true
   puppet181:
     port: 8204
     probe: false
@@ -159,6 +160,11 @@ role::cache::haproxy::varnish_backends:
     port: 8208
     probe: false
     pool: false
+  matomo211:
+    port: 8209
+    probe: false
+    pool: false
+    matomopool: true
 
 role::cache::haproxy::post_acl_actions:
   tls:
