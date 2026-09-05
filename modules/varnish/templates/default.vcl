@@ -70,6 +70,7 @@ sub vcl_init {
 <%- if property['swiftpool'] -%>
 	swift.add_backend(<%= name %>, 100);
 <%- end -%>
+<%- end -%>
 
 	new matomo = directors.random();
 <%- @backends.each_pair do | name, property | -%>
