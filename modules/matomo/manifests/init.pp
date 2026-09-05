@@ -175,7 +175,7 @@ class matomo (
     # Install a systemd timer to run the Archive task periodically.
     # Running it once a day to avoid performance penalties on high trafficated websites
     # (https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/#important-tips-for-medium-to-high-traffic-websites)
-    $archiver_command = "/usr/bin/php /srv/matomo/console core:archive --concurrent-archivers=4 --concurrent-requests-per-website=1 --url=\"https://analytics.wikitide.net/\""
+    $archiver_command = "/usr/bin/php /srv/matomo/console core:archive --concurrent-archivers=4 --url=\"https://analytics.wikitide.net/\""
 
     # Create concurrent archivers
     # https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/
@@ -183,35 +183,41 @@ class matomo (
         '1' => {
             interval => '*-*-* 00/8:00:00',
             ensure   => 'present',
+            host     => 'matomo151',
         },
         '2' => {
             interval => '*-*-* 00/8:01:00',
             ensure   => 'present',
+            host     => 'matomo151',
         },
         '3' => {
-            interval => '*-*-* 00/8:02:00',
+            interval => '*-*-* 04/8:02:00',
             ensure   => 'present',
+            host     => 'matomo211',
         },
         '4' => {
-            interval => '*-*-* 00/8:03:00',
+            interval => '*-*-* 04/8:03:00',
             ensure   => 'absent',
+            host     => 'matomo211',
         },
     }
     $concurrent_hash.each | String $concurrent, Hash $config | {
-        systemd::timer::job { "matomo-archiver-${concurrent}":
-            ensure            => $config['ensure'],
-            description       => "Runs the Matomo's archive process.",
-            command           => "/bin/bash -c '${archiver_command}'",
-            interval          => {
-                'start'    => 'OnCalendar',
-                'interval' => $config['interval'],
-            },
-            logfile_basedir   => '/var/log/matomo',
-            logfile_group     => 'www-data',
-            logfile_name      => "matomo-archive-${concurrent}.log",
-            syslog_identifier => "matomo-archiver-${concurrent}",
-            user              => 'www-data',
-            require           => Git::Clone['matomo'],
+        if $facts['networking']['hostname'] == $config['host'] {
+            systemd::timer::job { "matomo-archiver-${concurrent}":
+                ensure            => $config['ensure'],
+                description       => "Runs the Matomo's archive process.",
+                command           => "/bin/bash -c '${archiver_command}'",
+                interval          => {
+                    'start'    => 'OnCalendar',
+                    'interval' => $config['interval'],
+                },
+                logfile_basedir   => '/var/log/matomo',
+                logfile_group     => 'www-data',
+                logfile_name      => "matomo-archive-${concurrent}.log",
+                syslog_identifier => "matomo-archiver-${concurrent}",
+                user              => 'www-data',
+                require           => Git::Clone['matomo'],
+            }
         }
     }
 
@@ -236,29 +242,38 @@ class matomo (
     $concurrent_queuedtracking = {
         '0' => {
             ensure   => 'present',
+            host     => 'matomo151',
         },
         '1' => {
             ensure   => 'present',
+            host     => 'matomo151',
         },
         '2' => {
             ensure   => 'present',
+            host     => 'matomo211',
+        },
+        '3' => {
+            ensure   => 'present',
+            host     => 'matomo211',
         },
     }
     $concurrent_queuedtracking.each | String $key, Hash $config | {
-        systemd::timer::job { "matomo-queuedtracking-${key}":
-            ensure            => $config['ensure'],
-            description       => "Runs the Matomo's Plugin QueuedTracking process.",
-            command           => "/usr/bin/php /srv/matomo/console queuedtracking:process --queue-id=${key} --delay=1 --no-ansi",
-            interval          => {
-                'start'    => 'OnCalendar',
-                'interval' => '*-*-* *:*:00',
-            },
-            logfile_basedir   => '/var/log/matomo',
-            logfile_group     => 'www-data',
-            logfile_name      => "matomo-queuedtracking-${key}.log",
-            syslog_identifier => "matomo-queuedtracking-${key}",
-            user              => 'www-data',
-            require           => Git::Clone['matomo'],
+        if $facts['networking']['hostname'] == $config['host'] {
+            systemd::timer::job { "matomo-queuedtracking-${key}":
+                ensure            => $config['ensure'],
+                description       => "Runs the Matomo's Plugin QueuedTracking process.",
+                command           => "/usr/bin/php /srv/matomo/console queuedtracking:process --queue-id=${key} --delay=1 --no-ansi",
+                interval          => {
+                    'start'    => 'OnCalendar',
+                    'interval' => '*-*-* *:*:00',
+                },
+                logfile_basedir   => '/var/log/matomo',
+                logfile_group     => 'www-data',
+                logfile_name      => "matomo-queuedtracking-${key}.log",
+                syslog_identifier => "matomo-queuedtracking-${key}",
+                user              => 'www-data',
+                require           => Git::Clone['matomo'],
+            }
         }
     }
 }
