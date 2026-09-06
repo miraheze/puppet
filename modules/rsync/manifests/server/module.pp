@@ -72,7 +72,7 @@ define rsync::server::module (
 
   file { "${rsync::server::rsync_fragments}/frag-${name}":
     ensure  => $ensure,
-    content => template('rsync/module.erb'),
+    content => epp('rsync/module.epp', { 'name' => $name, 'path' => $path, 'read_only' => $read_only, 'write_only' => $write_only, 'list' => $list, 'uid' => $uid, 'gid' => $gid, 'chroot' => $chroot, 'incoming_chmod' => $incoming_chmod, 'outgoing_chmod' => $outgoing_chmod, 'max_connections' => $max_connections, 'lock_file' => $lock_file, 'comment' => $comment, 'secrets_file' => $secrets_file, 'auth_users' => $auth_users, 'frag_hosts_allow' => $frag_hosts_allow, 'hosts_deny' => $hosts_deny }),
     notify  => Exec['compile fragments'],
   }
 

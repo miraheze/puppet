@@ -25,7 +25,7 @@
 # === Examples
 #
 #  nginx::site { 'mediawiki':
-#    content => template('mediawiki/mediawiki.conf.erb'),
+#    content => epp('mediawiki/mediawiki.conf.epp'),
 #  }
 #
 define nginx::site(

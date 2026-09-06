@@ -151,7 +151,7 @@ class role::opensearch (
         file { '/usr/local/bin/opensearch-security':
             ensure  => present,
             mode    => '0755',
-            content => template('role/opensearch/bin/opensearch-security.sh.erb'),
+            content => epp('role/opensearch/bin/opensearch-security.sh.epp', { 'os_manager_hosts' => $os_manager_hosts }),
         }
 
         file { '/usr/local/bin/opensearch-generate-admin-certificate.sh':
@@ -209,7 +209,7 @@ class role::opensearch (
     if ('cluster_manager' in $os_roles) {
         nginx::site { 'opensearch.wikitide.net':
             ensure  => present,
-            content => template('role/opensearch/nginx.conf.erb'),
+            content => epp('role/opensearch/nginx.conf.epp', { 'os_manager_hosts' => $os_manager_hosts }),
             monitor => false,
         }
         monitoring::services { 'HTTPS':

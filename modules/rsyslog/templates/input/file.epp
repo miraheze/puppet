@@ -1,0 +1,27 @@
+<%- | String $path,
+      Enum['on', 'off'] $reopen_on_truncate,
+      Optional[String] $startmsg_regex,
+      Enum['on', 'off'] $addmetadata,
+      Enum['on', 'off'] $addceetag,
+      Variant[Pattern[/[a-zA-Z0-9_-]+/], Enum['']] $syslog_tag_prefix,
+      Pattern[/[a-zA-Z0-9_-]+/] $syslog_tag,
+      Boolean $use_udp,
+      Boolean $parse_json
+| -%>
+# This file managed by puppet rsyslog::input::file
+
+input(type="imfile"
+      File="<%= $path %>"
+      reopenOnTruncate="<%= $reopen_on_truncate %>"
+<%- if $startmsg_regex { -%>
+      startmsg.regex="<%= $startmsg_regex %>"
+<%- } -%>
+      addMetadata="<%= $addmetadata %>"
+      addCeeTag="<%= $addceetag %>"
+      Tag="<%= $syslog_tag_prefix %><%= $syslog_tag %>"
+<%- if $use_udp and $parse_json { -%>
+      ruleset="rsyslog_udp_localhost_rule_parse_json"
+<%- } elsif $use_udp { -%>
+      ruleset="rsyslog_udp_localhost_rule"
+<%- } -%>
+      )
