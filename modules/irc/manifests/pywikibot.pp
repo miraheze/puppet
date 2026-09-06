@@ -37,7 +37,7 @@ class irc::pywikibot {
         group   => 'root',
         mode    => '0555',
         content => epp('irc/pywikibot/pywikibot.sh.epp', {
-            'base_path' => $base_path,
+            'base_path'    => $base_path,
             'install_path' => $install_path,
         }),
     }
@@ -71,10 +71,10 @@ class irc::pywikibot {
         group   => 'pywikibot',
         mode    => '0400',
         content => epp('irc/pywikibot/user-config.py.epp', {
-            'consumer_token' => $consumer_token,
+            'consumer_token'  => $consumer_token,
             'consumer_secret' => $consumer_secret,
-            'access_token' => $access_token,
-            'access_secret' => $access_secret,
+            'access_token'    => $access_token,
+            'access_secret'   => $access_secret,
         }),
         require => Git::Clone['Pywikibot-stable'],
     }
