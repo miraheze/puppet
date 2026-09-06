@@ -46,7 +46,17 @@ define mariadb::instance(
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
-        content => epp($template, { 'title' => $title, 'datadir' => $datadir, 'tmpdir' => $tmpdir, 'socket' => $socket, 'port' => $port, 'error_log' => $error_log, 'innodb_buffer_pool_size' => $innodb_buffer_pool_size, 'read_only' => $read_only, 'pid_file' => $pid_file }),
+        content => epp($template, {
+            'title'                   => $title,
+            'datadir'                 => $datadir,
+            'tmpdir'                  => $tmpdir,
+            'socket'                  => $socket,
+            'port'                    => $port,
+            'error_log'               => $error_log,
+            'innodb_buffer_pool_size' => $innodb_buffer_pool_size,
+            'read_only'               => $read_only,
+            'pid_file'                => $pid_file,
+        }),
     }
 
     $icinga_password = lookup('passwords::db::icinga')
