@@ -1,4 +1,10 @@
-<%- | String $mirahezebots_password, String $mirahezelogbot_password, String $mirahezelogbot_consumer_token, String $mirahezelogbot_consumer_secret, String $mirahezelogbot_access_token, String $mirahezelogbot_access_secret | -%>
+<%- | String $mirahezebots_password,
+      String $mirahezelogbot_password,
+      String $mirahezelogbot_consumer_token,
+      String $mirahezelogbot_consumer_secret,
+      String $mirahezelogbot_access_token,
+      String $mirahezelogbot_access_secret
+| -%>
 # If true, !log <project> <message>
 # If false, !log <message>
 enable_projects = False
