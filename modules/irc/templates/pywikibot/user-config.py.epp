@@ -1,4 +1,8 @@
-<%- | String $consumer_token, String $consumer_secret, String $access_token, String $access_secret | -%>
+<%- | String $consumer_token,
+      String $consumer_secret,
+      String $access_token,
+      String $access_secret
+| -%>
 # MANAGED BY PUPPET
 family = 'wikitide'
 mylang = 'metawiki'
