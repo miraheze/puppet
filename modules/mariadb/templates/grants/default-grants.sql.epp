@@ -1,4 +1,8 @@
-<%- | String $password, String $icinga_password, String $exporter_password, String $mariadb_replica_password | -%>
+<%- | String $password,
+      String $icinga_password,
+      String $exporter_password,
+      String $mariadb_replica_password
+| -%>
 -- Grants for 'root'@'localhost'
 
 GRANT ALL PRIVILEGES
