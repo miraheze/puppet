@@ -1,4 +1,11 @@
-<%- | String $interval_check, String $interval_timeout, Hash $backends, Array[String] $cloudflare_ipv4, Array[String] $cloudflare_ipv6, String $debug_access_key, Hash $csp | -%>
+<%- | String $interval_check,
+      String $interval_timeout,
+      Hash $backends,
+      Array[String] $cloudflare_ipv4,
+      Array[String] $cloudflare_ipv6,
+      String $debug_access_key,
+      Hash $csp
+| -%>
 # This is the VCL file for Varnish, adjusted for WikiTide's needs.
 # It was originally written by Southparkfan in 2015, but rewritten in 2022 by John.
 # Some material used is inspired by the Wikimedia Foundation's configuration files.
