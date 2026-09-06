@@ -36,7 +36,10 @@ class irc::pywikibot {
         owner   => 'root',
         group   => 'root',
         mode    => '0555',
-        content => epp('irc/pywikibot/pywikibot.sh.epp', { 'base_path' => $base_path, 'install_path' => $install_path }),
+        content => epp('irc/pywikibot/pywikibot.sh.epp', {
+            'base_path' => $base_path,
+            'install_path' => $install_path,
+        }),
     }
 
     stdlib::ensure_packages([
@@ -67,7 +70,12 @@ class irc::pywikibot {
         owner   => 'pywikibot',
         group   => 'pywikibot',
         mode    => '0400',
-        content => epp('irc/pywikibot/user-config.py.epp', { 'consumer_token' => $consumer_token, 'consumer_secret' => $consumer_secret, 'access_token' => $access_token, 'access_secret' => $access_secret }),
+        content => epp('irc/pywikibot/user-config.py.epp', {
+            'consumer_token' => $consumer_token,
+            'consumer_secret' => $consumer_secret,
+            'access_token' => $access_token,
+            'access_secret' => $access_secret,
+        }),
         require => Git::Clone['Pywikibot-stable'],
     }
 
