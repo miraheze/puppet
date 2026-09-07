@@ -191,12 +191,12 @@ class matomo (
             host     => 'matomo151',
         },
         '3' => {
-            interval => '*-*-* 04/8:02:00',
+            interval => '*-*-* 00/8:02:00',
             ensure   => 'present',
             host     => 'matomo211',
         },
         '4' => {
-            interval => '*-*-* 04/8:03:00',
+            interval => '*-*-* 00/8:03:00',
             ensure   => 'present',
             host     => 'matomo211',
         },
