@@ -1,4 +1,4 @@
-<%- | Optional[String] $nickname = undef | -%>
+<%- | String $nickname | -%>
 [Unit]
 Description=WikiTide IRC RecentChanges feed - <%= $nickname %>
 

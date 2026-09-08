@@ -1,0 +1,100 @@
+<%- | Integer $num_workers, Hash $accounts, Hash $accounts_keys, String $swift_main_memcached | -%>
+<%# SPDX-License-Identifier: Apache-2.0 -%>
+# This file is managed by Puppet!
+
+[DEFAULT]
+# Only in proxy-server and object-server must you use ipv6 without bracket.
+bind_ip = ::
+bind_port = 80
+workers = <%= $num_workers %>
+# bind_timeout = 30
+# backlog = 4096
+swift_dir = /etc/swift
+user = swift
+
+log_statsd_host = localhost
+log_statsd_port = 9125
+log_statsd_metric_prefix = swift.<%= $facts['networking']['hostname'] %>
+log_statsd_sample_rate_factor = 1
+
+conn_timeout = 1.5
+
+[pipeline:main]
+pipeline = proxy-logging listing_formats ensure_max_age rewrite healthcheck cache container_sync tempurl ratelimit tempauth cors proxy-logging proxy-server
+
+[app:proxy-server]
+use = egg:swift#proxy
+# allow_account_management = true
+account_autocreate = true
+
+[filter:tempauth]
+use = egg:swift#tempauth
+token_life = 604800
+<%- $accounts.keys.sort.each |$name| {
+  $info = $accounts[$name]
+  $key = $accounts_keys[$name]
+  $user_key = $info['user'].regsubst(':', '_', 'G')
+-%>
+user_<%= $user_key %> = <%= $key %> <%= $info['access'] %> <%= $info['auth'] %>/v1/<%= $info['account_name'] %>
+<%- } -%>
+
+[filter:healthcheck]
+use = egg:swift#healthcheck
+
+[filter:cache]
+use = egg:swift#memcache
+memcache_servers = <%= $swift_main_memcached %>:11211
+memcache_serialization_support = 2
+# per worker!
+memcache_max_connections = 12
+
+[filter:ratelimit]
+use = egg:swift#ratelimit
+# accounts limited to 5/s PUT/DELETE to containers
+account_ratelimit = 5
+account_whitelist = AUTH_mw
+log_sleep_time_seconds = 3
+# containers with > 200 objects limited to 30/s PUT/DELETE/POST and listings
+container_ratelimit_200 = 30
+container_listing_ratelimit_200 = 30
+
+[filter:tempurl]
+use = egg:swift#tempurl
+# default includes PUT
+methods = GET HEAD
+
+# s3api requirement
+[filter:bulk]
+use = egg:swift#bulk
+
+[filter:container_sync]
+use = egg:swift#container_sync
+
+[filter:cors]
+paste.filter_factory = wikitide.cors:filter_factory
+
+[filter:proxy-logging]
+use = egg:swift#proxy_logging
+set access_log_facility = LOG_LOCAL1
+
+[filter:listing_formats]
+use = egg:swift#listing_formats
+
+[filter:ensure_max_age]
+paste.filter_factory = wikitide.ensure_max_age:filter_factory
+methods_list = HEAD GET
+status_list = 200
+max_age = 86400
+host_list = static.wikitide.net
+
+[filter:rewrite]
+# the auth system turns our login and key into an account / token pair.
+# the account remains valid forever, but the token times out.
+account = <%= $accounts['mw_media']['account_name'] %>
+# upload doesn't like our User-agent (Python-urllib/2.6), otherwise we could call it using urllib2.urlopen()
+user_agent = Mozilla/5.0
+
+# sending thumbnail requests to thumbor
+thumbhost = static.wikitide.net
+
+paste.filter_factory = wikitide.rewrite:filter_factory

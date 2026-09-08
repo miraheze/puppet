@@ -1,0 +1,10 @@
+<%- | Array $privileges, Boolean $is_group, String $priv_holder | -%>
+# Puppet
+
+<%- $privileges.each |$privilege| { -%>
+<%- if $is_group { -%>
+%<%= $priv_holder %> <%= $privilege %>
+<%- } else { -%>
+<%= $priv_holder %> <%= $privilege %>
+<%- } -%>
+<%- } -%>

@@ -1,0 +1,27 @@
+<%- | Array[String] $syslog_host, Integer $syslog_queue_size | -%>
+# NOTE: This file is managed by Puppet.
+
+$DefaultNetstreamDriverCAFile /etc/ssl/certs/ISRG_Root_X1.pem
+# $DefaultNetstreamDriverCertFile /etc/rsyslog/ssl/cert.pem
+# $DefaultNetstreamDriverKeyFile /etc/rsyslog/ssl/server.key
+
+ruleset(name="rsyslog_udp_localhost_rule" queue.type="LinkedList") {
+
+<%- $syslog_host.sort.each |$log_host| {
+  $parts = $log_host.split(':')
+  $host = $parts[0]
+  $port = pick($parts[1], '6514')
+-%>
+  action(type="omfwd" name="fwd_udp_<%= $log_host %>_rule" Target="<%= $host %>" Port="<%= $port %>"
+    StreamDriver="gtls" StreamDriverAuthMode="x509/certvalid" StreamDriverMode="1"
+    Protocol="tcp" template="RSYSLOG_SyslogProtocol23Format"
+    action.resumeRetryCount="-1"
+<%- if $syslog_queue_size > 0 { -%>
+    queue.type="LinkedList" queue.size="<%= $syslog_queue_size %>" queue.filename="fwd_udp_<%= $log_host %>_rule"
+    queue.highWatermark="<%= Integer($syslog_queue_size * 0.7) %>" queue.lowWatermark="<%= Integer($syslog_queue_size * 0.6) %>"
+    queue.checkpointInterval="5"
+    queue.maxDiskSpace="<%= Integer($syslog_queue_size * 4096) %>"
+<%- } -%>
+    )
+<%- } -%>
+}

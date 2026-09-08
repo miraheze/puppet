@@ -1,0 +1,74 @@
+<%- | String $file_glob,
+      Boolean $not_if_empty,
+      Optional[String] $frequency,
+      Boolean $date_yesterday,
+      Boolean $copy_truncate,
+      Optional[Integer] $max_age,
+      Optional[Integer] $rotate,
+      Boolean $date_ext,
+      Boolean $compress,
+      Boolean $missing_ok,
+      Optional[String] $actual_size,
+      Boolean $no_create,
+      Optional[String] $create,
+      Optional[String] $su,
+      Array[String] $post_rotate,
+      Optional[String] $old_dir
+| -%>
+<%# SPDX-License-Identifier: Apache-2.0 -%>
+# This file is managed by Puppet.
+# puppet:///logrotate/logrotate.epp
+
+<%= $file_glob %> {
+<%- if $not_if_empty { -%>
+    notifempty
+<%- } -%>
+<%- if $frequency { -%>
+    <%= $frequency %>
+<%- } -%>
+<%- if $date_yesterday { -%>
+    dateyesterday
+<%- } -%>
+<%- if $copy_truncate { -%>
+    copytruncate
+<%- } -%>
+<%- if $max_age { -%>
+    maxage <%= $max_age %>
+<%- } -%>
+<%- if $rotate { -%>
+    rotate <%= $rotate %>
+<%- } -%>
+<%- if $date_ext { -%>
+    dateext
+<%- } -%>
+<%- if $compress { -%>
+    compress
+    delaycompress
+<%- } -%>
+<%- if $missing_ok { -%>
+    missingok
+<%- } -%>
+<%- if $actual_size { -%>
+    <%= $actual_size %>
+<%- } -%>
+<%- if $no_create { -%>
+    nocreate
+<%- } -%>
+<%- if $create { -%>
+    create <%= $create %>
+<%- } -%>
+<%- if $su { -%>
+    su <%= $su %>
+<%- } -%>
+<%- unless $post_rotate.length == 0 { -%>
+    sharedscripts
+    postrotate
+    <%- $post_rotate.each |$line| { -%>
+        <%= $line %>
+    <%- } -%>
+    endscript
+<%- } -%>
+<%- if $old_dir { -%>
+    olddir <%= $old_dir %>
+<%- } -%>
+}

@@ -42,7 +42,7 @@ class role::db (
     }
 
     class { 'mariadb::config':
-        config          => 'mariadb/config/mw.cnf.erb',
+        config          => 'mariadb/config/mw.cnf.epp',
         password        => lookup('passwords::db::root'),
         icinga_password => $icinga_password,
         enable_bin_logs => $enable_bin_logs,

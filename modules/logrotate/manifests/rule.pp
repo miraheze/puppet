@@ -54,6 +54,23 @@ define logrotate::rule (
 
     logrotate::conf { $title:
         ensure  => $ensure,
-        content => template('logrotate/logrotate.erb'),
+        content => epp('logrotate/logrotate.epp', {
+            'file_glob'      => $file_glob,
+            'not_if_empty'   => $not_if_empty,
+            'frequency'      => $frequency,
+            'date_yesterday' => $date_yesterday,
+            'copy_truncate'  => $copy_truncate,
+            'max_age'        => $max_age,
+            'rotate'         => $rotate,
+            'date_ext'       => $date_ext,
+            'compress'       => $compress,
+            'missing_ok'     => $missing_ok,
+            'actual_size'    => $actual_size,
+            'no_create'      => $no_create,
+            'create'         => $create,
+            'su'             => $su,
+            'post_rotate'    => $post_rotate,
+            'old_dir'        => $old_dir,
+        }),
     }
 }

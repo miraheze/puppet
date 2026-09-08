@@ -45,7 +45,7 @@ define systemd::timer (
     systemd::service { $title:
         ensure    => $ensure,
         unit_type => 'timer',
-        content   => template('systemd/systemd.timer.erb'),
+        content   => epp('systemd/systemd.timer.epp', { 'unit_name' => $unit_name, 'accuracy' => $accuracy, 'timer_intervals' => $timer_intervals, 'splay' => $splay }),
         require   => Systemd::Unit[$unit_name],
     }
 }

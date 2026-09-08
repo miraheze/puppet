@@ -1,0 +1,445 @@
+<%- | String $php_fpm_sock, Hash $sslredirects, Hash $sslcerts | -%>
+server {
+	listen 80 deferred backlog=4096 reuseport;
+	listen [::]:80 deferred backlog=4096 reuseport;
+
+	server_name ~.;
+
+	if ($http_user_agent ~* "WordPress") {
+		return 403;
+	}
+
+	location /php_status {
+		access_log off;
+		allow 127.0.0.1;
+		include fastcgi_params;
+		fastcgi_pass unix:/run/<%= $php_fpm_sock %>;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_buffers 32 32k;
+		fastcgi_buffer_size 64k;
+		fastcgi_read_timeout 20;
+		send_timeout 20s;
+	}
+
+	location / {
+		return 301 https://$host$request_uri;
+	}
+}
+
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
+
+	server_name *.miraheze.org;
+	root /srv/mediawiki;
+
+	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
+	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
+
+	ssl_verify_client optional;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= $facts['networking']['fqdn'] %>' always;
+
+	# XSS Protection
+	add_header X-XSS-Protection "1; mode=block" always;
+
+	add_header Cache-Tag "mediawiki" always;
+
+	error_page 400 /ErrorPages/400.html;
+	error_page 401 /ErrorPages/401.html;
+	error_page 403 /ErrorPages/403.html;
+	error_page 404 /ErrorPages/404.php;
+	error_page 405 /ErrorPages/405.html;
+	error_page 406 /ErrorPages/406.html;
+	error_page 410 /ErrorPages/410.html;
+	error_page 413 /ErrorPages/413.html;
+	error_page 414 /ErrorPages/414.html;
+
+	error_page 500 /ErrorPages/500.html;
+	error_page 502 /ErrorPages/502.html;
+	error_page 504 /ErrorPages/504.html;
+
+	include /etc/nginx/mediawiki-includes;
+
+	location = /robots.txt {
+		rewrite ^(.*)$ /w/robots.php;
+	}
+
+	location = /sitemap.xml {
+		rewrite ^(.*)$ /sitemap.php;
+	}
+}
+
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
+
+	server_name miraheze.org;
+	root /srv/mediawiki/landing;
+	index index.php;
+
+	if ($http_user_agent ~* "WordPress") {
+		return 403;
+	}
+
+	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
+	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
+
+	ssl_verify_client optional;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= $facts['networking']['fqdn'] %>' always;
+
+	# XSS Protection
+	add_header X-XSS-Protection "1; mode=block" always;
+
+	location ~ ^/(\.git|config) {
+		deny all;
+	}
+
+	# images are more likely to change so we
+	# use a shorter cache expiry for them.
+	location ~* ^/img/ {
+		expires 1d;
+		add_header Cache-Control "public";
+	}
+
+	# webfonts should typically never change, and for css
+	# we use versioned file names so we can set a very
+	# long cache expiry.
+	location ~* ^/(css|webfonts)/ {
+		expires 1y;
+		add_header Cache-Control "public, immutable";
+	}
+
+	location ~ \.php {
+		include fastcgi_params;
+		fastcgi_index index.php;
+		fastcgi_split_path_info ^(.+\.php)(.*)$;
+		try_files $fastcgi_script_name =404;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_pass unix:/run/<%= $php_fpm_sock %>;
+		fastcgi_connect_timeout 300;
+		fastcgi_send_timeout 300;
+		fastcgi_read_timeout 300;
+	}
+
+	location ~ ^/((?!(css|img|webfonts)).)*$ {
+		# redirect query parameter to path
+		if ($arg_lang !~ '^$|en') {
+			return 301 /$arg_lang;
+		}
+
+		# redirect en (default) to /
+		if ($arg_lang = 'en') {
+			return 301 /;
+		}
+
+		rewrite ^/en(/.*)?$ / permanent;
+
+		# rewrite path to lang, so that, for example, /en will act the
+		# same as ?lang=en, but without the ?lang being needed 
+		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
+
+		# if we aren't using a user selected language,
+		# use $http_accept_language
+		if ( $http_accept_language ~ ^(..) ) {
+			set $lang $1;
+		}
+
+		# rewrite to language if not default
+		if ($lang != 'en') {
+			rewrite ^(.*) $1?lang=$lang break;
+		}
+	}
+}
+
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
+
+	server_name foundation.wikitide.org;
+	root /srv/mediawiki/landing;
+	index foundation.php;
+
+	if ($http_user_agent ~* "WordPress") {
+		return 403;
+	}
+
+	ssl_certificate /etc/ssl/localcerts/wikitide.org.crt;
+	ssl_certificate_key /etc/ssl/private/wikitide.org.key;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= $facts['networking']['fqdn'] %>' always;
+
+	# XSS Protection
+	add_header X-XSS-Protection "1; mode=block" always;
+
+	location ~ ^/(\.git|config) {
+		deny all;
+	}
+
+	# images are more likely to change so we
+	# use a shorter cache expiry for them.
+	location ~* ^/img/ {
+		expires 1d;
+		add_header Cache-Control "public";
+	}
+
+	# webfonts should typically never change, and for css
+	# we use versioned file names so we can set a very
+	# long cache expiry.
+	location ~* ^/(css|webfonts)/ {
+		expires 1y;
+		add_header Cache-Control "public, immutable";
+	}
+
+	location ~ \.php {
+		include fastcgi_params;
+		fastcgi_index index.php;
+		fastcgi_split_path_info ^(.+\.php)(.*)$;
+		try_files $fastcgi_script_name =404;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_pass unix:/run/<%= $php_fpm_sock %>;
+		fastcgi_connect_timeout 300;
+		fastcgi_send_timeout 300;
+		fastcgi_read_timeout 300;
+	}
+
+	location ~ ^/((?!(css|img|webfonts)).)*$ {
+		# redirect query parameter to path
+		if ($arg_lang !~ '^$|en') {
+			return 301 /$arg_lang;
+		}
+
+		# redirect en (default) to /
+		if ($arg_lang = 'en') {
+			return 301 /;
+		}
+
+		rewrite ^/en(/.*)?$ / permanent;
+
+		# rewrite path to lang, so that, for example, /en will act the
+		# same as ?lang=en, but without the ?lang being needed 
+		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
+
+		# if we aren't using a user selected language,
+		# use $http_accept_language
+		if ( $http_accept_language ~ ^(..) ) {
+			set $lang $1;
+		}
+
+		# rewrite to language if not default
+		if ($lang != 'en') {
+			rewrite ^(.*) $1?lang=$lang break;
+		}
+	}
+}
+
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
+
+	server_name health.wikitide.net;
+	root /srv/mediawiki;
+	index index.php index.html;
+
+	ssl_certificate /etc/ssl/localcerts/wikitide.net.crt;
+	ssl_certificate_key /etc/ssl/private/wikitide.net.key;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= $facts['networking']['fqdn'] %>' always;
+
+	# XSS Protection
+	add_header X-XSS-Protection "1; mode=block" always;
+
+	location ~ \.php {
+		include fastcgi_params;
+		fastcgi_index index.php;
+		fastcgi_split_path_info ^(.+\.php)(.*)$;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_buffers 32 32k;
+		fastcgi_buffer_size 64k;
+		fastcgi_pass unix:/run/<%= $php_fpm_sock %>;
+	}
+
+	location = /check {
+		rewrite ^(.*)$ /healthcheck.php;
+	}
+}
+
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
+
+	server_name static.wikitide.net;
+
+	send_timeout 120;
+
+	ssl_certificate /etc/ssl/localcerts/wikitide.net.crt;
+	ssl_certificate_key /etc/ssl/private/wikitide.net.key;
+
+	ssl_verify_client optional;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= $facts['networking']['fqdn'] %>' always;
+
+	# XSS Protection
+	add_header X-XSS-Protection "1; mode=block" always;
+
+	location /private/ {
+		deny all;
+	}
+
+	location / {
+		proxy_pass https://swift-lb.wikitide.net;
+		proxy_ssl_protocols TLSv1.3;
+		proxy_http_version 1.1;
+		proxy_set_header Connection close; # should be default
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_buffering off;
+		proxy_buffer_size 32k;
+		proxy_buffers 4 32k;
+	}
+}
+
+<%- $sslredirects.each_pair |$name, $property| { -%>
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
+
+	<%- if $property['additional_domain'] { -%>
+	server_name <%= $property['url'] %> <%= $property['additional_domain'] %>;
+	<%- } else { -%>
+	server_name <%= $property['url'] %>;
+	<%- } -%>
+
+	root /var/www/html;
+
+	ssl_certificate /etc/ssl/localcerts/<%= $property['sslname'] %>.crt;
+	ssl_certificate_key /etc/ssl/private/<%= $property['sslname'] %>.key;
+
+	<%- if $property['ca'] == "Cloudflare" { -%>
+	ssl_verify_client optional;
+	<%- } else { -%>
+	# Domain doesn't go through Cloudflare,
+	# do not require a client certificate as
+	# cp* will not present one that'd be signed by Cloudflare
+	ssl_verify_client off;
+	<%- } -%>
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
+
+	<%- if $property['hsts'] == "strict" { -%>
+	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+	<%- } else { -%>
+	add_header Strict-Transport-Security "max-age=604800";
+	<%- } -%>
+
+	<%- if $property['path_redirects'] { -%>
+	<%- $property['path_redirects'].each_pair |$path, $redirect| { -%>
+	location ~* <%= $path %>$ {
+		return 301 https://<%= $redirect %>;
+	}
+	<%- } -%>
+	# If we are using path_redirects, make the main
+	# redirect property optional.
+	<%- if $property['redirect'] { -%>
+	# Only redirect if there are no other matches found.
+	# This prevents this from conflicting with
+	# redirects specified in path_redirects.
+	location / {
+		return 301 https://<%= $property['redirect'] %>$request_uri;
+	}
+	<%- } -%>
+	<%- } else { -%>
+	# If we aren't using path_redirects, always
+	# redirect using the main redirect property.
+	return 301 https://<%= $property['redirect'] %>$request_uri;
+	<%- } -%>
+}
+
+<%- } -%>
+
+<%- $sslcerts.each_pair |$name, $property| { -%>
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
+<%- if $property['additional_domain'] { -%>
+	server_name <%= $property['url'] %> <%= $property['additional_domain'] %>;
+<%- } else { -%>
+	server_name <%= $property['url'] %>;
+<%- } -%>
+	root /srv/mediawiki;
+<%- if $property['sslname'] { -%>
+	ssl_certificate /etc/ssl/localcerts/<%= $property['sslname'] %>.crt;
+	ssl_certificate_key /etc/ssl/private/<%= $property['sslname'] %>.key;
+<%- } else { -%>
+	ssl_certificate /etc/ssl/localcerts/<%= $property['url'] %>.crt;
+	ssl_certificate_key /etc/ssl/private/<%= $property['url'] %>.key;
+<%- } -%>
+
+<%- if $property['ca'] == "Cloudflare" { -%>
+	ssl_verify_client optional;
+<%- } else { -%>
+	# Domain doesn't go through Cloudflare,
+	# do not require a client certificate as
+	# cp* will not present one that'd be signed by Cloudflare
+	ssl_verify_client off;
+<%- } -%>
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
+
+<%- if $property['hsts'] == "strict" { -%>
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+<%- } else { -%>
+	add_header Strict-Transport-Security "max-age=604800";
+<%- } -%>
+
+	add_header X-Served-By '<%= $facts['networking']['fqdn'] %>' always;
+
+	# XSS Protection
+	add_header X-XSS-Protection "1; mode=block" always;
+
+	error_page 400 /ErrorPages/400.html;
+	error_page 401 /ErrorPages/401.html;
+	error_page 403 /ErrorPages/403.html;
+	error_page 404 /ErrorPages/404.php;
+	error_page 405 /ErrorPages/405.html;
+	error_page 406 /ErrorPages/406.html;
+	error_page 410 /ErrorPages/410.html;
+	error_page 413 /ErrorPages/413.html;
+	error_page 414 /ErrorPages/414.html;
+
+	error_page 500 /ErrorPages/500.html;
+	error_page 502 /ErrorPages/502.html;
+	error_page 504 /ErrorPages/504.html;
+
+	include /etc/nginx/mediawiki-includes;
+
+	location = /robots.txt {
+		rewrite ^(.*)$ /w/robots.php;
+	}
+
+	location = /sitemap.xml {
+		rewrite ^(.*)$ /sitemap.php;
+	}
+}
+
+<%- } -%>
