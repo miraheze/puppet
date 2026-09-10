@@ -17,7 +17,7 @@
         "Prefix": "sslkeys/"
       },
       "Expiration": {
-        "Days": 28
+        "Days": 27
       }
     },
     {
@@ -27,7 +27,7 @@
         "Prefix": "swift-account-container/"
       },
       "Expiration": {
-        "Days": 28
+        "Days": 27
       }
     },
     {
@@ -37,7 +37,7 @@
         "Prefix": "phorge/"
       },
       "Expiration": {
-        "Days": 28
+        "Days": 27
       }
     },
     {
@@ -47,7 +47,7 @@
         "Prefix": "sql/mhglobal/"
       },
       "Expiration": {
-        "Days": 7
+        "Days": 6
       }
     },
     {
@@ -57,7 +57,7 @@
         "Prefix": "sql/"
       },
       "Expiration": {
-        "Days": 35
+        "Days": 34
       }
     },
     {
@@ -67,7 +67,7 @@
         "Prefix": "mediawiki-xml/"
       },
       "Expiration": {
-        "Days": 91
+        "Days": 90
       }
     },
     {
@@ -77,7 +77,7 @@
         "Prefix": "mattermost-data/"
       },
       "Expiration": {
-        "Days": 28
+        "Days": 27
       }
     },
     {
@@ -87,7 +87,7 @@
         "Prefix": "mattermost-db/"
       },
       "Expiration": {
-        "Days": 28
+        "Days": 27
       }
     },
     {
@@ -97,7 +97,7 @@
         "Prefix": "puppetdb/"
       },
       "Expiration": {
-        "Days": 28
+        "Days": 27
       }
     },
     {
