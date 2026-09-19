@@ -82,7 +82,7 @@ class rsync::server(
     }
 
     file { "${rsync_fragments}/header":
-        content => template('rsync/header.erb'),
+        content => epp('rsync/header.epp', { 'use_chroot' => $use_chroot, 'log_file' => $log_file, 'timeout' => $timeout, 'address' => $address, 'rsyncd_conf' => $rsyncd_conf }),
     }
 
     # perhaps this should be a script

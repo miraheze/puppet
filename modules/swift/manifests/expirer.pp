@@ -14,7 +14,7 @@ class swift::expirer (
 
     file { '/etc/swift/object-expirer.conf':
         ensure  => $ensure,
-        content => template('swift/object-expirer.conf.erb'),
+        content => epp('swift/object-expirer.conf.epp', { 'statsd_host' => $statsd_host, 'statsd_port' => $statsd_port, 'statsd_metric_prefix' => $statsd_metric_prefix, 'statsd_sample_rate_factor' => $statsd_sample_rate_factor, 'swift_main_memcached' => $swift_main_memcached }),
         owner   => 'swift',
         group   => 'swift',
         mode    => '0440',

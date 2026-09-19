@@ -1,0 +1,353 @@
+<%- | Hash $backends, Hash $sslredirects, Hash $sslcerts | -%>
+map $http_upgrade $connection_upgrade {
+	default upgrade;
+	''      close;
+}
+
+<%- $backends.each_pair |$name, $property| { -%>
+
+server {
+	listen <%= $property['port'] %> deferred backlog=16384 reuseport;
+	listen [::]:<%= $property['port'] %> deferred backlog=16384 reuseport;
+
+	server_name localhost;
+
+	access_log  off;
+
+	location / {
+		<%- if $property['domain'] { -%>
+		proxy_pass https://<%= $name %>.<%= $property['domain'] %>;
+		<%- } else { -%>
+		proxy_pass https://<%= $name %>.fsslc.wtnet;
+		<%- } -%>
+		proxy_ssl_protocols TLSv1.3;
+		proxy_http_version 1.1;
+		proxy_set_header Connection $connection_upgrade;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Host $host;
+		# Don't clobber the Server header from the backend.
+		proxy_pass_header Server;
+		proxy_buffer_size       32k;
+		proxy_buffers         4 32k;
+		proxy_redirect off;
+		proxy_buffering    off;
+                proxy_request_buffering off;
+	}
+}
+
+<%- } -%>
+
+server {
+	listen 80 deferred backlog=16384 reuseport;
+	listen [::]:80 deferred backlog=16384 reuseport;
+
+	server_name ~.;
+
+	location ~ ^/check$ {
+		proxy_pass http://127.0.0.1:81;
+		proxy_http_version 1.1;
+		proxy_set_header Connection close;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_buffering    off;
+		proxy_read_timeout 60s;
+		proxy_send_timeout 60s;
+		send_timeout       60s;
+	}
+
+	# no way you are legit - rhinosf1 T8832
+	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Web scraper - Void
+	if ($http_user_agent ~ "\+Zimit$") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
+		return 403;
+	}
+
+	location / {
+		if ($request_uri !~ "^/check$") {
+			return 301 https://$host$request_uri;
+		}
+	}
+}
+
+server {
+	# We can only set backlog once per port (so this will be applied to the others below)
+	listen 443 ssl deferred backlog=16384 reuseport;
+	listen [::]:443 ssl deferred backlog=16384 reuseport;
+	http2 on;
+
+	server_name miraheze.org *.miraheze.org;
+	root /var/www/html;
+
+	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
+	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
+
+	ssl_stapling_verify on;
+	
+	# no way you are legit - rhinosf1 T8832
+	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Web scraper - Void
+	if ($http_user_agent ~ "\+Zimit$") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
+		return 403;
+	}
+
+	location = /.well-known/change-password {
+		return 301 /wiki/Special:ResetPassword;
+	}
+
+	location / {
+		proxy_pass http://127.0.0.1:81;
+		proxy_http_version 1.1;
+		proxy_set_header Connection $connection_upgrade;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_read_timeout 140s;
+		proxy_send_timeout 140s;
+		send_timeout       140s;
+		proxy_buffer_size       32k;
+		proxy_buffers         4 32k;
+		# Remove duplicate headers that is already added on the frontend
+		proxy_hide_header     X-XSS-Protection;
+		proxy_hide_header     X-Frame-Options;
+		proxy_buffering    off;
+                proxy_request_buffering off;
+	}
+}
+
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
+
+	server_name m.miraheze.org *.m.miraheze.org;
+	root /var/www/html;
+
+	ssl_certificate /etc/ssl/localcerts/m.miraheze.org.crt;
+	ssl_certificate_key /etc/ssl/private/m.miraheze.org.key;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+	
+	# no way you are legit - rhinosf1 T8832
+	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
+		return 403;
+	}
+
+	if ($host ~ ^(\w+)\.m\.miraheze\.org$) {
+		return 301 https://$1.miraheze.org$request_uri;
+	}
+
+	return 301 https://miraheze.org$request_uri;
+}
+
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
+
+	server_name phorge-static.wikitide.net;
+	root /var/www/html;
+
+	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
+	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
+
+	ssl_stapling_verify on;
+	
+	# no way you are legit - rhinosf1 T8832
+	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
+		return 403;
+	}
+
+	location / {
+		proxy_pass http://127.0.0.1:81;
+		proxy_http_version 1.1;
+		proxy_set_header Connection $connection_upgrade;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_read_timeout 140s;
+		proxy_send_timeout 140s;
+		send_timeout       140s;
+		proxy_buffer_size       32k;
+		proxy_buffers         4 32k;
+		# Remove duplicate headers that is already added on the frontend
+		proxy_hide_header     X-XSS-Protection;
+		proxy_hide_header     X-Frame-Options;
+		proxy_buffering    off;
+                proxy_request_buffering off;
+	}
+}
+
+<%- $sslredirects.each_pair |$name, $property| { -%>
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
+
+	<%- if $property['additional_domain'] { -%>
+	server_name <%= $property['url'] %> <%= $property['additional_domain'] %>;
+	<%- } else { -%>
+	server_name <%= $property['url'] %>;
+	<%- } -%>
+
+	root /var/www/html;
+	
+	# no way you are legit - rhinosf1 T8832
+	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
+		return 403;
+	}
+
+	ssl_certificate /etc/ssl/localcerts/<%= $property['sslname'] %>.crt;
+	ssl_certificate_key /etc/ssl/private/<%= $property['sslname'] %>.key;
+
+	<%- if $property['hsts'] == "strict" { -%>
+	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+	<%- } else { -%>
+	add_header Strict-Transport-Security "max-age=604800";
+	<%- } -%>
+
+	location ^~ /.well-known/acme-challenge/ {
+		# Redirect to wikitide.net to serve acme challenges - T12203
+		return 301 https://wikitide.net$request_uri;
+	}
+
+	location = /.well-known/change-password {
+		return 301 /wiki/Special:ResetPassword;
+	}
+
+	<%- if $property['path_redirects'] { -%>
+	<%- $property['path_redirects'].each_pair |$path, $redirect| { -%>
+	location ~* <%= $path %>$ {
+		return 301 https://<%= $redirect %>;
+	}
+	<%- } -%>
+	<%- } -%>
+
+	<%- if $property['redirect'] { -%>
+	# Only redirect if there are no other matches found.
+	# This prevents this from conflicting with
+	# redirects specified in path_redirects.
+	location / {
+		return 301 https://<%= $property['redirect'] %>$request_uri;
+	}
+	<%- } -%>
+}
+
+<%- } -%>
+
+<%- $sslcerts.each_pair |$name, $property| { -%>
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
+<%- if $property['additional_domain'] { -%>
+	server_name <%= $property['url'] %> <%= $property['additional_domain'] %>;
+<%- } else { -%>
+	server_name <%= $property['url'] %>;
+<%- } -%>
+	root /var/www/html;
+<%- if $property['sslname'] { -%>
+	ssl_certificate /etc/ssl/localcerts/<%= $property['sslname'] %>.crt;
+	ssl_certificate_key /etc/ssl/private/<%= $property['sslname'] %>.key;
+<%- } else { -%>
+	ssl_certificate /etc/ssl/localcerts/<%= $property['url'] %>.crt;
+	ssl_certificate_key /etc/ssl/private/<%= $property['url'] %>.key;
+<%- } -%>
+
+	<%- if $property['hsts'] == "strict" { %>
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+	<%- } else { %>
+	add_header Strict-Transport-Security "max-age=604800";
+	<%- } %>
+	
+	# no way you are legit - rhinosf1 T8832
+	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
+		return 403;
+	}
+
+	location = /.well-known/change-password {
+		return 301 /wiki/Special:ResetPassword;
+	}
+
+	location / {
+		proxy_pass http://127.0.0.1:81;
+		proxy_http_version 1.1;
+		proxy_set_header Connection $connection_upgrade;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_read_timeout 140s;
+		proxy_send_timeout 140s;
+		send_timeout       140s;
+		proxy_buffer_size       32k;
+		proxy_buffers         4 32k;
+		# Remove duplicate headers that is already added on the frontend
+		proxy_hide_header     X-XSS-Protection;
+		proxy_hide_header     X-Frame-Options;
+		proxy_buffering    off;
+                proxy_request_buffering off;
+	}
+}
+
+<%- } -%>

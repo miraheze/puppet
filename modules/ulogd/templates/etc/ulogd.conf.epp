@@ -1,0 +1,133 @@
+<%- | Ulogd::Logfile $logfile,
+      Ulogd::Loglevel $log_level,
+      Array[Ulogd::Output] $nflog,
+      Array[Ulogd::Output] $nfct,
+      Array[Ulogd::Output] $acct,
+      Boolean $sync,
+      Stdlib::Unixpath $logemu_logfile,
+      Stdlib::Unixpath $logemu_nfct_logfile,
+      Stdlib::Unixpath $json_logfile,
+      Stdlib::Unixpath $json_nfct_logfile,
+      Stdlib::Unixpath $oprint_logfile,
+      Stdlib::Unixpath $gprint_logfile,
+      Stdlib::Unixpath $xml_directory,
+      Optional[Stdlib::Unixpath] $pcap_logfile,
+      Optional[Stdlib::Unixpath] $nacct_logfile,
+      Ulogd::Facility $syslog_facility,
+      Ulogd::Loglevel $syslog_level
+| -%>
+<%-
+# ulogd doesn't support all log levels so we try to be helpful and make a best guess
+# this also allows us to use the same puppet type for the  syslog_level param which
+# does support all levels
+$log_levels = {
+  'debug'  => 1,
+  'info'   => 3,
+  'notice' => 5,
+  'warning'  => 7,
+  'error'  => 7,
+  'crit'  => 8,
+  'alert'  => 8,
+  'emerg'  => 8,
+}
+$sync_int = if $sync { 1 } else { 0 }
+-%>
+# MANAGED BY PUPPET
+[global]
+logfile=<%= $logfile %>
+loglevel=<%= pick($log_levels[$log_level], 3) %>
+
+<%- ['LOGEMU', 'SYSLOG'].each |$output| { -%>
+  <%- if $output in $nflog { -%>
+stack=log1:NFLOG,base1:BASE,ifi1:IFINDEX,ip2str1:IP2STR,print1:PRINTPKT,<%= $output.downcase %>1:<%= $output %>
+  <%- } -%>
+<%- } -%>
+<%- if 'JSON' in $nflog { -%>
+stack=log1:NFLOG,base1:BASE,ifi1:IFINDEX,ip2str1:IP2STR,mac2str1:HWHDR,json1:JSON
+<%- } -%>
+<%- ['OPRINT', 'GPRINT', 'XML', 'PCAP'].each |$output| { -%>
+  <%- if $output in $nflog { -%>
+stack=log1:NFLOG,<%= $output.downcase %>1:<%= $output %>
+  <%- } -%>
+<%- } -%>
+
+<%- if 'LOGEMU' in $nfct { -%>
+stack=ct1:NFCT,ip2str1:IP2STR,print1:PRINTFLOW,emunfct1:LOGEMU
+<%- } -%>
+<%- if 'JSON' in $nfct { -%>
+stack=ct2:NFCT,ip2str1:IP2STR,jsonnfct1:JSON
+<%- } -%>
+<%- ['OPRINT', 'GPRINT', 'XML', 'PCAPNACCT'].each |$output| { -%>
+  <%- if $output in $nfct { -%>
+stack=ct1:NFCT,ip2str1:IP2STR,<%= $output.downcase %>1:<%= $output %>
+  <%- } -%>
+<%- } -%>
+
+<%- ['OPRINT', 'GPRINT', 'XML', 'PCAPNACCT'].each |$output| { -%>
+  <%- if $output in $acct { -%>
+stack=acct1:NFACCT,<%= $output.downcase %>1:<%= $output %>
+  <%- } -%>
+<%- } -%>
+
+
+[ct1]
+
+[ct2]
+hash_enable=0
+
+[mark]
+
+[log1]
+# Group O is used by the kernel
+group=1
+
+[log2]
+group=2
+
+[log3]
+group=0
+
+[logemu1]
+sync=<%= $sync_int %>
+file=<%= $logemu_logfile %>
+
+[emunfct1]
+sync=<%= $sync_int %>
+file=<%= $logemu_nfct_logfile %>
+
+[json1]
+sync=<%= $sync_int %>
+file=<%= $json_logfile %>
+
+[jsonnfct1]
+sync=<%= $sync_int %>
+file=<%= $json_nfct_logfile %>
+
+
+[oprint1]
+sync=<%= $sync_int %>
+file=<%= $oprint_logfile %>
+
+[gprint1]
+sync=<%= $sync_int %>
+file=<%= $gprint_logfile %>
+
+[json1]
+sync=<%= $sync_int %>
+file=<%= $json_logfile %>
+
+[xml1]
+sync=<%= $sync_int %>
+file=<%= $xml_directory %>
+
+[pcap1]
+sync=<%= $sync_int %>
+file=<%= $pcap_logfile %>
+
+[nacct1]
+sync=<%= $sync_int %>
+file=<%= $nacct_logfile %>
+
+[syslog1]
+facility=LOG_<%= $syslog_facility.upcase %>
+level=LOG_<%= $syslog_level.upcase %>

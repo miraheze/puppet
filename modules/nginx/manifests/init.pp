@@ -69,7 +69,7 @@ class nginx (
     $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
     $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
     file { '/etc/nginx/nginx.conf':
-        content => template('nginx/nginx.conf.erb'),
+        content => epp('nginx/nginx.conf.epp', { 'nginx_worker_processes' => $nginx_worker_processes, 'nginx_client_max_body_size' => $nginx_client_max_body_size, 'config' => $config, 'keepalive_timeout' => $keepalive_timeout, 'keepalive_requests' => $keepalive_requests, 'ssl_session_cache' => $ssl_session_cache, 'use_graylog' => $use_graylog, 'use_varnish_directly' => $use_varnish_directly, 'cache_proxies' => $cache_proxies, 'cloudflare_ipv4' => $cloudflare_ipv4, 'cloudflare_ipv6' => $cloudflare_ipv6 }),
         require => Package['nginx'],
         notify  => Service['nginx'],
     }

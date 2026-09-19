@@ -26,7 +26,7 @@ define rsyslog::input::file(
 ) {
 
     rsyslog::conf { "${syslog_tag_prefix}${syslog_tag}":
-        content  => template('rsyslog/input/file.erb'),
+        content  => epp('rsyslog/input/file.epp', { 'path' => $path, 'reopen_on_truncate' => $reopen_on_truncate, 'startmsg_regex' => $startmsg_regex, 'addmetadata' => $addmetadata, 'addceetag' => $addceetag, 'syslog_tag_prefix' => $syslog_tag_prefix, 'syslog_tag' => $syslog_tag, 'use_udp' => $use_udp, 'parse_json' => $parse_json }),
         priority => $priority,
         require  => Rsyslog::Conf['imfile'],
     }

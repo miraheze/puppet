@@ -10,7 +10,7 @@ define monitoring::nrpe (
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
-        content => template('monitoring/nrpecheck.cfg'),
+        content => epp('monitoring/nrpecheck.epp', { 'title' => $title, 'command' => $command }),
         notify  => Service['nagios-nrpe-server'],
         tag     => 'nrpe',
     }

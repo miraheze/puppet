@@ -83,7 +83,7 @@ class varnish (
 
     file { '/etc/varnish/default.vcl':
         ensure  => present,
-        content => template('varnish/default.vcl'),
+        content => epp('varnish/default.vcl.epp', { 'interval_check' => $interval_check, 'interval_timeout' => $interval_timeout, 'backends' => $backends, 'cloudflare_ipv4' => $cloudflare_ipv4, 'cloudflare_ipv6' => $cloudflare_ipv6, 'debug_access_key' => $debug_access_key, 'csp' => $csp }),
         notify  => Exec['load-new-vcl-file'],
         require => Package['varnish'],
     }

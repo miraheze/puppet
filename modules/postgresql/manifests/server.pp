@@ -106,7 +106,7 @@ class postgresql::server(
 
     file { "/etc/postgresql/${_pgversion}/main/postgresql.conf":
         ensure  => $ensure,
-        content => template('postgresql/postgresql.conf.erb'),
+        content => epp('postgresql/postgresql.conf.epp', { 'data_dir' => $data_dir, '_pgversion' => $_pgversion, 'port' => $port, 'listen_addresses' => $listen_addresses, 'includes' => $includes, 'use_ssl' => $use_ssl }),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',

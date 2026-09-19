@@ -11,7 +11,7 @@ class swift::proxy (
 
     file { '/etc/swift/proxy-server.conf':
         ensure  => present,
-        content => template('swift/proxy-server.conf.erb'),
+        content => epp('swift/proxy-server.conf.epp', { 'num_workers' => $num_workers, 'accounts' => $accounts, 'accounts_keys' => $accounts_keys, 'swift_main_memcached' => $swift_main_memcached }),
         require => Package['swift-proxy'],
         notify  => Service['swift-proxy'],
     }
