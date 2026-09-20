@@ -9,6 +9,8 @@ import os
 import subprocess
 import argparse
 from datetime import datetime, timedelta, timezone
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # Variables for output files and proxy settings
 CLOUDFLARE_OUTPUT = "cloudflare_domains"
@@ -31,6 +33,7 @@ EXEMPT_DOMAINS = ["analytics.wikitide.net", "grafana.wikitide.net", "monitoring.
     "speedscope.wikitide.net", "static.wikitide.net", "wikitide.com", "www.orain.org"]
 PROXY = "http://bastion.fsslc.wtnet:8080"
 proxies = {"http": PROXY, "https": PROXY}
+REQUEST_TIMEOUT = 30
 
 # Cloudflare credentials and headers
 CLOUDFLARE_API_TOKEN = "<%= @cloudflare_api_token %>"
@@ -45,6 +48,21 @@ cf_headers = {
 }
 
 
+def build_session():
+    session = requests.Session()
+    retry = Retry(
+        total=5,
+        backoff_factor=1,
+        status_forcelist=(429, 500, 502, 503, 504),
+        allowed_methods=("GET",),
+    )
+    session.mount("https://", HTTPAdapter(max_retries=retry))
+    return session
+
+
+SESSION = build_session()
+
+
 def get_cloudflare_domains(quiet=False):
     all_domains = []
     page = 1
@@ -52,7 +70,7 @@ def get_cloudflare_domains(quiet=False):
     # We will paginate through all results until we get an empty page
     per_page = 50
     while True:
-        resp = requests.get(f"{CLOUDFLARE_API_URL}?page={page}&per_page={per_page}", headers=cf_headers, proxies=proxies)
+        resp = SESSION.get(f"{CLOUDFLARE_API_URL}?page={page}&per_page={per_page}", headers=cf_headers, proxies=proxies, timeout=REQUEST_TIMEOUT)
         resp.raise_for_status()
         data = resp.json()
         result = data.get("result", [])
@@ -92,7 +110,7 @@ def get_wikidiscover_data():
         if offset > 0:
             params['wdoffset'] = str(offset)
 
-        response = requests.get(url, headers=headers, params=params, proxies=proxies)
+        response = SESSION.get(url, headers=headers, params=params, proxies=proxies, timeout=REQUEST_TIMEOUT)
         response.raise_for_status()
 
         result = response.json().get('query', {}).get('wikidiscover', {})
