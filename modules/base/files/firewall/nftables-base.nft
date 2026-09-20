@@ -30,7 +30,7 @@ table inet base {
 	}
 
 	chain output {
-		type filter hook output priority 0; policy accept;
+		type filter hook output priority -300; policy accept;
 
 		# Include any puppet-managed client definitions and outbound
 		# connection tracking exceptions
