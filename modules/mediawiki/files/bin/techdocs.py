@@ -4,6 +4,8 @@ from git import Repo
 from datetime import datetime
 import mwparserfromhell
 import re
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 MEDIAWIKI_API_URL = 'https://meta.miraheze.org/w/api.php'
 GITHUB_REPO_URL = 'git@github.com:miraheze/statichelp.git'
@@ -26,12 +28,28 @@ EXCLUDED_CATEGORIES = {
 }
 
 
+def build_session():
+    session = requests.Session()
+    retry = Retry(
+        total=5,
+        backoff_factor=1,
+        status_forcelist=(429, 500, 502, 503, 504),
+        allowed_methods=('GET',),
+    )
+    session.mount('https://', HTTPAdapter(max_retries=retry))
+    session.headers.update({'User-Agent': USER_AGENT})
+    session.proxies.update({
+        'http': f'http://{HTTP_PROXY}',
+        'https': f'http://{HTTP_PROXY}',
+    })
+    return session
+
+
+SESSION = build_session()
+
+
 def fetch_tech_pages():
     """Fetch pages in the Tech namespace."""
-    session = requests.Session()
-    headers = {
-        'User-Agent': USER_AGENT,
-    }
     params = {
         'action': 'query',
         'format': 'json',
@@ -44,7 +62,7 @@ def fetch_tech_pages():
         'cllimit': 'max',
     }
     pages = []
-    response = session.get(url=MEDIAWIKI_API_URL, params=params, headers=headers)
+    response = SESSION.get(url=MEDIAWIKI_API_URL, params=params, timeout=30)
     response.raise_for_status()
     data = response.json()
     pages_gen = data.get('query', {}).get('pages', {})
@@ -57,17 +75,13 @@ def fetch_tech_pages():
 
 
 def fetch_page_content(title):
-    session = requests.Session()
-    headers = {
-        'User-Agent': USER_AGENT,
-    }
     params = {
         'action': 'parse',
         'format': 'json',
         'page': title,
         'prop': 'wikitext',
     }
-    response = session.get(url=MEDIAWIKI_API_URL, params=params, headers=headers)
+    response = SESSION.get(url=MEDIAWIKI_API_URL, params=params, timeout=30)
     response.raise_for_status()
     return response.json()['parse']['wikitext']['*']
 
