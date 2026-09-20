@@ -16,6 +16,8 @@ USER_AGENT = 'TechNamespaceBot/1.0 (https://github.com/miraheze/statichelp/tree/
 
 SSH_PRIVATE_KEY_PATH = '/var/lib/nagios/id_ed25519'
 HTTP_PROXY = 'bastion.fsslc.wtnet:8080'
+PROXIES = {'http': f'http://{HTTP_PROXY}', 'https': f'http://{HTTP_PROXY}'}
+REQUEST_TIMEOUT = 30
 
 GIT_USER_EMAIL = 'noreply@wikitide.org'
 GIT_USER_NAME = 'WikiTideBot'
@@ -38,10 +40,6 @@ def build_session():
     )
     session.mount('https://', HTTPAdapter(max_retries=retry))
     session.headers.update({'User-Agent': USER_AGENT})
-    session.proxies.update({
-        'http': f'http://{HTTP_PROXY}',
-        'https': f'http://{HTTP_PROXY}',
-    })
     return session
 
 
@@ -62,7 +60,7 @@ def fetch_tech_pages():
         'cllimit': 'max',
     }
     pages = []
-    response = SESSION.get(url=MEDIAWIKI_API_URL, params=params, timeout=30)
+    response = SESSION.get(url=MEDIAWIKI_API_URL, params=params, proxies=PROXIES, timeout=REQUEST_TIMEOUT)
     response.raise_for_status()
     data = response.json()
     pages_gen = data.get('query', {}).get('pages', {})
@@ -81,7 +79,7 @@ def fetch_page_content(title):
         'page': title,
         'prop': 'wikitext',
     }
-    response = SESSION.get(url=MEDIAWIKI_API_URL, params=params, timeout=30)
+    response = SESSION.get(url=MEDIAWIKI_API_URL, params=params, proxies=PROXIES, timeout=REQUEST_TIMEOUT)
     response.raise_for_status()
     return response.json()['parse']['wikitext']['*']
 
