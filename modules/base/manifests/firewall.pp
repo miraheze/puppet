@@ -49,14 +49,16 @@ class base::firewall (
         onlyif  => "/bin/grep --invert-match --quiet '^32768$' /sys/module/nf_conntrack/parameters/hashsize",
     }
 
-    $block_abuse = split(file('/etc/puppetlabs/puppet/private/files/firewall/block_abuse'), /[\r\n]/)
+    $block_abuse = network::host_group('ABUSE_NETS')
 
-    if $block_abuse != undef and $block_abuse != [] {
+    if !$block_abuse.empty {
         $block_abuse_v4 = $block_abuse.filter |$ip| { $ip =~ Stdlib::IP::Address::V4 }
         $block_abuse_v6 = $block_abuse.filter |$ip| { $ip =~ Stdlib::IP::Address::V6 }
 
-        nftables::set { 'ABUSE_NETS':
-            ips => $block_abuse,
+        unless defined(Firewall::Set['ABUSE_NETS']) {
+            firewall::set { 'ABUSE_NETS':
+                ips => $block_abuse,
+            }
         }
 
         # nftables::set only creates a family's set file if that family
@@ -86,24 +88,16 @@ class base::firewall (
         content => file('base/firewall/nftables-base.nft'),
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Role::Icinga2' }
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'nrpe':
-        proto  => 'tcp',
-        port   => 5666,
-        srange => "(${firewall_rules_str})",
+        proto    => 'tcp',
+        port     => 5666,
+        src_sets => ['ICINGA2_HOSTS'],
     }
 
-    $subquery_2 = @("PQL")
-    resources { type = 'Class' and title = 'Base' }
-    | PQL
-    $firewall_bastion_hosts = vmlib::generate_firewall_ip($subquery_2)
     firewall::service { 'ssh':
-        proto  => 'tcp',
-        port   => 22,
-        srange => "(${firewall_bastion_hosts})",
+        proto    => 'tcp',
+        port     => 22,
+        src_sets => ['ALL_HOSTS'],
     }
 
     class { '::ulogd': }

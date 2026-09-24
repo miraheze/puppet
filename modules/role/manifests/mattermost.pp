@@ -76,46 +76,32 @@ class role::mattermost {
         source => 'puppet:///modules/role/mattermost/nginx.conf',
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Role::Mattermost' }
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
     firewall::service { 'postgresql':
-        proto   => 'tcp',
-        port    => 5432,
-        srange  => "(${firewall_rules_str})",
-        notrack => true,
+        proto    => 'tcp',
+        port     => 5432,
+        src_sets => ['MATTERMOST_HOSTS'],
+        notrack  => true,
     }
 
     firewall::service { 'mattermost':
-        proto   => 'tcp',
-        port    => 8065,
-        srange  => "(${firewall_rules_str})",
-        notrack => true,
+        proto    => 'tcp',
+        port     => 8065,
+        src_sets => ['MATTERMOST_HOSTS'],
+        notrack  => true,
     }
-
-    $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
-    $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
-
-    $subquery_2 = @("PQL")
-    resources { type = 'Class' and title = 'Role::Icinga2' }
-    | PQL
-    $cf_ip = join($cloudflare_ipv4 + $cloudflare_ipv6, ' ')
-    $ip = vmlib::generate_firewall_ip($subquery_2)
-    $firewall_rules_cloudflare_str = "${cf_ip} ${ip}"
 
     firewall::service { 'http':
         proto   => 'tcp',
         port    => 80,
-        # srange  => "(${$firewall_rules_cloudflare_str})",
+        # src_sets => ['CLOUDFLARE_HOSTS', 'ICINGA2_HOSTS'],
         notrack => true,
     }
 
     firewall::service { 'https':
         proto   => 'tcp',
         port    => 443,
-        # srange  => "(${$firewall_rules_cloudflare_str})",
+        # src_sets => ['CLOUDFLARE_HOSTS', 'ICINGA2_HOSTS'],
         notrack => true,
     }
 

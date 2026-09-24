@@ -43,24 +43,15 @@ class role::memcached (
         extra_options => $extra_options,
     }
 
-    if ($facts['networking']['hostname'] =~ /^test.+$/) {
-        $subquery = @("PQL")
-        (resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
-        resources { type = 'Class' and title = 'Role::Icinga2' })
-        | PQL
-        $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    } else {
-        $subquery = @("PQL")
-        (resources { type = 'Class' and title = 'Role::Mediawiki' } or
-        resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
-        resources { type = 'Class' and title = 'Role::Icinga2' })
-        | PQL
-        $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
+    $memcached_src_sets = ($facts['networking']['hostname'] =~ /^test.+$/) ? {
+        true    => ['MEDIAWIKI_BETA_HOSTS', 'ICINGA2_HOSTS'],
+        default => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'ICINGA2_HOSTS'],
     }
+
     firewall::service { 'memcached':
-        proto  => 'tcp',
-        port   => $port,
-        srange => "(${firewall_rules_str})",
+        proto    => 'tcp',
+        port     => $port,
+        src_sets => $memcached_src_sets,
     }
 
     system::role { 'memcached':

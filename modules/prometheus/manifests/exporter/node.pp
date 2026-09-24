@@ -88,13 +88,9 @@ class prometheus::exporter::node (
         require => Package['prometheus-node-exporter'],
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Prometheus' }
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     firewall::service { 'prometheus node-exporter':
-        proto  => 'tcp',
-        port   => 9100,
-        srange => "(${firewall_rules_str})",
+        proto    => 'tcp',
+        port     => 9100,
+        src_sets => ['PROMETHEUS_CLASS_HOSTS'],
     }
 }

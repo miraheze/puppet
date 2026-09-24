@@ -2,25 +2,16 @@
 class role::poolcounter {
     include poolcounter
 
-    if ($facts['networking']['hostname'] =~ /^test.+$/) {
-        $subquery = @("PQL")
-        (resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
-        resources { type = 'Class' and title = 'Role::Icinga2' })
-        | PQL
-        $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    } else {
-        $subquery = @("PQL")
-        (resources { type = 'Class' and title = 'Role::Mediawiki' } or
-        resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
-        resources { type = 'Class' and title = 'Role::Icinga2' })
-        | PQL
-        $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
+    $poolcounter_src_sets = ($facts['networking']['hostname'] =~ /^test.+$/) ? {
+        true    => ['MEDIAWIKI_BETA_HOSTS', 'ICINGA2_HOSTS'],
+        default => ['MEDIAWIKI_HOSTS', 'MEDIAWIKI_TASK_HOSTS', 'ICINGA2_HOSTS'],
     }
+
     firewall::service { 'poolcounter':
-        proto   => 'tcp',
-        port    => 7531,
-        srange  => "(${firewall_rules_str})",
-        notrack => true,
+        proto    => 'tcp',
+        port     => 7531,
+        src_sets => $poolcounter_src_sets,
+        notrack  => true,
     }
 
     monitoring::nrpe { 'poolcounter process':

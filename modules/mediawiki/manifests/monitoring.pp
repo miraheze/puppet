@@ -25,15 +25,11 @@ class mediawiki::monitoring {
         mode   => '0555',
     }
 
-    $subquery = @("PQL")
-    resources { type = 'Class' and title = 'Role::Prometheus' }
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
     firewall::service { 'php http port 9181':
-        proto  => 'tcp',
-        port   => 9181,
-        srange => "(${firewall_rules_str})",
+        proto    => 'tcp',
+        port     => 9181,
+        src_sets => ['PROMETHEUS_HOSTS'],
     }
 
     monitoring::services { 'MediaWiki Rendering':
