@@ -5,7 +5,7 @@
 #
 class systemd {
     # Directories for base units and overrides
-    $base_dir = '/lib/systemd/system'
+    $base_dir = '/etc/systemd/system'
     $override_dir = '/etc/systemd/system'
 
     file { '/usr/local/bin/systemd-timer-mail-wrapper':
