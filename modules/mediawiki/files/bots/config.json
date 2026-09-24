@@ -1,0 +1,6 @@
+{
+    "username": "MirahezeRenameBot",
+    "password_file": "/etc/global_rename_bot/password",
+    "bot_contact": "https://meta.miraheze.org/wiki/User:MirahezeRenameBot",
+    "log_file": "/var/log/global_rename_bot/rename_bot.log"
+}

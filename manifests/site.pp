@@ -5,6 +5,7 @@ node /^bast1[68]1\.wikitide\.net$/ {
 }
 
 node 'bots171.fsslc.wtnet' {
+    include mediawiki::rename_bot
     role(irc)
 }
 
