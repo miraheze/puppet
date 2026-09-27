@@ -21,6 +21,7 @@ def _make_args(**overrides):
     defaults = {
         'world': False, 'force': False, 'force_upgrade': False, 'skip_schema_confirm': True,
         'show_tags': False, 'ignore_time': False, 'batch': False, 'pr': None, 'pr_repo': 'config',
+        'debug': False,
     }
     defaults.update(overrides)
     return argparse.Namespace(**defaults)
@@ -261,7 +262,6 @@ class TestSubprocessMigration(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as tmp:
             os.makedirs(os.path.join(tmp, 'patches'))
-            # neither public.json nor private.json exists here
             with patch.object(mwdeploy, 'STAGING_ROOT', tmp):
                 loaded = mwdeploy._load_patches()
 
@@ -301,18 +301,26 @@ class TestSubprocessMigration(unittest.TestCase):
 
     @patch('mwdeploy._run')
     def test_fetch_component_returns_name_repo_output_and_returncode(self, mock_run):
-        mock_run.return_value = MagicMock(stdout='Already up to date.\n', returncode=0)
-        name, repo, output, status = mwdeploy.DeploymentRunner._fetch_component('extensions', 'Foo', 'REL1_41')
+        mock_run.return_value = MagicMock(stdout='Already up to date.\n', returncode=0, stderr='')
+        name, repo, output, status, error = mwdeploy.DeploymentRunner._fetch_component('extensions', 'Foo', 'REL1_41')
         self.assertEqual(name, 'Foo')
         self.assertEqual(repo, 'extensions/Foo')
         self.assertEqual(output, 'Already up to date.')
         self.assertEqual(status, 0)
+        self.assertEqual(error, '')
 
     @patch('mwdeploy._run')
     def test_fetch_component_nonzero_exit_is_a_plain_int(self, mock_run):
-        mock_run.return_value = MagicMock(stdout='', returncode=1)
-        _name, _repo, _output, status = mwdeploy.DeploymentRunner._fetch_component('extensions', 'Foo', 'REL1_41')
+        mock_run.return_value = MagicMock(stdout='', returncode=1, stderr='')
+        _name, _repo, _output, status, _error = mwdeploy.DeploymentRunner._fetch_component('extensions', 'Foo', 'REL1_41')
         self.assertEqual(status, 1)
+
+    @patch('mwdeploy._run')
+    def test_fetch_component_carries_stderr_through(self, mock_run):
+        mock_run.return_value = MagicMock(stdout='', returncode=128, stderr='fatal: could not read from remote repository.\n')
+        _name, _repo, _output, status, error = mwdeploy.DeploymentRunner._fetch_component('extensions', 'Foo', 'REL1_41')
+        self.assertEqual(status, 128)
+        self.assertIn('could not read from remote repository', error)
 
 
 class TestCanaryChecker(unittest.TestCase):
@@ -472,19 +480,19 @@ class TestPathAndCommandBuilders(unittest.TestCase):
         assert mwdeploy._git.pull('skins/Vector', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull --quiet'
 
     def test_git_pull_skin_no_quiet(self):
-        assert mwdeploy._git.pull('skins/Vector', quiet=False, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull 2> /dev/null'
+        assert mwdeploy._git.pull('skins/Vector', quiet=False, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull'
 
     def test_git_pull_extension_submodules(self):
         assert mwdeploy._git.pull('extensions/VisualEditor', submodules=True, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules --quiet'
 
     def test_git_pull_extension_submodules_no_quiet(self):
-        assert mwdeploy._git.pull('extensions/VisualEditor', submodules=True, quiet=False, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules 2> /dev/null'
+        assert mwdeploy._git.pull('extensions/VisualEditor', submodules=True, quiet=False, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules'
 
     def test_git_pull_branch_submodules(self):
         assert mwdeploy._git.pull('config', submodules=True, branch='test') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test --quiet'
 
     def test_git_pull_branch_submodules_no_quiet(self):
-        assert mwdeploy._git.pull('config', submodules=True, branch='test', quiet=False) == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test 2> /dev/null'
+        assert mwdeploy._git.pull('config', submodules=True, branch='test', quiet=False) == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test'
 
     def test_git_reset_revert(self):
         assert mwdeploy._git.reset_revert('extensions/VisualEditor', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor reset --hard HEAD@{1}'
@@ -533,6 +541,15 @@ class TestPathAndCommandBuilders(unittest.TestCase):
     def test_git_strip_noise_case_insensitive(self):
         text = "Warning: Unable to access something\nreal line"
         self.assertEqual(mwdeploy.GitCommandBuilder.strip_noise(text), 'real line')
+
+    def test_git_strip_noise_keeps_a_real_fatal_error_sharing_the_same_phrase(self):
+        text = (
+            "warning: unable to access '/home/x/.config/git/attributes': Permission denied\n"
+            "fatal: unable to access 'https://github.com/wikimedia/Foo.git/': Could not resolve host: github.com"
+        )
+        cleaned = mwdeploy.GitCommandBuilder.strip_noise(text)
+        self.assertNotIn('.config/git/attributes', cleaned)
+        self.assertIn('Could not resolve host', cleaned)
 
     def test_world_reset_remove_staging(self):
         assert mwdeploy._world_reset.remove_staging('version') == 'sudo -u www-data rm -rf /srv/mediawiki-staging/version/'
@@ -592,11 +609,10 @@ class TestPatchApplier(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertTrue(changed)
         mock_run_command.assert_called_once()
-        mock_run_quiet.assert_called_once()  # only the forward check ran, no reverse probe needed
+        mock_run_quiet.assert_called_once()
 
     @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_apply_git_skips_when_already_applied(self, mock_run_quiet):
-        # forward check fails, reverse check succeeds: it's already applied
         mock_run_quiet.side_effect = [MagicMock(returncode=1, stderr=''), MagicMock(returncode=0)]
         code, changed = self.applier._apply_git('extensions/Foo', '/patches/public/foo.patch', 'REL1_41')
         self.assertEqual(code, 0)
@@ -605,8 +621,6 @@ class TestPatchApplier(unittest.TestCase):
 
     @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_apply_git_reports_a_real_conflict(self, mock_run_quiet):
-        # both forward and reverse fail: this is a genuine conflict, not an
-        # already applied patch
         mock_run_quiet.side_effect = [
             MagicMock(returncode=1, stderr='error: patch failed: file.php:1'),
             MagicMock(returncode=1, stderr=''),
@@ -691,7 +705,7 @@ class TestPatchApplier(unittest.TestCase):
         with patch('os.path.isfile', return_value=True), \
              patch.object(self.applier, '_apply_git', return_value=(1, False)):
             codes = self.applier.apply_all('extensions/Foo', 'REL1_41')
-        self.assertEqual(codes, [])  # the failing code is never appended, only successes are
+        self.assertEqual(codes, [])
 
     def test_apply_all_uses_plain_patch_for_non_git_repos(self):
         self.mock_git.is_repo.return_value = False
@@ -775,9 +789,6 @@ class TestRemoteDeployer(unittest.TestCase):
 
     @patch.object(mwdeploy.ShellExecutor, 'run', return_value=0)
     def test_sync_defaults_to_one_server_at_a_time_without_batch(self, mock_run):
-        # without --batch, every server is its own single item group, so a
-        # deploy to several remote servers still means one run() call per
-        # server, made one after another rather than grouped
         result = self.deployer.sync(False, ['mw151', 'mw152', 'mw153', 'mw161', 'mw162'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
         assert result == 0
         assert mock_run.call_count == 4
@@ -792,14 +803,14 @@ class TestRemoteDeployer(unittest.TestCase):
     @patch.object(mwdeploy.ShellExecutor, 'run', return_value=0)
     def test_sync_with_batch_groups_targets_and_stops_on_canary_failure(self, mock_run):
         canary = MagicMock()
-        canary.check.side_effect = [False, True, True]  # the lone canary server fails its check
+        canary.check.side_effect = [False, True, True]
         deployer = mwdeploy.RemoteDeployer(self.rsync_builder, canary, hostname='mw151', batch_size=2)
 
         with pytest.raises(SystemExit) as excinfo:
             deployer.sync(False, ['mw151', 'mw152', 'mw153', 'mw154'], '/srv/mediawiki/config/', self.envinfo, nolog=True, batch=True)
 
         assert excinfo.value.code == 3
-        assert mock_run.call_count == 1  # only the canary server was ever touched
+        assert mock_run.call_count == 1
 
     @patch.object(mwdeploy.ShellExecutor, 'run', return_value=0)
     def test_sync_with_batch_runs_all_targets_when_healthy(self, mock_run):
@@ -934,7 +945,7 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
 
         with patch('mwdeploy.run_command', return_value=0) as mock_run_command:
             runner._checkout_pr()
-            runner._checkout_pr()  # a repeat call (e.g. from a second --versions pass) should be a no-op
+            runner._checkout_pr()
 
         self.assertEqual(mock_run_command.call_count, 2)
         fetch_cmd, checkout_cmd = (call.args[0] for call in mock_run_command.call_args_list)
@@ -953,12 +964,10 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
         mock_run_command.assert_not_called()
 
     def test_upgrade_components_processes_more_than_one_batch(self):
-        # COMPONENT_FETCH_BATCH_SIZE is 20, so 25 items forces two batches
-        # through the loop instead of one, even with --batch off (batch size 1)
         names = [f'Ext{i}' for i in range(25)]
         runner = _make_runner()
 
-        fake_fetch = staticmethod(lambda kind, name, _version: (name, f'{kind}/{name}', 'Already up to date.', 0))  # noqa: U101
+        fake_fetch = staticmethod(lambda kind, name, _version: (name, f'{kind}/{name}', 'Already up to date.', 0, ''))  # noqa: U101
         with patch('mwdeploy._git') as mock_git, \
              patch('os.path.exists', return_value=True), \
              patch.object(mwdeploy.DeploymentRunner, '_fetch_component', fake_fetch), \
@@ -967,9 +976,6 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
             mock_patch_applier.apply_all_tracking_changes.return_value = ([], False)
             runner._upgrade_components('extensions', names, 'REL1_41')
 
-        # every item is processed across both batches (20 then 5) without a
-        # failing exit code, and since nothing actually changed for any of
-        # them, nothing should have been queued for rsync either
         self.assertEqual(runner.exitcodes, [])
         self.assertEqual(runner.rsync, [])
 
@@ -977,7 +983,7 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
         names = ['Ext1', 'Ext2', 'Ext3']
         runner = _make_runner(batch=False)
 
-        fake_fetch = staticmethod(lambda kind, name, _version: (name, f'{kind}/{name}', 'Already up to date.', 0))  # noqa: U101
+        fake_fetch = staticmethod(lambda kind, name, _version: (name, f'{kind}/{name}', 'Already up to date.', 0, ''))  # noqa: U101
         with patch('mwdeploy._git') as mock_git, \
              patch('os.path.exists', return_value=True), \
              patch.object(mwdeploy.DeploymentRunner, '_fetch_component', fake_fetch), \
@@ -996,7 +1002,7 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
 
         def fake_fetch(kind, name, _version):  # noqa: U101
             seen.append(name)
-            return name, f'{kind}/{name}', 'Already up to date.', 0
+            return name, f'{kind}/{name}', 'Already up to date.', 0, ''
 
         with patch('mwdeploy._git') as mock_git, \
              patch('os.path.exists', return_value=True), \
@@ -1018,7 +1024,7 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
             runner._upgrade_components('extensions', ['Bundled'], 'REL1_41')
 
         mock_patch_applier.apply_all.assert_called_once_with('extensions/Bundled', 'REL1_41')
-        self.assertEqual(len(runner.rsync), 1)  # rsync was queued for the non-git component
+        self.assertEqual(len(runner.rsync), 1)
 
     def test_upgrade_components_skips_missing_staging_dir(self):
         runner = _make_runner()
@@ -1036,7 +1042,7 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
         runner = _make_runner()
         with patch('mwdeploy.ChangeTagger.files_of_type', return_value=set()), \
              patch('builtins.print') as mock_print:
-            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, 'REL1_41')
+            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, '', 'REL1_41')
         printed = '\n'.join(str(call.args[0]) for call in mock_print.call_args_list)
         self.assertIn('already up to date. Applying patches...', printed)
         self.assertEqual(len(runner.rsync), 1)
@@ -1047,21 +1053,19 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
         runner = _make_runner()
         with patch('mwdeploy.ChangeTagger.files_of_type', return_value=set()), \
              patch('builtins.print') as mock_print:
-            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, 'REL1_41')
+            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, '', 'REL1_41')
         printed = '\n'.join(str(call.args[0]) for call in mock_print.call_args_list)
         self.assertIn('already up to date.', printed)
         self.assertNotIn('Applying patches', printed)
-        self.assertEqual(runner.rsync, [])  # nothing changed, so nothing to sync
+        self.assertEqual(runner.rsync, [])
 
     @patch('mwdeploy._patch_applier')
     def test_process_component_fetch_reports_plain_up_to_date_when_a_patch_was_already_applied(self, mock_patch_applier):
-        # the patch matched, but it was already sitting in the tree, so this
-        # is functionally identical to there being no patches at all
         mock_patch_applier.apply_all_tracking_changes.return_value = ([0], False)
         runner = _make_runner()
         with patch('mwdeploy.ChangeTagger.files_of_type', return_value=set()), \
              patch('builtins.print') as mock_print:
-            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, 'REL1_41')
+            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, '', 'REL1_41')
         printed = '\n'.join(str(call.args[0]) for call in mock_print.call_args_list)
         self.assertIn('already up to date.', printed)
         self.assertNotIn('Applying patches', printed)
@@ -1073,43 +1077,72 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
         runner = _make_runner()
         with patch('mwdeploy.ChangeTagger.files_of_type', return_value=set()), \
              patch('builtins.print') as mock_print:
-            runner._process_component_fetch('Foo', 'extensions/Foo', 'Updating abc123..def456', 0, 'REL1_41')
+            runner._process_component_fetch('Foo', 'extensions/Foo', 'Updating abc123..def456', 0, '', 'REL1_41')
         printed = '\n'.join(str(call.args[0]) for call in mock_print.call_args_list)
         self.assertIn('Upgrading Foo', printed)
-        self.assertEqual(len(runner.rsync), 1)  # git pulled something new, so it still syncs
+        self.assertEqual(len(runner.rsync), 1)
 
     @patch('mwdeploy._patch_applier')
     def test_process_component_fetch_force_upgrade_queues_rsync_even_with_no_changes(self, mock_patch_applier):
         mock_patch_applier.apply_all_tracking_changes.return_value = ([], False)
         runner = _make_runner(force_upgrade=True)
         with patch('mwdeploy.ChangeTagger.files_of_type', return_value=set()):
-            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, 'REL1_41')
+            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, '', 'REL1_41')
         self.assertEqual(len(runner.rsync), 1)
 
     def test_process_component_fetch_records_failure_exit_code(self):
         runner = _make_runner()
-        runner._process_component_fetch('Foo', 'extensions/Foo', '', 1, 'REL1_41')
+        runner._process_component_fetch('Foo', 'extensions/Foo', '', 1, '', 'REL1_41')
         self.assertEqual(runner.exitcodes, [1])
 
-    @patch('mwdeploy._patch_applier')
-    def test_process_component_fetch_ignores_status_when_force(self, mock_patch_applier):
-        mock_patch_applier.apply_all_tracking_changes.return_value = ([], False)
+    def test_process_component_fetch_force_prevents_a_fetch_failure_from_counting_but_still_skips_it(self):
         runner = _make_runner(force=True)
-        with patch('mwdeploy.ChangeTagger.files_of_type', return_value=set()):
-            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 1, 'REL1_41')
+        with patch.object(mwdeploy, '_patch_applier') as mock_patch_applier:
+            runner._process_component_fetch('Foo', 'extensions/Foo', '', 128, '', 'REL1_41')
         self.assertEqual(runner.exitcodes, [])
+        self.assertEqual(runner.rsync, [])
+        mock_patch_applier.apply_all_tracking_changes.assert_not_called()
+
+    def test_process_component_fetch_records_fetch_failure_without_force(self):
+        runner = _make_runner(force=False)
+        with patch.object(mwdeploy, '_patch_applier') as mock_patch_applier:
+            runner._process_component_fetch('Foo', 'extensions/Foo', '', 128, '', 'REL1_41')
+        self.assertEqual(runner.exitcodes, [128])
+        self.assertEqual(runner.rsync, [])
+        mock_patch_applier.apply_all_tracking_changes.assert_not_called()
+
+    def test_process_component_fetch_hides_failure_detail_without_debug(self):
+        runner = _make_runner(force=True, debug=False)
+        error = "fatal: unable to access 'https://github.com/wikimedia/Foo.git/': Could not resolve host: github.com"
+        with patch('builtins.print') as mock_print:
+            runner._process_component_fetch('Foo', 'extensions/Foo', '', 128, error, 'REL1_41')
+        printed = '\n'.join(str(call.args[0]) for call in mock_print.call_args_list)
+        self.assertIn('Failed to upgrade Foo', printed)
+        self.assertNotIn('Could not resolve host', printed)
+
+    def test_process_component_fetch_shows_failure_detail_with_debug(self):
+        runner = _make_runner(force=True, debug=True)
+        error = (
+            "warning: unable to access '/home/x/.config/git/attributes': Permission denied\n"
+            "fatal: unable to access 'https://github.com/wikimedia/Foo.git/': Could not resolve host: github.com"
+        )
+        with patch('builtins.print') as mock_print:
+            runner._process_component_fetch('Foo', 'extensions/Foo', '', 128, error, 'REL1_41')
+        printed = '\n'.join(str(call.args[0]) for call in mock_print.call_args_list)
+        self.assertIn('Could not resolve host', printed)
+        self.assertNotIn('.config/git/attributes', printed)
 
     @patch('mwdeploy._patch_applier')
     def test_process_component_fetch_world_never_queues_rsync_even_with_a_real_change(self, mock_patch_applier):
         mock_patch_applier.apply_all_tracking_changes.return_value = ([], False)
         runner = _make_runner(world=True)
         with patch('mwdeploy.ChangeTagger.files_of_type', return_value=set()):
-            runner._process_component_fetch('Foo', 'extensions/Foo', 'Updating abc..def', 0, 'REL1_41')
+            runner._process_component_fetch('Foo', 'extensions/Foo', 'Updating abc..def', 0, '', 'REL1_41')
         self.assertEqual(runner.rsync, [])
 
         runner2 = _make_runner(world=False)
         with patch('mwdeploy.ChangeTagger.files_of_type', return_value=set()):
-            runner2._process_component_fetch('Foo', 'extensions/Foo', 'Updating abc..def', 0, 'REL1_41')
+            runner2._process_component_fetch('Foo', 'extensions/Foo', 'Updating abc..def', 0, '', 'REL1_41')
         self.assertEqual(len(runner2.rsync), 1)
 
     @patch('mwdeploy._patch_applier')
@@ -1118,7 +1151,7 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
         runner = _make_runner(show_tags=True)
         with patch('mwdeploy.ChangeTagger.files_of_type', return_value=set()), \
              patch('mwdeploy.ChangeTagger.tags', return_value={'code change'}):
-            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, 'REL1_41')
+            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, '', 'REL1_41')
         self.assertEqual(runner.tagsinfo, ['Tags for Foo: code change'])
 
     @patch('mwdeploy._patch_applier')
@@ -1128,9 +1161,9 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
         with patch('mwdeploy.ChangeTagger.files_of_type', return_value={'sql/patch.sql'}), \
              patch('mwdeploy.run_command') as mock_run_command, \
              patch('builtins.input', return_value='Y'):
-            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, 'REL1_41')
+            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, '', 'REL1_41')
         self.assertEqual(runner.newschema, ['/srv/mediawiki-staging/REL1_41/extensions/Foo/sql/patch.sql'])
-        mock_run_command.assert_not_called()  # accepting the schema change reverts nothing
+        mock_run_command.assert_not_called()
 
     @patch('mwdeploy._patch_applier')
     def test_process_component_fetch_schema_change_decline_reverts(self, mock_patch_applier):
@@ -1139,7 +1172,7 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
         with patch('mwdeploy.ChangeTagger.files_of_type', return_value={'sql/patch.sql'}), \
              patch('mwdeploy.run_command', return_value=0) as mock_run_command, \
              patch('builtins.input', return_value='n'):
-            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, 'REL1_41')
+            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, '', 'REL1_41')
         self.assertEqual(runner.newschema, [])
         mock_run_command.assert_called_once()
         self.assertIn('reset --hard HEAD@{1}', mock_run_command.call_args.args[0])
@@ -1151,7 +1184,7 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
         with patch('mwdeploy.ChangeTagger.files_of_type', return_value={'sql/a.sql', 'sql/b.sql'}), \
              patch('mwdeploy.run_command'), \
              patch('builtins.input', return_value='Y') as mock_input:
-            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, 'REL1_41')
+            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, '', 'REL1_41')
         mock_input.assert_called_once()
 
     @patch('mwdeploy._patch_applier')
@@ -1160,7 +1193,7 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
         runner = _make_runner(skip_schema_confirm=True)
         with patch('mwdeploy.ChangeTagger.files_of_type', return_value={'sql/patch.sql'}), \
              patch('builtins.input') as mock_input:
-            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, 'REL1_41')
+            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, '', 'REL1_41')
         mock_input.assert_not_called()
         self.assertEqual(runner.newschema, [])
 
@@ -1173,7 +1206,7 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
              patch('builtins.input', side_effect=KeyboardInterrupt), \
              patch('builtins.print'), \
              pytest.raises(SystemExit) as excinfo:
-            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, 'REL1_41')
+            runner._process_component_fetch('Foo', 'extensions/Foo', 'Already up to date.', 0, '', 'REL1_41')
         assert excinfo.value.code == 1
         mock_run_command.assert_called_once()
         self.assertIn('reset --hard HEAD@{1}', mock_run_command.call_args.args[0])
@@ -1235,15 +1268,12 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
         runner = _make_runner()
         runner.args = argparse.Namespace(pull='world', branch=None)
         with patch('mwdeploy.run_command') as mock_run_command:
-            runner._pull_named_repos('')  # no version means the world pull has nothing to target yet
+            runner._pull_named_repos('')
         mock_run_command.assert_not_called()
 
     def test_pull_named_repos_world_pulls_the_version_repo_when_given_one(self):
         runner = _make_runner()
         runner.args = argparse.Namespace(pull='world', branch=None)
-        # 'version' is the fallback key mwdeploy.versions resolves to when
-        # getMWVersions isn't available, so it's the one guaranteed to exist
-        # in mwdeploy.repos here
         with patch('mwdeploy.run_command', return_value=0) as mock_run_command, \
              patch('mwdeploy._patch_applier') as mock_patch_applier:
             mock_patch_applier.apply_all.return_value = []
@@ -1273,14 +1303,12 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
              patch('mwdeploy._patch_applier') as mock_patch_applier:
             mock_patch_applier.apply_all.return_value = []
             runner._upgrade_vendor('REL1_41')
-        self.assertEqual(mock_run_command.call_count, 2)  # reset --hard, then pull
-        self.assertEqual(len(runner.stage), 1)  # the composer update command was queued
+        self.assertEqual(mock_run_command.call_count, 2)
+        self.assertEqual(len(runner.stage), 1)
         self.assertEqual(len(runner.rsync), 1)
         self.assertEqual(len(runner.rsyncpaths), 1)
 
     def test_upgrade_vendor_skips_local_rsync_during_a_world_upgrade(self):
-        # --world already syncs the whole version tree at once, so vendor
-        # doesn't need its own separate composer update or rsync entry
         runner = _make_runner(upgrade_vendor=True, world=True)
         with patch('mwdeploy.run_command', return_value=0), \
              patch('mwdeploy._patch_applier') as mock_patch_applier:
@@ -1315,8 +1343,6 @@ class TestArgparseActions(unittest.TestCase):
             parser.parse_args(['--lang', 'en,fr'])
 
         with pytest.raises(SystemExit):
-            # l10n is set here, so this exercises the invalid tag check
-            # itself rather than the "needs --l10n first" check above
             parser.parse_args(['--l10n', '--lang', 'invalid_tag'])
 
         namespace = parser.parse_args(['--l10n', '--lang', 'en,fr'])
@@ -1380,6 +1406,12 @@ class TestArgparseActions(unittest.TestCase):
         parser.add_argument('--batch', dest='batch', action='store_true')
         self.assertFalse(parser.parse_args([]).batch)
         self.assertTrue(parser.parse_args(['--batch']).batch)
+
+    def test_debug_flag_defaults_to_false(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--debug', dest='debug', action='store_true')
+        self.assertFalse(parser.parse_args([]).debug)
+        self.assertTrue(parser.parse_args(['--debug']).debug)
 
 
 if __name__ == '__main__':
