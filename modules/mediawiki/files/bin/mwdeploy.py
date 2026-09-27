@@ -9,6 +9,7 @@ import json
 import os
 import re
 import socket
+import subprocess
 import sys
 import time
 import warnings
@@ -261,6 +262,10 @@ class ShellExecutor:
         return ec
 
     @staticmethod
+    def run_quiet(cmd: str) -> subprocess.CompletedProcess:
+        return subprocess.run(cmd, shell=True, capture_output=True, text=True)
+
+    @staticmethod
     def ensure_all_zero(codes: list[int], nolog: bool = True, leave: bool = True) -> bool:
         for code in codes:
             if code != 0:
@@ -455,6 +460,11 @@ class GitCommandBuilder:
     def is_repo(self, repo: str, version: str) -> bool:
         return os.path.isdir(os.path.join(self._paths.staging(repo, version), '.git'))
 
+    @staticmethod
+    def strip_noise(text: str) -> str:
+        lines = [line for line in text.splitlines() if 'unable to access' not in line.lower()]
+        return '\n'.join(lines).strip()
+
 
 _git = GitCommandBuilder(_paths)
 
@@ -500,34 +510,46 @@ class PatchApplier:
 
         return version in patch_versions and staging_path.endswith(f'{version}/{path}')
 
+    def _matching_patches(self, repo: str, version: str) -> list[dict]:
+        return [patch for patch in self._patches if self._matches(patch, repo, version)]
+
+    def has_patches(self, repo: str, version: str = '') -> bool:
+        return bool(self._matching_patches(repo, version))
+
     def _apply_git(self, repo: str, patchfile: str, version: str) -> int:
-        check = run_command(self._git.apply(repo, patchfile, version, check=True))
-        if check == 0:
+        name = os.path.basename(patchfile)
+        check = ShellExecutor.run_quiet(self._git.apply(repo, patchfile, version, check=True))
+        if check.returncode == 0:
             return run_command(self._git.apply(repo, patchfile, version))
 
-        # a failed check here doesn't always mean a real conflict. it can also
-        # mean the patch is already sitting in the tree, so confirm that by
-        # checking whether it applies cleanly in reverse before giving up.
-        already_applied = run_command(self._git.apply(repo, patchfile, version, check=True, reverse=True))
-        if already_applied == 0:
-            print(Console.dim(f'Patch {patchfile} is already applied to {repo}. Skipping.'))
+        # a failed check doesn't always mean a real conflict. it can also mean
+        # the patch is already sitting in the tree, so confirm that quietly
+        # before bothering the user with anything.
+        reverse_check = ShellExecutor.run_quiet(self._git.apply(repo, patchfile, version, check=True, reverse=True))
+        if reverse_check.returncode == 0:
+            print(Console.dim(f'{name} is already applied to {repo}. Skipping.'))
             return 0
 
-        return check
+        print(Console.fail(f'{name} does not apply to {repo}:'))
+        detail = self._git.strip_noise(check.stderr)
+        if detail:
+            print(Console.dim(detail))
+        return check.returncode
 
     def _apply_plain(self, repo: str, patchfile: str, version: str) -> int:
         # For non-git repos (like those installed via composer)
+        name = os.path.basename(patchfile)
         staging_path = self._paths.staging(repo, version)
-        already_applied = run_command(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r - --dry-run --reverse --silent')
-        if already_applied == 0:
-            print(Console.dim(f'Patch {patchfile} is already applied to {repo}. Skipping.'))
+        already_applied = ShellExecutor.run_quiet(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r - --dry-run --reverse --silent')
+        if already_applied.returncode == 0:
+            print(Console.dim(f'{name} is already applied to {repo}. Skipping.'))
             return 0
         return run_command(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r -')
 
     def apply_all(self, repo: str, version: str = '') -> list[int]:
         exitcodes = []
         is_git = self._git.is_repo(repo, version)
-        to_apply = [patch for patch in self._patches if self._matches(patch, repo, version)]
+        to_apply = self._matching_patches(repo, version)
 
         for patch in to_apply:
             visibility = 'public' if patch['public'] else 'private'
@@ -974,8 +996,10 @@ class DeploymentRunner:
         updated = args.force_upgrade or output != 'Already up to date.'
         if updated:
             print(Console.ok(f'Upgrading {name}'))
-        else:
+        elif _patch_applier.has_patches(repo, version):
             print(Console.dim(f'{name} already up to date. Applying patches...'))
+        else:
+            print(Console.dim(f'{name} already up to date.'))
 
         # patches always get applied, even when git had nothing new to pull.
         # a patch can be added or changed without any upstream commit existing yet
