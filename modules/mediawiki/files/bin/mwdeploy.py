@@ -417,10 +417,12 @@ class GitCommandBuilder:
     def reset_hard(self, repo: str, version: str = '') -> str:
         return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} reset --hard'
 
-    def apply(self, repo: str, patchfile: str, version: str = '', check: bool = False, reverse: bool = False) -> str:
+    def apply(self, repo: str, patchfile: str, version: str = '', check: bool = False, reverse: bool = False, threeway: bool = False) -> str:
         option = ' --check' if check else ' --index'
         if reverse:
             option += ' --reverse'
+        if threeway:
+            option += ' --3way'
         return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} apply{option} {patchfile}'
 
     def fetch_pr(self, repo: str, pr_number: int, branch: str, version: str = '') -> str:
@@ -451,8 +453,8 @@ def _construct_git_reset_hard(repo: str, version: str = '') -> str:
     return _git.reset_hard(repo, version)
 
 
-def _construct_git_apply(repo: str, patchfile: str, version: str = '', check: bool = False, reverse: bool = False) -> str:
-    return _git.apply(repo, patchfile, version, check, reverse)
+def _construct_git_apply(repo: str, patchfile: str, version: str = '', check: bool = False, reverse: bool = False, threeway: bool = False) -> str:
+    return _git.apply(repo, patchfile, version, check, reverse, threeway)
 
 
 def _construct_git_fetch_pr(repo: str, pr_number: int, branch: str, version: str = '') -> str:
@@ -521,12 +523,21 @@ class PatchApplier:
         if check == 0:
             return run_command(self._git.apply(repo, patchfile, version))
 
-        # a failed check here doesn't always mean a conflict. it also happens
-        # when the patch is already sitting in the tree, so confirm that by
+        # a failed check here doesn't always mean a real conflict. it can also
+        # mean the patch is already sitting in the tree, so confirm that by
         # checking whether it applies cleanly in reverse before giving up.
         already_applied = run_command(self._git.apply(repo, patchfile, version, check=True, reverse=True))
         if already_applied == 0:
             print(f'Patch {patchfile} is already applied to {repo}. Skipping.')
+            return 0
+
+        # the context around the target lines may have drifted from an
+        # unrelated commit. a three way merge can still land the change using
+        # the blobs recorded in the patch, even when the surrounding text no
+        # longer matches.
+        threeway = run_command(self._git.apply(repo, patchfile, version, threeway=True))
+        if threeway == 0:
+            print(f'Patch {patchfile} applied to {repo} via three way merge.')
             return 0
 
         return check
