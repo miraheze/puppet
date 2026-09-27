@@ -49,6 +49,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
         'closed',
         'deleted',
         'inactive',
+        'upgrade-wikis',
     ) + versionLists
 
     longscripts = (
