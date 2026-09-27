@@ -989,39 +989,43 @@ class DeploymentRunner:
             exitcode = os.waitstatus_to_exitcode(status)
             self.exitcodes.append(exitcode)
 
-        if exitcode == 0 and (args.force_upgrade or output != 'Already up to date.'):
-            print(f'Upgrading {name}')
-            self.exitcodes.extend(_patch_applier.apply_all(repo, version))
-            for file in ChangeTagger.files_of_type(repo, version, 'schema change'):
-                if not args.skip_schema_confirm and name not in self.warnings:
-                    self.warnings[name] = True
-                    print('WARNING: upgrade contains schema changes.')
-                    try:
-                        if input('Type Y to confirm: ').upper() != 'Y':
-                            self.exitcodes.append(run_command(_git.reset_revert(repo, version)))
-                            print('reverted')
-                            continue
-                        self.newschema.append(f'{STAGING_ROOT}/{version}/{repo}/{file}')
-                    except KeyboardInterrupt:
-                        run_command(_git.reset_revert(repo, version))
-                        print('reverted')
-                        self._print_summary()
-                        print('Operation aborted by user')
-                        sys.exit(1)
-
-            if args.show_tags:
-                tags = ChangeTagger.tags(repo, version)
-                if tags:
-                    self.tagsinfo.append(f'Tags for {name}: {", ".join(sorted(tags))}')
-
-            if not args.world:
-                self.rsync.append(_rsync_builder.build(time=args.ignore_time, location=f'{STAGING_ROOT}/{version}/{repo}/*', dest=f'{DEPLOYED_ROOT}/{version}/{repo}/'))
-                self.rsyncpaths.append(f'{DEPLOYED_ROOT}/{version}/{repo}/')
-                self._needs_version_cache_rebuild = True
-        elif exitcode == 0:
-            print(f'{name} already up to date. Skipping...')
-        else:
+        if exitcode != 0:
             print(f'Failed to upgrade {name} (exit code: {exitcode}).')
+            return
+
+        updated = args.force_upgrade or output != 'Already up to date.'
+        print(f'Upgrading {name}' if updated else f'{name} already up to date. Applying patches...')
+
+        # patches always get applied, even when git had nothing new to pull.
+        # a patch can be added or changed without any upstream commit existing yet
+        self.exitcodes.extend(_patch_applier.apply_all(repo, version))
+
+        for file in ChangeTagger.files_of_type(repo, version, 'schema change'):
+            if not args.skip_schema_confirm and name not in self.warnings:
+                self.warnings[name] = True
+                print('WARNING: upgrade contains schema changes.')
+                try:
+                    if input('Type Y to confirm: ').upper() != 'Y':
+                        self.exitcodes.append(run_command(_git.reset_revert(repo, version)))
+                        print('reverted')
+                        continue
+                    self.newschema.append(f'{STAGING_ROOT}/{version}/{repo}/{file}')
+                except KeyboardInterrupt:
+                    run_command(_git.reset_revert(repo, version))
+                    print('reverted')
+                    self._print_summary()
+                    print('Operation aborted by user')
+                    sys.exit(1)
+
+        if args.show_tags:
+            tags = ChangeTagger.tags(repo, version)
+            if tags:
+                self.tagsinfo.append(f'Tags for {name}: {", ".join(sorted(tags))}')
+
+        if not args.world:
+            self.rsync.append(_rsync_builder.build(time=args.ignore_time, location=f'{STAGING_ROOT}/{version}/{repo}/*', dest=f'{DEPLOYED_ROOT}/{version}/{repo}/'))
+            self.rsyncpaths.append(f'{DEPLOYED_ROOT}/{version}/{repo}/')
+            self._needs_version_cache_rebuild = True
 
 
 def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
@@ -1105,9 +1109,11 @@ class ServersAction(argparse.Action):
 
 class ApplyPatchesAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
-        input_repos = values.split(',')
         if not getattr(namespace, 'versions', None):
             parser.error('--versions is required when using --apply-patches (--versions must come before --apply-patches)')
+        input_repos = values.split(',')
+        if 'all' in input_repos:
+            input_repos = sorted({patch['path'] for patch in patches})
         setattr(namespace, self.dest, input_repos)
 
 
