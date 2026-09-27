@@ -18,12 +18,10 @@ from mwdeploy import (
 
 
 def _make_args(**overrides):
-    """A Namespace with the flags DeploymentRunner methods commonly read, so
-    each test only has to override what it actually cares about."""
-    defaults = dict(
-        world=False, force=False, force_upgrade=False, skip_schema_confirm=True,
-        show_tags=False, ignore_time=False, batch=False, pr=None, pr_repo='config',
-    )
+    defaults = {
+        'world': False, 'force': False, 'force_upgrade': False, 'skip_schema_confirm': True,
+        'show_tags': False, 'ignore_time': False, 'batch': False, 'pr': None, 'pr_repo': 'config',
+    }
     defaults.update(overrides)
     return argparse.Namespace(**defaults)
 
@@ -35,10 +33,6 @@ def _make_runner(**overrides):
 
 
 class TestChangeTagger(unittest.TestCase):
-    """Covers ChangeTagger directly. The old get_change_tag_map/get_changed_files/
-    get_changed_files_type/get_change_tags module functions were thin, unused
-    wrappers and have been removed, so these test the class they wrapped."""
-
     def setUp(self):
         self.path = 'test/path'
         self.version = 'version'
@@ -137,8 +131,6 @@ class TestComponentPacksAndDiscovery(unittest.TestCase):
             self.assertEqual(skins, skins1 + skins2)
 
     def test_component_packs_known_pack(self):
-        # get_extensions_in_pack/get_skins_in_pack were unused wrappers around
-        # this and have been removed, so this goes straight to ComponentPacks
         self.assertEqual(
             mwdeploy.ComponentPacks.extensions('mleb'),
             ['Babel', 'cldr', 'CleanChanges', 'Translate', 'UniversalLanguageSelector'],
@@ -204,8 +196,6 @@ class TestNonZeroCode(unittest.TestCase):
 
 
 class TestSubprocessMigration(unittest.TestCase):
-    """The subprocess based replacement for the old os.system/os.popen calls."""
-
     @patch('mwdeploy.subprocess.run')
     def test_run_helper_uses_shell_and_captures_text(self, mock_subprocess_run):
         mock_subprocess_run.return_value = 'sentinel'
@@ -327,8 +317,6 @@ class TestCanaryChecker(unittest.TestCase):
         self.assertIs(checker._session, checker._session)
 
     def test_check_reports_failure_without_exiting_when_asked(self):
-        # inside a batch, a canary failure has to come back as a value the
-        # RemoteDeployer can act on, not kill whichever worker hit it
         checker = mwdeploy.CanaryChecker()
         fake_response = MagicMock(status_code=500, text='nope', headers={})
         with patch.object(checker._session, 'get', return_value=fake_response):
@@ -382,8 +370,6 @@ class TestCanaryChecker(unittest.TestCase):
         self.assertNotIn('cert', mock_get.call_args.kwargs)
 
     def test_check_with_host_instead_of_debug_uses_the_local_proxy_path(self):
-        # the non Debug branch checks against localhost with the real domain
-        # sent as a host header, rather than hitting the domain directly
         checker = mwdeploy.CanaryChecker()
         fake_response = MagicMock(status_code=200, text='mainpageisdomainroot', headers={})
         with patch.object(checker._session, 'get', return_value=fake_response) as mock_get:
@@ -393,10 +379,6 @@ class TestCanaryChecker(unittest.TestCase):
 
 
 class TestPathAndCommandBuilders(unittest.TestCase):
-    """The thin backward compatible module functions these used to go through
-    (_get_staging_path, _construct_rsync_command, _construct_git_pull, etc.)
-    were unused and removed; these call the classes directly instead."""
-
     def test_staging_path(self):
         self.assertEqual(mwdeploy._paths.staging('version'), '/srv/mediawiki-staging/version/')
 
@@ -550,9 +532,6 @@ class TestPatchApplierMatching(unittest.TestCase):
 
 
 class TestPatchApplier(unittest.TestCase):
-    """PatchApplier with a private instance and a mocked GitCommandBuilder, so
-    these don't depend on the real, empty patches.json on this machine."""
-
     def setUp(self):
         self.mock_git = MagicMock(spec=mwdeploy.GitCommandBuilder)
         self.mock_git.strip_noise.side_effect = mwdeploy.GitCommandBuilder.strip_noise
