@@ -209,6 +209,14 @@ def get_valid_skins(mw_versions: list[str]) -> list[str]:
     return ComponentDiscovery.skins(mw_versions)
 
 
+def get_valid_versions() -> list[str]:
+    return [version for version in versions.values() if os.path.exists(f'{STAGING_ROOT}/{version}')]
+
+
+def get_all_patch_paths() -> list[str]:
+    return sorted({patch['path'] for patch in patches})
+
+
 _BUILD_PATTERN = r'^.*?(\.github/.*?|\.phan/.*?|tests/.*?|composer(\.json|\.lock)|package(-lock)?\.json|yarn\.lock|(\.phpcs|\.stylelintrc|\.eslintrc|\.prettierrc|\.stylelintignore|\.eslintignore|\.prettierignore|tsconfig)\.json|\.nvmrc|\.svgo\.config\.js|Gruntfile\.js|bundlesize\.config\.json|jsdoc\.json)$'
 BUILD_REGEX = re.compile(_BUILD_PATTERN)
 CODECHANGE_REGEX = re.compile(rf'(?!.*{_BUILD_PATTERN})^.*?(\.(php|js|css|less|scss|vue|lua|mustache|d\.ts)|extension(-repo|-client)?\.json|skin\.json)$')
@@ -504,7 +512,9 @@ class PatchApplier:
     def _matches(self, patch: dict, repo: str, version: str) -> bool:
         path = patch['path']
         if path == repo and path in versions:
-            return True  # mw core patches
+            # a core patch's path IS a specific MW version, so it can
+            # only ever apply while that same version is being deployed
+            return path == version
         staging_path = self._paths.staging(repo, version)
         if not staging_path.endswith(path):
             return False
@@ -521,11 +531,13 @@ class PatchApplier:
     def has_patches(self, repo: str, version: str = '') -> bool:
         return bool(self._matching_patches(repo, version))
 
-    def _apply_git(self, repo: str, patchfile: str, version: str) -> int:
+    def _apply_git(self, repo: str, patchfile: str, version: str) -> tuple[int, bool]:
+        """Returns (exit code, changed). changed is False when the patch was
+        already sitting in the tree, since nothing actually happened then."""
         name = os.path.basename(patchfile)
         check = ShellExecutor.run_quiet(self._git.apply(repo, patchfile, version, check=True))
         if check.returncode == 0:
-            return run_command(self._git.apply(repo, patchfile, version))
+            return run_command(self._git.apply(repo, patchfile, version)), True
 
         # a failed check doesn't always mean a real conflict. it can also mean
         # the patch is already sitting in the tree, so confirm that quietly
@@ -533,26 +545,27 @@ class PatchApplier:
         reverse_check = ShellExecutor.run_quiet(self._git.apply(repo, patchfile, version, check=True, reverse=True))
         if reverse_check.returncode == 0:
             print(Console.dim(f'{name} is already applied to {repo}. Skipping.'))
-            return 0
+            return 0, False
 
         print(Console.fail(f'{name} does not apply to {repo}:'))
         detail = self._git.strip_noise(check.stderr)
         if detail:
             print(Console.dim(detail))
-        return check.returncode
+        return check.returncode, False
 
-    def _apply_plain(self, repo: str, patchfile: str, version: str) -> int:
+    def _apply_plain(self, repo: str, patchfile: str, version: str) -> tuple[int, bool]:
         # For non-git repos (like those installed via composer)
         name = os.path.basename(patchfile)
         staging_path = self._paths.staging(repo, version)
         already_applied = ShellExecutor.run_quiet(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r - --dry-run --reverse --silent')
         if already_applied.returncode == 0:
             print(Console.dim(f'{name} is already applied to {repo}. Skipping.'))
-            return 0
-        return run_command(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r -')
+            return 0, False
+        return run_command(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r -'), True
 
-    def apply_all(self, repo: str, version: str = '') -> list[int]:
+    def _apply_all_tracked(self, repo: str, version: str) -> tuple[list[int], bool]:
         exitcodes = []
+        changed = False
         is_git = self._git.is_repo(repo, version)
         to_apply = self._matching_patches(repo, version)
 
@@ -564,10 +577,11 @@ class PatchApplier:
                 print(Console.warn(f'WARNING: Patch file {patchfile} could not be found!'))
                 continue
 
-            code = self._apply_git(repo, patchfile, version) if is_git else self._apply_plain(repo, patchfile, version)
+            code, patch_changed = self._apply_git(repo, patchfile, version) if is_git else self._apply_plain(repo, patchfile, version)
 
             if code == 0:
                 exitcodes.append(code)
+                changed = changed or patch_changed
                 continue
 
             print(Console.fail(f"ERROR: Could not apply patch {patch['file']}"))
@@ -576,7 +590,14 @@ class PatchApplier:
                 sys.exit(1)
             print(Console.warn('Skipping patch...'))
 
+        return exitcodes, changed
+
+    def apply_all(self, repo: str, version: str = '') -> list[int]:
+        exitcodes, _changed = self._apply_all_tracked(repo, version)
         return exitcodes
+
+    def apply_all_tracking_changes(self, repo: str, version: str = '') -> tuple[list[int], bool]:
+        return self._apply_all_tracked(repo, version)
 
 
 _patch_applier = PatchApplier(patches, _paths, _git)
@@ -655,6 +676,11 @@ class RemoteDeployer:
 _remote_deployer = RemoteDeployer(_rsync_builder, _default_canary_checker)
 
 
+def _mark_all(loginfo: dict, key: str, actual, full) -> None:
+    if key in loginfo and actual == full:
+        loginfo[key] = 'all'
+
+
 class DeploymentRunner:
     """Coordinates one mwdeploy invocation: local staging, then a fleet-wide rollout."""
 
@@ -677,8 +703,8 @@ class DeploymentRunner:
             args.upgrade_extensions = get_valid_extensions(args.versions)
             args.upgrade_skins = get_valid_skins(args.versions)
 
-        if len(args.servers) > 1 and args.servers == self.envinfo.servers:
-            loginfo['servers'] = 'all'
+        if len(args.servers) > 1:
+            _mark_all(loginfo, 'servers', args.servers, self.envinfo.servers)
 
         use_version = bool(
             args.world or args.l10n or args.extension_list or args.reset_world
@@ -686,10 +712,10 @@ class DeploymentRunner:
         )
 
         if args.versions:
-            if args.upgrade_extensions == get_valid_extensions(args.versions):
-                loginfo['upgrade_extensions'] = 'all'
-            if args.upgrade_skins == get_valid_skins(args.versions):
-                loginfo['upgrade_skins'] = 'all'
+            _mark_all(loginfo, 'upgrade_extensions', args.upgrade_extensions, get_valid_extensions(args.versions))
+            _mark_all(loginfo, 'upgrade_skins', args.upgrade_skins, get_valid_skins(args.versions))
+            _mark_all(loginfo, 'apply_patches', args.apply_patches, get_all_patch_paths())
+            _mark_all(loginfo, 'versions', args.versions, get_valid_versions())
             if args.upgrade_pack:
                 del loginfo['upgrade_extensions']
                 del loginfo['upgrade_skins']
@@ -787,14 +813,7 @@ class DeploymentRunner:
             non_zero_code(self.exitcodes, nolog=args.nolog)
 
             if version and args.apply_patches:
-                for repo in args.apply_patches:
-                    self.exitcodes.extend(_patch_applier.apply_all(repo, version))
-                    staging_path = _paths.staging(repo, version)  # non-consistent behavior, ensure terminating /
-                    staging_path = staging_path if staging_path.endswith('/') else staging_path + '/'
-                    dest_path = _paths.deployed(repo, version)
-                    dest_path = dest_path if dest_path.endswith('/') else dest_path + '/'
-                    self.rsync.append(_rsync_builder.build(time=args.ignore_time, location=f'{staging_path}*', dest=dest_path))
-                    self.rsyncpaths.append(dest_path)
+                self._apply_extra_patches(version)
             non_zero_code(self.exitcodes, nolog=args.nolog)
 
             if args.files and not version:  # specfic extra files
@@ -936,6 +955,18 @@ class DeploymentRunner:
             self.rsync.append(_rsync_builder.build(time=self.args.ignore_time, location=f'{STAGING_ROOT}/{version}/vendor/*', dest=f'{DEPLOYED_ROOT}/{version}/vendor/'))
             self.rsyncpaths.append(f'{DEPLOYED_ROOT}/{version}/vendor/')
 
+    def _apply_extra_patches(self, version: str) -> None:
+        for repo in self.args.apply_patches:
+            if not _patch_applier.has_patches(repo, version):
+                continue
+            self.exitcodes.extend(_patch_applier.apply_all(repo, version))
+            staging_path = _paths.staging(repo, version)  # non-consistent behavior, ensure terminating /
+            staging_path = staging_path if staging_path.endswith('/') else staging_path + '/'
+            dest_path = _paths.deployed(repo, version)
+            dest_path = dest_path if dest_path.endswith('/') else dest_path + '/'
+            self.rsync.append(_rsync_builder.build(time=self.args.ignore_time, location=f'{staging_path}*', dest=dest_path))
+            self.rsyncpaths.append(dest_path)
+
     def _upgrade_components(self, kind: str, items: list[str], version: str) -> None:
         # non-git repos (or ones missing entirely) are handled right away, since
         # there's nothing to fetch. everything else is queued up and fetched in
@@ -999,16 +1030,22 @@ class DeploymentRunner:
             return
 
         updated = args.force_upgrade or output != 'Already up to date.'
+        applied_codes, patches_changed = _patch_applier.apply_all_tracking_changes(repo, version)
+        self.exitcodes.extend(applied_codes)
+
+        # a patch can be added or changed without any upstream commit
+        # existing yet, so an actually applied patch counts as a real change
+        # too, even when git itself had nothing new to pull. a patch that
+        # matched but was already sitting in the tree does not count, since
+        # nothing on disk actually moved.
+        changed = updated or patches_changed
+
         if updated:
             print(Console.ok(f'Upgrading {name}'))
-        elif _patch_applier.has_patches(repo, version):
+        elif patches_changed:
             print(Console.dim(f'{name} already up to date. Applying patches...'))
         else:
             print(Console.dim(f'{name} already up to date.'))
-
-        # patches always get applied, even when git had nothing new to pull.
-        # a patch can be added or changed without any upstream commit existing yet
-        self.exitcodes.extend(_patch_applier.apply_all(repo, version))
 
         for file in ChangeTagger.files_of_type(repo, version, 'schema change'):
             if not args.skip_schema_confirm and name not in self.warnings:
@@ -1032,7 +1069,7 @@ class DeploymentRunner:
             if tags:
                 self.tagsinfo.append(f'Tags for {name}: {", ".join(sorted(tags))}')
 
-        if not args.world:
+        if changed and not args.world:
             self.rsync.append(_rsync_builder.build(time=args.ignore_time, location=f'{STAGING_ROOT}/{version}/{repo}/*', dest=f'{DEPLOYED_ROOT}/{version}/{repo}/'))
             self.rsyncpaths.append(f'{DEPLOYED_ROOT}/{version}/{repo}/')
             self._needs_version_cache_rebuild = True
@@ -1092,7 +1129,7 @@ class LangAction(argparse.Action):
 class VersionsAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         input_versions = values.split(',')
-        valid_versions = [version for version in versions.values() if os.path.exists(f'{STAGING_ROOT}/{version}')]
+        valid_versions = get_valid_versions()
         if 'all' in input_versions:
             input_versions = valid_versions
         invalid_versions = set(input_versions) - set(valid_versions)
@@ -1119,7 +1156,7 @@ class ApplyPatchesAction(argparse.Action):
             parser.error('--versions is required when using --apply-patches (--versions must come before --apply-patches)')
         input_repos = values.split(',')
         if 'all' in input_repos:
-            input_repos = sorted({patch['path'] for patch in patches})
+            input_repos = get_all_patch_paths()
         setattr(namespace, self.dest, input_repos)
 
 
