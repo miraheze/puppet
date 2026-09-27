@@ -26,6 +26,69 @@ DEPLOYED_ROOT = '/srv/mediawiki'
 COMPONENT_FETCH_BATCH_SIZE = 20
 COMPONENT_FETCH_WORKERS = 10
 
+_ANSI_RE = re.compile(r'\x1b\[[0-9;]*m')
+
+
+class Console:
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+    DIM = '\033[2m'
+    RED = '\033[31m'
+    GREEN = '\033[32m'
+    YELLOW = '\033[33m'
+    CYAN = '\033[36m'
+
+    enabled = sys.stdout.isatty() and not os.environ.get('NO_COLOR')
+
+    @classmethod
+    def _wrap(cls, text: str, *codes: str) -> str:
+        if not cls.enabled:
+            return text
+        return f"{''.join(codes)}{text}{cls.RESET}"
+
+    @classmethod
+    def header(cls, text: str) -> str:
+        return cls._wrap(text, cls.BOLD, cls.CYAN)
+
+    @classmethod
+    def bold(cls, text: str) -> str:
+        return cls._wrap(text, cls.BOLD)
+
+    @classmethod
+    def dim(cls, text: str) -> str:
+        return cls._wrap(text, cls.DIM)
+
+    @classmethod
+    def ok(cls, text: str) -> str:
+        return cls._wrap(text, cls.GREEN)
+
+    @classmethod
+    def warn(cls, text: str) -> str:
+        return cls._wrap(text, cls.YELLOW)
+
+    @classmethod
+    def fail(cls, text: str) -> str:
+        return cls._wrap(text, cls.BOLD, cls.RED)
+
+    @staticmethod
+    def strip(text: str) -> str:
+        """Removes color codes, for messages that end up somewhere other than a terminal."""
+        return _ANSI_RE.sub('', text)
+
+
+class ProgressBar:
+    def __init__(self, total: int, label: str = '', width: int = 30):
+        self.total = max(total, 1)
+        self.label = label
+        self.width = width
+
+    def update(self, current: int, suffix: str = '') -> None:
+        current = min(current, self.total)
+        filled = int(self.width * current / self.total)
+        bar = Console.ok('#' * filled) + Console.dim('-' * (self.width - filled))
+        percent = int(100 * current / self.total)
+        print(f'{self.label} [{bar}] {percent:3d}% ({current}/{self.total}) {suffix}'.rstrip())
+
 
 def _load_mw_versions() -> dict:
     output = os.popen('/usr/local/bin/getMWVersions').read().strip()
@@ -190,9 +253,11 @@ class ShellExecutor:
     @staticmethod
     def run(cmd: str) -> int:
         start = time.time()
-        print(f'Execute: {cmd}')
+        print(Console.dim(f'Execute: {cmd}'))
         ec = os.system(cmd)
-        print(f'Completed ({ec}) in {str(int(time.time() - start))}s!')
+        elapsed = int(time.time() - start)
+        status = Console.ok(f'Completed ({ec})') if ec == 0 else Console.fail(f'Completed ({ec})')
+        print(f'{status} in {elapsed}s!')
         return ec
 
     @staticmethod
@@ -202,7 +267,7 @@ class ShellExecutor:
                 if not nolog:
                     os.system('/usr/local/bin/logsalmsg DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.')
                 if leave:
-                    print('Exiting due to non-zero status.')
+                    print(Console.fail('Exiting due to non-zero status.'))
                     sys.exit(1)
                 return True
         return False
@@ -260,7 +325,7 @@ class CanaryChecker:
             location = f'{Host}@{domain}'
 
         if force:
-            print(f'Skipping canary check on {location} due to --force')
+            print(Console.warn(f'Skipping canary check on {location} due to --force'))
             return True
 
         proto = 'https://' if port == 443 else 'http://'
@@ -272,12 +337,12 @@ class CanaryChecker:
             and (Debug is None or Debug in req.headers['X-Served-By'])
         )
         if not up:
-            print(f'Status: {req.status_code}')
-            print(f'Text: {"miraheze" in req.text} \n {req.text}')
+            print(Console.dim(f'Status: {req.status_code}'))
+            print(Console.dim(f'Text: {"miraheze" in req.text} \n {req.text}'))
             if 'X-Served-By' not in req.headers:
                 req.headers['X-Served-By'] = 'None'
-            print(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}')
-            print(f'Canary check failed for {location}. Aborting... - use --force to proceed')
+            print(Console.dim(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}'))
+            print(Console.fail(f'Canary check failed for {location}. Aborting... - use --force to proceed'))
             message = f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {location}'
             if nolog:
                 print(message)
@@ -286,6 +351,7 @@ class CanaryChecker:
             if exit_on_failure:
                 sys.exit(3)
             return False
+        print(Console.ok(f'Canary check passed for {location}.'))
         return up
 
 
@@ -444,7 +510,7 @@ class PatchApplier:
         # checking whether it applies cleanly in reverse before giving up.
         already_applied = run_command(self._git.apply(repo, patchfile, version, check=True, reverse=True))
         if already_applied == 0:
-            print(f'Patch {patchfile} is already applied to {repo}. Skipping.')
+            print(Console.dim(f'Patch {patchfile} is already applied to {repo}. Skipping.'))
             return 0
 
         return check
@@ -454,7 +520,7 @@ class PatchApplier:
         staging_path = self._paths.staging(repo, version)
         already_applied = run_command(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r - --dry-run --reverse --silent')
         if already_applied == 0:
-            print(f'Patch {patchfile} is already applied to {repo}. Skipping.')
+            print(Console.dim(f'Patch {patchfile} is already applied to {repo}. Skipping.'))
             return 0
         return run_command(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r -')
 
@@ -468,7 +534,7 @@ class PatchApplier:
             patchfile = f"{STAGING_ROOT}/patches/{visibility}/{patch['file']}"
 
             if not os.path.isfile(patchfile):
-                print(f'WARNING: Patch file {patchfile} could not be found!')
+                print(Console.warn(f'WARNING: Patch file {patchfile} could not be found!'))
                 continue
 
             code = self._apply_git(repo, patchfile, version) if is_git else self._apply_plain(repo, patchfile, version)
@@ -477,11 +543,11 @@ class PatchApplier:
                 exitcodes.append(code)
                 continue
 
-            print(f"ERROR: Could not apply patch {patch['file']}")
+            print(Console.fail(f"ERROR: Could not apply patch {patch['file']}"))
             if patch['failureStrategy'] == 'abort':
-                print('Aborting!')
+                print(Console.fail('Aborting!'))
                 sys.exit(1)
-            print('Skipping patch...')
+            print(Console.warn('Skipping patch...'))
 
         return exitcodes
 
@@ -500,11 +566,11 @@ class RemoteDeployer:
 
     def _deploy_to_server(self, server: str, time_flag, path: str, recursive: bool, envinfo: Environment,
                           nolog: bool, force: bool) -> tuple[str, int, bool]:
-        print(f'Deploying {path} to {server}.')
         cmd = self._rsync_builder.build(time=time_flag, local=False, dest=path, server=server, recursive=recursive)
         ec = ShellExecutor.run(cmd)
         healthy = self._canary.check(nolog, Debug=server, force=force, domain=envinfo.wikiurl, exit_on_failure=False)
-        print(f'Deployed {path} to {server}.')
+        status = Console.ok('OK') if ec == 0 and healthy else Console.fail('FAIL')
+        print(f'  {status}  {server}  {path}')
         return server, ec, healthy
 
     def _run_batch(self, batch: list[str], time_flag, path: str, recursive: bool, envinfo: Environment,
@@ -535,21 +601,25 @@ class RemoteDeployer:
 
     def sync(self, time_flag, serverlist: list[str], path: str, envinfo: Environment, nolog: bool,
              recursive: bool = True, force: bool = False, batch: bool = False) -> int:
-        print(f'Start {path} deploys.')
+        print(Console.header(f'==> Deploying {path}'))
         targets = [server for server in serverlist if self._hostname != server.split('.')[0]]
+        progress = ProgressBar(len(targets), label=Console.dim(path))
+        deployed = 0
 
         codes: list[int] = []
         for group in self._batches(targets, batch):
             results = self._run_batch(group, time_flag, path, recursive, envinfo, nolog, force)
             codes.extend(ec for _, ec, _ in results)
+            deployed += len(group)
+            progress.update(deployed)
 
             failed = [server for server, ec, healthy in results if ec != 0 or not healthy]
             if failed:
-                print(f'Deploy or health check failed on: {", ".join(failed)}. Stopping before the remaining batches.')
-                print(f'Finished {path} deploys.')
+                print(Console.fail(f'Deploy or health check failed on: {", ".join(failed)}. Stopping before the remaining batches.'))
+                print(Console.fail(f'Finished {path} deploys.'))
                 sys.exit(3)
 
-        print(f'Finished {path} deploys.')
+        print(Console.ok(f'Finished {path} deploys.'))
         if not codes:
             return 0
         return next((code for code in codes if code != 0), codes[-1])
@@ -602,14 +672,14 @@ class DeploymentRunner:
         synced = loginfo['servers']
         del loginfo['servers']
 
-        self._log(f'starting deploy of "{loginfo}" to {synced}', args.nolog)
+        self._log(Console.header(f'==> Starting deploy of "{loginfo}" to {synced}'), args.nolog)
 
         exitcodes = self.process()
         failed = non_zero_code(exitcodes, leave=False)
 
         fintext = f'finished deploy of "{loginfo}" to {synced}'
         if failed:
-            self._log(f'{fintext} - FAIL: {exitcodes}', args.nolog)
+            self._log(Console.fail(f'{fintext} - FAIL: {exitcodes}'), args.nolog)
             sys.exit(1)
 
         if use_version:
@@ -617,11 +687,11 @@ class DeploymentRunner:
                 exitcodes = self.process(version)
                 failed = non_zero_code(exitcodes, leave=False)
                 if failed:
-                    self._log(f'{fintext} - FAIL: {exitcodes}', args.nolog)
+                    self._log(Console.fail(f'{fintext} - FAIL: {exitcodes}'), args.nolog)
                     sys.exit(1)
 
         fintext += f' - SUCCESS in {int(time.time() - start)}s'
-        self._log(fintext, args.nolog)
+        self._log(Console.ok(fintext), args.nolog)
 
     def process(self, version: str = '') -> list[int]:  # pragma: no cover
         self._reset_state()
@@ -787,17 +857,17 @@ class DeploymentRunner:
         if nolog:
             print(text)
         else:
-            os.system(f'/usr/local/bin/logsalmsg {text}')
+            os.system(f'/usr/local/bin/logsalmsg {Console.strip(text)}')
 
     def _print_summary(self) -> None:
         if self.tagsinfo:
-            print('TAGS:')
+            print(Console.header('TAGS:'))
             for info in self.tagsinfo:
-                print(info)
+                print(f'  {info}')
         if self.newschema:
-            print('WARNING: NEW SCHEMA CHANGES DETECTED:')
+            print(Console.fail('WARNING: NEW SCHEMA CHANGES DETECTED:'))
             for schema in self.newschema:
-                print(schema)
+                print(f'  {Console.warn(schema)}')
 
     def _pull_named_repos(self, version: str) -> None:
         if not self.args.pull:
@@ -811,14 +881,14 @@ class DeploymentRunner:
                 self.exitcodes.append(run_command(_git.pull(repo, branch=self.args.branch)))
                 self.exitcodes.extend(_patch_applier.apply_all(repo))
             except KeyError:
-                print(f'Failed to pull {repo} due to invalid name')
+                print(Console.fail(f'Failed to pull {repo} due to invalid name'))
 
     def _checkout_pr(self) -> None:
         if not self.args.pr or self._pr_checked_out:
             return
         repo = self.args.pr_repo
         branch = f'pr-{self.args.pr}'
-        print(f'Checking out PR #{self.args.pr} for {repo} as {branch}.')
+        print(Console.header(f'==> Checking out PR #{self.args.pr} for {repo} as {branch}'))
         self.exitcodes.append(run_command(_git.fetch_pr(repo, self.args.pr, branch)))
         self.exitcodes.append(run_command(_git.checkout(repo, branch)))
         self._pr_checked_out = True
@@ -845,7 +915,7 @@ class DeploymentRunner:
         for name in items:
             repo = f'{kind}/{name}'
             if not _git.is_repo(repo, version):
-                print(f'Upgrading {name}')
+                print(Console.ok(f'Upgrading {name}'))
                 self.exitcodes.extend(_patch_applier.apply_all(repo, version))
                 if not self.args.world:
                     self.rsync.append(_rsync_builder.build(time=self.args.ignore_time, location=f'{STAGING_ROOT}/{version}/{repo}/*', dest=f'{DEPLOYED_ROOT}/{version}/{repo}/'))
@@ -853,7 +923,7 @@ class DeploymentRunner:
                 continue
 
             if not os.path.exists(_paths.staging(repo, version)):
-                print(f'{name} does not exist for {version}. Skipping...')
+                print(Console.warn(f'{name} does not exist for {version}. Skipping...'))
                 continue
 
             to_fetch.append(name)
@@ -861,7 +931,9 @@ class DeploymentRunner:
         if not to_fetch:
             return
 
+        print(Console.header(f'==> Fetching {kind} ({len(to_fetch)})'))
         total = len(to_fetch)
+        progress = ProgressBar(total, label=Console.dim(kind))
         fetched_count = 0
         batch_size = COMPONENT_FETCH_BATCH_SIZE if self.args.batch else 1
         for start in range(0, total, batch_size):
@@ -872,13 +944,13 @@ class DeploymentRunner:
             else:
                 fetched = [self._fetch_component(kind, name, version) for name in batch]
 
-            fetched_count += len(batch)
-            print(f'Fetched {fetched_count}/{total} {kind}.')
-
             # confirmation prompts, patch application, and rsync queueing all touch
             # shared state, so a batch is fully processed before the next one starts
             for name, repo, output, status in fetched:
                 self._process_component_fetch(name, repo, output, status, version)
+
+            fetched_count += len(batch)
+            progress.update(fetched_count)
 
     @staticmethod
     def _fetch_component(kind: str, name: str, version: str):
@@ -896,11 +968,14 @@ class DeploymentRunner:
             self.exitcodes.append(exitcode)
 
         if exitcode != 0:
-            print(f'Failed to upgrade {name} (exit code: {exitcode}).')
+            print(Console.fail(f'Failed to upgrade {name} (exit code: {exitcode}).'))
             return
 
         updated = args.force_upgrade or output != 'Already up to date.'
-        print(f'Upgrading {name}' if updated else f'{name} already up to date. Applying patches...')
+        if updated:
+            print(Console.ok(f'Upgrading {name}'))
+        else:
+            print(Console.dim(f'{name} already up to date. Applying patches...'))
 
         # patches always get applied, even when git had nothing new to pull.
         # a patch can be added or changed without any upstream commit existing yet
@@ -909,18 +984,18 @@ class DeploymentRunner:
         for file in ChangeTagger.files_of_type(repo, version, 'schema change'):
             if not args.skip_schema_confirm and name not in self.warnings:
                 self.warnings[name] = True
-                print('WARNING: upgrade contains schema changes.')
+                print(Console.warn('WARNING: upgrade contains schema changes.'))
                 try:
-                    if input('Type Y to confirm: ').upper() != 'Y':
+                    if input(Console.bold('Type Y to confirm: ')).upper() != 'Y':
                         self.exitcodes.append(run_command(_git.reset_revert(repo, version)))
-                        print('reverted')
+                        print(Console.warn('reverted'))
                         continue
                     self.newschema.append(f'{STAGING_ROOT}/{version}/{repo}/{file}')
                 except KeyboardInterrupt:
                     run_command(_git.reset_revert(repo, version))
-                    print('reverted')
+                    print(Console.warn('reverted'))
                     self._print_summary()
-                    print('Operation aborted by user')
+                    print(Console.fail('Operation aborted by user'))
                     sys.exit(1)
 
         if args.show_tags:
