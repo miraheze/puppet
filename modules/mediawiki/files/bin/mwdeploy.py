@@ -417,8 +417,10 @@ class GitCommandBuilder:
     def reset_hard(self, repo: str, version: str = '') -> str:
         return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} reset --hard'
 
-    def apply(self, repo: str, patchfile: str, version: str = '', check: bool = False) -> str:
+    def apply(self, repo: str, patchfile: str, version: str = '', check: bool = False, reverse: bool = False) -> str:
         option = ' --check' if check else ' --index'
+        if reverse:
+            option += ' --reverse'
         return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} apply{option} {patchfile}'
 
     def fetch_pr(self, repo: str, pr_number: int, branch: str, version: str = '') -> str:
@@ -449,8 +451,8 @@ def _construct_git_reset_hard(repo: str, version: str = '') -> str:
     return _git.reset_hard(repo, version)
 
 
-def _construct_git_apply(repo: str, patchfile: str, version: str = '', check: bool = False) -> str:
-    return _git.apply(repo, patchfile, version, check)
+def _construct_git_apply(repo: str, patchfile: str, version: str = '', check: bool = False, reverse: bool = False) -> str:
+    return _git.apply(repo, patchfile, version, check, reverse)
 
 
 def _construct_git_fetch_pr(repo: str, pr_number: int, branch: str, version: str = '') -> str:
@@ -518,11 +520,25 @@ class PatchApplier:
         check = run_command(self._git.apply(repo, patchfile, version, check=True))
         if check == 0:
             return run_command(self._git.apply(repo, patchfile, version))
+
+        # a failed check here doesn't always mean a conflict. it also happens
+        # when the patch is already sitting in the tree, so confirm that by
+        # checking whether it applies cleanly in reverse before giving up.
+        already_applied = run_command(self._git.apply(repo, patchfile, version, check=True, reverse=True))
+        if already_applied == 0:
+            print(f'Patch {patchfile} is already applied to {repo}. Skipping.')
+            return 0
+
         return check
 
     def _apply_plain(self, repo: str, patchfile: str, version: str) -> int:
         # For non-git repos (like those installed via composer)
-        return run_command(f'sudo -u {self._deploy_user} patch -p1 -N -d {self._paths.staging(repo, version)} -i {patchfile} -r -')
+        staging_path = self._paths.staging(repo, version)
+        already_applied = run_command(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r - --dry-run --reverse --silent')
+        if already_applied == 0:
+            print(f'Patch {patchfile} is already applied to {repo}. Skipping.')
+            return 0
+        return run_command(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r -')
 
     def apply_all(self, repo: str, version: str = '') -> list[int]:
         exitcodes = []
