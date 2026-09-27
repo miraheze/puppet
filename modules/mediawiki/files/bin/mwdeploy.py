@@ -91,8 +91,13 @@ class ProgressBar:
         print(f'{self.label} [{bar}] {percent:3d}% ({current}/{self.total}) {suffix}'.rstrip())
 
 
+def _run(cmd: str) -> subprocess.CompletedProcess:
+    """Runs a command through the shell, capturing its output as text."""
+    return subprocess.run(cmd, shell=True, capture_output=True, text=True)
+
+
 def _load_mw_versions() -> dict:
-    output = os.popen('/usr/local/bin/getMWVersions').read().strip()
+    output = _run('/usr/local/bin/getMWVersions').stdout.strip()
     if not output:
         return {'version': 'version'}
     return json.loads(output)
@@ -226,8 +231,8 @@ class ChangeTagger:
     @staticmethod
     def changed_files(path: str, version: str) -> list[str]:
         repo_dir = os.path.join(STAGING_ROOT, version, path)
-        raw = os.popen(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git diff --name-only HEAD@{{1}} HEAD 2> /dev/null').readlines()
-        return [line.strip() for line in raw]
+        result = _run(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git diff --name-only HEAD@{{1}} HEAD')
+        return [line.strip() for line in result.stdout.splitlines()]
 
     @classmethod
     def files_of_type(cls, path: str, version: str, change_type: str) -> set:
@@ -255,7 +260,7 @@ class ShellExecutor:
     def run(cmd: str) -> int:
         start = time.time()
         print(Console.dim(f'Execute: {cmd}'))
-        ec = os.system(cmd)
+        ec = subprocess.run(cmd, shell=True).returncode
         elapsed = int(time.time() - start)
         status = Console.ok(f'Completed ({ec})') if ec == 0 else Console.fail(f'Completed ({ec})')
         print(f'{status} in {elapsed}s!')
@@ -263,14 +268,14 @@ class ShellExecutor:
 
     @staticmethod
     def run_quiet(cmd: str) -> subprocess.CompletedProcess:
-        return subprocess.run(cmd, shell=True, capture_output=True, text=True)
+        return _run(cmd)
 
     @staticmethod
     def ensure_all_zero(codes: list[int], nolog: bool = True, leave: bool = True) -> bool:
         for code in codes:
             if code != 0:
                 if not nolog:
-                    os.system('/usr/local/bin/logsalmsg DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.')
+                    subprocess.run('/usr/local/bin/logsalmsg DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.', shell=True)
                 if leave:
                     print(Console.fail('Exiting due to non-zero status.'))
                     sys.exit(1)
@@ -352,7 +357,7 @@ class CanaryChecker:
             if nolog:
                 print(message)
             else:
-                os.system(message)
+                subprocess.run(message, shell=True)
             if exit_on_failure:
                 sys.exit(3)
             return False
@@ -868,6 +873,8 @@ class DeploymentRunner:
         for name, value in vars(self.args).items():
             if value is None or value is False:
                 continue
+            if name == 'pr_repo' and not self.args.pr:
+                continue
             if isinstance(value, list) and len(value) == 1:
                 loginfo[name] = value[0]
             else:
@@ -879,7 +886,7 @@ class DeploymentRunner:
         if nolog:
             print(text)
         else:
-            os.system(f'/usr/local/bin/logsalmsg {Console.strip(text)}')
+            subprocess.run(f'/usr/local/bin/logsalmsg {Console.strip(text)}', shell=True)
 
     def _print_summary(self) -> None:
         if self.tagsinfo:
@@ -977,16 +984,14 @@ class DeploymentRunner:
     @staticmethod
     def _fetch_component(kind: str, name: str, version: str):
         repo = f'{kind}/{name}'
-        process = os.popen(_git.pull(repo, submodules=True, quiet=False, version=version))
-        output = process.read().strip()
-        status = process.close()
-        return name, repo, output, status
+        result = _run(_git.pull(repo, submodules=True, quiet=False, version=version))
+        return name, repo, result.stdout.strip(), result.returncode
 
     def _process_component_fetch(self, name: str, repo: str, output: str, status, version: str) -> None:
         args = self.args
         exitcode = 0
         if status and not args.force:
-            exitcode = os.waitstatus_to_exitcode(status)
+            exitcode = status
             self.exitcodes.append(exitcode)
 
         if exitcode != 0:
@@ -1140,7 +1145,7 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang', action=LangAction, help='l10n language(s) to rebuild, defaults to all')
-    parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'/usr/local/bin/getMWVersion {get_environment_info().wikidbname}').read().strip()], help='version(s) to deploy')
+    parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[_run(f'/usr/local/bin/getMWVersion {get_environment_info().wikidbname}').stdout.strip()], help='version(s) to deploy')
     parser.add_argument('--show-tags', dest='show_tags', action='store_true', help='Show change tags for extension/skin upgrades')
     parser.add_argument('--skip-schema-confirm', dest='skip_schema_confirm', action='store_true', help='Skip confirm prompts for extensions with schema changes')
     parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=UpgradeExtensionsAction, help='extension(s) to upgrade')
