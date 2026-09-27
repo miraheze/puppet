@@ -111,14 +111,6 @@ class ComponentPacks:
         return cls.SKINS.get(pack_name, [])
 
 
-def get_extensions_in_pack(pack_name: str) -> list[str]:
-    return ComponentPacks.extensions(pack_name)
-
-
-def get_skins_in_pack(pack_name: str) -> list[str]:
-    return ComponentPacks.skins(pack_name)
-
-
 class ComponentDiscovery:
     """Finds the extensions and skins that actually exist on disk for a set of versions."""
 
@@ -192,22 +184,6 @@ class ChangeTagger:
         return found
 
 
-def get_change_tag_map() -> dict:
-    return ChangeTagger.TAG_MAP
-
-
-def get_changed_files(path: str, version: str) -> list[str]:
-    return ChangeTagger.changed_files(path, version)
-
-
-def get_changed_files_type(path: str, version: str, change_type: str) -> set:
-    return ChangeTagger.files_of_type(path, version, change_type)
-
-
-def get_change_tags(path: str, version: str) -> set:
-    return ChangeTagger.tags(path, version)
-
-
 class ShellExecutor:
     """Runs shell commands and, where the caller allows it, runs several at once."""
 
@@ -218,14 +194,6 @@ class ShellExecutor:
         ec = os.system(cmd)
         print(f'Completed ({ec}) in {str(int(time.time() - start))}s!')
         return ec
-
-    @staticmethod
-    def run_parallel(cmds: list[str], max_workers: int = 8) -> list[int]:
-        """Runs independent commands concurrently. Results come back in the same order as cmds."""
-        if not cmds:
-            return []
-        with ThreadPoolExecutor(max_workers=min(max_workers, len(cmds))) as pool:
-            return list(pool.map(ShellExecutor.run, cmds))
 
     @staticmethod
     def ensure_all_zero(codes: list[int], nolog: bool = True, leave: bool = True) -> bool:
@@ -350,14 +318,6 @@ class PathResolver:
 _paths = PathResolver(repos)
 
 
-def _get_staging_path(repo: str, version: str = '') -> str:
-    return _paths.staging(repo, version)
-
-
-def _get_deployed_path(repo: str, version: str = '') -> str:
-    return _paths.deployed(repo, version)
-
-
 class RsyncCommandBuilder:
     """Builds the rsync command lines used for both local staging and remote fleet syncs."""
 
@@ -389,11 +349,6 @@ class RsyncCommandBuilder:
 _rsync_builder = RsyncCommandBuilder()
 
 
-def _construct_rsync_command(time, dest: str, recursive: bool = True, local: bool = True,
-                             location: Optional[str] = None, server: Optional[str] = None) -> str:
-    return _rsync_builder.build(time, dest, recursive=recursive, local=local, location=location, server=server)
-
-
 class GitCommandBuilder:
     """Builds the git command lines used to pull, reset, and patch a staged repo."""
 
@@ -417,12 +372,10 @@ class GitCommandBuilder:
     def reset_hard(self, repo: str, version: str = '') -> str:
         return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} reset --hard'
 
-    def apply(self, repo: str, patchfile: str, version: str = '', check: bool = False, reverse: bool = False, threeway: bool = False) -> str:
+    def apply(self, repo: str, patchfile: str, version: str = '', check: bool = False, reverse: bool = False) -> str:
         option = ' --check' if check else ' --index'
         if reverse:
             option += ' --reverse'
-        if threeway:
-            option += ' --3way'
         return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} apply{option} {patchfile}'
 
     def fetch_pr(self, repo: str, pr_number: int, branch: str, version: str = '') -> str:
@@ -438,35 +391,6 @@ class GitCommandBuilder:
 
 
 _git = GitCommandBuilder(_paths)
-
-
-def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[str] = None,
-                        quiet: bool = True, version: str = '') -> str:
-    return _git.pull(repo, submodules=submodules, branch=branch, quiet=quiet, version=version)
-
-
-def _construct_git_reset_revert(repo: str, version: str = '') -> str:
-    return _git.reset_revert(repo, version)
-
-
-def _construct_git_reset_hard(repo: str, version: str = '') -> str:
-    return _git.reset_hard(repo, version)
-
-
-def _construct_git_apply(repo: str, patchfile: str, version: str = '', check: bool = False, reverse: bool = False, threeway: bool = False) -> str:
-    return _git.apply(repo, patchfile, version, check, reverse, threeway)
-
-
-def _construct_git_fetch_pr(repo: str, pr_number: int, branch: str, version: str = '') -> str:
-    return _git.fetch_pr(repo, pr_number, branch, version)
-
-
-def _construct_git_checkout(repo: str, branch: str, version: str = '') -> str:
-    return _git.checkout(repo, branch, version)
-
-
-def _is_git_repo(repo: str, version: str) -> bool:
-    return _git.is_repo(repo, version)
 
 
 class WorldReset:
@@ -485,14 +409,6 @@ class WorldReset:
 
 
 _world_reset = WorldReset(_paths)
-
-
-def _construct_reset_mediawiki_rm_staging(version: str) -> str:
-    return _world_reset.remove_staging(version)
-
-
-def _construct_reset_mediawiki_run_puppet() -> str:
-    return _world_reset.run_puppet()
 
 
 class PatchApplier:
@@ -529,15 +445,6 @@ class PatchApplier:
         already_applied = run_command(self._git.apply(repo, patchfile, version, check=True, reverse=True))
         if already_applied == 0:
             print(f'Patch {patchfile} is already applied to {repo}. Skipping.')
-            return 0
-
-        # the context around the target lines may have drifted from an
-        # unrelated commit. a three way merge can still land the change using
-        # the blobs recorded in the patch, even when the surrounding text no
-        # longer matches.
-        threeway = run_command(self._git.apply(repo, patchfile, version, threeway=True))
-        if threeway == 0:
-            print(f'Patch {patchfile} applied to {repo} via three way merge.')
             return 0
 
         return check
@@ -582,22 +489,6 @@ class PatchApplier:
 _patch_applier = PatchApplier(patches, _paths, _git)
 
 
-def _patch_matches(patch: dict, repo: str, version: str) -> bool:
-    return _patch_applier._matches(patch, repo, version)
-
-
-def _apply_patches(repo: str, version: str = '') -> list[int]:
-    return _patch_applier.apply_all(repo, version)
-
-
-def _apply_patch_git(repo: str, patchfile: str, version: str) -> int:
-    return _patch_applier._apply_git(repo, patchfile, version)
-
-
-def _apply_patch_plain(repo: str, patchfile: str, version: str) -> int:
-    return _patch_applier._apply_plain(repo, patchfile, version)
-
-
 class RemoteDeployer:
     def __init__(self, rsync_builder: RsyncCommandBuilder, canary, hostname: str = HOSTNAME,
                  batch_size: int = 3, max_workers: int = 8):
@@ -627,10 +518,15 @@ class RemoteDeployer:
             ]
             return [future.result() for future in as_completed(futures)]
 
-    def _batches(self, targets: list[str]):
-        """The first server goes out alone. Everything after that ships in
-        fixed-size groups."""
+    def _batches(self, targets: list[str], batch: bool):
+        """With batch off, every server goes out on its own, one at a time.
+        With batch on, the first server goes out alone and everything after
+        ships in fixed-size groups."""
         if not targets:
+            return
+        if not batch:
+            for server in targets:
+                yield [server]
             return
         yield [targets[0]]
         remaining = targets[1:]
@@ -638,13 +534,13 @@ class RemoteDeployer:
             yield remaining[start:start + self._batch_size]
 
     def sync(self, time_flag, serverlist: list[str], path: str, envinfo: Environment, nolog: bool,
-             recursive: bool = True, force: bool = False) -> int:
+             recursive: bool = True, force: bool = False, batch: bool = False) -> int:
         print(f'Start {path} deploys.')
         targets = [server for server in serverlist if self._hostname != server.split('.')[0]]
 
         codes: list[int] = []
-        for batch in self._batches(targets):
-            results = self._run_batch(batch, time_flag, path, recursive, envinfo, nolog, force)
+        for group in self._batches(targets, batch):
+            results = self._run_batch(group, time_flag, path, recursive, envinfo, nolog, force)
             codes.extend(ec for _, ec, _ in results)
 
             failed = [server for server, ec, healthy in results if ec != 0 or not healthy]
@@ -660,11 +556,6 @@ class RemoteDeployer:
 
 
 _remote_deployer = RemoteDeployer(_rsync_builder, _default_canary_checker)
-
-
-def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Environment, nolog: bool,
-                     recursive: bool = True, force: bool = False) -> int:
-    return _remote_deployer.sync(time, serverlist, path, envinfo, nolog, recursive=recursive, force=force)
 
 
 class DeploymentRunner:
@@ -858,9 +749,9 @@ class DeploymentRunner:
             self.rsyncpaths.append(f'{DEPLOYED_ROOT}/cache/{version}/l10n/')
 
         for path in self.rsyncpaths:
-            self.exitcodes.append(_remote_deployer.sync(args.ignore_time, args.servers, path, envinfo, args.nolog, force=args.force))
+            self.exitcodes.append(_remote_deployer.sync(args.ignore_time, args.servers, path, envinfo, args.nolog, force=args.force, batch=args.batch))
         for file in self.rsyncfiles:
-            self.exitcodes.append(_remote_deployer.sync(args.ignore_time, args.servers, file, envinfo, args.nolog, recursive=False, force=args.force))
+            self.exitcodes.append(_remote_deployer.sync(args.ignore_time, args.servers, file, envinfo, args.nolog, recursive=False, force=args.force, batch=args.batch))
 
         self._print_summary()
         return self.exitcodes
@@ -972,10 +863,14 @@ class DeploymentRunner:
 
         total = len(to_fetch)
         fetched_count = 0
-        for start in range(0, total, COMPONENT_FETCH_BATCH_SIZE):
-            batch = to_fetch[start:start + COMPONENT_FETCH_BATCH_SIZE]
-            with ThreadPoolExecutor(max_workers=min(COMPONENT_FETCH_WORKERS, len(batch))) as pool:
-                fetched = list(pool.map(lambda name: self._fetch_component(kind, name, version), batch))
+        batch_size = COMPONENT_FETCH_BATCH_SIZE if self.args.batch else 1
+        for start in range(0, total, batch_size):
+            batch = to_fetch[start:start + batch_size]
+            if self.args.batch:
+                with ThreadPoolExecutor(max_workers=min(COMPONENT_FETCH_WORKERS, len(batch))) as pool:
+                    fetched = list(pool.map(lambda name: self._fetch_component(kind, name, version), batch))
+            else:
+                fetched = [self._fetch_component(kind, name, version) for name in batch]
 
             fetched_count += len(batch)
             print(f'Fetched {fetched_count}/{total} {kind}.')
@@ -1041,10 +936,6 @@ class DeploymentRunner:
 
 def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
     DeploymentRunner(args).run(start)
-
-
-def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pragma: no cover
-    return DeploymentRunner(args).process(version)
 
 
 class UpgradeExtensionsAction(argparse.Action):  # pragma: no cover
@@ -1160,5 +1051,6 @@ if __name__ == '__main__':
     parser.add_argument('--ignore-time', dest='ignore_time', action='store_true')
     parser.add_argument('--port', dest='port')
     parser.add_argument('--apply-patches', dest='apply_patches', action=ApplyPatchesAction, help='repo(s) to apply patches to')
+    parser.add_argument('--batch', dest='batch', action='store_true', help='deploy to servers and fetch components in parallel batches instead of one at a time')
 
     run(parser.parse_args(), start)
