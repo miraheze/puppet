@@ -442,12 +442,13 @@ class GitCommandBuilder:
 
     def pull(self, repo: str, submodules: bool = False, branch: Optional[str] = None,
              quiet: bool = True, version: str = '') -> str:
-        extra = ' '
+        extra = ''
         if submodules:
-            extra += '--recurse-submodules '
+            extra += ' --recurse-submodules'
         if branch:
-            extra += f'origin {branch} '
-        extra += '--quiet' if quiet else '2> /dev/null'
+            extra += f' origin {branch}'
+        if quiet:
+            extra += ' --quiet'
         return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} pull{extra}'
 
     def reset_revert(self, repo: str, version: str = '') -> str:
@@ -475,7 +476,10 @@ class GitCommandBuilder:
 
     @staticmethod
     def strip_noise(text: str) -> str:
-        lines = [line for line in text.splitlines() if 'unable to access' not in line.lower()]
+        lines = [
+            line for line in text.splitlines()
+            if not (line.strip().lower().startswith('warning:') and 'unable to access' in line.lower())
+        ]
         return '\n'.join(lines).strip()
 
 
@@ -1006,8 +1010,8 @@ class DeploymentRunner:
 
             # confirmation prompts, patch application, and rsync queueing all touch
             # shared state, so a batch is fully processed before the next one starts
-            for name, repo, output, status in fetched:
-                self._process_component_fetch(name, repo, output, status, version)
+            for name, repo, output, status, error in fetched:
+                self._process_component_fetch(name, repo, output, status, error, version)
 
             fetched_count += len(batch)
             progress.update(fetched_count)
@@ -1016,17 +1020,18 @@ class DeploymentRunner:
     def _fetch_component(kind: str, name: str, version: str):
         repo = f'{kind}/{name}'
         result = _run(_git.pull(repo, submodules=True, quiet=False, version=version))
-        return name, repo, result.stdout.strip(), result.returncode
+        return name, repo, result.stdout.strip(), result.returncode, result.stderr
 
-    def _process_component_fetch(self, name: str, repo: str, output: str, status, version: str) -> None:
+    def _process_component_fetch(self, name: str, repo: str, output: str, status, error: str, version: str) -> None:
         args = self.args
-        exitcode = 0
-        if status and not args.force:
-            exitcode = status
-            self.exitcodes.append(exitcode)
-
-        if exitcode != 0:
-            print(Console.fail(f'Failed to upgrade {name} (exit code: {exitcode}).'))
+        if status:
+            if not args.force:
+                self.exitcodes.append(status)
+            print(Console.fail(f'Failed to upgrade {name} (exit code: {status}).'))
+            if args.debug:
+                detail = _git.strip_noise(error)
+                if detail:
+                    print(Console.dim(detail))
             return
 
         updated = args.force_upgrade or output != 'Already up to date.'
@@ -1193,5 +1198,6 @@ if __name__ == '__main__':
     parser.add_argument('--port', dest='port')
     parser.add_argument('--apply-patches', dest='apply_patches', action=ApplyPatchesAction, help='repo(s) to apply patches to')
     parser.add_argument('--batch', dest='batch', action='store_true', help='deploy to servers and fetch components in parallel batches instead of one at a time')
+    parser.add_argument('--debug', dest='debug', action='store_true', help='show the underlying command output when a component fails to fetch')
 
     run(parser.parse_args(), start)
