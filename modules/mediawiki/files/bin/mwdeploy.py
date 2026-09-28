@@ -8,6 +8,7 @@ import contextlib
 import json
 import os
 import re
+import shlex
 import socket
 import subprocess
 import sys
@@ -89,6 +90,18 @@ class ProgressBar:
         bar = Console.ok('#' * filled) + Console.dim('-' * (self.width - filled))
         percent = int(100 * current / self.total)
         print(f'{self.label} [{bar}] {percent:3d}% ({current}/{self.total}) {suffix}'.rstrip())
+
+
+class Sal:
+    task: Optional[str] = None
+
+    @classmethod
+    def suffix(cls) -> str:
+        return f' ({cls.task})' if cls.task else ''
+
+    @classmethod
+    def command(cls, message: str) -> str:
+        return f'/usr/local/bin/logsalmsg {shlex.quote(message + cls.suffix())}'
 
 
 def _run(cmd: str) -> subprocess.CompletedProcess:
@@ -283,7 +296,7 @@ class ShellExecutor:
         for code in codes:
             if code != 0:
                 if not nolog:
-                    subprocess.run('/usr/local/bin/logsalmsg DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.', shell=True)
+                    subprocess.run(Sal.command('DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.'), shell=True)
                 if leave:
                     print(Console.fail('Exiting due to non-zero status.'))
                     sys.exit(1)
@@ -361,7 +374,7 @@ class CanaryChecker:
                 req.headers['X-Served-By'] = 'None'
             print(Console.dim(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}'))
             print(Console.fail(f'Canary check failed for {location}. Aborting... - use --force to proceed'))
-            message = f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {location}'
+            message = Sal.command(f'DEPLOY ABORTED: Canary check failed for {location}')
             if nolog:
                 print(message)
             else:
@@ -898,6 +911,8 @@ class DeploymentRunner:
                 continue
             if name == 'pr_repo' and not self.args.pr:
                 continue
+            if name == 'task':
+                continue
             if isinstance(value, list) and len(value) == 1:
                 loginfo[name] = value[0]
             else:
@@ -907,9 +922,9 @@ class DeploymentRunner:
     @staticmethod
     def _log(text: str, nolog: bool) -> None:
         if nolog:
-            print(text)
+            print(f'{text}{Sal.suffix()}')
         else:
-            subprocess.run(f'/usr/local/bin/logsalmsg {Console.strip(text)}', shell=True)
+            subprocess.run(Sal.command(Console.strip(text)), shell=True)
 
     def _print_summary(self) -> None:
         if self.tagsinfo:
@@ -1081,7 +1096,14 @@ class DeploymentRunner:
 
 
 def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
+    Sal.task = args.task
     DeploymentRunner(args).run(start)
+
+
+def task_id(value: str) -> str:
+    if not re.fullmatch(r'T[0-9]+', value):
+        raise argparse.ArgumentTypeError(f'invalid task ID {value!r}, expected something like T12345')
+    return value
 
 
 class UpgradeExtensionsAction(argparse.Action):  # pragma: no cover
@@ -1199,5 +1221,6 @@ if __name__ == '__main__':
     parser.add_argument('--apply-patches', dest='apply_patches', action=ApplyPatchesAction, help='repo(s) to apply patches to')
     parser.add_argument('--batch', dest='batch', action='store_true', help='deploy to servers and fetch components in parallel batches instead of one at a time')
     parser.add_argument('--debug', dest='debug', action='store_true', help='show the underlying command output when a component fails to fetch')
+    parser.add_argument('--task', dest='task', type=task_id, help='Phorge task ID to include in the log entries, e.g. T12345')
 
     run(parser.parse_args(), start)
