@@ -197,8 +197,8 @@ class ComponentPacks:
         return cls.SKINS.get(pack_name, [])
 
 
-class ComponentDiscovery:
-    """Finds the extensions and skins that actually exist on disk for a set of versions."""
+class Discovery:
+    """Finds the valid choices for the options that take a list."""
 
     @staticmethod
     def _scan(kind: str, mw_versions: list[str]) -> list[str]:
@@ -217,21 +217,13 @@ class ComponentDiscovery:
     def skins(cls, mw_versions: list[str]) -> list[str]:
         return cls._scan('skins', mw_versions)
 
+    @staticmethod
+    def versions() -> list[str]:
+        return [version for version in versions.values() if os.path.exists(f'{STAGING_ROOT}/{version}')]
 
-def get_valid_extensions(mw_versions: list[str]) -> list[str]:
-    return ComponentDiscovery.extensions(mw_versions)
-
-
-def get_valid_skins(mw_versions: list[str]) -> list[str]:
-    return ComponentDiscovery.skins(mw_versions)
-
-
-def get_valid_versions() -> list[str]:
-    return [version for version in versions.values() if os.path.exists(f'{STAGING_ROOT}/{version}')]
-
-
-def get_all_patch_paths() -> list[str]:
-    return sorted({patch['path'] for patch in patches})
+    @staticmethod
+    def patch_paths() -> list[str]:
+        return sorted({patch['path'] for patch in patches})
 
 
 _BUILD_PATTERN = r'^.*?(\.github/.*?|\.phan/.*?|tests/.*?|composer(\.json|\.lock)|package(-lock)?\.json|yarn\.lock|(\.phpcs|\.stylelintrc|\.eslintrc|\.prettierrc|\.stylelintignore|\.eslintignore|\.prettierignore|tsconfig)\.json|\.nvmrc|\.svgo\.config\.js|Gruntfile\.js|bundlesize\.config\.json|jsdoc\.json)$'
@@ -292,10 +284,6 @@ class ShellExecutor:
         return ec
 
     @staticmethod
-    def run_quiet(cmd: str) -> subprocess.CompletedProcess:
-        return _run(cmd)
-
-    @staticmethod
     def ensure_all_zero(codes: list[int], nolog: bool = True, leave: bool = True) -> bool:
         for code in codes:
             if code != 0:
@@ -306,14 +294,6 @@ class ShellExecutor:
                     sys.exit(1)
                 return True
         return False
-
-
-def run_command(cmd: str) -> int:
-    return ShellExecutor.run(cmd)
-
-
-def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool:
-    return ShellExecutor.ensure_all_zero(ec, nolog=nolog, leave=leave)
 
 
 class CanaryChecker:
@@ -391,12 +371,6 @@ class CanaryChecker:
 
 
 _default_canary_checker = CanaryChecker()
-
-
-def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None,
-             domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False,
-             port: int = 443, use_cert: bool = True, exit_on_failure: bool = True) -> bool:
-    return _default_canary_checker.check(nolog, Debug=Debug, Host=Host, domain=domain, verify=verify, force=force, port=port, use_cert=use_cert, exit_on_failure=exit_on_failure)
 
 
 class PathResolver:
@@ -556,14 +530,14 @@ class PatchApplier:
         """Returns (exit code, changed). changed is False when the patch was
         already sitting in the tree, since nothing actually happened then."""
         name = os.path.basename(patchfile)
-        check = ShellExecutor.run_quiet(self._git.apply(repo, patchfile, version, check=True))
+        check = _run(self._git.apply(repo, patchfile, version, check=True))
         if check.returncode == 0:
-            return run_command(self._git.apply(repo, patchfile, version)), True
+            return ShellExecutor.run(self._git.apply(repo, patchfile, version)), True
 
         # a failed check doesn't always mean a real conflict. it can also mean
         # the patch is already sitting in the tree, so confirm that quietly
         # before bothering the user with anything.
-        reverse_check = ShellExecutor.run_quiet(self._git.apply(repo, patchfile, version, check=True, reverse=True))
+        reverse_check = _run(self._git.apply(repo, patchfile, version, check=True, reverse=True))
         if reverse_check.returncode == 0:
             print(Console.dim(f'{name} is already applied to {repo}. Skipping.'))
             return 0, False
@@ -578,13 +552,13 @@ class PatchApplier:
         # For non-git repos (like those installed via composer)
         name = os.path.basename(patchfile)
         staging_path = self._paths.staging(repo, version)
-        already_applied = ShellExecutor.run_quiet(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r - --dry-run --reverse --silent')
+        already_applied = _run(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r - --dry-run --reverse --silent')
         if already_applied.returncode == 0:
             print(Console.dim(f'{name} is already applied to {repo}. Skipping.'))
             return 0, False
-        return run_command(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r -'), True
+        return ShellExecutor.run(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r -'), True
 
-    def _apply_all_tracked(self, repo: str, version: str) -> tuple[list[int], bool]:
+    def apply_all(self, repo: str, version: str = '') -> tuple[list[int], bool]:
         exitcodes = []
         changed = False
         is_git = self._git.is_repo(repo, version)
@@ -612,13 +586,6 @@ class PatchApplier:
             print(Console.warn('Skipping patch...'))
 
         return exitcodes, changed
-
-    def apply_all(self, repo: str, version: str = '') -> list[int]:
-        exitcodes, _changed = self._apply_all_tracked(repo, version)
-        return exitcodes
-
-    def apply_all_tracking_changes(self, repo: str, version: str = '') -> tuple[list[int], bool]:
-        return self._apply_all_tracked(repo, version)
 
 
 _patch_applier = PatchApplier(patches, _paths, _git)
@@ -712,6 +679,7 @@ class DeploymentRunner:
 
     def run(self, start: float) -> None:  # pragma: no cover
         args = self.args
+        Sal.task = args.task
         loginfo = self._build_loginfo()
 
         if args.upgrade_world and not args.reset_world:
@@ -721,8 +689,8 @@ class DeploymentRunner:
             args.ignore_time = True
             args.extension_list = True
             args.upgrade_vendor = True
-            args.upgrade_extensions = get_valid_extensions(args.versions)
-            args.upgrade_skins = get_valid_skins(args.versions)
+            args.upgrade_extensions = Discovery.extensions(args.versions)
+            args.upgrade_skins = Discovery.skins(args.versions)
 
         if len(args.servers) > 1:
             _mark_all(loginfo, 'servers', args.servers, self.envinfo.servers)
@@ -733,10 +701,10 @@ class DeploymentRunner:
         )
 
         if args.versions:
-            _mark_all(loginfo, 'upgrade_extensions', args.upgrade_extensions, get_valid_extensions(args.versions))
-            _mark_all(loginfo, 'upgrade_skins', args.upgrade_skins, get_valid_skins(args.versions))
-            _mark_all(loginfo, 'apply_patches', args.apply_patches, get_all_patch_paths())
-            _mark_all(loginfo, 'versions', args.versions, get_valid_versions())
+            _mark_all(loginfo, 'upgrade_extensions', args.upgrade_extensions, Discovery.extensions(args.versions))
+            _mark_all(loginfo, 'upgrade_skins', args.upgrade_skins, Discovery.skins(args.versions))
+            _mark_all(loginfo, 'apply_patches', args.apply_patches, Discovery.patch_paths())
+            _mark_all(loginfo, 'versions', args.versions, Discovery.versions())
             if args.upgrade_pack:
                 del loginfo['upgrade_extensions']
                 del loginfo['upgrade_skins']
@@ -749,7 +717,7 @@ class DeploymentRunner:
         self._log(Console.header(f'==> Starting deploy of "{loginfo}" to {synced}'), args.nolog)
 
         exitcodes = self.process()
-        failed = non_zero_code(exitcodes, leave=False)
+        failed = ShellExecutor.ensure_all_zero(exitcodes, leave=False)
 
         fintext = f'finished deploy of "{loginfo}" to {synced}'
         if failed:
@@ -759,7 +727,7 @@ class DeploymentRunner:
         if use_version:
             for version in args.versions:
                 exitcodes = self.process(version)
-                failed = non_zero_code(exitcodes, leave=False)
+                failed = ShellExecutor.ensure_all_zero(exitcodes, leave=False)
                 if failed:
                     self._log(Console.fail(f'{fintext} - FAIL: {exitcodes}'), args.nolog)
                     sys.exit(1)
@@ -798,8 +766,8 @@ class DeploymentRunner:
             for cmd in self.stage:  # setup env, git pull etc
                 if 'composer' in cmd:
                     os.chdir(_paths.staging(version))
-                self.exitcodes.append(run_command(cmd))
-            non_zero_code(self.exitcodes, nolog=args.nolog)
+                self.exitcodes.append(ShellExecutor.run(cmd))
+            ShellExecutor.ensure_all_zero(self.exitcodes, nolog=args.nolog)
 
             for option in options:  # configure rsync & custom data for repos
                 if not options[option]:
@@ -807,13 +775,13 @@ class DeploymentRunner:
                 if option == 'world':  # install steps for world
                     option = version
                     os.chdir(_paths.staging(version))
-                    self.exitcodes.append(run_command(
+                    self.exitcodes.append(ShellExecutor.run(
                         f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 '
                         f'https_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet',
                     ))
                     self._needs_version_cache_rebuild = True
                 self.rsync.append(_rsync_builder.build(time=args.ignore_time, location=f'{_paths.staging(option)}*', dest=_paths.deployed(option)))
-            non_zero_code(self.exitcodes, nolog=args.nolog)
+            ShellExecutor.ensure_all_zero(self.exitcodes, nolog=args.nolog)
 
             # a version upgrade only needs one RebuildVersionCache run at the end,
             # no matter how many extensions, skins, or core itself were upgraded
@@ -829,13 +797,14 @@ class DeploymentRunner:
                 applied = []
                 for patch in patches:
                     if patch['path'] not in applied:
-                        self.exitcodes.extend(_patch_applier.apply_all(patch['path'], version))
+                        codes, _ = _patch_applier.apply_all(patch['path'], version)
+                        self.exitcodes.extend(codes)
                         applied.append(patch['path'])
-            non_zero_code(self.exitcodes, nolog=args.nolog)
+            ShellExecutor.ensure_all_zero(self.exitcodes, nolog=args.nolog)
 
             if version and args.apply_patches:
                 self._apply_extra_patches(version)
-            non_zero_code(self.exitcodes, nolog=args.nolog)
+            ShellExecutor.ensure_all_zero(self.exitcodes, nolog=args.nolog)
 
             if args.files and not version:  # specfic extra files
                 for file in str(args.files).split(','):
@@ -848,8 +817,8 @@ class DeploymentRunner:
                 self.rebuild.append(f'sudo -u {DEPLOYUSER} php {self._runner}ManageWiki:RebuildExtensionListCache --wiki={envinfo.wikidbname} --cachedir={DEPLOYED_ROOT}/cache/{version}')
 
             for cmd in self.rsync:  # move staged content to live
-                self.exitcodes.append(run_command(cmd))
-            non_zero_code(self.exitcodes)
+                self.exitcodes.append(ShellExecutor.run(cmd))
+            ShellExecutor.ensure_all_zero(self.exitcodes)
 
             if args.l10n and version:  # setup l10n
                 lang = f'--lang={args.lang}' if args.lang else ''
@@ -857,17 +826,17 @@ class DeploymentRunner:
                 self.rebuild.append(f'sudo -u {DEPLOYUSER} php {self._runner}{DEPLOYED_ROOT}/{version}/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo.wikidbname}')
 
             for cmd in self.postinstall:  # cmds to run after rsync & install (like mergemessage)
-                self.exitcodes.append(run_command(cmd))
-            non_zero_code(self.exitcodes, nolog=args.nolog)
+                self.exitcodes.append(ShellExecutor.run(cmd))
+            ShellExecutor.ensure_all_zero(self.exitcodes, nolog=args.nolog)
             for cmd in self.rebuild:  # update ext list + l10n
-                self.exitcodes.append(run_command(cmd))
-            non_zero_code(self.exitcodes, nolog=args.nolog)
+                self.exitcodes.append(ShellExecutor.run(cmd))
+            ShellExecutor.ensure_all_zero(self.exitcodes, nolog=args.nolog)
 
             # see if we are online - exit code 3 if not
             if args.port:
-                check_up(Debug=None, Host=envinfo.wikiurl, verify=False, force=args.force, nolog=args.nolog, port=args.port)
+                _default_canary_checker.check(Debug=None, Host=envinfo.wikiurl, verify=False, force=args.force, nolog=args.nolog, port=args.port)
             else:
-                check_up(Debug=None, Host=envinfo.wikiurl, verify=False, force=args.force, nolog=args.nolog)
+                _default_canary_checker.check(Debug=None, Host=envinfo.wikiurl, verify=False, force=args.force, nolog=args.nolog)
 
         # actually set remote lists
         for option in options:
@@ -949,8 +918,9 @@ class DeploymentRunner:
                     if not version:
                         continue
                     repo = version
-                self.exitcodes.append(run_command(_git.pull(repo, branch=self.args.branch)))
-                self.exitcodes.extend(_patch_applier.apply_all(repo))
+                self.exitcodes.append(ShellExecutor.run(_git.pull(repo, branch=self.args.branch)))
+                codes, _ = _patch_applier.apply_all(repo)
+                self.exitcodes.extend(codes)
             except KeyError:
                 print(Console.fail(f'Failed to pull {repo} due to invalid name'))
 
@@ -960,16 +930,17 @@ class DeploymentRunner:
         repo = self.args.pr_repo
         branch = f'pr-{self.args.pr}'
         print(Console.header(f'==> Checking out PR #{self.args.pr} for {repo} as {branch}'))
-        self.exitcodes.append(run_command(_git.fetch_pr(repo, self.args.pr, branch)))
-        self.exitcodes.append(run_command(_git.checkout(repo, branch)))
+        self.exitcodes.append(ShellExecutor.run(_git.fetch_pr(repo, self.args.pr, branch)))
+        self.exitcodes.append(ShellExecutor.run(_git.checkout(repo, branch)))
         self._pr_checked_out = True
 
     def _upgrade_vendor(self, version: str) -> None:
         if not self.args.upgrade_vendor:
             return
-        self.exitcodes.append(run_command(_git.reset_hard('vendor', version=version)))
-        self.exitcodes.append(run_command(_git.pull('vendor', submodules=True, version=version)))
-        self.exitcodes.extend(_patch_applier.apply_all('vendor', version))
+        self.exitcodes.append(ShellExecutor.run(_git.reset_hard('vendor', version=version)))
+        self.exitcodes.append(ShellExecutor.run(_git.pull('vendor', submodules=True, version=version)))
+        codes, _ = _patch_applier.apply_all('vendor', version)
+        self.exitcodes.extend(codes)
         if not self.args.world:
             self.stage.append(
                 f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 '
@@ -982,7 +953,8 @@ class DeploymentRunner:
         for repo in self.args.apply_patches:
             if not _patch_applier.has_patches(repo, version):
                 continue
-            self.exitcodes.extend(_patch_applier.apply_all(repo, version))
+            codes, _ = _patch_applier.apply_all(repo, version)
+            self.exitcodes.extend(codes)
             staging_path = _paths.staging(repo, version)  # non-consistent behavior, ensure terminating /
             staging_path = staging_path if staging_path.endswith('/') else staging_path + '/'
             dest_path = _paths.deployed(repo, version)
@@ -999,7 +971,8 @@ class DeploymentRunner:
             repo = f'{kind}/{name}'
             if not _git.is_repo(repo, version):
                 print(Console.ok(f'Upgrading {name}'))
-                self.exitcodes.extend(_patch_applier.apply_all(repo, version))
+                codes, _ = _patch_applier.apply_all(repo, version)
+                self.exitcodes.extend(codes)
                 if not self.args.world:
                     self.rsync.append(_rsync_builder.build(time=self.args.ignore_time, location=f'{STAGING_ROOT}/{version}/{repo}/*', dest=f'{DEPLOYED_ROOT}/{version}/{repo}/'))
                     self.rsyncpaths.append(f'{DEPLOYED_ROOT}/{version}/{repo}/')
@@ -1054,7 +1027,7 @@ class DeploymentRunner:
             return
 
         updated = args.force_upgrade or output != 'Already up to date.'
-        applied_codes, patches_changed = _patch_applier.apply_all_tracking_changes(repo, version)
+        applied_codes, patches_changed = _patch_applier.apply_all(repo, version)
         self.exitcodes.extend(applied_codes)
 
         # a patch can be added or changed without any upstream commit
@@ -1077,12 +1050,12 @@ class DeploymentRunner:
                 print(Console.warn('WARNING: upgrade contains schema changes.'))
                 try:
                     if input(Console.bold('Type Y to confirm: ')).upper() != 'Y':
-                        self.exitcodes.append(run_command(_git.reset_revert(repo, version)))
+                        self.exitcodes.append(ShellExecutor.run(_git.reset_revert(repo, version)))
                         print(Console.warn('reverted'))
                         continue
                     self.newschema.append(f'{STAGING_ROOT}/{version}/{repo}/{file}')
                 except KeyboardInterrupt:
-                    run_command(_git.reset_revert(repo, version))
+                    ShellExecutor.run(_git.reset_revert(repo, version))
                     print(Console.warn('reverted'))
                     self._print_summary()
                     print(Console.fail('Operation aborted by user'))
@@ -1099,11 +1072,6 @@ class DeploymentRunner:
             self._needs_version_cache_rebuild = True
 
 
-def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
-    Sal.task = args.task
-    DeploymentRunner(args).run(start)
-
-
 def task_id(value: str) -> str:
     if not re.fullmatch(r'T[0-9]+', value):
         raise argparse.ArgumentTypeError(f'invalid task ID {value!r}, expected something like T12345')
@@ -1116,7 +1084,7 @@ class UpgradeExtensionsAction(argparse.Action):  # pragma: no cover
         if not mw_versions:
             parser.error('--versions is required when using --upgrade-extensions (--versions must come before --upgrade-extensions)')
         input_extensions = values.split(',')
-        valid_extensions = get_valid_extensions(mw_versions)
+        valid_extensions = Discovery.extensions(mw_versions)
         if 'all' in input_extensions:
             input_extensions = valid_extensions
         invalid_extensions = set(input_extensions) - set(valid_extensions)
@@ -1131,7 +1099,7 @@ class UpgradeSkinsAction(argparse.Action):  # pragma: no cover
         if not mw_versions:
             parser.error('--versions is required when using --upgrade-skins (--versions must come before --upgrade-skins)')
         input_skins = values.split(',')
-        valid_skins = get_valid_skins(mw_versions)
+        valid_skins = Discovery.skins(mw_versions)
         if 'all' in input_skins:
             input_skins = valid_skins
         invalid_skins = set(input_skins) - set(valid_skins)
@@ -1160,7 +1128,7 @@ class LangAction(argparse.Action):
 class VersionsAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         input_versions = values.split(',')
-        valid_versions = get_valid_versions()
+        valid_versions = Discovery.versions()
         if 'all' in input_versions:
             input_versions = valid_versions
         invalid_versions = set(input_versions) - set(valid_versions)
@@ -1187,7 +1155,7 @@ class ApplyPatchesAction(argparse.Action):
             parser.error('--versions is required when using --apply-patches (--versions must come before --apply-patches)')
         input_repos = values.split(',')
         if 'all' in input_repos:
-            input_repos = get_all_patch_paths()
+            input_repos = Discovery.patch_paths()
         setattr(namespace, self.dest, input_repos)
 
 
@@ -1227,4 +1195,4 @@ if __name__ == '__main__':
     parser.add_argument('--debug', dest='debug', action='store_true', help='show the underlying command output when a component fails to fetch')
     parser.add_argument('--task', dest='task', type=task_id, help='Phorge task ID to include in the log entries, e.g. T12345')
 
-    run(parser.parse_args(), start)
+    DeploymentRunner(parser.parse_args()).run(start)
