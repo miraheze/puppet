@@ -1,6 +1,7 @@
 import argparse
 import os
 import re
+import shlex
 import socket
 import unittest
 from unittest.mock import MagicMock, patch
@@ -178,6 +179,123 @@ class TestMarkAll(unittest.TestCase):
         loginfo = {}
         mwdeploy._mark_all(loginfo, 'servers', ['a'], ['a'])
         self.assertNotIn('servers', loginfo)
+
+
+class TestSal(unittest.TestCase):
+    def test_suffix_is_empty_without_a_task(self):
+        with patch.object(mwdeploy.Sal, 'task', None):
+            self.assertEqual(mwdeploy.Sal.suffix(), '')
+
+    def test_suffix_names_the_task(self):
+        with patch.object(mwdeploy.Sal, 'task', 'T12345'):
+            self.assertEqual(mwdeploy.Sal.suffix(), ' (T12345)')
+
+    def test_plain_removes_color_codes(self):
+        colored = f'{mwdeploy.Console.BOLD}{mwdeploy.Console.RED}failed{mwdeploy.Console.RESET}'
+        self.assertEqual(mwdeploy.Sal.plain(colored), 'failed')
+
+    def test_plain_removes_the_leading_header_arrow(self):
+        self.assertEqual(mwdeploy.Sal.plain('==> Starting deploy'), 'Starting deploy')
+
+    def test_plain_keeps_an_arrow_that_is_not_at_the_start(self):
+        self.assertEqual(mwdeploy.Sal.plain('moved a ==> b'), 'moved a ==> b')
+
+    def test_plain_removes_double_quotes(self):
+        self.assertEqual(mwdeploy.Sal.plain('deploy of "{\'a\': 1}" to test151'), "deploy of {'a': 1} to test151")
+
+    def test_plain_leaves_an_undecorated_message_alone(self):
+        self.assertEqual(mwdeploy.Sal.plain('DEPLOY ABORTED: Canary check failed for x'), 'DEPLOY ABORTED: Canary check failed for x')
+
+    def test_command_sends_only_the_plain_text_as_one_argument(self):
+        message = mwdeploy.Console.header('==> Starting deploy of "{1}" to test151')
+        with patch.object(mwdeploy.Sal, 'task', None):
+            command = mwdeploy.Sal.command(message)
+        self.assertEqual(shlex.split(command), ['/usr/local/bin/logsalmsg', 'Starting deploy of {1} to test151'])
+
+    def test_command_includes_the_task(self):
+        with patch.object(mwdeploy.Sal, 'task', 'T12345'):
+            command = mwdeploy.Sal.command('finished deploy')
+        self.assertEqual(shlex.split(command), ['/usr/local/bin/logsalmsg', 'finished deploy (T12345)'])
+
+    def test_command_survives_a_real_shell(self):
+        import subprocess
+        import tempfile
+
+        message = 'finished deploy of {\'a\': 1} > Starting; echo $HOME (odd) | cat'
+        with patch.object(mwdeploy.Sal, 'task', 'T12345'):
+            command = mwdeploy.Sal.command(message).replace('/usr/local/bin/logsalmsg', 'printf %s', 1)
+        with tempfile.TemporaryDirectory() as tmp:
+            result = subprocess.run(command, shell=True, capture_output=True, text=True, cwd=tmp)
+            self.assertEqual(os.listdir(tmp), [])
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, f'{message} (T12345)')
+
+    def test_log_includes_the_task_when_printing(self):
+        with patch.object(mwdeploy.Sal, 'task', 'T12345'), \
+             patch('builtins.print') as mock_print:
+            mwdeploy.DeploymentRunner._log('hello', nolog=True)
+        mock_print.assert_called_once_with('hello (T12345)')
+
+    def test_log_sends_the_message_without_its_display_decoration(self):
+        decorated = mwdeploy.Console.header('==> Starting deploy of "{1}" to test151')
+        with patch.object(mwdeploy.Sal, 'task', None), \
+             patch('mwdeploy.subprocess.run') as mock_subprocess_run:
+            mwdeploy.DeploymentRunner._log(decorated, nolog=False)
+        self.assertEqual(shlex.split(mock_subprocess_run.call_args.args[0])[1], 'Starting deploy of {1} to test151')
+
+    def test_log_keeps_the_decoration_when_printing(self):
+        with patch.object(mwdeploy.Sal, 'task', None), \
+             patch('builtins.print') as mock_print:
+            mwdeploy.DeploymentRunner._log('==> Starting deploy of "{1}" to test151', nolog=True)
+        mock_print.assert_called_once_with('==> Starting deploy of "{1}" to test151')
+
+    def test_log_includes_the_task_when_sending(self):
+        with patch.object(mwdeploy.Sal, 'task', 'T12345'), \
+             patch('mwdeploy.subprocess.run') as mock_subprocess_run:
+            mwdeploy.DeploymentRunner._log('hello', nolog=False)
+        self.assertEqual(shlex.split(mock_subprocess_run.call_args.args[0])[1], 'hello (T12345)')
+
+    @patch('mwdeploy.subprocess.run')
+    def test_prep_abort_entry_includes_the_task(self, mock_subprocess_run):
+        with patch.object(mwdeploy.Sal, 'task', 'T12345'), \
+             pytest.raises(SystemExit):
+            mwdeploy.non_zero_code([1], nolog=False, leave=True)
+        self.assertEqual(shlex.split(mock_subprocess_run.call_args.args[0])[1], 'DEPLOY ABORTED: Non-Zero Exit Code in prep, see output. (T12345)')
+
+    @patch('mwdeploy.subprocess.run')
+    def test_canary_abort_entry_includes_the_task(self, mock_subprocess_run):
+        checker = mwdeploy.CanaryChecker()
+        fake_response = MagicMock(status_code=500, text='nope', headers={})
+        with patch.object(checker._session, 'get', return_value=fake_response), \
+             patch.object(mwdeploy.Sal, 'task', 'T12345'):
+            checker.check(nolog=False, Debug='mw151', domain='example.org', verify=False, use_cert=False, exit_on_failure=False)
+        self.assertEqual(shlex.split(mock_subprocess_run.call_args.args[0])[1], 'DEPLOY ABORTED: Canary check failed for example.org@mw151 (T12345)')
+
+    def test_run_sets_the_task_used_for_every_log_entry(self):
+        with patch.object(mwdeploy, 'DeploymentRunner') as mock_runner, \
+             patch.object(mwdeploy.Sal, 'task', None):
+            mwdeploy.run(argparse.Namespace(task='T12345'), 0.0)
+            self.assertEqual(mwdeploy.Sal.task, 'T12345')
+        mock_runner.assert_called_once()
+
+
+class TestTaskArgument(unittest.TestCase):
+    def test_task_id_accepts_a_phorge_task(self):
+        self.assertEqual(mwdeploy.task_id('T12345'), 'T12345')
+
+    def test_task_id_rejects_anything_else(self):
+        for value in ['', 'T', 't12345', '12345', 'T12a45', 'T12345 ', ' T12345', 'T12345;ls', 'T12345\n', 'T-1']:
+            with self.subTest(value=value), \
+                 pytest.raises(argparse.ArgumentTypeError, match='invalid task ID'):
+                mwdeploy.task_id(value)
+
+    def test_task_flag_parses_through_argparse(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--task', dest='task', type=mwdeploy.task_id)
+        self.assertIsNone(parser.parse_args([]).task)
+        self.assertEqual(parser.parse_args(['--task', 'T12345']).task, 'T12345')
+        with pytest.raises(SystemExit):
+            parser.parse_args(['--task', 'nope'])
 
 
 class TestNonZeroCode(unittest.TestCase):
@@ -937,6 +1055,11 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
         loginfo = runner._build_loginfo()
         self.assertEqual(loginfo['pr_repo'], 'config')
         self.assertEqual(loginfo['pr'], 42)
+
+    def test_build_loginfo_leaves_the_task_out_since_it_is_added_to_the_entry_itself(self):
+        args = argparse.Namespace(task='T12345', servers=['mw151'], pr=None, pr_repo='config')
+        runner = mwdeploy.DeploymentRunner(args)
+        self.assertEqual(runner._build_loginfo(), {'servers': 'mw151'})
 
     def test_checkout_pr_fetches_then_checks_out_once(self):
         args = argparse.Namespace(pr=42, pr_repo='config')
