@@ -99,9 +99,13 @@ class Sal:
     def suffix(cls) -> str:
         return f' ({cls.task})' if cls.task else ''
 
+    @staticmethod
+    def plain(text: str) -> str:
+        return Console.strip(text).removeprefix('==> ').replace('"', '')
+
     @classmethod
     def command(cls, message: str) -> str:
-        return f'/usr/local/bin/logsalmsg {shlex.quote(message + cls.suffix())}'
+        return f'/usr/local/bin/logsalmsg {shlex.quote(cls.plain(message) + cls.suffix())}'
 
 
 def _run(cmd: str) -> subprocess.CompletedProcess:
@@ -924,7 +928,7 @@ class DeploymentRunner:
         if nolog:
             print(f'{text}{Sal.suffix()}')
         else:
-            subprocess.run(Sal.command(Console.strip(text)), shell=True)
+            subprocess.run(Sal.command(text), shell=True)
 
     def _print_summary(self) -> None:
         if self.tagsinfo:
