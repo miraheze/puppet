@@ -398,26 +398,23 @@ class RsyncCommandBuilder:
     def __init__(self, deploy_user: str = DEPLOYUSER):
         self._deploy_user = deploy_user
 
-    def build(self, time, dest: str, recursive: bool = True, local: bool = True,
-              location: Optional[str] = None, server: Optional[str] = None) -> str:
+    def build(self, time, source_root: str, dest_root: str, relative_paths: list[str],
+              local: bool = True, server: Optional[str] = None) -> str:
+        if not relative_paths:
+            raise Exception('At least one path must be given.')
         params = '--inplace' if time else '--update'
-        if recursive:
-            params += ' -r --delete'
+        params += ' -r --delete'
+        sources = ' '.join(f'{source_root}/./{path}' for path in relative_paths)
 
         if local:
-            if location is None:
-                raise Exception('Location must be specified for local rsync.')
-            return f'sudo -u {self._deploy_user} rsync {params} --exclude=".*" {location} {dest}'
+            return f'sudo -u {self._deploy_user} rsync -R {params} --exclude=".*" {sources} {dest_root}/'
 
-        if location is None:
-            location = dest
-        if location == dest and server:
+        if server:
             fqdn = socket.getfqdn()
             domain = '.'.join(fqdn.split('.')[1:])
-            return f'sudo -u {self._deploy_user} rsync {params} -e "ssh -i {STAGING_ROOT}/deploykey" {dest} {self._deploy_user}@{server}.{domain}:{dest}'
+            return f'sudo -u {self._deploy_user} rsync -R {params} -e "ssh -i {STAGING_ROOT}/deploykey" {sources} {self._deploy_user}@{server}.{domain}:{dest_root}/'
 
-        # a return None here would be dangerous - except and ignore R503 as return after Exception is not reachable
-        raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
+        raise Exception('Server must be specified for a remote rsync.')
 
 
 _rsync_builder = RsyncCommandBuilder()
@@ -599,22 +596,22 @@ class RemoteDeployer:
         self._batch_size = batch_size
         self._max_workers = max_workers
 
-    def _deploy_to_server(self, server: str, time_flag, path: str, recursive: bool, envinfo: Environment,
+    def _deploy_to_server(self, server: str, time_flag, paths: list[str], root: str, envinfo: Environment,
                           nolog: bool, force: bool) -> tuple[str, int, bool]:
-        cmd = self._rsync_builder.build(time=time_flag, local=False, dest=path, server=server, recursive=recursive)
+        cmd = self._rsync_builder.build(time_flag, root, root, paths, local=False, server=server)
         ec = ShellExecutor.run(cmd)
         healthy = self._canary.check(nolog, Debug=server, force=force, domain=envinfo.wikiurl, exit_on_failure=False)
         status = Console.ok('OK') if ec == 0 and healthy else Console.fail('FAIL')
-        print(f'  {status}  {server}  {path}')
+        print(f'  {status}  {server}')
         return server, ec, healthy
 
-    def _run_batch(self, batch: list[str], time_flag, path: str, recursive: bool, envinfo: Environment,
+    def _run_batch(self, batch: list[str], time_flag, paths: list[str], root: str, envinfo: Environment,
                    nolog: bool, force: bool) -> list[tuple[str, int, bool]]:
         if len(batch) == 1:
-            return [self._deploy_to_server(batch[0], time_flag, path, recursive, envinfo, nolog, force)]
+            return [self._deploy_to_server(batch[0], time_flag, paths, root, envinfo, nolog, force)]
         with ThreadPoolExecutor(max_workers=min(self._max_workers, len(batch))) as pool:
             futures = [
-                pool.submit(self._deploy_to_server, server, time_flag, path, recursive, envinfo, nolog, force)
+                pool.submit(self._deploy_to_server, server, time_flag, paths, root, envinfo, nolog, force)
                 for server in batch
             ]
             return [future.result() for future in as_completed(futures)]
@@ -634,16 +631,17 @@ class RemoteDeployer:
         for start in range(0, len(remaining), self._batch_size):
             yield remaining[start:start + self._batch_size]
 
-    def sync(self, time_flag, serverlist: list[str], path: str, envinfo: Environment, nolog: bool,
-             recursive: bool = True, force: bool = False, batch: bool = False) -> int:
-        print(Console.header(f'==> Deploying {path}'))
+    def sync(self, time_flag, serverlist: list[str], paths: list[str], root: str, envinfo: Environment,
+             nolog: bool, force: bool = False, batch: bool = False) -> int:
+        label = paths[0] if len(paths) == 1 else f'{len(paths)} paths'
+        print(Console.header(f'==> Deploying {label}'))
         targets = [server for server in serverlist if self._hostname != server.split('.')[0]]
-        progress = ProgressBar(len(targets), label=Console.dim(path))
+        progress = ProgressBar(len(targets), label=Console.dim(label))
         deployed = 0
 
         codes: list[int] = []
         for group in self._batches(targets, batch):
-            results = self._run_batch(group, time_flag, path, recursive, envinfo, nolog, force)
+            results = self._run_batch(group, time_flag, paths, root, envinfo, nolog, force)
             codes.extend(ec for _, ec, _ in results)
             deployed += len(group)
             progress.update(deployed)
@@ -651,10 +649,10 @@ class RemoteDeployer:
             failed = [server for server, ec, healthy in results if ec != 0 or not healthy]
             if failed:
                 print(Console.fail(f'Deploy or health check failed on: {", ".join(failed)}. Stopping before the remaining batches.'))
-                print(Console.fail(f'Finished {path} deploys.'))
+                print(Console.fail(f'Finished {label} deploys.'))
                 sys.exit(3)
 
-        print(Console.ok(f'Finished {path} deploys.'))
+        print(Console.ok(f'Finished {label} deploys.'))
         if not codes:
             return 0
         return next((code for code in codes if code != 0), codes[-1])
@@ -779,18 +777,18 @@ class DeploymentRunner:
                         f'https_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet',
                     ))
                     self._needs_version_cache_rebuild = True
-                self.rsync.append(_rsync_builder.build(time=args.ignore_time, location=f'{_paths.staging(option)}*', dest=_paths.deployed(option)))
+                self.rsync.append(self._relative(_paths.deployed(option)))
             ShellExecutor.ensure_all_zero(self.exitcodes, nolog=args.nolog)
 
             # a version upgrade only needs one RebuildVersionCache run at the end,
-            # no matter how many extensions, skins, or core itself were upgraded
+            # no matter how many extensions, skins, or core itself were upgraded.
             if version and self._needs_version_cache_rebuild:
                 self.rebuild.append(
                     f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH={STAGING_ROOT}/{version} php {self._runner_staging}'
                     f'MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} '
                     f'--wiki={envinfo.wikidbname} --conf={STAGING_ROOT}/config/LocalSettings.php',
                 )
-                self.rsyncpaths.append(f'{DEPLOYED_ROOT}/cache/{version}/gitinfo/')
+                self.rsyncpaths.append(f'cache/{version}/gitinfo')
 
             if version and args.reset_world:  # complete reset_world by applying patches, after potential composer update
                 applied = []
@@ -807,16 +805,16 @@ class DeploymentRunner:
 
             if args.files and not version:  # specfic extra files
                 for file in str(args.files).split(','):
-                    self.rsync.append(_rsync_builder.build(time=args.ignore_time, recursive=False, location=f'{STAGING_ROOT}/{file}', dest=f'{DEPLOYED_ROOT}/{file}'))
+                    self.rsync.append(file)
             if args.folders and not version:  # specfic extra folders
                 for folder in str(args.folders).split(','):
-                    self.rsync.append(_rsync_builder.build(time=args.ignore_time, location=f'{STAGING_ROOT}/{folder}/*', dest=f'{DEPLOYED_ROOT}/{folder}/'))
+                    self.rsync.append(folder)
 
             if args.extension_list and version:  # when adding skins/exts
                 self.rebuild.append(f'sudo -u {DEPLOYUSER} php {self._runner}ManageWiki:RebuildExtensionListCache --wiki={envinfo.wikidbname} --cachedir={DEPLOYED_ROOT}/cache/{version}')
 
-            for cmd in self.rsync:  # move staged content to live
-                self.exitcodes.append(ShellExecutor.run(cmd))
+            if self.rsync:  # move staged content to live
+                self.exitcodes.append(ShellExecutor.run(_rsync_builder.build(args.ignore_time, STAGING_ROOT, DEPLOYED_ROOT, self.rsync)))
             ShellExecutor.ensure_all_zero(self.exitcodes)
 
             if args.l10n and version:  # setup l10n
@@ -841,22 +839,20 @@ class DeploymentRunner:
         for option in options:
             if options[option]:
                 target = version if option == 'world' else option
-                self.rsyncpaths.append(_paths.deployed(target))
+                self.rsyncpaths.append(self._relative(_paths.deployed(target)))
         if args.files and not version:
             for file in str(args.files).split(','):
-                self.rsyncfiles.append(f'{DEPLOYED_ROOT}/{file}')
+                self.rsyncpaths.append(file)
         if args.folders and not version:
             for folder in str(args.folders).split(','):
-                self.rsyncpaths.append(f'{DEPLOYED_ROOT}/{folder}/')
+                self.rsyncpaths.append(folder)
         if args.extension_list and version:
-            self.rsyncfiles.append(f'{DEPLOYED_ROOT}/cache/{version}/extension-list.php')
+            self.rsyncpaths.append(f'cache/{version}/extension-list.php')
         if args.l10n and version:
-            self.rsyncpaths.append(f'{DEPLOYED_ROOT}/cache/{version}/l10n/')
+            self.rsyncpaths.append(f'cache/{version}/l10n')
 
-        for path in self.rsyncpaths:
-            self.exitcodes.append(_remote_deployer.sync(args.ignore_time, args.servers, path, envinfo, args.nolog, force=args.force, batch=args.batch))
-        for file in self.rsyncfiles:
-            self.exitcodes.append(_remote_deployer.sync(args.ignore_time, args.servers, file, envinfo, args.nolog, recursive=False, force=args.force, batch=args.batch))
+        if self.rsyncpaths:
+            self.exitcodes.append(_remote_deployer.sync(args.ignore_time, args.servers, self.rsyncpaths, DEPLOYED_ROOT, envinfo, args.nolog, force=args.force, batch=args.batch))
 
         self._print_summary()
         return self.exitcodes
@@ -864,7 +860,6 @@ class DeploymentRunner:
     def _reset_state(self) -> None:
         self.exitcodes: list[int] = []
         self.rsyncpaths: list[str] = []
-        self.rsyncfiles: list[str] = []
         self.rsync: list[str] = []
         self.rebuild: list[str] = []
         self.postinstall: list[str] = []
@@ -875,6 +870,14 @@ class DeploymentRunner:
         self._needs_version_cache_rebuild = False
         self._runner = ''
         self._runner_staging = ''
+
+    @staticmethod
+    def _relative(dest: str) -> str:
+        return dest.removeprefix(f'{DEPLOYED_ROOT}/').rstrip('/')
+
+    def _queue_rsync(self, relative: str) -> None:
+        self.rsync.append(relative)
+        self.rsyncpaths.append(relative)
 
     def _build_loginfo(self) -> dict:
         loginfo = {}
@@ -945,8 +948,7 @@ class DeploymentRunner:
                 f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 '
                 f'https_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet',
             )
-            self.rsync.append(_rsync_builder.build(time=self.args.ignore_time, location=f'{STAGING_ROOT}/{version}/vendor/*', dest=f'{DEPLOYED_ROOT}/{version}/vendor/'))
-            self.rsyncpaths.append(f'{DEPLOYED_ROOT}/{version}/vendor/')
+            self._queue_rsync(f'{version}/vendor')
 
     def _apply_extra_patches(self, version: str) -> None:
         for repo in self.args.apply_patches:
@@ -954,12 +956,7 @@ class DeploymentRunner:
                 continue
             codes, _ = _patch_applier.apply_all(repo, version)
             self.exitcodes.extend(codes)
-            staging_path = _paths.staging(repo, version)  # non-consistent behavior, ensure terminating /
-            staging_path = staging_path if staging_path.endswith('/') else staging_path + '/'
-            dest_path = _paths.deployed(repo, version)
-            dest_path = dest_path if dest_path.endswith('/') else dest_path + '/'
-            self.rsync.append(_rsync_builder.build(time=self.args.ignore_time, location=f'{staging_path}*', dest=dest_path))
-            self.rsyncpaths.append(dest_path)
+            self._queue_rsync(self._relative(_paths.deployed(repo, version)))
 
     def _upgrade_components(self, kind: str, items: list[str], version: str) -> None:
         # non-git repos (or ones missing entirely) are handled right away, since
@@ -973,8 +970,7 @@ class DeploymentRunner:
                 codes, _ = _patch_applier.apply_all(repo, version)
                 self.exitcodes.extend(codes)
                 if not self.args.world:
-                    self.rsync.append(_rsync_builder.build(time=self.args.ignore_time, location=f'{STAGING_ROOT}/{version}/{repo}/*', dest=f'{DEPLOYED_ROOT}/{version}/{repo}/'))
-                    self.rsyncpaths.append(f'{DEPLOYED_ROOT}/{version}/{repo}/')
+                    self._queue_rsync(f'{version}/{repo}')
                 continue
 
             if not os.path.exists(_paths.staging(repo, version)):
@@ -1066,8 +1062,7 @@ class DeploymentRunner:
                 self.tagsinfo.append(f'Tags for {name}: {", ".join(sorted(tags))}')
 
         if changed and not args.world:
-            self.rsync.append(_rsync_builder.build(time=args.ignore_time, location=f'{STAGING_ROOT}/{version}/{repo}/*', dest=f'{DEPLOYED_ROOT}/{version}/{repo}/'))
-            self.rsyncpaths.append(f'{DEPLOYED_ROOT}/{version}/{repo}/')
+            self._queue_rsync(f'{version}/{repo}')
             self._needs_version_cache_rebuild = True
 
 
