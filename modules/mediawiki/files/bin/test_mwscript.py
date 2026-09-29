@@ -82,6 +82,44 @@ def test_extension_nested_path():
 
 
 @pytest.mark.usefixtures('shell')
+def test_extension_scripts_directory():
+    info = build('extensions/Translate/scripts/moveTranslatableBundle.php', 'metawiki', '--version', '1.43')
+    assert info.command == f'{PHP} {RUNNER} /srv/mediawiki/1.43/extensions/Translate/scripts/moveTranslatableBundle.php --wiki=metawiki'
+    assert info.long is False
+
+
+@pytest.mark.usefixtures('shell')
+def test_extension_explicit_maintenance_directory():
+    info = build('extensions/Foo/maintenance/test.php', 'metawiki', '--version', '1.43')
+    assert info.command.endswith('/srv/mediawiki/1.43/extensions/Foo/maintenance/test.php --wiki=metawiki')
+
+
+@pytest.mark.usefixtures('shell')
+def test_extension_scripts_nested_directory():
+    info = build('extensions/Translate/scripts/sub/test.php', 'metawiki', '--version', '1.43')
+    assert info.command.endswith('/srv/mediawiki/1.43/extensions/Translate/scripts/sub/test.php --wiki=metawiki')
+
+
+@pytest.mark.usefixtures('shell')
+def test_scripts_named_file_stays_in_maintenance():
+    info = build('extensions/Foo/scripts.php', 'metawiki', '--version', '1.43')
+    assert info.command.endswith('/srv/mediawiki/1.43/extensions/Foo/maintenance/scripts.php --wiki=metawiki')
+
+
+@pytest.mark.usefixtures('shell')
+def test_translate_move_bundle():
+    info = build(
+        'extensions/Translate/scripts/moveTranslatableBundle.php', 'metawiki',
+        'Main Page 60', 'Main Page 70', 'Admin', '--reason', 'Just an example', '--skip-redirect',
+        '--version', '1.43',
+    )
+    assert shlex.split(info.command)[-7:] == [
+        '--wiki=metawiki', 'Main Page 60', 'Main Page 70', 'Admin',
+        '--reason', 'Just an example', '--skip-redirect',
+    ]
+
+
+@pytest.mark.usefixtures('shell')
 def test_subdir():
     info = build('subdir/test.php', 'metawiki', '--version', '1.43')
     assert info.command == f'{PHP} {RUNNER} /srv/mediawiki/1.43/maintenance/subdir/test.php --wiki=metawiki'
