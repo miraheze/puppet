@@ -582,49 +582,49 @@ class TestPathAndCommandBuilders(unittest.TestCase):
             f'sudo -u www-data rsync -R --inplace -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/./config www-data@meta.{domain}:/srv/mediawiki/'
 
     def test_git_pull(self):
-        assert mwdeploy._git.pull('config') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --quiet'
+        assert mwdeploy._git.pull('config') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ pull --quiet'
 
     def test_git_pull_branch(self):
-        assert mwdeploy._git.pull('config', branch='myfunbranch') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull origin myfunbranch --quiet'
+        assert mwdeploy._git.pull('config', branch='myfunbranch') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ pull origin myfunbranch --quiet'
 
     def test_git_pull_skin(self):
-        assert mwdeploy._git.pull('skins/Vector', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull --quiet'
+        assert mwdeploy._git.pull('skins/Vector', version='version') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull --quiet'
 
     def test_git_pull_skin_no_quiet(self):
-        assert mwdeploy._git.pull('skins/Vector', quiet=False, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull'
+        assert mwdeploy._git.pull('skins/Vector', quiet=False, version='version') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull'
 
     def test_git_pull_extension_submodules(self):
-        assert mwdeploy._git.pull('extensions/VisualEditor', submodules=True, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules --quiet'
+        assert mwdeploy._git.pull('extensions/VisualEditor', submodules=True, version='version') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules --quiet'
 
     def test_git_pull_extension_submodules_no_quiet(self):
-        assert mwdeploy._git.pull('extensions/VisualEditor', submodules=True, quiet=False, version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules'
+        assert mwdeploy._git.pull('extensions/VisualEditor', submodules=True, quiet=False, version='version') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules'
 
     def test_git_pull_branch_submodules(self):
-        assert mwdeploy._git.pull('config', submodules=True, branch='test') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test --quiet'
+        assert mwdeploy._git.pull('config', submodules=True, branch='test') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test --quiet'
 
     def test_git_pull_branch_submodules_no_quiet(self):
-        assert mwdeploy._git.pull('config', submodules=True, branch='test', quiet=False) == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test'
+        assert mwdeploy._git.pull('config', submodules=True, branch='test', quiet=False) == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test'
 
     def test_git_reset_revert(self):
-        assert mwdeploy._git.reset_revert('extensions/VisualEditor', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor reset --hard HEAD@{1}'
+        assert mwdeploy._git.reset_revert('extensions/VisualEditor', version='version') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor reset --hard HEAD@{1}'
 
     def test_git_reset_hard(self):
-        assert mwdeploy._git.reset_hard('vendor', version='version') == 'sudo -u www-data git -C /srv/mediawiki-staging/version/vendor reset --hard'
+        assert mwdeploy._git.reset_hard('vendor', version='version') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/version/vendor reset --hard'
 
     def test_git_fetch_pr(self):
-        assert mwdeploy._git.fetch_pr('config', 42, 'pr-42') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ fetch origin +pull/42/head:pr-42'
+        assert mwdeploy._git.fetch_pr('config', 42, 'pr-42') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ fetch origin +pull/42/head:pr-42'
 
     def test_git_checkout(self):
-        assert mwdeploy._git.checkout('config', 'pr-42') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ checkout pr-42'
+        assert mwdeploy._git.checkout('config', 'pr-42') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ checkout pr-42'
 
     def test_git_apply_forward(self):
-        assert mwdeploy._git.apply('config', '/patch.diff') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ apply --index /patch.diff'
+        assert mwdeploy._git.apply('config', '/patch.diff') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ apply --index /patch.diff'
 
     def test_git_apply_check(self):
-        assert mwdeploy._git.apply('config', '/patch.diff', check=True) == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ apply --check /patch.diff'
+        assert mwdeploy._git.apply('config', '/patch.diff', check=True) == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ apply --check /patch.diff'
 
     def test_git_apply_check_reverse(self):
-        assert mwdeploy._git.apply('config', '/patch.diff', check=True, reverse=True) == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ apply --check --reverse /patch.diff'
+        assert mwdeploy._git.apply('config', '/patch.diff', check=True, reverse=True) == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ apply --check --reverse /patch.diff'
 
     def test_git_is_repo(self):
         with patch('os.path.isdir', return_value=True) as mock_isdir:
