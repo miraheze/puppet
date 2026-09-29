@@ -26,7 +26,7 @@ def completed(stdout: str = '', returncode: int = 0) -> subprocess.CompletedProc
 
 
 @pytest.fixture(autouse=True)
-def reset_state():
+def _reset_state():
     Sal.task = None
     original = Console.enabled
     Console.enabled = False
@@ -35,7 +35,7 @@ def reset_state():
     Console.enabled = original
 
 
-@pytest.fixture
+@pytest.fixture()
 def shell():
     calls = []
 
@@ -55,7 +55,8 @@ def build(*argv: str) -> CommandInfo:
     return CommandBuilder(mwscript.get_args(list(argv))).build()
 
 
-def test_simple(shell):
+@pytest.mark.usefixtures('shell')
+def test_simple():
     info = build('test.php', 'metawiki', '--version', '1.43')
     assert info == CommandInfo(
         command=f'{PHP} {RUNNER} /srv/mediawiki/1.43/maintenance/test.php --wiki=metawiki',
@@ -66,23 +67,27 @@ def test_simple(shell):
     )
 
 
-def test_extension_path(shell):
+@pytest.mark.usefixtures('shell')
+def test_extension_path():
     info = build('extensions/CheckUser/test.php', 'metawiki', '--version', '1.43')
     assert info.command == f'{PHP} {RUNNER} /srv/mediawiki/1.43/extensions/CheckUser/maintenance/test.php --wiki=metawiki'
     assert info.long is False
 
 
-def test_extension_nested_path(shell):
+@pytest.mark.usefixtures('shell')
+def test_extension_nested_path():
     info = build('extensions/Foo/sub/test.php', 'metawiki', '--version', '1.43')
     assert info.command.endswith('/srv/mediawiki/1.43/extensions/Foo/maintenance/sub/test.php --wiki=metawiki')
 
 
-def test_subdir(shell):
+@pytest.mark.usefixtures('shell')
+def test_subdir():
     info = build('subdir/test.php', 'metawiki', '--version', '1.43')
     assert info.command == f'{PHP} {RUNNER} /srv/mediawiki/1.43/maintenance/subdir/test.php --wiki=metawiki'
 
 
-def test_class(shell):
+@pytest.mark.usefixtures('shell')
+def test_class():
     info = build('test', 'metawiki', '--test', '--version', '1.43', '--yes')
     assert info == CommandInfo(
         command=f'{PHP} {RUNNER} test --wiki=metawiki --test',
@@ -93,14 +98,16 @@ def test_class(shell):
     )
 
 
-def test_extension_list(shell):
+@pytest.mark.usefixtures('shell')
+def test_extension_list():
     info = build('test.php', '--extension', 'CheckUser', '--version', '1.43')
     assert info.long is True
     assert info.generate == f'{PHP} {RUNNER} MirahezeMagic:GenerateExtensionDatabaseList --wiki=metawiki --extension=CheckUser --directory=/tmp'
     assert info.command == f'{FOREACH} /tmp/CheckUser.php {RUNNER} /srv/mediawiki/1.43/maintenance/test.php'
 
 
-def test_extension_list_beta_suffix(shell):
+@pytest.mark.usefixtures('shell')
+def test_extension_list_beta_suffix():
     with patch.object(mwscript, 'WIKISUFFIX', 'wikibeta'):
         info = build('test.php', '--skin', 'Vector', '--version', '1.43')
     assert info.generate is not None
@@ -113,13 +120,15 @@ def test_extension_list_detects_default_version(shell):
     assert shell[-1] == 'sudo -u www-data /usr/local/bin/getMWVersion default'
 
 
-def test_all(shell):
+@pytest.mark.usefixtures('shell')
+def test_all():
     info = build('test.php', 'all', '--version', '1.43')
     assert info.long is True
     assert info.command == f'{FOREACH} /srv/mediawiki/cache/databases.php {RUNNER} /srv/mediawiki/1.43/maintenance/test.php'
 
 
-def test_dblist(shell):
+@pytest.mark.usefixtures('shell')
+def test_dblist():
     info = build('test.php', 'active', '--version', '1.43')
     assert info.long is True
     assert info.command == f'{FOREACH} /srv/mediawiki/cache/active.php {RUNNER} /srv/mediawiki/1.43/maintenance/test.php'
@@ -139,33 +148,37 @@ def test_version_detected_from_wiki(shell):
 
 
 def test_no_versions_output():
-    with patch.object(ShellExecutor, 'run_quiet', return_value=completed('')):
-        with pytest.raises(UsageError, match='Could not determine'):
-            build('test.php', 'metawiki')
+    with patch.object(ShellExecutor, 'run_quiet', return_value=completed('')), \
+            pytest.raises(UsageError, match='Could not determine'):
+        build('test.php', 'metawiki')
 
 
 def test_version_list_unknown_version():
-    with patch.object(ShellExecutor, 'run_quiet', return_value=completed('{"stable": ""}')):
-        with pytest.raises(UsageError, match='Could not determine'):
-            build('test.php', 'stable-wikis')
+    with patch.object(ShellExecutor, 'run_quiet', return_value=completed('{"stable": ""}')), \
+            pytest.raises(UsageError, match='Could not determine'):
+        build('test.php', 'stable-wikis')
 
 
-def test_wiki_typo(shell):
+@pytest.mark.usefixtures('shell')
+def test_wiki_typo():
     with pytest.raises(UsageError, match='metawik'):
         build('test', 'metawik', '--version', '1.43')
 
 
-def test_no_wiki(shell):
+@pytest.mark.usefixtures('shell')
+def test_no_wiki():
     with pytest.raises(UsageError, match='Not enough'):
         build('test', '--version', '1.43')
 
 
-def test_wikibeta(shell):
+@pytest.mark.usefixtures('shell')
+def test_wikibeta():
     info = build('test', 'metawikibeta', '--version', '1.43')
     assert info.command.endswith('--wiki=metawikibeta')
 
 
-def test_script_args_passed_through(shell):
+@pytest.mark.usefixtures('shell')
+def test_script_args_passed_through():
     info = build('test.php', 'metawiki', '--test', 'value', '--version', '1.43')
     assert info.command.endswith('--wiki=metawiki --test value')
 
@@ -181,34 +194,40 @@ def test_script_args_passed_through(shell):
     'extensions/Cargo/cargoRecreateData.php',
     'CargoRecreateData',
 ])
-def test_long_scripts(shell, script):
+@pytest.mark.usefixtures('shell')
+def test_long_scripts(script):
     assert build(script, 'metawiki', '--version', '1.43').long is True
 
 
 @pytest.mark.parametrize('script', ['test.php', 'test', 'MirahezeMagic:GetSiteInfo'])
-def test_not_long_scripts(shell, script):
+@pytest.mark.usefixtures('shell')
+def test_not_long_scripts(script):
     assert build(script, 'metawiki', '--version', '1.43').long is False
 
 
-def test_arguments_are_quoted(shell):
+@pytest.mark.usefixtures('shell')
+def test_arguments_are_quoted():
     info = build('test.php', 'metawiki', '--reason=two words', "it's", '$(id)', ';', '--version', '1.43')
     assert info.command.endswith(shlex.join(['--reason=two words', "it's", '$(id)', ';']))
     assert shlex.split(info.command)[-4:] == ['--reason=two words', "it's", '$(id)', ';']
 
 
-def test_wiki_is_quoted(shell):
+@pytest.mark.usefixtures('shell')
+def test_wiki_is_quoted():
     info = build('test.php', 'evil; reboot wiki', '--version', '1.43')
     assert shlex.split(info.command)[-1] == '--wiki=evil; reboot wiki'
 
 
-def test_extension_is_quoted(shell):
+@pytest.mark.usefixtures('shell')
+def test_extension_is_quoted():
     info = build('test.php', '--extension', 'A B', '--version', '1.43')
     assert info.generate is not None
     assert '--extension=A B' in shlex.split(info.generate)
     assert '/tmp/A B.php' in shlex.split(info.command)
 
 
-def test_conf_is_not_read_as_confirm(shell):
+@pytest.mark.usefixtures('shell')
+def test_conf_is_not_read_as_confirm():
     args = mwscript.get_args(['test.php', 'metawiki', '--conf=/tmp/LocalSettings.php', '--ext=foo'])
     assert args.confirm is False
     assert args.extension is None
@@ -317,7 +336,7 @@ def make_runner(**overrides) -> ScriptRunner:
     return ScriptRunner(CommandInfo(**values))
 
 
-@pytest.fixture
+@pytest.fixture()
 def executor():
     with patch.object(ShellExecutor, 'run', return_value=0) as run, patch.object(ShellExecutor, 'run_quiet', return_value=completed()) as quiet:
         yield run, quiet
@@ -407,7 +426,8 @@ def test_run_prompt_interrupted(executor, capsys, error):
     assert 'Aborted!' in capsys.readouterr().out
 
 
-def test_main_runs_command(shell):
+@pytest.mark.usefixtures('shell')
+def test_main_runs_command():
     with patch.object(ScriptRunner, 'run', return_value=0) as run, pytest.raises(SystemExit) as exit_info:
         mwscript.main(['test.php', 'metawiki', '--version', '1.43', '--task', 'T5'])
     assert exit_info.value.code == 0
@@ -415,13 +435,15 @@ def test_main_runs_command(shell):
     assert Sal.task == 'T5'
 
 
-def test_main_passes_exit_code(shell):
+@pytest.mark.usefixtures('shell')
+def test_main_passes_exit_code():
     with patch.object(ScriptRunner, 'run', return_value=7), pytest.raises(SystemExit) as exit_info:
         mwscript.main(['test.php', 'metawiki', '--version', '1.43'])
     assert exit_info.value.code == 7
 
 
-def test_main_usage_error(shell, capsys):
+@pytest.mark.usefixtures('shell')
+def test_main_usage_error(capsys):
     with pytest.raises(SystemExit) as exit_info:
         mwscript.main(['test', 'metawik', '--version', '1.43'])
     assert exit_info.value.code == 2
