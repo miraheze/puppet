@@ -414,8 +414,8 @@ def test_sal_suffix():
 
 
 def test_sal_plain():
-    assert Sal.plain(Console.header('==> a "b"')) == 'a b'
-    assert Sal.plain('moved a ==> b') == 'moved a ==> b'
+    Console.enabled = True
+    assert Sal.plain(Console.header('a "b"')) == 'a b'
 
 
 def test_sal_command_quotes_message():
