@@ -6,14 +6,131 @@
 from __future__ import annotations
 
 import argparse
-import os
 import json
+import os
+import re
+import shlex
 import socket
+import subprocess
 import sys
-from typing import TypedDict
+import time
+from dataclasses import dataclass
+
+DEPLOYUSER = 'www-data'
+MEDIAWIKI_ROOT = '/srv/mediawiki'
+HOSTNAME = socket.gethostname().split('.')[0]
+WIKISUFFIX = 'wikibeta' if HOSTNAME.startswith('test') else 'wiki'
+
+LONG_SCRIPTS = frozenset({
+    'cargorecreatedata',
+    'checkswiftcontainers',
+    'compressold',
+    'deletebatch',
+    'importdump',
+    'importimages',
+    'nukens',
+    'populatewikibasesitestable',
+    'populatewikisettings',
+    'purgelist',
+    'rebuildall',
+    'rebuildimages',
+    'rebuildtextindex',
+    'refreshlinks',
+    'resetwikicaches',
+    'runjobs',
+})
+
+_ANSI_RE = re.compile(r'\x1b\[[0-9;]*m')
 
 
-class CommandInfo(TypedDict):
+class Console:
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+    DIM = '\033[2m'
+    RED = '\033[31m'
+    GREEN = '\033[32m'
+    YELLOW = '\033[33m'
+    CYAN = '\033[36m'
+
+    enabled = sys.stdout.isatty() and not os.environ.get('NO_COLOR')
+
+    @classmethod
+    def _wrap(cls, text: str, *codes: str) -> str:
+        if not cls.enabled:
+            return text
+        return f"{''.join(codes)}{text}{cls.RESET}"
+
+    @classmethod
+    def header(cls, text: str) -> str:
+        return cls._wrap(text, cls.BOLD, cls.CYAN)
+
+    @classmethod
+    def bold(cls, text: str) -> str:
+        return cls._wrap(text, cls.BOLD)
+
+    @classmethod
+    def dim(cls, text: str) -> str:
+        return cls._wrap(text, cls.DIM)
+
+    @classmethod
+    def ok(cls, text: str) -> str:
+        return cls._wrap(text, cls.GREEN)
+
+    @classmethod
+    def warn(cls, text: str) -> str:
+        return cls._wrap(text, cls.YELLOW)
+
+    @classmethod
+    def fail(cls, text: str) -> str:
+        return cls._wrap(text, cls.BOLD, cls.RED)
+
+    @staticmethod
+    def strip(text: str) -> str:
+        """Removes color codes, for messages that end up somewhere other than a terminal."""
+        return _ANSI_RE.sub('', text)
+
+
+class Sal:
+    task: str | None = None
+
+    @classmethod
+    def suffix(cls) -> str:
+        return f' ({cls.task})' if cls.task else ''
+
+    @staticmethod
+    def plain(text: str) -> str:
+        return Console.strip(text).removeprefix('==> ').replace('"', '')
+
+    @classmethod
+    def command(cls, message: str) -> str:
+        return f'/usr/local/bin/logsalmsg {shlex.quote(cls.plain(message) + cls.suffix())}'
+
+
+class ShellExecutor:
+    """Runs shell commands."""
+
+    @staticmethod
+    def run(cmd: str, echo: bool = True) -> int:
+        start = time.time()
+        if echo:
+            print(Console.dim(f'Execute: {cmd}'))
+        ec = subprocess.run(cmd, shell=True).returncode
+        elapsed = int(time.time() - start)
+        status = Console.ok(f'Completed ({ec})') if ec == 0 else Console.fail(f'Completed ({ec})')
+        print(f'{status} in {elapsed}s!')
+        return ec
+
+    @staticmethod
+    def run_quiet(cmd: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(cmd, shell=True, capture_output=True, text=True)
+
+
+class UsageError(Exception):
+    """Raised when the arguments given can not be turned into a command."""
+
+
+@dataclass(frozen=True)
+class CommandInfo:
     command: str
     generate: str | None
     long: bool
@@ -21,155 +138,184 @@ class CommandInfo(TypedDict):
     confirm: bool
 
 
-def syscheck(result: CommandInfo | int) -> CommandInfo:
-    if isinstance(result, int):
-        sys.exit(result)
-    return result
+class CommandBuilder:
+    """Turns parsed arguments into the shell command that gets run."""
+
+    STATIC_DBLISTS = ('active', 'closed', 'deleted', 'inactive', 'upgrade-wikis')
+
+    def __init__(self, args: argparse.Namespace):
+        self.args = args
+        self.versions = self._load_versions()
+        self.version_lists = tuple(f'{key}-wikis' for key in self.versions)
+        self.db_lists = (*self.STATIC_DBLISTS, *self.version_lists)
+
+    @staticmethod
+    def _load_versions() -> dict[str, str]:
+        output = ShellExecutor.run_quiet('/usr/local/bin/getMWVersions all').stdout.strip()
+        return json.loads(output) if output else {}
+
+    @staticmethod
+    def is_long_script(script: str) -> bool:
+        name = re.split(r'[:\\/]', script)[-1].removesuffix('.php')
+        return name.lower() in LONG_SCRIPTS
+
+    def _split_wiki(self) -> tuple[str, list[str]]:
+        arguments = list(self.args.arguments)
+        if self.args.extension:
+            return '', arguments
+        if not arguments:
+            raise UsageError('Not enough arguments given.')
+        first = arguments[0]
+        if first.endswith(('wiki', 'wikibeta')) or first == 'all' or first in self.db_lists:
+            return first, arguments[1:]
+        raise UsageError(f'First argument should be a valid wiki if --extension is not given, got: {first}')
+
+    def _resolve_version(self, wiki: str) -> str:
+        if self.args.version:
+            return str(self.args.version)
+        if wiki in self.version_lists:
+            version = self.versions.get(wiki.removesuffix('-wikis'), '')
+        else:
+            dbname = shlex.quote(wiki or 'default')
+            version = ShellExecutor.run_quiet(f'sudo -u {DEPLOYUSER} /usr/local/bin/getMWVersion {dbname}').stdout.strip()
+        if not version:
+            raise UsageError('Could not determine the MediaWiki version, use --version.')
+        return version
+
+    def _script_target(self, version: str) -> tuple[str, str]:
+        script = self.args.script
+        root = f'{MEDIAWIKI_ROOT}/{version}'
+        runner = f'{root}/maintenance/run.php'
+        if not script.endswith('.php'):
+            return runner, script
+        parts = script.split('/')
+        if len(parts) < 3:
+            return runner, f'{root}/maintenance/{script}'
+        return runner, f'{root}/{parts[0]}/{parts[1]}/maintenance/{"/".join(parts[2:])}'
+
+    def build(self) -> CommandInfo:
+        args = self.args
+        wiki, extra = self._split_wiki()
+        runner, target = self._script_target(self._resolve_version(wiki))
+        script = shlex.join([runner, target])
+        prefix = f'sudo -u {DEPLOYUSER}'
+        foreach = f'{prefix} /usr/local/bin/foreachwikiindblist'
+        long = self.is_long_script(args.script)
+        generate = None
+
+        if wiki == 'all':
+            long = True
+            command = f'{foreach} {MEDIAWIKI_ROOT}/cache/databases.php {script}'
+        elif wiki in self.db_lists:
+            long = True
+            dblist = shlex.quote(f'{MEDIAWIKI_ROOT}/cache/{wiki}.php')
+            command = f'{foreach} {dblist} {script}'
+        elif args.extension:
+            long = True
+            extension = shlex.quote(f'--extension={args.extension}')
+            dblist = shlex.quote(f'/tmp/{args.extension}.php')
+            generate = f'{prefix} php {shlex.quote(runner)} MirahezeMagic:GenerateExtensionDatabaseList --wiki=meta{WIKISUFFIX} {extension} --directory=/tmp'
+            command = f'{foreach} {dblist} {script}'
+        else:
+            command = f'{prefix} php {script} {shlex.quote(f"--wiki={wiki}")}'
+
+        if extra:
+            command += f' {shlex.join(extra)}'
+        return CommandInfo(command=command, generate=generate, long=long, nolog=args.nolog, confirm=args.confirm)
 
 
-HOSTNAME = socket.gethostname().split('.')[0]
-wikisuffix = ''
-if HOSTNAME.startswith('test'):
-    wikisuffix = 'wikibeta'
-else:
-    wikisuffix = 'wiki'
+class ScriptRunner:
+    """Confirms, logs and executes a built command."""
+
+    def __init__(self, info: CommandInfo):
+        self.info = info
+
+    @staticmethod
+    def _log(message: str, show: bool = False) -> None:
+        cmd = Sal.command(message)
+        if show:
+            print(Console.dim(f'Logging via {cmd}'))
+        ShellExecutor.run_quiet(cmd)
+
+    def _confirmed(self) -> bool:
+        if self.info.confirm:
+            return True
+        try:
+            return input(Console.bold("Type 'Y' to confirm: ")).strip().upper() == 'Y'
+        except (EOFError, KeyboardInterrupt):
+            print()
+            return False
+
+    def run(self) -> int:
+        info = self.info
+        print(Console.header('==> Will execute:'))
+        if info.generate:
+            print(f'  {info.generate}')
+        print(f'  {info.command}')
+
+        if not self._confirmed():
+            print(Console.warn('Aborted!'))
+            return 1
+
+        if info.long and not info.nolog:
+            self._log(f'{info.command} (START)')
+
+        generate = info.generate
+        exit_code = ShellExecutor.run(generate, echo=False) if generate else 0
+        if exit_code == 0:
+            exit_code = ShellExecutor.run(info.command, echo=False)
+
+        if not info.nolog:
+            self._log(f'{info.command} (END - exit={exit_code})', show=True)
+
+        print(Console.ok('Done!') if exit_code == 0 else Console.fail(f'Failed with exit code {exit_code}.'))
+        return exit_code
 
 
-def get_commands(args: argparse.Namespace) -> CommandInfo | int:
-    mw_versions = os.popen('/usr/local/bin/getMWVersions all').read().strip()
-    versions = {}
-    if mw_versions:
-        versions = json.loads(mw_versions)
+def task_id(value: str) -> str:
+    if not re.fullmatch(r'T[0-9]+', value):
+        raise argparse.ArgumentTypeError(f'invalid task ID {value!r}, expected something like T12345')
+    return value
 
-    del mw_versions
 
-    versionLists = tuple([f'{key}-wikis' for key in versions.keys()])
-    validDBLists = (
-        'active',
-        'closed',
-        'deleted',
-        'inactive',
-        'upgrade-wikis',
-    ) + versionLists
-
-    longscripts = (
-        'checkswiftcontainers',
-        'compressold',
-        'deletebatch',
-        'importdump',
-        'importimages',
-        'nukens',
-        'populatewikibasesitestable',
-        'populatewikisettings',
-        'rebuildall',
-        'rebuildimages',
-        'rebuildtextindex',
-        'refreshlinks',
-        'resetwikicaches',
-        'runjobs',
-        'purgelist',
-        'cargorecreatedata',
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description='Run a MediaWiki maintenance script on a single wiki, on a database list, or on every wiki that has an extension or skin enabled. Options mwscript itself does not know are passed on to the script you are running.',
+        epilog=(
+            'examples:\n'
+            '  mwscript ManageWiki:ResetWikiCaches metawiki --all-wikis\n'
+            '  mwscript rebuildall.php all --yes\n'
+            '  mwscript extensions/CheckUser/populateCheckUserTable.php metawiki --task=T12345'
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False,
     )
-
-    long = False
-    generate = None
-
-    try:
-        if args.extension:
-            wiki = ''
-        elif args.arguments[0].endswith('wiki') or args.arguments[0].endswith('wikibeta') or args.arguments[0] in [*['all'], *validDBLists]:
-            wiki = args.arguments[0]
-            args.arguments.remove(wiki)
-            if args.arguments == []:
-                args.arguments = False
-        else:
-            print(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*["all"], *validDBLists]}')
-            return 2
-    except IndexError:
-        print('Not enough Arguments given.')
-        return 2
-
-    if not args.version:
-        dbname = wiki
-        if not dbname:
-            dbname = 'default'
-        args.version = os.popen(f'sudo -u www-data /usr/local/bin/getMWVersion {dbname}').read().strip()
-        if wiki and wiki in versionLists:
-            args.version = versions.get(wiki[:-6])
-
-    script = args.script
-    runner = f'/srv/mediawiki/{args.version}/maintenance/run.php '
-
-    if script.endswith('.php'):  # assume class if not
-        scriptsplit = script.split('/')
-        if script.split('.')[0].lower() in longscripts:
-            long = True
-        if len(scriptsplit) == 1:
-            script = f'{runner}/srv/mediawiki/{args.version}/maintenance/{script}'
-        elif len(scriptsplit) == 2:
-            script = f'{runner}/srv/mediawiki/{args.version}/maintenance/{scriptsplit[0]}/{scriptsplit[1]}'
-            if scriptsplit[1].split('.')[0].lower() in longscripts:
-                long = True
-        else:
-            script = f'{runner}/srv/mediawiki/{args.version}/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
-            if scriptsplit[2].split('.')[0].lower() in longscripts:
-                long = True
-    else:
-        if script.lower() in longscripts:
-            long = True
-        script = f'{runner}{script}'
-
-    if wiki == 'all':
-        long = True
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php {script}'
-    elif wiki and wiki in validDBLists:
-        long = True
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.php {script}'
-    elif args.extension:
-        long = True
-        generate = f'sudo -u www-data php {runner}MirahezeMagic:GenerateExtensionDatabaseList --wiki=meta{wikisuffix} --extension={args.extension} --directory=/tmp'
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /tmp/{args.extension}.php {script}'
-    else:
-        command = f'sudo -u www-data php {script} --wiki={wiki}'
-    if args.arguments:
-        command += ' ' + ' '.join(args.arguments)
-    return {'long': long, 'generate': generate, 'command': command, 'nolog': args.nolog, 'confirm': args.confirm}
+    parser.add_argument('script', help='script to run. Either a class name such as ManageWiki:ResetWikiCaches, a file in maintenance such as rebuildall.php, or a path such as extensions/Foo/bar.php')
+    parser.add_argument('arguments', nargs='*', default=[], help='wiki database name, all, or a database list such as active (not needed with --extension), followed by any arguments for the script')
+    parser.add_argument('--version', dest='version', help='MediaWiki version to run against, detected from the wiki when not given')
+    parser.add_argument('--extension', '--skin', dest='extension', help='run on every wiki that has this extension or skin enabled instead of naming a wiki')
+    parser.add_argument('--no-log', dest='nolog', action='store_true', help='do not log the run to the server admin log')
+    parser.add_argument('--confirm', '--yes', '-y', dest='confirm', action='store_true', help='run without asking for confirmation first')
+    parser.add_argument('--task', dest='task', type=task_id, help='Phorge task ID to include in the log entries, e.g. T12345')
+    return parser
 
 
-def run(info: CommandInfo) -> None:  # pragma: no cover
-    logcommand = f'/usr/local/bin/logsalmsg "{info["command"]}'
-    print('Will execute:')
-    if info['generate']:
-        print(info['generate'])
-    print(info['command'])
-    if info['confirm'] or input("Type 'Y' to confirm: ").upper() == 'Y':
-        if info['long'] and not info['nolog']:
-            os.system(f'{logcommand} (START)"')
-        if info['generate']:
-            os.system(info['generate'])  # type: ignore
-        return_value = os.system(info['command'])
-        logcommand += f' (END - exit={str(return_value)})"'
-        if not info['nolog']:
-            print(f'Logging via {logcommand}')
-            os.system(logcommand)
-        print('Done!')
-    else:
-        print('Aborted!')
-
-
-def get_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description='Run a MediaWiki Script')
-    parser.add_argument('script')
-    parser.add_argument('arguments', nargs='*', default=[])
-    parser.add_argument('--version', dest='version')
-    parser.add_argument('--extension', '--skin', dest='extension')
-    parser.add_argument('--no-log', dest='nolog', action='store_true')
-    parser.add_argument('--confirm', '--yes', '-y', dest='confirm', action='store_true')
-
-    args = parser.parse_known_args()[0]
-    args.arguments += parser.parse_known_args()[1]
+def get_args(argv: list[str] | None = None) -> argparse.Namespace:
+    args, unknown = build_parser().parse_known_args(argv)
+    args.arguments = [*args.arguments, *unknown]
     return args
 
 
-if __name__ == '__main__':
-    run(syscheck(get_commands(get_args())))
+def main(argv: list[str] | None = None) -> None:
+    args = get_args(argv)
+    Sal.task = args.task
+    try:
+        info = CommandBuilder(args).build()
+    except UsageError as error:
+        print(Console.fail(str(error)))
+        sys.exit(2)
+    sys.exit(ScriptRunner(info).run())
+
+
+if __name__ == '__main__':  # pragma: no cover
+    main()
