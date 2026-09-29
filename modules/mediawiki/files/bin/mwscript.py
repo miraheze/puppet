@@ -29,16 +29,31 @@ LONG_SCRIPTS = frozenset({
     'importdump',
     'importimages',
     'nukens',
-    'populatewikibasesitestable',
-    'populatewikisettings',
+    'populatemediawikiversion',
     'purgelist',
     'rebuildall',
     'rebuildimages',
     'rebuildtextindex',
     'refreshlinks',
-    'resetwikicaches',
-    'runjobs',
+    'upgradewiki',
 })
+
+LONG_SCRIPTS_WITH_ARGS: dict[str, frozenset[str]] = {
+    'changemediawikiversion': frozenset({
+        '--all-wikis',
+        '--file',
+        '--regex',
+        '--active',
+        '--closed',
+        '--deleted',
+        '--inactive',
+    }),
+    'modifygrouppermissions': frozenset({'--all-wikis'}),
+    'populatewikibasesitestable': frozenset({'--all-wikis'}),
+    'populatewikisettings': frozenset({'--all-wikis'}),
+    'resetwikicaches': frozenset({'--all-wikis'}),
+    'toggleextension': frozenset({'--all-wikis'}),
+}
 
 _ANSI_RE = re.compile(r'\x1b\[[0-9;]*m')
 
@@ -155,9 +170,12 @@ class CommandBuilder:
         return json.loads(output) if output else {}
 
     @staticmethod
-    def is_long_script(script: str) -> bool:
-        name = re.split(r'[:\\/]', script)[-1].removesuffix('.php')
-        return name.lower() in LONG_SCRIPTS
+    def is_long_script(script: str, arguments: list[str]) -> bool:
+        name = re.split(r'[:\\/]', script)[-1].removesuffix('.php').lower()
+        if name in LONG_SCRIPTS:
+            return True
+        options = LONG_SCRIPTS_WITH_ARGS.get(name, frozenset())
+        return any(argument.split('=', 1)[0] in options for argument in arguments)
 
     def _split_wiki(self) -> tuple[str, list[str]]:
         arguments = list(self.args.arguments)
@@ -202,7 +220,7 @@ class CommandBuilder:
         script = shlex.join([runner, target])
         prefix = f'sudo -u {SCRIPT_USER}'
         foreach = f'{prefix} /usr/local/bin/foreachwikiindblist'
-        long = self.is_long_script(args.script)
+        long = self.is_long_script(args.script, extra)
         generate = None
 
         if wiki == 'all':
@@ -262,13 +280,17 @@ class ScriptRunner:
         if info.long and not info.nolog:
             self._log(f'{info.command} (START)')
 
+        start = time.time()
         generate = info.generate
         exit_code = ShellExecutor.run(generate, echo=False) if generate else 0
         if exit_code == 0:
             exit_code = ShellExecutor.run(info.command, echo=False)
 
         if not info.nolog:
-            self._log(f'{info.command} (END - exit={exit_code})', show=True)
+            result = f'exit={exit_code}'
+            if info.long:
+                result += f'; time={int(time.time() - start)}s'
+            self._log(f'{info.command} (END - {result})', show=True)
 
         print(Console.ok('Done!') if exit_code == 0 else Console.fail(f'Failed with exit code {exit_code}.'))
         return exit_code
