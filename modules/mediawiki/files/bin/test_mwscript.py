@@ -253,10 +253,10 @@ def test_script_args_passed_through():
     'rebuildall.php',
     'rebuildall',
     'rEbUiLdAll',
-    'ManageWiki:ResetWikiCaches',
-    'ManageWiki:ResetWikiCaches.php',
-    'managewiki:resetwikicaches',
-    'Ns\\ResetWikiCaches',
+    'MirahezeMagic:UpgradeWiki',
+    'MirahezeMagic:UpgradeWiki.php',
+    'mirahezemagic:upgradewiki',
+    'Ns\\UpgradeWiki',
     'extensions/Cargo/cargoRecreateData.php',
     'CargoRecreateData',
 ])
@@ -269,6 +269,53 @@ def test_long_scripts(script):
 @pytest.mark.usefixtures('shell')
 def test_not_long_scripts(script):
     assert build(script, 'metawiki', '--version', '1.43').long is False
+
+
+LONG_WITH_ALL_WIKIS = {'test': frozenset({'--all-wikis'})}
+
+
+@pytest.mark.usefixtures('shell')
+@pytest.mark.parametrize('script', ['test.php', 'test', 'Ext:Test', 'Ext:Test.php', 'extensions/Foo/scripts/test.php', 'TEST'])
+def test_long_with_argument(script):
+    with patch.dict(mwscript.LONG_SCRIPTS_WITH_ARGS, LONG_WITH_ALL_WIKIS):
+        assert build(script, 'metawiki', '--all-wikis', '--version', '1.43').long is True
+
+
+@pytest.mark.usefixtures('shell')
+def test_long_with_argument_and_value():
+    with patch.dict(mwscript.LONG_SCRIPTS_WITH_ARGS, LONG_WITH_ALL_WIKIS):
+        assert build('test.php', 'metawiki', '--all-wikis=yes', '--version', '1.43').long is True
+
+
+@pytest.mark.usefixtures('shell')
+def test_not_long_without_argument():
+    with patch.dict(mwscript.LONG_SCRIPTS_WITH_ARGS, LONG_WITH_ALL_WIKIS):
+        assert build('test.php', 'metawiki', '--other', '--all-wikis-not', '--version', '1.43').long is False
+
+
+@pytest.mark.usefixtures('shell')
+def test_argument_only_applies_to_its_script():
+    with patch.dict(mwscript.LONG_SCRIPTS_WITH_ARGS, LONG_WITH_ALL_WIKIS):
+        assert build('other.php', 'metawiki', '--all-wikis', '--version', '1.43').long is False
+
+
+@pytest.mark.usefixtures('shell')
+def test_argument_after_wiki_only():
+    with patch.dict(mwscript.LONG_SCRIPTS_WITH_ARGS, LONG_WITH_ALL_WIKIS):
+        info = build('test.php', '--extension', 'Foo', '--all-wikis', '--version', '1.43')
+    assert info.long is True
+
+
+@pytest.mark.usefixtures('shell')
+@pytest.mark.parametrize('script', ['resetwikicaches', 'ManageWiki:ResetWikiCaches', 'toggleextension', 'populatewikisettings'])
+def test_configured_scripts_long_with_all_wikis(script):
+    assert build(script, 'metawiki', '--all-wikis', '--version', '1.43').long is True
+    assert build(script, 'metawiki', '--version', '1.43').long is False
+
+
+@pytest.mark.usefixtures('shell')
+def test_runjobs_is_not_long():
+    assert build('runJobs.php', 'metawiki', '--version', '1.43').long is False
 
 
 @pytest.mark.usefixtures('shell')
@@ -424,7 +471,28 @@ def test_run_confirmed_flag(executor, capsys):
 def test_run_long_logs_start_and_end(executor):
     _, quiet = executor
     make_runner(long=True).run()
-    assert logged(quiet) == ['do it (START)', 'do it (END - exit=0)']
+    assert logged(quiet) == ['do it (START)', 'do it (END - exit=0; time=0s)']
+
+
+def test_run_long_logs_time(executor):
+    _, quiet = executor
+    with patch.object(mwscript.time, 'time', side_effect=[100.0, 175.9]):
+        make_runner(long=True).run()
+    assert logged(quiet) == ['do it (START)', 'do it (END - exit=0; time=75s)']
+
+
+def test_run_long_failure_logs_time(executor):
+    run, quiet = executor
+    run.return_value = 5
+    with patch.object(mwscript.time, 'time', side_effect=[10.0, 12.0]):
+        make_runner(long=True).run()
+    assert logged(quiet)[-1] == 'do it (END - exit=5; time=2s)'
+
+
+def test_run_not_long_has_no_time(executor):
+    _, quiet = executor
+    make_runner().run()
+    assert 'time=' not in logged(quiet)[-1]
 
 
 def test_run_nolog(executor):
@@ -437,7 +505,7 @@ def test_run_logs_task(executor):
     _, quiet = executor
     Sal.task = 'T99'
     make_runner(long=True).run()
-    assert logged(quiet) == ['do it (START) (T99)', 'do it (END - exit=0) (T99)']
+    assert logged(quiet) == ['do it (START) (T99)', 'do it (END - exit=0; time=0s) (T99)']
 
 
 def test_run_generate_first(executor, capsys):
