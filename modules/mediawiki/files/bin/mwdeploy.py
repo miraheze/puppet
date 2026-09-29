@@ -108,13 +108,38 @@ class Sal:
         return f'/usr/local/bin/logsalmsg {shlex.quote(cls.plain(message) + cls.suffix())}'
 
 
-def _run(cmd: str) -> subprocess.CompletedProcess:
-    """Runs a command through the shell, capturing its output as text."""
-    return subprocess.run(cmd, shell=True, capture_output=True, text=True)
+class ShellExecutor:
+    """Runs shell commands."""
+
+    @staticmethod
+    def run(cmd: str) -> int:
+        start = time.time()
+        print(Console.dim(f'Execute: {cmd}'))
+        ec = subprocess.run(cmd, shell=True).returncode
+        elapsed = int(time.time() - start)
+        status = Console.ok(f'Completed ({ec})') if ec == 0 else Console.fail(f'Completed ({ec})')
+        print(f'{status} in {elapsed}s!')
+        return ec
+
+    @staticmethod
+    def run_quiet(cmd: str) -> subprocess.CompletedProcess:
+        return subprocess.run(cmd, shell=True, capture_output=True, text=True)
+
+    @staticmethod
+    def ensure_all_zero(codes: list[int], nolog: bool = True, leave: bool = True) -> bool:
+        for code in codes:
+            if code != 0:
+                if not nolog:
+                    subprocess.run(Sal.command('DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.'), shell=True)
+                if leave:
+                    print(Console.fail('Exiting due to non-zero status.'))
+                    sys.exit(1)
+                return True
+        return False
 
 
 def _load_mw_versions() -> dict:
-    output = _run('/usr/local/bin/getMWVersions').stdout.strip()
+    output = ShellExecutor.run_quiet('/usr/local/bin/getMWVersions').stdout.strip()
     if not output:
         return {'version': 'version'}
     return json.loads(output)
@@ -248,7 +273,7 @@ class ChangeTagger:
     @staticmethod
     def changed_files(path: str, version: str) -> list[str]:
         repo_dir = os.path.join(STAGING_ROOT, version, path)
-        result = _run(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git diff --name-only HEAD@{{1}} HEAD')
+        result = ShellExecutor.run_quiet(f'git -C {repo_dir} --no-pager --git-dir={repo_dir}/.git diff --name-only HEAD@{{1}} HEAD')
         return [line.strip() for line in result.stdout.splitlines()]
 
     @classmethod
@@ -268,32 +293,6 @@ class ChangeTagger:
                 if regex.match(file):
                     found.add(tag)
         return found
-
-
-class ShellExecutor:
-    """Runs shell commands and, where the caller allows it, runs several at once."""
-
-    @staticmethod
-    def run(cmd: str) -> int:
-        start = time.time()
-        print(Console.dim(f'Execute: {cmd}'))
-        ec = subprocess.run(cmd, shell=True).returncode
-        elapsed = int(time.time() - start)
-        status = Console.ok(f'Completed ({ec})') if ec == 0 else Console.fail(f'Completed ({ec})')
-        print(f'{status} in {elapsed}s!')
-        return ec
-
-    @staticmethod
-    def ensure_all_zero(codes: list[int], nolog: bool = True, leave: bool = True) -> bool:
-        for code in codes:
-            if code != 0:
-                if not nolog:
-                    subprocess.run(Sal.command('DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.'), shell=True)
-                if leave:
-                    print(Console.fail('Exiting due to non-zero status.'))
-                    sys.exit(1)
-                return True
-        return False
 
 
 class CanaryChecker:
@@ -530,14 +529,14 @@ class PatchApplier:
         """Returns (exit code, changed). changed is False when the patch was
         already sitting in the tree, since nothing actually happened then."""
         name = os.path.basename(patchfile)
-        check = _run(self._git.apply(repo, patchfile, version, check=True))
+        check = ShellExecutor.run_quiet(self._git.apply(repo, patchfile, version, check=True))
         if check.returncode == 0:
             return ShellExecutor.run(self._git.apply(repo, patchfile, version)), True
 
         # a failed check doesn't always mean a real conflict. it can also mean
         # the patch is already sitting in the tree, so confirm that quietly
         # before bothering the user with anything.
-        reverse_check = _run(self._git.apply(repo, patchfile, version, check=True, reverse=True))
+        reverse_check = ShellExecutor.run_quiet(self._git.apply(repo, patchfile, version, check=True, reverse=True))
         if reverse_check.returncode == 0:
             print(Console.dim(f'{name} is already applied to {repo}. Skipping.'))
             return 0, False
@@ -552,7 +551,7 @@ class PatchApplier:
         # For non-git repos (like those installed via composer)
         name = os.path.basename(patchfile)
         staging_path = self._paths.staging(repo, version)
-        already_applied = _run(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r - --dry-run --reverse --silent')
+        already_applied = ShellExecutor.run_quiet(f'sudo -u {self._deploy_user} patch -p1 -N -d {staging_path} -i {patchfile} -r - --dry-run --reverse --silent')
         if already_applied.returncode == 0:
             print(Console.dim(f'{name} is already applied to {repo}. Skipping.'))
             return 0, False
@@ -677,7 +676,7 @@ class DeploymentRunner:
         self.envinfo = get_environment_info()
         self._pr_checked_out = False
 
-    def run(self, start: float) -> None:  # pragma: no cover
+    def run(self, start: float) -> None:
         args = self.args
         Sal.task = args.task
         loginfo = self._build_loginfo()
@@ -735,7 +734,7 @@ class DeploymentRunner:
         fintext += f' - SUCCESS in {int(time.time() - start)}s'
         self._log(Console.ok(fintext), args.nolog)
 
-    def process(self, version: str = '') -> list[int]:  # pragma: no cover
+    def process(self, version: str = '') -> list[int]:
         self._reset_state()
         args = self.args
         envinfo = self.envinfo
@@ -1011,7 +1010,7 @@ class DeploymentRunner:
     @staticmethod
     def _fetch_component(kind: str, name: str, version: str):
         repo = f'{kind}/{name}'
-        result = _run(_git.pull(repo, submodules=True, quiet=False, version=version))
+        result = ShellExecutor.run_quiet(_git.pull(repo, submodules=True, quiet=False, version=version))
         return name, repo, result.stdout.strip(), result.returncode, result.stderr
 
     def _process_component_fetch(self, name: str, repo: str, output: str, status, error: str, version: str) -> None:
@@ -1078,7 +1077,7 @@ def task_id(value: str) -> str:
     return value
 
 
-class UpgradeExtensionsAction(argparse.Action):  # pragma: no cover
+class UpgradeExtensionsAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         mw_versions = getattr(namespace, 'versions', None)
         if not mw_versions:
@@ -1093,7 +1092,7 @@ class UpgradeExtensionsAction(argparse.Action):  # pragma: no cover
         setattr(namespace, self.dest, sorted(input_extensions))
 
 
-class UpgradeSkinsAction(argparse.Action):  # pragma: no cover
+class UpgradeSkinsAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         mw_versions = getattr(namespace, 'versions', None)
         if not mw_versions:
@@ -1159,8 +1158,7 @@ class ApplyPatchesAction(argparse.Action):
         setattr(namespace, self.dest, input_repos)
 
 
-if __name__ == '__main__':
-    start = time.time()
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--pull', dest='pull')
     parser.add_argument('--branch', dest='branch')
@@ -1181,7 +1179,7 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang', action=LangAction, help='l10n language(s) to rebuild, defaults to all')
-    parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[_run(f'/usr/local/bin/getMWVersion {get_environment_info().wikidbname}').stdout.strip()], help='version(s) to deploy')
+    parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[ShellExecutor.run_quiet(f'/usr/local/bin/getMWVersion {get_environment_info().wikidbname}').stdout.strip()], help='version(s) to deploy')
     parser.add_argument('--show-tags', dest='show_tags', action='store_true', help='Show change tags for extension/skin upgrades')
     parser.add_argument('--skip-schema-confirm', dest='skip_schema_confirm', action='store_true', help='Skip confirm prompts for extensions with schema changes')
     parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=UpgradeExtensionsAction, help='extension(s) to upgrade')
@@ -1194,5 +1192,13 @@ if __name__ == '__main__':
     parser.add_argument('--batch', dest='batch', action='store_true', help='deploy to servers and fetch components in parallel batches instead of one at a time')
     parser.add_argument('--debug', dest='debug', action='store_true', help='show the underlying command output when a component fails to fetch')
     parser.add_argument('--task', dest='task', type=task_id, help='Phorge task ID to include in the log entries, e.g. T12345')
+    return parser
 
-    DeploymentRunner(parser.parse_args()).run(start)
+
+def main() -> None:
+    start = time.time()
+    DeploymentRunner(build_parser().parse_args()).run(start)
+
+
+if __name__ == '__main__':  # pragma: no cover
+    main()
