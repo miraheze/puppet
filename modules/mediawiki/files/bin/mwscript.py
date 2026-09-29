@@ -16,8 +16,8 @@ import sys
 import time
 from dataclasses import dataclass
 
-DEPLOYUSER = 'www-data'
 MEDIAWIKI_ROOT = '/srv/mediawiki'
+SCRIPT_USER = 'www-data'
 HOSTNAME = socket.gethostname().split('.')[0]
 WIKISUFFIX = 'wikibeta' if HOSTNAME.startswith('test') else 'wiki'
 
@@ -177,7 +177,7 @@ class CommandBuilder:
             version = self.versions.get(wiki.removesuffix('-wikis'), '')
         else:
             dbname = shlex.quote(wiki or 'default')
-            version = ShellExecutor.run_quiet(f'sudo -u {DEPLOYUSER} /usr/local/bin/getMWVersion {dbname}').stdout.strip()
+            version = ShellExecutor.run_quiet(f'sudo -u {SCRIPT_USER} /usr/local/bin/getMWVersion {dbname}').stdout.strip()
         if not version:
             raise UsageError('Could not determine the MediaWiki version, use --version.')
         return version
@@ -200,7 +200,7 @@ class CommandBuilder:
         wiki, extra = self._split_wiki()
         runner, target = self._script_target(self._resolve_version(wiki))
         script = shlex.join([runner, target])
-        prefix = f'sudo -u {DEPLOYUSER}'
+        prefix = f'sudo -u {SCRIPT_USER}'
         foreach = f'{prefix} /usr/local/bin/foreachwikiindblist'
         long = self.is_long_script(args.script)
         generate = None
