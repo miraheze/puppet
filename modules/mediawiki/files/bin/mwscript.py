@@ -191,6 +191,8 @@ class CommandBuilder:
         parts = script.split('/')
         if len(parts) < 3:
             return runner, f'{root}/maintenance/{script}'
+        if len(parts) > 3 and parts[2] in ('maintenance', 'scripts'):
+            return runner, f'{root}/{script}'
         return runner, f'{root}/{parts[0]}/{parts[1]}/maintenance/{"/".join(parts[2:])}'
 
     def build(self) -> CommandInfo:
@@ -285,7 +287,8 @@ def build_parser() -> argparse.ArgumentParser:
             'examples:\n'
             '  mwscript ManageWiki:ResetWikiCaches metawiki --all-wikis\n'
             '  mwscript rebuildall.php all --yes\n'
-            '  mwscript extensions/CheckUser/populateCheckUserTable.php metawiki --task=T12345'
+            '  mwscript extensions/CheckUser/populateCheckUserTable.php metawiki --task=T12345\n'
+            '  mwscript extensions/Translate/scripts/moveTranslatableBundle.php metawiki "Main Page 60" "Main Page 70" Admin --reason "Moved"'
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         allow_abbrev=False,
