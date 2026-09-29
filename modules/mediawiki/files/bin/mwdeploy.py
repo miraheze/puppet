@@ -679,6 +679,15 @@ class DeploymentRunner:
         Sal.task = args.task
         loginfo = self._build_loginfo()
 
+        if args.new_install:
+            synced = loginfo['servers']
+            del loginfo['servers']
+            self._log(Console.header(f'==> Starting new install of "{loginfo}" to {synced}'), args.nolog)
+            fintext = f'finished new install of "{loginfo}" to {synced}'
+            self._check_or_exit(self._new_install(), fintext)
+            self._log(Console.ok(f'{fintext} - SUCCESS in {int(time.time() - start)}s'), args.nolog)
+            return
+
         if args.upgrade_world and not args.reset_world:
             args.world = True
             args.pull = 'world'
@@ -712,25 +721,28 @@ class DeploymentRunner:
         del loginfo['servers']
 
         self._log(Console.header(f'==> Starting deploy of "{loginfo}" to {synced}'), args.nolog)
-
-        exitcodes = self.process()
-        failed = ShellExecutor.ensure_all_zero(exitcodes, leave=False)
-
         fintext = f'finished deploy of "{loginfo}" to {synced}'
-        if failed:
-            self._log(Console.fail(f'{fintext} - FAIL: {exitcodes}'), args.nolog)
-            sys.exit(1)
+
+        self._check_or_exit(self.process(), fintext)
 
         if use_version:
             for version in args.versions:
-                exitcodes = self.process(version)
-                failed = ShellExecutor.ensure_all_zero(exitcodes, leave=False)
-                if failed:
-                    self._log(Console.fail(f'{fintext} - FAIL: {exitcodes}'), args.nolog)
-                    sys.exit(1)
+                self._check_or_exit(self.process(version), fintext)
 
         fintext += f' - SUCCESS in {int(time.time() - start)}s'
         self._log(Console.ok(fintext), args.nolog)
+
+    def _check_or_exit(self, exitcodes: list[int], fintext: str) -> None:
+        if ShellExecutor.ensure_all_zero(exitcodes, leave=False):
+            self._log(Console.fail(f'{fintext} - FAIL: {exitcodes}'), self.args.nolog)
+            sys.exit(1)
+
+    def _new_install(self) -> list[int]:
+        args = self.args
+        paths = list(Discovery.versions())
+        paths += [self._relative(_paths.deployed(repo)) for repo in ('config', 'landing', 'errorpages')]
+        paths.append('cache/databases.php')
+        return [_remote_deployer.sync(time_flag: True, args.servers, paths, DEPLOYED_ROOT, self.envinfo, args.nolog, force=True, batch=args.batch)]
 
     def process(self, version: str = '') -> list[int]:
         self._reset_state()
@@ -1187,6 +1199,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('--batch', dest='batch', action='store_true', help='deploy to servers and fetch components in parallel batches instead of one at a time')
     parser.add_argument('--debug', dest='debug', action='store_true', help='show the underlying command output when a component fails to fetch')
     parser.add_argument('--task', dest='task', type=task_id, help='Phorge task ID to include in the log entries, e.g. T12345')
+    parser.add_argument('--new-install', dest='new_install', action='store_true', help='mirror everything currently deployed onto a brand-new server (every version, config/landing/errorpages, and the database cache); ignores every deploy-selection flag, --servers/--batch/--task/--no-log still apply')
     return parser
 
 
