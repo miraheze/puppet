@@ -29,7 +29,7 @@ def _make_args(**overrides):
         'upgrade_world': False, 'upgrade_vendor': False, 'upgrade_extensions': None,
         'upgrade_skins': None, 'upgrade_pack': None, 'apply_patches': None, 'pull': None,
         'branch': None, 'files': None, 'folders': None, 'extension_list': False, 'l10n': False,
-        'lang': None, 'port': None,
+        'lang': None, 'port': None, 'new_install': False,
     }
     defaults.update(overrides)
     return argparse.Namespace(**defaults)
@@ -1045,6 +1045,37 @@ class TestProgressBar(unittest.TestCase):
 
 
 class TestDeploymentRunnerHelpers(unittest.TestCase):
+    def test_new_install_builds_the_full_path_list_from_discovery(self):
+        runner = _make_runner(new_install=True, servers=['mw152'], ignore_time=False, batch=False)
+        with patch.object(mwdeploy.Discovery, 'versions', return_value=['REL1_41', 'REL1_42']), \
+             patch.object(mwdeploy._remote_deployer, 'sync', return_value=0) as mock_sync:
+            codes = runner._new_install()
+        self.assertEqual(codes, [0])
+        self.assertEqual(
+            mock_sync.call_args.args[2],
+            ['REL1_41', 'REL1_42', 'config', 'landing', 'ErrorPages', 'cache/databases.php'],
+        )
+
+    def test_new_install_works_with_no_versions_discovered(self):
+        runner = _make_runner(new_install=True, servers=['mw152'])
+        with patch.object(mwdeploy.Discovery, 'versions', return_value=[]), \
+             patch.object(mwdeploy._remote_deployer, 'sync', return_value=0) as mock_sync:
+            runner._new_install()
+        self.assertEqual(mock_sync.call_args.args[2], ['config', 'landing', 'ErrorPages', 'cache/databases.php'])
+
+    def test_new_install_returns_the_sync_exit_code(self):
+        runner = _make_runner(new_install=True, servers=['mw152'])
+        with patch.object(mwdeploy.Discovery, 'versions', return_value=[]), \
+             patch.object(mwdeploy._remote_deployer, 'sync', return_value=3):
+            self.assertEqual(runner._new_install(), [3])
+
+    def test_new_install_hardcodes_inplace_even_when_ignore_time_is_false(self):
+        runner = _make_runner(new_install=True, servers=['mw152'], ignore_time=False)
+        with patch.object(mwdeploy.Discovery, 'versions', return_value=[]), \
+             patch.object(mwdeploy._remote_deployer, 'sync', return_value=0) as mock_sync:
+            runner._new_install()
+        self.assertTrue(mock_sync.call_args.args[0])
+
     def test_build_loginfo_filters_falsy_and_unwraps_single_item_lists(self):
         args = argparse.Namespace(pull=None, force=False, servers=['mw151'], versions=['REL1_41'], branch=None, pr=None, pr_repo='config')
         runner = mwdeploy.DeploymentRunner(args)
@@ -1646,6 +1677,56 @@ class TestRun(unittest.TestCase):
     def _logged(self, index):
         return self.log.call_args_list[index].args[0]
 
+    def test_new_install_pushes_every_version_plus_shared_repos_and_databases_cache(self):
+        runner = mwdeploy.DeploymentRunner(_make_args(new_install=True, servers=['mw152']))
+        with patch.object(mwdeploy._remote_deployer, 'sync', return_value=0) as mock_sync, \
+             patch.object(runner, '_log'):
+            runner.run(1000.0)
+        mock_sync.assert_called_once()
+        call = mock_sync.call_args
+        self.assertEqual(call.args[2], ['v1', 'v2', 'config', 'landing', 'ErrorPages', 'cache/databases.php'])
+        self.assertEqual(call.args[3], '/srv/mediawiki')
+        self.assertTrue(call.kwargs['force'])
+
+    def test_new_install_ignores_deploy_selection_flags(self):
+        runner = mwdeploy.DeploymentRunner(_make_args(
+            new_install=True, upgrade_extensions=['A'], apply_patches=['config'], reset_world=True,
+        ))
+        with patch.object(mwdeploy._remote_deployer, 'sync', return_value=0), \
+             patch.object(runner, 'process') as mock_process, \
+             patch.object(runner, '_log'):
+            runner.run(1000.0)
+        mock_process.assert_not_called()
+
+    def test_new_install_logs_start_and_success(self):
+        runner = mwdeploy.DeploymentRunner(_make_args(new_install=True, servers=['mw152']))
+        with patch.object(mwdeploy._remote_deployer, 'sync', return_value=0), \
+             patch.object(runner, '_log') as mock_log, \
+             patch('mwdeploy.time.time', return_value=1005.0):
+            runner.run(1000.0)
+        logged = [call.args[0] for call in mock_log.call_args_list]
+        self.assertIn('Starting new install of', logged[0])
+        self.assertIn('finished new install of', logged[1])
+        self.assertIn('SUCCESS in 5s', logged[1])
+
+    def test_new_install_logs_failure_and_exits(self):
+        runner = mwdeploy.DeploymentRunner(_make_args(new_install=True, servers=['mw152']))
+        with patch.object(mwdeploy._remote_deployer, 'sync', return_value=1), \
+             patch.object(runner, '_log') as mock_log, \
+             pytest.raises(SystemExit) as excinfo:
+            runner.run(1000.0)
+        assert excinfo.value.code == 1
+        self.assertIn('FAIL: [1]', mock_log.call_args_list[-1].args[0])
+
+    def test_new_install_passes_through_nolog_and_batch(self):
+        runner = mwdeploy.DeploymentRunner(_make_args(new_install=True, servers=['mw152'], nolog=False, batch=True))
+        with patch.object(mwdeploy._remote_deployer, 'sync', return_value=0) as mock_sync, \
+             patch.object(runner, '_log'):
+            runner.run(1000.0)
+        call = mock_sync.call_args
+        self.assertFalse(call.args[5])  # nolog
+        self.assertTrue(call.kwargs['batch'])
+
     def test_plain_deploy_logs_the_start_and_the_success(self):
         self._run([[]])
         self.process.assert_called_once_with()
@@ -1938,6 +2019,12 @@ class TestArgparseActions(unittest.TestCase):
         parser.add_argument('--debug', dest='debug', action='store_true')
         self.assertFalse(parser.parse_args([]).debug)
         self.assertTrue(parser.parse_args(['--debug']).debug)
+
+    def test_new_install_flag_defaults_to_false(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--new-install', dest='new_install', action='store_true')
+        self.assertFalse(parser.parse_args([]).new_install)
+        self.assertTrue(parser.parse_args(['--new-install']).new_install)
 
 
 if __name__ == '__main__':
