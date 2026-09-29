@@ -114,7 +114,7 @@ class Sal:
 
     @staticmethod
     def plain(text: str) -> str:
-        return Console.strip(text).removeprefix('==> ').replace('"', '')
+        return Console.strip(text).replace('"', '')
 
     @classmethod
     def command(cls, message: str) -> str:
@@ -268,7 +268,7 @@ class ScriptRunner:
 
     def run(self) -> int:
         info = self.info
-        print(Console.header('==> Will execute:'))
+        print(Console.header('Will execute:'))
         if info.generate:
             print(f'  {info.generate}')
         print(f'  {info.command}')
