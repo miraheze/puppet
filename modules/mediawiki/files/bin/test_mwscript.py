@@ -330,10 +330,8 @@ def test_shell_run_quiet():
     assert (result.returncode, result.stdout) == (0, 'hi\n')
 
 
-def make_runner(**overrides) -> ScriptRunner:
-    values = {'command': 'do it', 'generate': None, 'long': False, 'nolog': False, 'confirm': True}
-    values.update(overrides)
-    return ScriptRunner(CommandInfo(**values))
+def make_runner(generate: Optional[str] = None, long: bool = False, nolog: bool = False, confirm: bool = True) -> ScriptRunner:
+    return ScriptRunner(CommandInfo(command='do it', generate=generate, long=long, nolog=nolog, confirm=confirm))
 
 
 @pytest.fixture()
