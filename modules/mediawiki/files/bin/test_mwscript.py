@@ -1,6 +1,7 @@
 import argparse
 import shlex
 import subprocess
+from typing import Optional
 from unittest.mock import MagicMock, patch
 
 import pytest
