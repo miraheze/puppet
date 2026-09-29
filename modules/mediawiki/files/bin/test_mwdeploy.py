@@ -1604,10 +1604,10 @@ class TestProcess(unittest.TestCase):
 
     def test_a_failing_command_aborts_the_pass(self):
         runner = _make_runner(config=True)
-        with _deploy_environment() as env, \
-             pytest.raises(SystemExit) as excinfo:
+        with _deploy_environment() as env:
             env.shell.return_value = 1
-            runner.process()
+            with pytest.raises(SystemExit) as excinfo:
+                runner.process()
         assert excinfo.value.code == 1
         env.sync.assert_not_called()
 
