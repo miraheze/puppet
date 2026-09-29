@@ -742,7 +742,7 @@ class DeploymentRunner:
         paths = list(Discovery.versions())
         paths += [self._relative(_paths.deployed(repo)) for repo in ('config', 'landing', 'errorpages')]
         paths.append('cache/databases.php')
-        return [_remote_deployer.sync(time_flag: True, args.servers, paths, DEPLOYED_ROOT, self.envinfo, args.nolog, force=True, batch=args.batch)]
+        return [_remote_deployer.sync(time_flag=True, args.servers, paths, DEPLOYED_ROOT, self.envinfo, args.nolog, force=True, batch=args.batch)]
 
     def process(self, version: str = '') -> list[int]:
         self._reset_state()
