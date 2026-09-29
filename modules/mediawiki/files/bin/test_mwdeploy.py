@@ -543,53 +543,43 @@ class TestPathAndCommandBuilders(unittest.TestCase):
     def test_deployed_path_version_scoped_component(self):
         self.assertEqual(mwdeploy._paths.deployed('extensions/Foo', 'REL1_41'), '/srv/mediawiki/REL1_41/extensions/Foo')
 
-    def test_rsync_no_location_local_raises(self):
-        with pytest.raises(Exception, match='Location must be specified for local rsync.'):
-            mwdeploy._rsync_builder.build(time=False, dest='/srv/mediawiki/version/')
+    def test_rsync_requires_at_least_one_path(self):
+        with pytest.raises(Exception, match='At least one path must be given.'):
+            mwdeploy._rsync_builder.build(False, '/srv/mediawiki-staging', '/srv/mediawiki', [])
 
-    def test_rsync_no_server_remote_raises(self):
-        with pytest.raises(Exception, match=re.escape('Error constructing command. Either server was missing or /srv/mediawiki/version/ != /srv/mediawiki/version/')):
-            mwdeploy._rsync_builder.build(time=False, dest='/srv/mediawiki/version/', local=False)
+    def test_rsync_local_requires_no_server(self):
+        assert mwdeploy._rsync_builder.build(False, '/srv/mediawiki-staging', '/srv/mediawiki', ['config']) == \
+            'sudo -u www-data rsync -R --update -r --delete --exclude=".*" /srv/mediawiki-staging/./config /srv/mediawiki/'
 
-    def test_rsync_conflicting_location_and_server_raises(self):
-        with pytest.raises(Exception, match=re.escape('Error constructing command. Either server was missing or garbage != /srv/mediawiki/version/')):
-            mwdeploy._rsync_builder.build(time=False, dest='/srv/mediawiki/version/', location='garbage', local=False, server='meta')
+    def test_rsync_remote_without_server_raises(self):
+        with pytest.raises(Exception, match='Server must be specified for a remote rsync.'):
+            mwdeploy._rsync_builder.build(False, '/srv/mediawiki', '/srv/mediawiki', ['config'], local=False)
 
-    def test_rsync_conflicting_location_no_server_raises(self):
-        with pytest.raises(Exception, match=re.escape('Error constructing command. Either server was missing or garbage != /srv/mediawiki/version/')):
-            mwdeploy._rsync_builder.build(time=False, dest='/srv/mediawiki/version/', location='garbage', local=False)
+    def test_rsync_local_single_path_update(self):
+        assert mwdeploy._rsync_builder.build(False, '/srv/mediawiki-staging', '/srv/mediawiki', ['version']) == \
+            'sudo -u www-data rsync -R --update -r --delete --exclude=".*" /srv/mediawiki-staging/./version /srv/mediawiki/'
 
-    def test_rsync_local_dir_update(self):
-        assert mwdeploy._rsync_builder.build(time=False, dest='/srv/mediawiki/version/', location='/home/') == 'sudo -u www-data rsync --update -r --delete --exclude=".*" /home/ /srv/mediawiki/version/'
+    def test_rsync_local_multiple_paths_in_one_call(self):
+        assert mwdeploy._rsync_builder.build(False, '/srv/mediawiki-staging', '/srv/mediawiki', ['version/extensions/Foo', 'version/extensions/Bar', 'config']) == \
+            'sudo -u www-data rsync -R --update -r --delete --exclude=".*" ' \
+            '/srv/mediawiki-staging/./version/extensions/Foo /srv/mediawiki-staging/./version/extensions/Bar /srv/mediawiki-staging/./config /srv/mediawiki/'
 
-    def test_rsync_local_file_update(self):
-        assert mwdeploy._rsync_builder.build(time=False, dest='/srv/mediawiki/version/test.txt', location='/home/test.txt', recursive=False) == 'sudo -u www-data rsync --update --exclude=".*" /home/test.txt /srv/mediawiki/version/test.txt'
-
-    def test_rsync_remote_dir_update(self):
+    def test_rsync_remote_multiple_paths_in_one_call(self):
         fqdn = socket.getfqdn()
         domain = '.'.join(fqdn.split('.')[1:])
-        assert mwdeploy._rsync_builder.build(time=False, dest='/srv/mediawiki/version/', local=False, server='meta') == f'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/ www-data@meta.{domain}:/srv/mediawiki/version/'
+        assert mwdeploy._rsync_builder.build(False, '/srv/mediawiki', '/srv/mediawiki', ['version/extensions/Foo', 'config'], local=False, server='meta') == \
+            f'sudo -u www-data rsync -R --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" ' \
+            f'/srv/mediawiki/./version/extensions/Foo /srv/mediawiki/./config www-data@meta.{domain}:/srv/mediawiki/'
 
-    def test_rsync_remote_file_update(self):
+    def test_rsync_local_uses_inplace_when_time_is_true(self):
+        assert mwdeploy._rsync_builder.build(True, '/srv/mediawiki-staging', '/srv/mediawiki', ['config']) == \
+            'sudo -u www-data rsync -R --inplace -r --delete --exclude=".*" /srv/mediawiki-staging/./config /srv/mediawiki/'
+
+    def test_rsync_remote_uses_inplace_when_time_is_true(self):
         fqdn = socket.getfqdn()
         domain = '.'.join(fqdn.split('.')[1:])
-        assert mwdeploy._rsync_builder.build(time=False, dest='/srv/mediawiki/version/test.txt', recursive=False, local=False, server='meta') == f'sudo -u www-data rsync --update -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/test.txt www-data@meta.{domain}:/srv/mediawiki/version/test.txt'
-
-    def test_rsync_local_dir_time(self):
-        assert mwdeploy._rsync_builder.build(time=True, dest='/srv/mediawiki/version/', location='/home/') == 'sudo -u www-data rsync --inplace -r --delete --exclude=".*" /home/ /srv/mediawiki/version/'
-
-    def test_rsync_local_file_time(self):
-        assert mwdeploy._rsync_builder.build(time=True, dest='/srv/mediawiki/version/test.txt', location='/home/test.txt', recursive=False) == 'sudo -u www-data rsync --inplace --exclude=".*" /home/test.txt /srv/mediawiki/version/test.txt'
-
-    def test_rsync_remote_dir_time(self):
-        fqdn = socket.getfqdn()
-        domain = '.'.join(fqdn.split('.')[1:])
-        assert mwdeploy._rsync_builder.build(time=True, dest='/srv/mediawiki/version/', local=False, server='meta') == f'sudo -u www-data rsync --inplace -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/ www-data@meta.{domain}:/srv/mediawiki/version/'
-
-    def test_rsync_remote_file_time(self):
-        fqdn = socket.getfqdn()
-        domain = '.'.join(fqdn.split('.')[1:])
-        assert mwdeploy._rsync_builder.build(time=True, dest='/srv/mediawiki/version/test.txt', recursive=False, local=False, server='meta') == f'sudo -u www-data rsync --inplace -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/version/test.txt www-data@meta.{domain}:/srv/mediawiki/version/test.txt'
+        assert mwdeploy._rsync_builder.build(True, '/srv/mediawiki', '/srv/mediawiki', ['config'], local=False, server='meta') == \
+            f'sudo -u www-data rsync -R --inplace -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/./config www-data@meta.{domain}:/srv/mediawiki/'
 
     def test_git_pull(self):
         assert mwdeploy._git.pull('config') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --quiet'
@@ -893,7 +883,7 @@ class TestRemoteDeployer(unittest.TestCase):
 
     @patch.object(mwdeploy.ShellExecutor, 'run', return_value=0)
     def test_sync_skips_self_and_deploys_to_others(self, mock_run):
-        result = self.deployer.sync(False, ['mw151', 'mw152', 'mw153'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
+        result = self.deployer.sync(False, ['mw151', 'mw152', 'mw153'], ['config'], '/srv/mediawiki', self.envinfo, nolog=True)
         assert result == 0
         assert mock_run.call_count == 2
         commands = [call.args[0] for call in mock_run.call_args_list]
@@ -902,25 +892,39 @@ class TestRemoteDeployer(unittest.TestCase):
 
     @patch.object(mwdeploy.ShellExecutor, 'run', return_value=0)
     def test_sync_continues_past_self_mid_list(self, mock_run):
-        self.deployer.sync(False, ['mw152', 'mw151', 'mw153'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
+        self.deployer.sync(False, ['mw152', 'mw151', 'mw153'], ['config'], '/srv/mediawiki', self.envinfo, nolog=True)
         assert mock_run.call_count == 2
         commands = [call.args[0] for call in mock_run.call_args_list]
         assert not any('@mw151.' in cmd for cmd in commands)
 
     def test_sync_with_no_remote_targets_returns_zero(self):
-        result = self.deployer.sync(False, ['mw151'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
+        result = self.deployer.sync(False, ['mw151'], ['config'], '/srv/mediawiki', self.envinfo, nolog=True)
         assert result == 0
 
     @patch.object(mwdeploy.ShellExecutor, 'run', return_value=0)
+    def test_sync_carries_every_path_in_one_rsync_call_per_server(self, mock_run):
+        paths = [f'version/extensions/Ext{i}' for i in range(10)] + ['cache/version/gitinfo']
+        self.deployer.sync(False, ['mw151', 'mw152'], paths, '/srv/mediawiki', self.envinfo, nolog=True)
+        assert mock_run.call_count == 1  # one remote target (mw152), one rsync call
+        cmd = mock_run.call_args.args[0]
+        for path in paths:
+            self.assertIn(f'/srv/mediawiki/./{path}', cmd)
+
+    def test_sync_checks_canary_once_per_server_no_matter_how_many_paths(self):
+        with patch.object(mwdeploy.ShellExecutor, 'run', return_value=0):
+            self.deployer.sync(False, ['mw151', 'mw152'], ['config', 'version', 'cache/version/gitinfo'], '/srv/mediawiki', self.envinfo, nolog=True)
+        self.canary.check.assert_called_once()
+
+    @patch.object(mwdeploy.ShellExecutor, 'run', return_value=0)
     def test_sync_defaults_to_one_server_at_a_time_without_batch(self, mock_run):
-        result = self.deployer.sync(False, ['mw151', 'mw152', 'mw153', 'mw161', 'mw162'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
+        result = self.deployer.sync(False, ['mw151', 'mw152', 'mw153', 'mw161', 'mw162'], ['config'], '/srv/mediawiki', self.envinfo, nolog=True)
         assert result == 0
         assert mock_run.call_count == 4
 
     @patch.object(mwdeploy.ShellExecutor, 'run', side_effect=[0, 1])
     def test_sync_stops_after_a_failing_server(self, mock_run):
         with pytest.raises(SystemExit) as excinfo:
-            self.deployer.sync(False, ['mw151', 'mw152', 'mw153'], '/srv/mediawiki/config/', self.envinfo, nolog=True)
+            self.deployer.sync(False, ['mw151', 'mw152', 'mw153'], ['config'], '/srv/mediawiki', self.envinfo, nolog=True)
         assert excinfo.value.code == 3
         assert mock_run.call_count == 2
 
@@ -931,14 +935,14 @@ class TestRemoteDeployer(unittest.TestCase):
         deployer = mwdeploy.RemoteDeployer(self.rsync_builder, canary, hostname='mw151', batch_size=2)
 
         with pytest.raises(SystemExit) as excinfo:
-            deployer.sync(False, ['mw151', 'mw152', 'mw153', 'mw154'], '/srv/mediawiki/config/', self.envinfo, nolog=True, batch=True)
+            deployer.sync(False, ['mw151', 'mw152', 'mw153', 'mw154'], ['config'], '/srv/mediawiki', self.envinfo, nolog=True, batch=True)
 
         assert excinfo.value.code == 3
         assert mock_run.call_count == 1
 
     @patch.object(mwdeploy.ShellExecutor, 'run', return_value=0)
     def test_sync_with_batch_runs_all_targets_when_healthy(self, mock_run):
-        result = self.deployer.sync(False, ['mw151', 'mw152', 'mw153', 'mw161', 'mw162'], '/srv/mediawiki/config/', self.envinfo, nolog=True, batch=True)
+        result = self.deployer.sync(False, ['mw151', 'mw152', 'mw153', 'mw161', 'mw162'], ['config'], '/srv/mediawiki', self.envinfo, nolog=True, batch=True)
         assert result == 0
         assert mock_run.call_count == 4
 
@@ -1503,6 +1507,22 @@ class TestProcess(unittest.TestCase):
             self.assertTrue(matches, f'{fragment!r} not found after position {position} in {commands}')
             position = matches[0] + 1
 
+    def test_gitinfo_is_pushed_directly_from_deployed_root_with_no_local_copy(self):
+        runner = _make_runner(upgrade_extensions=['Foo'])
+        with _deploy_environment() as env, \
+             patch.object(mwdeploy.DeploymentRunner, '_upgrade_components') as mock_components:
+            def fake_upgrade_components(kind, items, version):  # noqa: U100
+                runner._needs_version_cache_rebuild = True
+            mock_components.side_effect = fake_upgrade_components
+            runner.process('version')
+
+        commands = [call.args[0] for call in env.shell.call_args_list]
+        self.assertTrue(any('RebuildVersionCache' in cmd for cmd in commands))
+        self.assertFalse(any(cmd.startswith('sudo -u www-data rsync -R') for cmd in commands))  # nothing local to copy
+        env.sync.assert_called_once()
+        self.assertEqual(env.sync.call_args.args[2], ['cache/version/gitinfo'])
+        self.assertEqual(env.sync.call_args.args[3], '/srv/mediawiki')
+
     def test_versioned_pass_runs_every_step_in_order_on_the_local_server(self):
         runner = _make_runner(
             reset_world=True, upgrade_vendor=True, upgrade_extensions=['Foo'], apply_patches=['config'],
@@ -1521,11 +1541,16 @@ class TestProcess(unittest.TestCase):
             'puppet agent',
             'composer update',
             'composer update',
-            'rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/version/*',
+            'rsync -R --update -r --delete',
             'MergeMessageFileList',
             'RebuildVersionCache',
             'RebuildExtensionListCache',
             'rebuildLocalisationCache.php --lang=en,fr',
+        )
+        self.assertIn(
+            'sudo -u www-data rsync -R --update -r --delete --exclude=".*" '
+            '/srv/mediawiki-staging/./version/vendor /srv/mediawiki-staging/./version /srv/mediawiki-staging/./config /srv/mediawiki/',
+            commands,
         )
         self.assertIn(
             'sudo -u www-data php /srv/mediawiki/version/maintenance/run.php MirahezeMagic:MergeMessageFileList '
@@ -1538,17 +1563,12 @@ class TestProcess(unittest.TestCase):
             [call.args for call in env.applier.apply_all.call_args_list],
             [('vendor', 'version'), ('config', 'version'), ('vendor', 'version'), ('config', 'version')],
         )
+        env.sync.assert_called_once()
         self.assertEqual(
-            [(call.args[2], call.kwargs.get('recursive', True)) for call in env.sync.call_args_list],
-            [
-                ('/srv/mediawiki/version/vendor/', True),
-                ('/srv/mediawiki/cache/version/gitinfo/', True),
-                ('/srv/mediawiki/config/', True),
-                ('/srv/mediawiki/version/', True),
-                ('/srv/mediawiki/cache/version/l10n/', True),
-                ('/srv/mediawiki/cache/version/extension-list.php', False),
-            ],
+            env.sync.call_args.args[2],
+            ['version/vendor', 'cache/version/gitinfo', 'config', 'version', 'cache/version/extension-list.php', 'cache/version/l10n'],
         )
+        self.assertEqual(env.sync.call_args.args[3], '/srv/mediawiki')
         env.canary.assert_called_once_with(Debug=None, Host=runner.envinfo.wikiurl, verify=False, force=False, nolog=True)
         self.assertEqual(set(codes), {0})
 
@@ -1559,26 +1579,16 @@ class TestProcess(unittest.TestCase):
 
         commands = [call.args[0] for call in env.shell.call_args_list]
         self.assertEqual(commands, [
-            'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/config/* /srv/mediawiki/config/',
-            'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/landing/* /srv/mediawiki/landing/',
-            'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/ErrorPages/* /srv/mediawiki/ErrorPages/',
-            'sudo -u www-data rsync --update --exclude=".*" /srv/mediawiki-staging/a.txt /srv/mediawiki/a.txt',
-            'sudo -u www-data rsync --update --exclude=".*" /srv/mediawiki-staging/b.txt /srv/mediawiki/b.txt',
-            'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/dir1/* /srv/mediawiki/dir1/',
-            'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/dir2/* /srv/mediawiki/dir2/',
+            'sudo -u www-data rsync -R --update -r --delete --exclude=".*" '
+            '/srv/mediawiki-staging/./config /srv/mediawiki-staging/./landing /srv/mediawiki-staging/./ErrorPages '
+            '/srv/mediawiki-staging/./a.txt /srv/mediawiki-staging/./b.txt /srv/mediawiki-staging/./dir1 /srv/mediawiki-staging/./dir2 /srv/mediawiki/',
         ])
+        env.sync.assert_called_once()
         self.assertEqual(
-            [(call.args[2], call.kwargs.get('recursive', True)) for call in env.sync.call_args_list],
-            [
-                ('/srv/mediawiki/config/', True),
-                ('/srv/mediawiki/landing/', True),
-                ('/srv/mediawiki/ErrorPages/', True),
-                ('/srv/mediawiki/dir1/', True),
-                ('/srv/mediawiki/dir2/', True),
-                ('/srv/mediawiki/a.txt', False),
-                ('/srv/mediawiki/b.txt', False),
-            ],
+            env.sync.call_args.args[2],
+            ['config', 'landing', 'ErrorPages', 'a.txt', 'b.txt', 'dir1', 'dir2'],
         )
+        self.assertEqual(env.sync.call_args.args[3], '/srv/mediawiki')
         self.assertEqual(set(codes), {0})
 
     def test_unversioned_pass_does_not_rebuild_the_version_cache(self):
@@ -1594,7 +1604,7 @@ class TestProcess(unittest.TestCase):
             runner.process()
         env.shell.assert_not_called()
         env.canary.assert_not_called()
-        self.assertEqual([call.args[2] for call in env.sync.call_args_list], ['/srv/mediawiki/config/'])
+        self.assertEqual([call.args[2] for call in env.sync.call_args_list], [['config']])
 
     def test_canary_check_uses_the_port_when_one_is_given(self):
         runner = _make_runner(config=True, port=8080)
