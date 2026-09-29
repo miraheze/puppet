@@ -1,9 +1,11 @@
 import argparse
+import contextlib
 import os
 import re
 import shlex
 import socket
 import unittest
+from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -22,7 +24,12 @@ def _make_args(**overrides):
     defaults = {
         'world': False, 'force': False, 'force_upgrade': False, 'skip_schema_confirm': True,
         'show_tags': False, 'ignore_time': False, 'batch': False, 'pr': None, 'pr_repo': 'config',
-        'debug': False,
+        'debug': False, 'task': None, 'nolog': True, 'servers': ['mw151'], 'versions': None,
+        'config': False, 'landing': False, 'errorpages': False, 'reset_world': False,
+        'upgrade_world': False, 'upgrade_vendor': False, 'upgrade_extensions': None,
+        'upgrade_skins': None, 'upgrade_pack': None, 'apply_patches': None, 'pull': None,
+        'branch': None, 'files': None, 'folders': None, 'extension_list': False, 'l10n': False,
+        'lang': None, 'port': None,
     }
     defaults.update(overrides)
     return argparse.Namespace(**defaults)
@@ -32,6 +39,22 @@ def _make_runner(**overrides):
     runner = mwdeploy.DeploymentRunner(_make_args(**overrides))
     runner._reset_state()
     return runner
+
+
+@contextlib.contextmanager
+def _deploy_environment(hostname='mw151'):
+    with contextlib.ExitStack() as stack:
+        stack.enter_context(patch.object(mwdeploy, 'HOSTNAME', hostname))
+        stack.enter_context(patch('os.chdir'))
+        environment = SimpleNamespace(
+            shell=stack.enter_context(patch('mwdeploy.ShellExecutor.run', return_value=0)),
+            applier=stack.enter_context(patch.object(mwdeploy, '_patch_applier')),
+            canary=stack.enter_context(patch.object(mwdeploy._default_canary_checker, 'check', return_value=True)),
+            sync=stack.enter_context(patch.object(mwdeploy._remote_deployer, 'sync', return_value=0)),
+        )
+        environment.applier.apply_all.return_value = ([0], False)
+        environment.applier.has_patches.return_value = True
+        yield environment
 
 
 class TestChangeTagger(unittest.TestCase):
@@ -54,7 +77,7 @@ class TestChangeTagger(unittest.TestCase):
     def test_tag_map_is_the_shared_module_level_map(self):
         self.assertIs(mwdeploy.ChangeTagger.TAG_MAP, mwdeploy.CHANGE_TAG_MAP)
 
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_changed_files(self, mock_run):
         mock_run.return_value = MagicMock(stdout='\n'.join(self.changed_files))
         changed_files = mwdeploy.ChangeTagger.changed_files(self.path, self.version)
@@ -62,13 +85,13 @@ class TestChangeTagger(unittest.TestCase):
         self.assertCountEqual(changed_files, self.changed_files)
         mock_run.assert_called_with(f'git -C {self.repo_dir} --no-pager --git-dir={self.repo_dir}/.git diff --name-only HEAD@{{1}} HEAD')
 
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_changed_files_strips_each_line(self, mock_run):
         mock_run.return_value = MagicMock(stdout='  padded.php  \nother.php\n')
         changed_files = mwdeploy.ChangeTagger.changed_files(self.path, self.version)
         self.assertEqual(changed_files, ['padded.php', 'other.php'])
 
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_files_of_type(self, mock_run):
         mock_run.return_value = MagicMock(stdout='\n'.join(self.changed_files))
         codechange_files = mwdeploy.ChangeTagger.files_of_type(self.path, self.version, 'code change')
@@ -81,7 +104,7 @@ class TestChangeTagger(unittest.TestCase):
         self.assertCountEqual(build_files, self.expected_build_files)
         self.assertCountEqual(i18n_files, self.expected_i18n_files)
 
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_tags(self, mock_run):
         mock_run.return_value = MagicMock(stdout='\n'.join(self.changed_files))
         tags = mwdeploy.ChangeTagger.tags(self.path, self.version)
@@ -329,18 +352,18 @@ class TestEnsureAllZero(unittest.TestCase):
 
 class TestSubprocessMigration(unittest.TestCase):
     @patch('mwdeploy.subprocess.run')
-    def test_run_helper_uses_shell_and_captures_text(self, mock_subprocess_run):
+    def test_run_quiet_uses_shell_and_captures_text(self, mock_subprocess_run):
         mock_subprocess_run.return_value = 'sentinel'
-        result = mwdeploy._run('echo hi')
+        result = mwdeploy.ShellExecutor.run_quiet('echo hi')
         mock_subprocess_run.assert_called_once_with('echo hi', shell=True, capture_output=True, text=True)
         self.assertEqual(result, 'sentinel')
 
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_load_mw_versions_parses_json_output(self, mock_run):
         mock_run.return_value = MagicMock(stdout='{"REL1_41": "REL1_41", "REL1_42": "REL1_42"}')
         self.assertEqual(mwdeploy._load_mw_versions(), {'REL1_41': 'REL1_41', 'REL1_42': 'REL1_42'})
 
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_load_mw_versions_falls_back_when_command_produces_nothing(self, mock_run):
         mock_run.return_value = MagicMock(stdout='')
         self.assertEqual(mwdeploy._load_mw_versions(), {'version': 'version'})
@@ -397,7 +420,7 @@ class TestSubprocessMigration(unittest.TestCase):
         self.assertIn('Execute: echo hi', printed)
         self.assertIn('Completed (0)', printed)
 
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_fetch_component_returns_name_repo_output_and_returncode(self, mock_run):
         mock_run.return_value = MagicMock(stdout='Already up to date.\n', returncode=0, stderr='')
         name, repo, output, status, error = mwdeploy.DeploymentRunner._fetch_component('extensions', 'Foo', 'REL1_41')
@@ -407,13 +430,13 @@ class TestSubprocessMigration(unittest.TestCase):
         self.assertEqual(status, 0)
         self.assertEqual(error, '')
 
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_fetch_component_nonzero_exit_is_a_plain_int(self, mock_run):
         mock_run.return_value = MagicMock(stdout='', returncode=1, stderr='')
         _name, _repo, _output, status, _error = mwdeploy.DeploymentRunner._fetch_component('extensions', 'Foo', 'REL1_41')
         self.assertEqual(status, 1)
 
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_fetch_component_carries_stderr_through(self, mock_run):
         mock_run.return_value = MagicMock(stdout='', returncode=128, stderr='fatal: could not read from remote repository.\n')
         _name, _repo, _output, status, error = mwdeploy.DeploymentRunner._fetch_component('extensions', 'Foo', 'REL1_41')
@@ -700,7 +723,7 @@ class TestPatchApplier(unittest.TestCase):
         self.assertEqual(self.applier._matching_patches('extensions/Bar', 'REL1_41'), [])
 
     @patch('mwdeploy.ShellExecutor.run', return_value=0)
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_apply_git_applies_cleanly_when_check_passes(self, mock_run_helper, mock_shell_run):
         mock_run_helper.return_value = MagicMock(returncode=0)
         code, changed = self.applier._apply_git('extensions/Foo', '/patches/public/foo.patch', 'REL1_41')
@@ -709,7 +732,7 @@ class TestPatchApplier(unittest.TestCase):
         mock_shell_run.assert_called_once()
         mock_run_helper.assert_called_once()
 
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_apply_git_skips_when_already_applied(self, mock_run_helper):
         mock_run_helper.side_effect = [MagicMock(returncode=1, stderr=''), MagicMock(returncode=0)]
         code, changed = self.applier._apply_git('extensions/Foo', '/patches/public/foo.patch', 'REL1_41')
@@ -717,7 +740,7 @@ class TestPatchApplier(unittest.TestCase):
         self.assertFalse(changed)
         self.assertEqual(mock_run_helper.call_count, 2)
 
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_apply_git_reports_a_real_conflict(self, mock_run_helper):
         mock_run_helper.side_effect = [
             MagicMock(returncode=1, stderr='error: patch failed: file.php:1'),
@@ -727,7 +750,7 @@ class TestPatchApplier(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertFalse(changed)
 
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_apply_git_conflict_output_has_noise_stripped(self, mock_run_helper):
         mock_run_helper.side_effect = [
             MagicMock(returncode=1, stderr="warning: unable to access foo\nerror: patch failed: file.php:1"),
@@ -740,7 +763,7 @@ class TestPatchApplier(unittest.TestCase):
         self.assertIn('patch failed', printed)
 
     @patch('mwdeploy.ShellExecutor.run', return_value=0)
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_apply_plain_skips_when_already_applied(self, mock_run_helper, mock_shell_run):
         mock_run_helper.return_value = MagicMock(returncode=0)
         code, changed = self.applier._apply_plain('vendor', '/patches/public/foo.patch', 'REL1_41')
@@ -749,7 +772,7 @@ class TestPatchApplier(unittest.TestCase):
         mock_shell_run.assert_not_called()
 
     @patch('mwdeploy.ShellExecutor.run', return_value=0)
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_apply_plain_applies_when_not_already_applied(self, mock_run_helper, mock_shell_run):
         mock_run_helper.return_value = MagicMock(returncode=1)
         code, changed = self.applier._apply_plain('vendor', '/patches/public/foo.patch', 'REL1_41')
@@ -758,7 +781,7 @@ class TestPatchApplier(unittest.TestCase):
         mock_shell_run.assert_called_once()
 
     @patch('mwdeploy.ShellExecutor.run', return_value=0)
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_apply_all_reports_changed_when_a_patch_is_actually_applied(self, mock_run_helper, mock_shell_run):
         mock_run_helper.return_value = MagicMock(returncode=0)
         with patch('os.path.isfile', return_value=True):
@@ -767,7 +790,7 @@ class TestPatchApplier(unittest.TestCase):
         self.assertTrue(changed)
         mock_shell_run.assert_called_once()
 
-    @patch('mwdeploy._run')
+    @patch('mwdeploy.ShellExecutor.run_quiet')
     def test_apply_all_reports_unchanged_when_everything_already_applied(self, mock_run_helper):
         mock_run_helper.side_effect = [MagicMock(returncode=1, stderr=''), MagicMock(returncode=0)]
         with patch('os.path.isfile', return_value=True):
@@ -1472,7 +1495,346 @@ class TestDeploymentRunnerHelpers(unittest.TestCase):
         self.assertEqual(runner.rsync, [])
 
 
+class TestProcess(unittest.TestCase):
+    def assertCommandsInOrder(self, commands, *fragments):
+        position = 0
+        for fragment in fragments:
+            matches = [index for index, command in enumerate(commands) if fragment in command and index >= position]
+            self.assertTrue(matches, f'{fragment!r} not found after position {position} in {commands}')
+            position = matches[0] + 1
+
+    def test_versioned_pass_runs_every_step_in_order_on_the_local_server(self):
+        runner = _make_runner(
+            reset_world=True, upgrade_vendor=True, upgrade_extensions=['Foo'], apply_patches=['config'],
+            extension_list=True, l10n=True, lang='en,fr',
+        )
+        patches = [{'path': 'config'}, {'path': 'vendor'}, {'path': 'config'}]
+        with _deploy_environment() as env, \
+             patch.object(mwdeploy, 'patches', patches), \
+             patch.object(mwdeploy.DeploymentRunner, '_upgrade_components') as mock_components:
+            codes = runner.process('version')
+
+        commands = [call.args[0] for call in env.shell.call_args_list]
+        self.assertCommandsInOrder(
+            commands,
+            'rm -rf /srv/mediawiki-staging/version/',
+            'puppet agent',
+            'composer update',
+            'composer update',
+            'rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/version/*',
+            'MergeMessageFileList',
+            'RebuildVersionCache',
+            'RebuildExtensionListCache',
+            'rebuildLocalisationCache.php --lang=en,fr',
+        )
+        self.assertIn(
+            'sudo -u www-data php /srv/mediawiki/version/maintenance/run.php MirahezeMagic:MergeMessageFileList '
+            '--quiet --wiki=testwiki --extensions-dir=/srv/mediawiki/version/extensions:/srv/mediawiki/version/skins '
+            '--output /srv/mediawiki/config/ExtensionMessageFiles-version.php',
+            commands,
+        )
+        mock_components.assert_called_once_with('extensions', ['Foo'], 'version')
+        self.assertEqual(
+            [call.args for call in env.applier.apply_all.call_args_list],
+            [('vendor', 'version'), ('config', 'version'), ('vendor', 'version'), ('config', 'version')],
+        )
+        self.assertEqual(
+            [(call.args[2], call.kwargs.get('recursive', True)) for call in env.sync.call_args_list],
+            [
+                ('/srv/mediawiki/version/vendor/', True),
+                ('/srv/mediawiki/cache/version/gitinfo/', True),
+                ('/srv/mediawiki/config/', True),
+                ('/srv/mediawiki/version/', True),
+                ('/srv/mediawiki/cache/version/l10n/', True),
+                ('/srv/mediawiki/cache/version/extension-list.php', False),
+            ],
+        )
+        env.canary.assert_called_once_with(Debug=None, Host=runner.envinfo.wikiurl, verify=False, force=False, nolog=True)
+        self.assertEqual(set(codes), {0})
+
+    def test_unversioned_pass_deploys_config_landing_errorpages_files_and_folders(self):
+        runner = _make_runner(config=True, landing=True, errorpages=True, files='a.txt,b.txt', folders='dir1,dir2')
+        with _deploy_environment() as env:
+            codes = runner.process()
+
+        commands = [call.args[0] for call in env.shell.call_args_list]
+        self.assertEqual(commands, [
+            'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/config/* /srv/mediawiki/config/',
+            'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/landing/* /srv/mediawiki/landing/',
+            'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/ErrorPages/* /srv/mediawiki/ErrorPages/',
+            'sudo -u www-data rsync --update --exclude=".*" /srv/mediawiki-staging/a.txt /srv/mediawiki/a.txt',
+            'sudo -u www-data rsync --update --exclude=".*" /srv/mediawiki-staging/b.txt /srv/mediawiki/b.txt',
+            'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/dir1/* /srv/mediawiki/dir1/',
+            'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/dir2/* /srv/mediawiki/dir2/',
+        ])
+        self.assertEqual(
+            [(call.args[2], call.kwargs.get('recursive', True)) for call in env.sync.call_args_list],
+            [
+                ('/srv/mediawiki/config/', True),
+                ('/srv/mediawiki/landing/', True),
+                ('/srv/mediawiki/ErrorPages/', True),
+                ('/srv/mediawiki/dir1/', True),
+                ('/srv/mediawiki/dir2/', True),
+                ('/srv/mediawiki/a.txt', False),
+                ('/srv/mediawiki/b.txt', False),
+            ],
+        )
+        self.assertEqual(set(codes), {0})
+
+    def test_unversioned_pass_does_not_rebuild_the_version_cache(self):
+        runner = _make_runner(config=True)
+        with _deploy_environment() as env:
+            runner.process()
+        commands = [call.args[0] for call in env.shell.call_args_list]
+        self.assertFalse(any('RebuildVersionCache' in command for command in commands))
+
+    def test_a_server_that_is_not_the_deploy_target_only_syncs_to_the_fleet(self):
+        runner = _make_runner(config=True, servers=['mw152'])
+        with _deploy_environment(hostname='mw151') as env:
+            runner.process()
+        env.shell.assert_not_called()
+        env.canary.assert_not_called()
+        self.assertEqual([call.args[2] for call in env.sync.call_args_list], ['/srv/mediawiki/config/'])
+
+    def test_canary_check_uses_the_port_when_one_is_given(self):
+        runner = _make_runner(config=True, port=8080)
+        with _deploy_environment() as env:
+            runner.process()
+        env.canary.assert_called_once_with(Debug=None, Host=runner.envinfo.wikiurl, verify=False, force=False, nolog=True, port=8080)
+
+    def test_a_failing_command_aborts_the_pass(self):
+        runner = _make_runner(config=True)
+        with _deploy_environment() as env, \
+             pytest.raises(SystemExit) as excinfo:
+            env.shell.return_value = 1
+            runner.process()
+        assert excinfo.value.code == 1
+        env.sync.assert_not_called()
+
+
+class TestRun(unittest.TestCase):
+    def setUp(self):
+        for patcher in (
+            patch.object(mwdeploy.Console, 'enabled', False),
+            patch.object(mwdeploy.Sal, 'task', None),
+            patch.object(mwdeploy, 'HOSTNAME', 'mw151'),
+            patch.object(mwdeploy.Discovery, 'extensions', return_value=['A', 'B']),
+            patch.object(mwdeploy.Discovery, 'skins', return_value=['S', 'T']),
+            patch.object(mwdeploy.Discovery, 'patch_paths', return_value=['config', 'vendor']),
+            patch.object(mwdeploy.Discovery, 'versions', return_value=['v1', 'v2']),
+        ):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def _run(self, results, **overrides):
+        self.runner = mwdeploy.DeploymentRunner(_make_args(**overrides))
+        with patch.object(self.runner, 'process', side_effect=results) as self.process, \
+             patch.object(self.runner, '_log') as self.log, \
+             patch('mwdeploy.time.time', return_value=1005.0):
+            self.runner.run(1000.0)
+
+    def _logged(self, index):
+        return self.log.call_args_list[index].args[0]
+
+    def test_plain_deploy_logs_the_start_and_the_success(self):
+        self._run([[]])
+        self.process.assert_called_once_with()
+        self.assertEqual(self.log.call_count, 2)
+        self.assertIn('Starting deploy of', self._logged(0))
+        self.assertIn('to mw151', self._logged(0))
+        self.assertIn('finished deploy of', self._logged(1))
+        self.assertIn('SUCCESS in 5s', self._logged(1))
+
+    def test_a_failed_first_pass_logs_the_failure_and_exits(self):
+        with pytest.raises(SystemExit) as excinfo:
+            self._run([[1]])
+        assert excinfo.value.code == 1
+        self.process.assert_called_once_with()
+        self.assertIn('FAIL: [1]', self._logged(1))
+        self.assertNotIn('SUCCESS', self._logged(1))
+
+    def test_each_version_gets_its_own_pass_when_something_needs_one(self):
+        self._run([[], [], []], l10n=True, versions=['v1', 'v2'])
+        self.assertEqual([call.args for call in self.process.call_args_list], [(), ('v1',), ('v2',)])
+        self.assertIn('SUCCESS', self._logged(1))
+
+    def test_a_failing_version_stops_the_remaining_ones(self):
+        with pytest.raises(SystemExit) as excinfo:
+            self._run([[], [1]], l10n=True, versions=['v1', 'v2'])
+        assert excinfo.value.code == 1
+        self.assertEqual([call.args for call in self.process.call_args_list], [(), ('v1',)])
+        self.assertIn('FAIL: [1]', self._logged(1))
+
+    def test_versions_are_not_processed_when_nothing_needs_one(self):
+        self._run([[]], versions=['v1'])
+        self.process.assert_called_once_with()
+        self.assertNotIn('versions', self._logged(0))
+
+    def test_upgrade_world_selects_everything(self):
+        self._run([[], []], upgrade_world=True, versions=['v1'])
+        args = self.runner.args
+        self.assertTrue(args.world)
+        self.assertEqual(args.pull, 'world')
+        self.assertTrue(args.l10n)
+        self.assertTrue(args.ignore_time)
+        self.assertTrue(args.extension_list)
+        self.assertTrue(args.upgrade_vendor)
+        self.assertEqual(args.upgrade_extensions, ['A', 'B'])
+        self.assertEqual(args.upgrade_skins, ['S', 'T'])
+        self.assertEqual([call.args for call in self.process.call_args_list], [(), ('v1',)])
+
+    def test_reset_world_takes_precedence_over_upgrade_world(self):
+        self._run([[], []], upgrade_world=True, reset_world=True, versions=['v1'])
+        args = self.runner.args
+        self.assertFalse(args.world)
+        self.assertIsNone(args.pull)
+        self.assertIsNone(args.upgrade_extensions)
+
+    def test_every_server_is_logged_as_all(self):
+        every_server = list(mwdeploy.get_environment_info().servers)
+        self._run([[]], servers=every_server)
+        self.assertIn('to all', self._logged(0))
+
+    def test_a_subset_of_servers_is_logged_by_name(self):
+        self._run([[]], servers=['mw151', 'mw152'])
+        self.assertIn("to ['mw151', 'mw152']", self._logged(0))
+
+    def test_choosing_everything_is_logged_as_all(self):
+        self._run(
+            [[], [], []], l10n=True, versions=['v1', 'v2'], upgrade_extensions=['A', 'B'],
+            upgrade_skins=['S', 'T'], apply_patches=['config', 'vendor'],
+        )
+        started = self._logged(0)
+        for option in ('upgrade_extensions', 'upgrade_skins', 'apply_patches', 'versions'):
+            self.assertIn(f"'{option}': 'all'", started)
+
+    def test_choosing_a_subset_is_logged_as_is(self):
+        self._run([[], []], versions=['v1'], upgrade_extensions=['A'], upgrade_skins=['S'], apply_patches=['config'])
+        started = self._logged(0)
+        self.assertIn("'upgrade_extensions': 'A'", started)
+        self.assertIn("'upgrade_skins': 'S'", started)
+        self.assertIn("'apply_patches': 'config'", started)
+        self.assertIn("'versions': 'v1'", started)
+
+    def test_a_pack_hides_the_extension_and_skin_lists_from_the_log(self):
+        self._run([[], []], versions=['v1'], upgrade_pack='wikitide', upgrade_extensions=['A'], upgrade_skins=['S'])
+        started = self._logged(0)
+        self.assertNotIn('upgrade_extensions', started)
+        self.assertNotIn('upgrade_skins', started)
+        self.assertIn("'upgrade_pack': 'wikitide'", started)
+
+
+class TestBuildParserAndMain(unittest.TestCase):
+    def test_build_parser_requires_servers(self):
+        with patch('mwdeploy.ShellExecutor.run_quiet', return_value=MagicMock(stdout='version')):
+            parser = mwdeploy.build_parser()
+        with pytest.raises(SystemExit):
+            parser.parse_args([])
+
+    def test_build_parser_defaults_versions_from_getmwversion(self):
+        with patch('mwdeploy.ShellExecutor.run_quiet', return_value=MagicMock(stdout='REL1_41\n')) as mock_run:
+            parser = mwdeploy.build_parser()
+            namespace = parser.parse_args(['--servers', 'mw151'])
+        self.assertEqual(namespace.versions, ['REL1_41'])
+        mock_run.assert_called_once()
+        self.assertIn('getMWVersion', mock_run.call_args.args[0])
+
+    def test_build_parser_accepts_every_documented_flag(self):
+        with patch('mwdeploy.ShellExecutor.run_quiet', return_value=MagicMock(stdout='REL1_41')), \
+             patch.object(mwdeploy.Discovery, 'extensions', return_value=['Foo']), \
+             patch.object(mwdeploy.Discovery, 'skins', return_value=['Vector']), \
+             patch.object(mwdeploy.Discovery, 'versions', return_value=['REL1_41']), \
+             patch.object(mwdeploy, 'patches', [{'path': 'config'}]):
+            parser = mwdeploy.build_parser()
+            namespace = parser.parse_args([
+                '--servers', 'mw151', '--versions', 'REL1_41', '--upgrade-extensions', 'Foo',
+                '--upgrade-skins', 'Vector', '--apply-patches', 'config', '--l10n', '--lang', 'en',
+                '--task', 'T12345', '--batch', '--debug', '--force',
+            ])
+        self.assertEqual(namespace.upgrade_extensions, ['Foo'])
+        self.assertEqual(namespace.upgrade_skins, ['Vector'])
+        self.assertEqual(namespace.apply_patches, ['config'])
+        self.assertEqual(namespace.lang, 'en')
+        self.assertEqual(namespace.task, 'T12345')
+        self.assertTrue(namespace.batch)
+        self.assertTrue(namespace.debug)
+        self.assertTrue(namespace.force)
+
+    def test_main_parses_args_and_runs_the_deployment(self):
+        namespace = argparse.Namespace(servers=['mw151'])
+        with patch('mwdeploy.build_parser') as mock_build_parser, \
+             patch.object(mwdeploy, 'DeploymentRunner') as mock_runner_cls, \
+             patch('mwdeploy.time.time', return_value=42.0):
+            mock_build_parser.return_value.parse_args.return_value = namespace
+            mwdeploy.main()
+        mock_build_parser.return_value.parse_args.assert_called_once_with()
+        mock_runner_cls.assert_called_once_with(namespace)
+        mock_runner_cls.return_value.run.assert_called_once_with(42.0)
+
+
 class TestArgparseActions(unittest.TestCase):
+    def test_upgrade_extensions_action_requires_versions_first(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--versions', action='store', default=None)
+        parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=mwdeploy.UpgradeExtensionsAction)
+        with pytest.raises(SystemExit):
+            parser.parse_args(['--upgrade-extensions', 'Foo'])
+
+    def test_upgrade_extensions_action_rejects_an_unknown_extension(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--versions', action='store', default=None)
+        parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=mwdeploy.UpgradeExtensionsAction)
+        with patch.object(mwdeploy.Discovery, 'extensions', return_value=['Foo', 'Bar']), \
+             pytest.raises(SystemExit):
+            parser.parse_args(['--versions', 'REL1_41', '--upgrade-extensions', 'Ghost'])
+
+    def test_upgrade_extensions_action_sorts_the_chosen_extensions(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--versions', action='store', default=None)
+        parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=mwdeploy.UpgradeExtensionsAction)
+        with patch.object(mwdeploy.Discovery, 'extensions', return_value=['Foo', 'Bar']):
+            namespace = parser.parse_args(['--versions', 'REL1_41', '--upgrade-extensions', 'Foo,Bar'])
+        self.assertEqual(namespace.upgrade_extensions, ['Bar', 'Foo'])
+
+    def test_upgrade_extensions_action_all_expands_to_every_valid_extension(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--versions', action='store', default=None)
+        parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=mwdeploy.UpgradeExtensionsAction)
+        with patch.object(mwdeploy.Discovery, 'extensions', return_value=['Foo', 'Bar']):
+            namespace = parser.parse_args(['--versions', 'REL1_41', '--upgrade-extensions', 'all'])
+        self.assertEqual(namespace.upgrade_extensions, ['Bar', 'Foo'])
+
+    def test_upgrade_skins_action_requires_versions_first(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--versions', action='store', default=None)
+        parser.add_argument('--upgrade-skins', dest='upgrade_skins', action=mwdeploy.UpgradeSkinsAction)
+        with pytest.raises(SystemExit):
+            parser.parse_args(['--upgrade-skins', 'Vector'])
+
+    def test_upgrade_skins_action_rejects_an_unknown_skin(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--versions', action='store', default=None)
+        parser.add_argument('--upgrade-skins', dest='upgrade_skins', action=mwdeploy.UpgradeSkinsAction)
+        with patch.object(mwdeploy.Discovery, 'skins', return_value=['Vector']), \
+             pytest.raises(SystemExit):
+            parser.parse_args(['--versions', 'REL1_41', '--upgrade-skins', 'Ghost'])
+
+    def test_upgrade_skins_action_sorts_the_chosen_skins(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--versions', action='store', default=None)
+        parser.add_argument('--upgrade-skins', dest='upgrade_skins', action=mwdeploy.UpgradeSkinsAction)
+        with patch.object(mwdeploy.Discovery, 'skins', return_value=['Vector', 'MonoBook']):
+            namespace = parser.parse_args(['--versions', 'REL1_41', '--upgrade-skins', 'Vector,MonoBook'])
+        self.assertEqual(namespace.upgrade_skins, ['MonoBook', 'Vector'])
+
+    def test_upgrade_skins_action_all_expands_to_every_valid_skin(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--versions', action='store', default=None)
+        parser.add_argument('--upgrade-skins', dest='upgrade_skins', action=mwdeploy.UpgradeSkinsAction)
+        with patch.object(mwdeploy.Discovery, 'skins', return_value=['Vector', 'MonoBook']):
+            namespace = parser.parse_args(['--versions', 'REL1_41', '--upgrade-skins', 'all'])
+        self.assertEqual(namespace.upgrade_skins, ['MonoBook', 'Vector'])
+
     def test_upgrade_pack_action(self):
         parser = argparse.ArgumentParser()
         parser.add_argument('--upgrade-extensions', action='store_const', const=True, default=False)
