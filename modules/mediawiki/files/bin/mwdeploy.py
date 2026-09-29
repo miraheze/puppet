@@ -436,27 +436,27 @@ class GitCommandBuilder:
             extra += f' origin {branch}'
         if quiet:
             extra += ' --quiet'
-        return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} pull{extra}'
+        return f'sudo -H -u {self._deploy_user} git -C {self._paths.staging(repo, version)} pull{extra}'
 
     def reset_revert(self, repo: str, version: str = '') -> str:
-        return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} reset --hard HEAD@{{1}}'
+        return f'sudo -H -u {self._deploy_user} git -C {self._paths.staging(repo, version)} reset --hard HEAD@{{1}}'
 
     def reset_hard(self, repo: str, version: str = '') -> str:
-        return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} reset --hard'
+        return f'sudo -H -u {self._deploy_user} git -C {self._paths.staging(repo, version)} reset --hard'
 
     def apply(self, repo: str, patchfile: str, version: str = '', check: bool = False, reverse: bool = False) -> str:
         option = ' --check' if check else ' --index'
         if reverse:
             option += ' --reverse'
-        return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} apply{option} {patchfile}'
+        return f'sudo -H -u {self._deploy_user} git -C {self._paths.staging(repo, version)} apply{option} {patchfile}'
 
     def fetch_pr(self, repo: str, pr_number: int, branch: str, version: str = '') -> str:
         # the leading + forces the fetch to update the local branch even when
         # the PR has been amended or rebased since the last time it was fetched
-        return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} fetch origin +pull/{pr_number}/head:{branch}'
+        return f'sudo -H -u {self._deploy_user} git -C {self._paths.staging(repo, version)} fetch origin +pull/{pr_number}/head:{branch}'
 
     def checkout(self, repo: str, branch: str, version: str = '') -> str:
-        return f'sudo -u {self._deploy_user} git -C {self._paths.staging(repo, version)} checkout {branch}'
+        return f'sudo -H -u {self._deploy_user} git -C {self._paths.staging(repo, version)} checkout {branch}'
 
     def is_repo(self, repo: str, version: str) -> bool:
         return os.path.isdir(os.path.join(self._paths.staging(repo, version), '.git'))
