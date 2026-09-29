@@ -31,7 +31,8 @@ def _reset_state():
     Sal.task = None
     original = Console.enabled
     Console.enabled = False
-    yield
+    with patch.object(mwscript, 'WIKISUFFIX', 'wiki'):
+        yield
     Sal.task = None
     Console.enabled = original
 
@@ -211,9 +212,35 @@ def test_no_wiki():
 
 
 @pytest.mark.usefixtures('shell')
-def test_wikibeta():
-    info = build('test', 'metawikibeta', '--version', '1.43')
+def test_wiki_suffix_prod():
+    info = build('test', 'metawiki', '--version', '1.43')
+    assert info.command.endswith('--wiki=metawiki')
+
+
+@pytest.mark.usefixtures('shell')
+def test_wikibeta_invalid_on_prod():
+    with pytest.raises(UsageError, match='metawikibeta'):
+        build('test', 'metawikibeta', '--version', '1.43')
+
+
+@pytest.mark.usefixtures('shell')
+def test_wikibeta_suffix_on_beta():
+    with patch.object(mwscript, 'WIKISUFFIX', 'wikibeta'):
+        info = build('test', 'metawikibeta', '--version', '1.43')
     assert info.command.endswith('--wiki=metawikibeta')
+
+
+@pytest.mark.usefixtures('shell')
+def test_wiki_invalid_on_beta():
+    with patch.object(mwscript, 'WIKISUFFIX', 'wikibeta'), pytest.raises(UsageError, match='metawiki'):
+        build('test', 'metawiki', '--version', '1.43')
+
+
+@pytest.mark.usefixtures('shell')
+def test_dblist_and_all_valid_on_beta():
+    with patch.object(mwscript, 'WIKISUFFIX', 'wikibeta'):
+        assert build('test', 'all', '--version', '1.43').long is True
+        assert build('test', 'active', '--version', '1.43').long is True
 
 
 @pytest.mark.usefixtures('shell')
