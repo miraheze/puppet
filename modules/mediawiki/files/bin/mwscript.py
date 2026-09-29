@@ -166,7 +166,7 @@ class CommandBuilder:
         if not arguments:
             raise UsageError('Not enough arguments given.')
         first = arguments[0]
-        if first.endswith(('wiki', 'wikibeta')) or first == 'all' or first in self.db_lists:
+        if first.endswith(WIKISUFFIX) or first == 'all' or first in self.db_lists:
             return first, arguments[1:]
         raise UsageError(f'First argument should be a valid wiki if --extension is not given, got: {first}')
 
