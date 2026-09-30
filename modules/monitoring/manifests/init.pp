@@ -275,6 +275,8 @@ class monitoring (
         mirahezebots_password => $mirahezebots_password,
     }
 
+    include monitoring::taskbot
+
     file { '/usr/lib/nagios/plugins/check_icinga_config':
         source  => 'puppet:///modules/monitoring/check_icinga_config',
         owner   => 'root',
