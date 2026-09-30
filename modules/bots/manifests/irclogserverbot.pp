@@ -1,8 +1,8 @@
 # class: bots::irclogserverbot
 class bots::irclogserverbot(
     String $nickname,
-    String $network,
     String $channel,
+    Stdlib::Host $network,
     Stdlib::Port $network_port,
     Stdlib::Port $udp_port,
 ) {
@@ -13,10 +13,10 @@ class bots::irclogserverbot(
     file { '/usr/local/bin/irclogserverbot.py':
         ensure  => present,
         content => epp('bots/ircrcbot.py.epp', {
-            'network'               => $network,
             'nickname'              => $nickname,
             'mirahezebots_password' => $mirahezebots_password,
             'channel'               => $channel,
+            'network'               => $network,
             'network_port'          => $network_port,
             'udp_port'              => $udp_port,
         }),
