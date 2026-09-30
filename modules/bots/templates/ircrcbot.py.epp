@@ -1,3 +1,10 @@
+<%- | String $network,
+      String $nickname,
+      String $mirahezebots_password,
+      String $channel,
+      String $udp_port,
+      String $network_port
+| -%>
 #!/usr/bin/python3
 
 from twisted.internet.protocol import DatagramProtocol
@@ -11,13 +18,13 @@ import socket
 recver = None
 
 # Grab first valid IPv6 address for the supplied domain name
-irc_network = str(socket.getaddrinfo("<%= @network %>", None, family=socket.AF_INET6)[0][4][0])
+irc_network = str(socket.getaddrinfo("<%= $network %>", None, family=socket.AF_INET6)[0][4][0])
 
 
 class RCBot(irc.IRCClient):
-    nickname = "<%= @nickname %>"
-    password = "<%= @mirahezebots_password %>"
-    channel = "<%= @channel %>"
+    nickname = "<%= $nickname %>"
+    password = "<%= $mirahezebots_password %>"
+    channel = "<%= $channel %>"
     lineRate = 1
 
     def connectionMade(self):
@@ -82,10 +89,10 @@ class Echo(DatagramProtocol):
             recver.gotUDP(data)
 
 
-reactor.listenUDP(<%= @udp_port %>, Echo(), interface='::')  # noqa: E225,E999
-<% if @network_port == '6697' %>  # noqa: E225
-reactor.connectSSL(irc_network, <%= @network_port %>, RCFactory(), ssl.ClientContextFactory())  # noqa: E225
-<% else %>  # noqa: E225
-reactor.connectTCP(irc_network, <%= @network_port %>, RCFactory())  # noqa: E225
-<% end %>  # noqa: E225
+reactor.listenUDP(<%= $udp_port %>, Echo(), interface='::')  # noqa: E225,E999
+<%- if $network_port == '6697' { %>  # noqa: E225
+reactor.connectSSL(irc_network, <%= $network_port %>, RCFactory(), ssl.ClientContextFactory())  # noqa: E225
+<%- } else { %>  # noqa: E225
+reactor.connectTCP(irc_network, <%= $network_port %>, RCFactory())  # noqa: E225
+<%- } %>  # noqa: E225
 reactor.run()
