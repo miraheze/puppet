@@ -5,7 +5,7 @@ class bots::taskbot {
     $icinga_host = lookup('icinga2_host', {'default_value' => 'mon181.fsslc.wtnet'})
     $icinga_password = lookup('passwords::icinga2::taskbot')
     $icinga_ca = lookup('icinga2_ca_cert')
-    $phorge_token = lookup('passwords::phorge::monitoringbot')
+    $phorge_token = lookup('passwords::phorge::monitoring_bot')
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
 
     file { '/etc/taskbot':
