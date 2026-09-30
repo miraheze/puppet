@@ -1,8 +1,8 @@
 # type: bots::ircrcbot
 define bots::ircrcbot(
     String $nickname,
-    String $network,
     String $channel,
+    Stdlib::Host $network,
     Stdlib::Port $network_port,
     Stdlib::Port $udp_port,
 ) {
@@ -13,10 +13,10 @@ define bots::ircrcbot(
     file { "/usr/local/bin/ircrcbot-${nickname}.py":
         ensure  => present,
         content => epp('bots/ircrcbot.py.epp', {
-            'network'               => $network,
             'nickname'              => $nickname,
             'mirahezebots_password' => $mirahezebots_password,
             'channel'               => $channel,
+            'network'               => $network,
             'network_port'          => $network_port,
             'udp_port'              => $udp_port,
         }),
