@@ -42,7 +42,7 @@ def log(config, message, project, author):
     lines = text.split('\n')
     position = 0
     # Um, check the date
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.now(datetime.timezone.utc)
     fingerprint = hashlib.sha1(message.encode("utf-8", "replace")).hexdigest()[:8]
     base_id = "sal-%s-%s" % (now.strftime("%Y%m%d%H%M%S"), fingerprint)
     entry_id = base_id
