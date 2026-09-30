@@ -7,7 +7,7 @@ Type=simple
 User=irc
 SyslogIdentifier=taskbot
 StateDirectory=taskbot
-ExecStart=/usr/bin/python3 /etc/taskbot/taskbot.py --config=/etc/taskbot/config.json
+ExecStart=/usr/bin/python3 /etc/taskbot/taskbot.py -c /etc/taskbot/config.json
 Restart=on-failure
 RestartSec=10s
 NoNewPrivileges=true
