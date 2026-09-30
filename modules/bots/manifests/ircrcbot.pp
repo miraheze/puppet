@@ -2,9 +2,9 @@
 define bots::ircrcbot(
     String $nickname,
     String $network,
-    String $network_port,
     String $channel,
-    String $udp_port,
+    Stdlib::Port $network_port,
+    Stdlib::Port $udp_port,
 ) {
     include bots
 
@@ -17,8 +17,8 @@ define bots::ircrcbot(
             'nickname'              => $nickname,
             'mirahezebots_password' => $mirahezebots_password,
             'channel'               => $channel,
-            'udp_port'              => $udp_port,
             'network_port'          => $network_port,
+            'udp_port'              => $udp_port,
         }),
         mode    => '0755',
         notify  => Service["ircrcbot-${nickname}"],
