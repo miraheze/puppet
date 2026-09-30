@@ -13,7 +13,7 @@ class bots::irclogbot {
         require   => File['/etc/irclogbot'],
     }
 
-    $mirahezebots_password = lookup('passwords::bots::mirahezebots')
+    $mirahezebots_password = lookup('passwords::irc::mirahezebots')
     $mirahezelogbot_password = lookup('passwords::mediawiki::mirahezelogbot')
     $mirahezelogbot_consumer_token = lookup('passwords::mediawiki::mirahezelogbot_consumer_token')
     $mirahezelogbot_consumer_secret = lookup('passwords::mediawiki::mirahezelogbot_consumer_secret')
