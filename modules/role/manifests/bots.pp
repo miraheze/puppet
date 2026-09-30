@@ -17,28 +17,28 @@ class role::bots {
         dotnet_version => '10.0',
     }
 
-    bots::ircrcbot { 'RCBot1' :
-        nickname     => 'MirahezeRC',
-        network      => 'irc.libera.chat',
-        network_port => '6697',
-        channel      => '#miraheze-feed',
-        udp_port     => '5070',
-    }
-
     class { 'bots::irclogserverbot':
         nickname     => 'MirahezeLSBot',
         network      => 'irc.libera.chat',
-        network_port => '6697',
         channel      => '#miraheze-tech-ops',
-        udp_port     => '5071',
+        network_port => 6697,
+        udp_port     => 5071,
     }
 
-    bots::ircrcbot { 'RCBot2' :
+    bots::ircrcbot { 'RCBot1':
+        nickname     => 'MirahezeRC',
+        network      => 'irc.libera.chat',
+        channel      => '#miraheze-feed',
+        network_port => 6697,
+        udp_port     => 5070,
+    }
+
+    bots::ircrcbot { 'RCBot2':
         nickname     => 'MirahezeRC2',
         network      => 'irc.libera.chat',
-        network_port => '6697',
         channel      => '#miraheze-feed',
-        udp_port     => '5072',
+        network_port => 6697,
+        udp_port     => 5072,
     }
 
     $subquery = @("PQL")
