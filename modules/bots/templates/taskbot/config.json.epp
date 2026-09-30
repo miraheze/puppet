@@ -7,7 +7,7 @@
 		"ca_file": "/etc/taskbot/icinga-ca.crt",
 		"queue": "taskbot",
 		"timeout": 30,
-		"stream_timeout": 900
+		"stream_timeout": 60
 	},
 	"phorge": {
 		"url": "https://issue-tracker.miraheze.org",
@@ -27,12 +27,17 @@
 	},
 	"icingaweb_url": "https://monitoring.wikitide.net",
 	"skip_in_downtime": true,
-	"close_on_recovery": false,
+	"close_on_recovery": true,
 	"close_status": "resolved",
-	"reconcile_interval": 900,
+	"grace_minutes": 15,
+	"storm_limit": 5,
+	"storm_window_minutes": 10,
+	"reopen_hours": 24,
+	"reconcile_interval": 60,
 	"reconnect_min": 5,
 	"reconnect_max": 300,
 	"state_file": "/var/lib/taskbot/state.json",
+	"heartbeat_file": "/var/lib/taskbot/last_sync",
 	"dry_run": true,
 	"log_level": "INFO"
 }
