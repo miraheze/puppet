@@ -1,18 +1,18 @@
-# class: irc::irclogserverbot
-class irc::irclogserverbot(
+# class: bots::irclogserverbot
+class bots::irclogserverbot(
     $nickname     = undef,
     $network      = undef,
     $network_port = '6697',
     $channel      = undef,
     $udp_port     = '5071',
 ) {
-    include ::irc
+    include bots
 
-    $mirahezebots_password = lookup('passwords::irc::mirahezebots')
+    $mirahezebots_password = lookup('passwords::bots::mirahezebots')
 
     file { '/usr/local/bin/irclogserverbot.py':
         ensure  => present,
-        content => template('irc/ircrcbot.py'),
+        content => template('bots/ircrcbot.py'),
         mode    => '0755',
         notify  => Service['irclogserverbot'],
     }
