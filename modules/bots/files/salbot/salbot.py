@@ -19,7 +19,7 @@ import sys
 import time
 import urllib.parse
 from collections import deque
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 
 log = logging.getLogger('salbot')
 
@@ -263,7 +263,7 @@ class Pending:
         self.slot = slot
         self.channel = channel
         self.entry = entry
-        self.when = datetime.now(timezone.utc)
+        self.when = datetime.now(UTC)
         self.timer = None
         self.done = False
 
