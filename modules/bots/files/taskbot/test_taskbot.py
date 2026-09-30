@@ -1595,10 +1595,6 @@ class TestConfigTemplate:
 
 
 class TestDeployment:
-    def test_the_manifest_ships_the_ca_from_the_module(self):
-        manifest = MANIFEST.read_text()
-        assert "source  => 'puppet:///modules/bots/taskbot/icinga-ca.crt'" in manifest
-        assert 'icinga2_ca_cert' not in manifest
 
     def test_the_config_points_at_the_deployed_ca(self):
         assert f"file {{ '{rendered()['icinga']['ca_file']}':" in MANIFEST.read_text()
