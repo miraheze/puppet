@@ -1,6 +1,6 @@
-# class: irc::irclogbot
-class irc::irclogbot {
-    include ::irc
+# class: bots::irclogbot
+class bots::irclogbot {
+    include bots
 
     file { '/etc/irclogbot':
         ensure => directory,
@@ -13,7 +13,7 @@ class irc::irclogbot {
         require   => File['/etc/irclogbot'],
     }
 
-    $mirahezebots_password = lookup('passwords::irc::mirahezebots')
+    $mirahezebots_password = lookup('passwords::bots::mirahezebots')
     $mirahezelogbot_password = lookup('passwords::mediawiki::mirahezelogbot')
     $mirahezelogbot_consumer_token = lookup('passwords::mediawiki::mirahezelogbot_consumer_token')
     $mirahezelogbot_consumer_secret = lookup('passwords::mediawiki::mirahezelogbot_consumer_secret')
@@ -22,26 +22,26 @@ class irc::irclogbot {
 
     file { '/etc/irclogbot/adminlog.py':
         ensure => present,
-        source => 'puppet:///modules/irc/logbot/adminlog.py',
+        source => 'puppet:///modules/bots/irclogbot/adminlog.py',
         notify => Service['logbot'],
     }
 
     file { '/etc/irclogbot/adminlogbot.py':
         ensure => present,
-        source => 'puppet:///modules/irc/logbot/adminlogbot.py',
+        source => 'puppet:///modules/bots/irclogbot/adminlogbot.py',
         mode   => '0755',
         notify => Service['logbot'],
     }
 
     file { '/etc/irclogbot/config.py':
         ensure  => present,
-        content => template('irc/logbot/config.py'),
+        content => template('bots/irclogbot/config.py'),
         notify  => Service['logbot'],
     }
 
     systemd::service { 'logbot':
         ensure  => present,
-        content => systemd_template('logbot'),
+        content => systemd_template('irclogbot'),
         restart => true,
     }
 
