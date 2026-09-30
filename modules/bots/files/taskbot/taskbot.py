@@ -62,18 +62,32 @@ def missing_keys(config):
             if not isinstance(section, dict):
                 missing.append(key)
                 continue
-            missing += [f'{key}.{name}' for name in inner if name not in section]
+            missing.extend(f'{key}.{name}' for name in inner if name not in section)
     return missing
+
+
+def load_config(path):
+    try:
+        with open(path) as handle:
+            config = json.load(handle)
+    except (OSError, ValueError) as error:
+        sys.exit(f'Cannot load {path}: {error}')
+    if not isinstance(config, dict):
+        sys.exit(f'{path} must contain a JSON object')
+    missing = missing_keys(config)
+    if missing:
+        sys.exit(f"Missing in config: {', '.join(missing)}")
+    return config
 
 
 def flatten(value, prefix=''):
     items = []
     if isinstance(value, dict):
         for key, inner in value.items():
-            items += flatten(inner, f'{prefix}[{key}]' if prefix else str(key))
+            items.extend(flatten(inner, f'{prefix}[{key}]' if prefix else str(key)))
     elif isinstance(value, (list, tuple)):
         for index, inner in enumerate(value):
-            items += flatten(inner, f'{prefix}[{index}]')
+            items.extend(flatten(inner, f'{prefix}[{index}]'))
     else:
         items.append((prefix, str(value)))
     return items
@@ -97,18 +111,20 @@ class Phorge:
         self.opener = build_opener(config['proxy'])
 
     def call(self, method, params=None):
-        fields = [('api.token', self.token)] + flatten(params or {})
+        fields = [('api.token', self.token), *flatten(params or {})]
         request = urllib.request.Request(
             f'{self.url}/api/{method}',
             data=urllib.parse.urlencode(fields).encode(),
         )
         failure = None
         for attempt in range(1, self.retries + 1):
+            log.debug(f'Calling {method}, attempt {attempt} of {self.retries}')
             try:
                 with self.opener.open(request, timeout=self.timeout) as response:
                     body = json.load(response)
             except (OSError, ValueError) as error:
                 failure = PhorgeError(f'{method} request failed: {error}')
+                log.debug(str(failure))
                 if attempt < self.retries:
                     time.sleep(min(2 ** attempt, 30))
                 continue
@@ -123,9 +139,10 @@ class Phorge:
             if slug not in self.phids:
                 result = self.call('project.search', {'constraints': {'slugs': [slug]}})
                 if not result['data']:
-                    log.warning('Project %s was not found in Phorge', slug)
+                    log.warning(f'Project {slug} was not found in Phorge')
                     continue
                 self.phids[slug] = result['data'][0]['phid']
+                log.debug(f'Project {slug} is {self.phids[slug]}')
             phids.append(self.phids[slug])
         return phids
 
@@ -134,7 +151,7 @@ class Phorge:
         if task is not None:
             params['objectIdentifier'] = task
         if self.dry_run:
-            log.info('Dry run, would send %s', json.dumps(params))
+            log.info(f'Dry run, would send {json.dumps(params)}')
             return {'object': {'id': task or 0}}
         return self.call('maniphest.edit', params)
 
@@ -166,7 +183,7 @@ class Icinga:
         self.stream_timeout = config['stream_timeout']
         login = f"{config['username']}:{config['password']}".encode()
         self.headers = {
-            'Authorization': 'Basic ' + base64.b64encode(login).decode(),
+            'Authorization': f'Basic {base64.b64encode(login).decode()}',
             'Accept': 'application/json',
             'Content-Type': 'application/json',
         }
@@ -202,10 +219,12 @@ class Icinga:
     def events(self):
         body = {'queue': self.queue, 'types': ['StateChange']}
         with self.request('/v1/events', body, self.stream_timeout) as response:
-            for line in response:
-                line = line.strip()
-                if line:
-                    yield json.loads(line)
+            log.debug('Connected to the Icinga event stream')
+            with contextlib.suppress(TimeoutError):
+                for line in response:
+                    line = line.strip()
+                    if line:
+                        yield json.loads(line)
 
 
 class State:
@@ -258,12 +277,12 @@ class Bot:
             '```',
         ]
         if attrs.get('notes_url'):
-            lines += ['', f"Documentation: {attrs['notes_url']}"]
+            lines.extend(['', f"Documentation: {attrs['notes_url']}"])
         base = self.config['icingaweb_url'].rstrip('/')
         if base:
             query = urllib.parse.urlencode({'name': name, 'host.name': host}, quote_via=urllib.parse.quote)
-            lines += ['', f'Icinga Web: {base}/icingadb/service?{query}']
-        lines += ['', time.strftime('Reported at %Y-%m-%d %H:%M UTC', time.gmtime())]
+            lines.extend(['', f'Icinga Web: {base}/icingadb/service?{query}'])
+        lines.extend(['', time.strftime('Reported at %Y-%m-%d %H:%M UTC', time.gmtime())])
         return '\n'.join(lines)
 
     def problem(self, key, attrs, state):
@@ -275,12 +294,12 @@ class Bot:
             lead = 'Now' if entry.get('active') else 'Alerting again,'
             text = f"{lead} **{state}**.\n\n```\n{check_output(attrs)}\n```"
             self.phorge.edit([{'type': 'comment', 'value': text}], task)
-            log.info('Commented on T%s for %s (%s)', task, key, state)
+            log.info(f'Commented on T{task} for {key} ({state})')
         else:
             priority = self.config['priorities'][state]
             slugs = attrs['vars'].get('phorge_projects') or []
             task = self.phorge.create(self.title(attrs, state), self.description(attrs, state), priority, slugs)
-            log.info('Created T%s for %s (%s)', task, key, state)
+            log.info(f'Created T{task} for {key} ({state})')
         self.state.put(key, {'task': task, 'active': True, 'state': state})
 
     def clear(self, key, state):
@@ -290,24 +309,27 @@ class Bot:
         if state == 'OK':
             text = 'Recovered, the service is back to **OK**.'
         else:
-            text = f'Now **{state}**, which is under the alert level for this service.'
+            text = f'Now **{state}**, which is not an alert state for this service.'
         transactions = [{'type': 'comment', 'value': text}]
         if state == 'OK' and self.config['close_on_recovery']:
             transactions.append({'type': 'status', 'value': self.config['close_status']})
         self.phorge.edit(transactions, entry['task'])
         self.state.put(key, {'task': entry['task'], 'active': False, 'state': state})
-        log.info('Updated T%s for %s (%s)', entry['task'], key, state)
+        log.info(f"Updated T{entry['task']} for {key} ({state})")
 
     def process(self, attrs):
+        key = f"{attrs['host_name']}!{attrs['name']}"
         mode = (attrs.get('vars') or {}).get('phorge_task')
         if mode not in self.triggers:
+            log.debug(f'{key} does not set phorge_task, skipping')
             return
         if int(attrs.get('state_type', 1)) != 1:
+            log.debug(f'{key} is in a soft state, skipping')
             return
         state = STATES.get(int(attrs['state']), 'UNKNOWN')
-        key = f"{attrs['host_name']}!{attrs['name']}"
         if state in self.triggers[mode]:
             if self.config['skip_in_downtime'] and attrs.get('downtime_depth', 0) > 0:
+                log.debug(f'{key} is {state} but in downtime, skipping')
                 return
             self.problem(key, attrs, state)
         else:
@@ -317,11 +339,12 @@ class Bot:
         try:
             func(*args)
         except Exception:
-            log.exception('Failed handling %s', func.__name__)
+            log.exception(f'Failed handling {func.__name__}')
 
     def on_event(self, event):
         if event.get('type') != 'StateChange' or not event.get('service'):
             return
+        log.debug(f"Event for {event['host']}!{event['service']}")
         attrs = self.icinga.service(event['host'], event['service'])
         if attrs:
             self.process(attrs)
@@ -342,7 +365,7 @@ class Bot:
             if attrs:
                 self.safe(self.process, attrs)
             else:
-                log.warning('%s no longer exists in Icinga', key)
+                log.warning(f'{key} no longer exists in Icinga')
                 self.state.put(key, {'task': entry['task'], 'active': False, 'state': 'GONE'})
         self.last_reconcile = time.monotonic()
 
@@ -356,37 +379,30 @@ class Bot:
                     self.safe(self.on_event, event)
                     if time.monotonic() - self.last_reconcile > self.config['reconcile_interval']:
                         self.reconcile()
-                log.warning('Event stream closed by Icinga')
-            except TimeoutError:
-                log.info('Event stream idle, reconnecting')
             except (OSError, ValueError) as error:
-                log.error('Icinga connection problem: %s', error)
+                log.error(f'Icinga connection problem: {error}')
+                time.sleep(delay)
+                delay = min(delay * 2, self.config['reconnect_max'])
+                continue
+            log.info('Event stream ended, reconnecting')
+            delay = self.config['reconnect_min']
             time.sleep(delay)
-            delay = min(delay * 2, self.config['reconnect_max'])
 
 
 def main():
     parser = argparse.ArgumentParser(description='Icinga to Phorge task bot')
-    parser.add_argument('--config', required=True)
-    parser.add_argument('--dry-run', action='store_true')
+    parser.add_argument('-c', '--config', default='config.json')
+    parser.add_argument('-v', '--verbose', action='store_true')
     args = parser.parse_args()
 
-    with open(args.config) as handle:
-        config = json.load(handle)
-
-    missing = missing_keys(config)
-    if missing:
-        sys.exit('Missing in config: ' + ', '.join(missing))
-
-    if args.dry_run:
-        config['dry_run'] = True
-
+    config = load_config(args.config)
     logging.basicConfig(
-        level=getattr(logging, config['log_level'].upper(), logging.INFO),
-        format='%(levelname)s %(message)s',
+        level=logging.DEBUG if args.verbose else getattr(logging, config['log_level'].upper(), logging.INFO),
+        format='{asctime} {levelname} {message}',
+        style='{',
     )
-
-    Bot(config).run()
+    with contextlib.suppress(KeyboardInterrupt):
+        Bot(config).run()
 
 
 if __name__ == '__main__':
