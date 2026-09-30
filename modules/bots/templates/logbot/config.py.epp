@@ -1,3 +1,10 @@
+<%- | String $mirahezebots_password,
+      String $mirahezelogbot_password,
+      String $mirahezelogbot_consumer_token,
+      String $mirahezelogbot_consumer_secret,
+      String $mirahezelogbot_access_token,
+      String $mirahezelogbot_access_secret
+| -%>
 # If true, !log <project> <message>
 # If false, !log <message>
 enable_projects = False
@@ -41,7 +48,7 @@ nick = "MirahezeLogbot"
 nick_username = "mirahezebots"
 
 # Password to identify with
-nick_password = "<%= @mirahezebots_password %>"
+nick_password = "<%= $mirahezebots_password %>"
 
 # Network to join (ex: irc.libera.chat)
 network = "irc.libera.chat"
@@ -85,17 +92,17 @@ wiki_path = "/w/"
 wiki_user = "MirahezeLogbot"
 
 # Password of wiki bot user
-wiki_pass = "<%= @mirahezelogbot_password %>"
+wiki_pass = "<%= $mirahezelogbot_password %>"
 
 # OAUTH
 
-wiki_consumer_token = "<%= @mirahezelogbot_consumer_token %>"
+wiki_consumer_token = "<%= $mirahezelogbot_consumer_token %>"
 
-wiki_consumer_secret = "<%= @mirahezelogbot_consumer_secret %>"
+wiki_consumer_secret = "<%= $mirahezelogbot_consumer_secret %>"
 
-wiki_access_token = "<%= @mirahezelogbot_access_token %>"
+wiki_access_token = "<%= $mirahezelogbot_access_token %>"
 
-wiki_access_secret = "<%= @mirahezelogbot_access_secret %>"
+wiki_access_secret = "<%= $mirahezelogbot_access_secret %>"
 
 # Whether to use a bot flag or not
 wiki_bot = True

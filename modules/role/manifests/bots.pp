@@ -1,9 +1,9 @@
-# role: irc
-class role::irc {
+# role: bots
+class role::bots {
     include base
-    include irc::irclogbot
-    include irc::salbot
-    include irc::cvtbot
+    include bots::cvtbot
+    include bots::irclogbot
+    include bots::salbot
 
     users::user { 'pywikibot':
         ensure => present,
@@ -11,34 +11,34 @@ class role::irc {
         shell  => '/bin/bash',
     }
 
-    include irc::pywikibot
+    include bots::pywikibot
 
-    irc::relaybot { 'relaybot':
+    bots::relaybot { 'relaybot':
         dotnet_version => '10.0',
     }
 
-    irc::ircrcbot { 'RCBot1' :
-        nickname     => 'MirahezeRC',
-        network      => 'irc.libera.chat',
-        network_port => '6697',
-        channel      => '#miraheze-feed',
-        udp_port     => '5070',
-    }
-
-    class { 'irc::irclogserverbot':
+    class { 'bots::irclogserverbot':
         nickname     => 'MirahezeLSBot',
-        network      => 'irc.libera.chat',
-        network_port => '6697',
         channel      => '#miraheze-tech-ops',
-        udp_port     => '5071',
+        network      => 'irc.libera.chat',
+        network_port => 6697,
+        udp_port     => 5071,
     }
 
-    irc::ircrcbot { 'RCBot2' :
-        nickname     => 'MirahezeRC2',
-        network      => 'irc.libera.chat',
-        network_port => '6697',
+    bots::ircrcbot { 'RCBot1':
+        nickname     => 'MirahezeRC',
         channel      => '#miraheze-feed',
-        udp_port     => '5072',
+        network      => 'irc.libera.chat',
+        network_port => 6697,
+        udp_port     => 5070,
+    }
+
+    bots::ircrcbot { 'RCBot2':
+        nickname     => 'MirahezeRC2',
+        channel      => '#miraheze-feed',
+        network      => 'irc.libera.chat',
+        network_port => 6697,
+        udp_port     => 5072,
     }
 
     $subquery = @("PQL")
@@ -71,7 +71,7 @@ class role::irc {
         srange => "(${firewall_all_rules_str})",
     }
 
-    system::role { 'irc':
-        description => 'IRC bots server',
+    system::role { 'bots':
+        description => 'Bots server',
     }
 }

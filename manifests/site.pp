@@ -5,7 +5,7 @@ node /^bast1[68]1\.wikitide\.net$/ {
 }
 
 node 'bots171.fsslc.wtnet' {
-    role(irc)
+    role(bots)
 }
 
 node 'changeprop202.fsslc.wtnet' {
