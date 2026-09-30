@@ -22,26 +22,26 @@ class bots::irclogbot {
 
     file { '/etc/irclogbot/adminlog.py':
         ensure => present,
-        source => 'puppet:///modules/bots/irclogbot/adminlog.py',
+        source => 'puppet:///modules/bots/logbot/adminlog.py',
         notify => Service['logbot'],
     }
 
     file { '/etc/irclogbot/adminlogbot.py':
         ensure => present,
-        source => 'puppet:///modules/bots/irclogbot/adminlogbot.py',
+        source => 'puppet:///modules/bots/logbot/adminlogbot.py',
         mode   => '0755',
         notify => Service['logbot'],
     }
 
     file { '/etc/irclogbot/config.py':
         ensure  => present,
-        content => template('bots/irclogbot/config.py'),
+        content => template('bots/logbot/config.py'),
         notify  => Service['logbot'],
     }
 
     systemd::service { 'logbot':
         ensure  => present,
-        content => systemd_template('irclogbot'),
+        content => systemd_template('logbot'),
         restart => true,
     }
 
