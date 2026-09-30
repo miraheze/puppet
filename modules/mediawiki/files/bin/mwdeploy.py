@@ -391,6 +391,8 @@ class PathResolver:
 
 _paths = PathResolver(repos)
 
+NEVER_DELETE = ('PrivateSettings.php', 'OAuth2.key')
+
 
 class RsyncCommandBuilder:
     """Builds the rsync command lines used for both local staging and remote fleet syncs."""
@@ -404,6 +406,8 @@ class RsyncCommandBuilder:
             raise Exception('At least one path must be given.')
         params = '--inplace' if time else '--update'
         params += ' -r --delete'
+        for protected in NEVER_DELETE:
+            params += f' --exclude={protected}'
         sources = ' '.join(f'{source_root}/./{path}' for path in relative_paths)
 
         if local:
