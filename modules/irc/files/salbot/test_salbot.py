@@ -232,7 +232,7 @@ class TestLoggedReply:
     def test_matches_plain_and_collision_urls(self):
         base = 'Logged the message at https://meta.miraheze.org/wiki/Tech:Server_admin_log#sal-20260930010101-0a1b2c3d'
         assert LOGGED_REPLY.match(base).group('fp') == '0a1b2c3d'
-        assert LOGGED_REPLY.match(base + '-2').group('fp') == '0a1b2c3d'
+        assert LOGGED_REPLY.match(f'{base}-2').group('fp') == '0a1b2c3d'
 
     @pytest.mark.parametrize('text', [
         'Logged the message at http://meta.miraheze.org/wiki/X#sal-20260930010101-0a1b2c3d',
@@ -728,7 +728,7 @@ class TestBuildComment:
     def test_layout(self):
         bot = make_bot()
         when = salbot.datetime(2026, 9, 29, 12, 42, 15, tzinfo=salbot.timezone.utc)
-        body = bot.build_comment(CHANNEL, 'universalomega@mw151', 'START - thing', when, SAL_URL + '#sal-x')
+        body = bot.build_comment(CHANNEL, 'universalomega@mw151', 'START - thing', when, f'{SAL_URL}#sal-x')
         assert body == (
             '{nav icon=file, name=Mentioned in SAL (#miraheze-tech-ops), '
             'href=https://meta.miraheze.org/wiki/Tech:Server_admin_log#sal-x} '
@@ -803,7 +803,7 @@ class TestHandleMessage:
 
         hrefs = [parse_comment(body)['href'] for _, body in asyncio.run(scenario())]
         assert hrefs[0].endswith(fingerprint(line))
-        assert hrefs[1].endswith(fingerprint(line) + '-2')
+        assert hrefs[1].endswith(f'{fingerprint(line)}-2')
 
     def test_several_tasks_share_one_reply(self):
         line = '!log [a@b] moving T1 and T2'
@@ -1098,7 +1098,7 @@ async def start_irc_server(respond, stop):
             line = raw.decode().rstrip('\r\n')
             sent.append(line)
             for out in respond(line):
-                writer.write((out + '\r\n').encode())
+                writer.write(f'{out}\r\n'.encode())
             await writer.drain()
             if stop(line):
                 break
@@ -1121,7 +1121,7 @@ def sasl_server_script(line):
             'PING :abc',
             ':srv NOTICE salbot :\x01VERSION\x01',
         ]
-    if line == 'JOIN ' + CHANNEL:
+    if line == f'JOIN {CHANNEL}':
         return [f':{LSBOT} PRIVMSG {CHANNEL} :!log [a@h] hi (T5)']
     return []
 
@@ -1156,12 +1156,12 @@ class TestSession:
         assert any(line.startswith('USER salbot 0 * :') for line in sent)
         auth = [line for line in sent if line.startswith('AUTHENTICATE ') and line != 'AUTHENTICATE PLAIN']
         assert base64.b64decode(auth[0].split(' ', 1)[1]) == b'salbot\x00salbot\x00secret'
-        assert 'JOIN ' + CHANNEL in sent
+        assert f'JOIN {CHANNEL}' in sent
         assert 'PONG :abc' in sent
 
     def test_channel_entry_reaches_the_pending_list(self):
         bot = make_bot()
-        outcome, _ = self.run(bot, sasl_server_script, lambda line: line == 'JOIN ' + CHANNEL)
+        outcome, _ = self.run(bot, sasl_server_script, lambda line: line == f'JOIN {CHANNEL}')
         assert isinstance(outcome, ConnectionError)
         assert sum(len(w) for w in bot.pending.values()) == 1
 
@@ -1190,7 +1190,7 @@ class TestSession:
         outcome, sent = self.run(make_bot(), respond, lambda line: line.startswith('JOIN'))
         assert isinstance(outcome, ConnectionError)
         assert 'CAP END' in sent
-        assert 'JOIN ' + CHANNEL in sent
+        assert f'JOIN {CHANNEL}' in sent
 
     def test_nickserv_identify_when_sasl_is_off(self):
         def respond(line):
@@ -1264,7 +1264,7 @@ class TestSession:
         })
         outcome, sent = self.run(bot, respond, lambda line: line.startswith('JOIN'))
         assert isinstance(outcome, ConnectionError)
-        assert 'JOIN ' + CHANNEL in sent
+        assert f'JOIN {CHANNEL}' in sent
         assert proxy.requests == [('irc.example.test', bot.irc_cfg['port'])]
 
 
@@ -1467,7 +1467,7 @@ class TestLogbotContract:
         adminlog, pages = load_adminlog(monkeypatch)
         line = '!log [universalomega@mw151] did a thing (T1)'
         url = adminlog.log(self.CONFIG, line.split(' ', 1)[1], '', 'universalomega')
-        match = LOGGED_REPLY.match('Logged the message at ' + url)
+        match = LOGGED_REPLY.match(f'Logged the message at {url}')
         assert match
         assert match.group('fp') == fingerprint(line)
         body = pages['Tech:Server_admin_log'].body
@@ -1480,4 +1480,4 @@ class TestLogbotContract:
         fragments = [url.split('#', 1)[1] for url in urls]
         assert fragments[0] != fragments[1]
         for url in urls:
-            assert LOGGED_REPLY.match('Logged the message at ' + url).group('fp') == fingerprint(line)
+            assert LOGGED_REPLY.match(f'Logged the message at {url}').group('fp') == fingerprint(line)
