@@ -33,6 +33,6 @@
 	"log_file": "",
 	"time_format": "%Y-%m-%d %H:%M UTC",
 	"logbot_nick": "MirahezeLogbot",
-	"logbot_mask": "*!~MirahezeL@miraheze/bots",
+	"logbot_mask": "MirahezeLogbot!~MirahezeL@miraheze/bots",
 	"link_wait": 60
 }
