@@ -1,7 +1,7 @@
 # role: bots
 class role::bots {
     include base
-    include bots::irccvtbot
+    include bots::cvtbot
     include bots::irclogbot
     include bots::salbot
 
