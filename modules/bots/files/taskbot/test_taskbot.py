@@ -1384,14 +1384,14 @@ class TestProcess:
         bot.process(make_service(mode='any', state=1))
         task = bot.phorge.created()[0]
         assert task['title'] == 'Disk on mw1 is WARNING'
-        assert task['priority'] == 'normal'
+        assert task['priority'] == 'medium'
         assert 'DISK CRITICAL - free space' in task['description']
 
     def test_priority_follows_the_state(self, tmp_path):
         bot = make_bot(tmp_path)
         bot.process(make_service(name='a', mode='any', state=1))
         bot.process(make_service(name='b', mode='any', state=2))
-        assert [task['priority'] for task in bot.phorge.created()] == ['normal', 'high']
+        assert [task['priority'] for task in bot.phorge.created()] == ['medium', 'high']
 
     def test_projects_are_passed_through(self, tmp_path):
         bot = make_bot(tmp_path)
