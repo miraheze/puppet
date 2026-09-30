@@ -35,7 +35,14 @@ class bots::irclogbot {
 
     file { '/etc/irclogbot/config.py':
         ensure  => present,
-        content => template('bots/logbot/config.py'),
+        content => epp('irc/logbot/config.py.epp', {
+            'mirahezebots_password'          => $mirahezebots_password,
+            'mirahezelogbot_password'        => $mirahezelogbot_password,
+            'mirahezelogbot_consumer_token'  => $mirahezelogbot_consumer_token,
+            'mirahezelogbot_consumer_secret' => $mirahezelogbot_consumer_secret,
+            'mirahezelogbot_access_token'    => $mirahezelogbot_access_token,
+            'mirahezelogbot_access_secret'   => $mirahezelogbot_access_secret,
+        }),
         notify  => Service['logbot'],
     }
 
@@ -46,6 +53,6 @@ class bots::irclogbot {
     }
 
     monitoring::nrpe { 'IRC Log Bot':
-        command => '/usr/lib/nagios/plugins/check_procs -a adminlogbot.py -c 1:1'
+        command => '/usr/lib/nagios/plugins/check_procs -a adminlogbot.py -c 1:1',
     }
 }
