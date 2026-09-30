@@ -4,7 +4,6 @@ class bots::taskbot {
 
     $icinga_host = lookup('icinga2_host', {'default_value' => 'mon181.fsslc.wtnet'})
     $icinga_password = lookup('passwords::icinga2::taskbot')
-    $icinga_ca = lookup('icinga2_ca_cert')
     $phorge_token = lookup('passwords::phorge::monitoring_bot')
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
 
@@ -28,9 +27,9 @@ class bots::taskbot {
     file { '/etc/taskbot/icinga-ca.crt':
         ensure  => present,
         owner   => 'root',
-        group   => 'irc',
-        mode    => '0640',
-        content => $icinga_ca,
+        group   => 'root',
+        mode    => '0644',
+        source  => 'puppet:///modules/bots/taskbot/icinga-ca.crt',
         require => File['/etc/taskbot'],
         notify  => Service['taskbot'],
     }
