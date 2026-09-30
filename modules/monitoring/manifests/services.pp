@@ -8,7 +8,7 @@ define monitoring::services (
     $event_command  = undef,
     $docs           = undef,
     $critical       = false,
-    $vars = undef,
+    $vars           = undef,
     Optional[Monitoring::PhorgeTask] $phorge_task     = undef,
     Array[Monitoring::PhorgeProject] $phorge_projects = [],
 ) {
