@@ -1,0 +1,34 @@
+{
+	"irc": {
+		"server": "irc.libera.chat",
+		"port": 6697,
+		"ssl": true,
+		"nick": "MirahezeTaskBot",
+		"username": "MirahezeTaskBot",
+		"password": "",
+		"sasl": true,
+		"realname": "SAL to Phorge bot",
+		"channels": [ "#miraheze-tech-ops" ],
+		"ping_interval": 180,
+		"reconnect_min": 5,
+		"reconnect_max": 300,
+		"proxy": "http://bastion.fsslc.wtnet:8080"
+	},
+	"phorge": {
+		"url": "https://issue-tracker.miraheze.org",
+		"api_token": "",
+		"timeout": 20,
+		"proxy": "http://bastion.fsslc.wtnet:8080"
+	},
+	"allowed_senders": [ "*!*@miraheze/bots" ],
+	"task_mode": "suffix",
+	"skip_patterns": [],
+	"sal_url": "https://meta.miraheze.org/wiki/Tech:Server_admin_log",
+	"min_post_interval": 1.0,
+	"retries": 3,
+	"dedupe_seconds": 60,
+	"dry_run": false,
+	"log_level": "INFO",
+	"log_file": "",
+	"time_format": "%Y-%m-%d %H:%M UTC"
+}
