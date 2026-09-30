@@ -63,4 +63,8 @@ class bots::taskbot {
     monitoring::nrpe { 'Icinga Task Bot':
         command => '/usr/lib/nagios/plugins/check_procs -a taskbot.py -c 1:1',
     }
+
+    monitoring::nrpe { 'Icinga Task Bot Sync':
+        command => '/usr/lib/nagios/plugins/check_file_age -w 300 -c 900 -f /var/lib/taskbot/last_sync',
+    }
 }
