@@ -408,11 +408,12 @@ class RsyncCommandBuilder:
             raise Exception('At least one path must be given.')
         params = '--inplace' if time else '--update'
         params += ' -r --delete'
-        for protected in NEVER_DELETE:
-            if os.path.exists(os.path.join(dest_root, 'config', protected)):
-                params += f' --exclude={protected}'
-        if glob.glob(os.path.join(dest_root, 'config', NEVER_DELETE_GLOB)):
-            params += f' --exclude="{NEVER_DELETE_GLOB}"'
+        if 'config' in relative_paths:
+            for protected in NEVER_DELETE:
+                if os.path.exists(os.path.join(dest_root, 'config', protected)):
+                    params += f' --exclude={protected}'
+            if glob.glob(os.path.join(dest_root, 'config', NEVER_DELETE_GLOB)):
+                params += f' --exclude="{NEVER_DELETE_GLOB}"'
         sources = ' '.join(f'{source_root}/./{path}' for path in relative_paths)
 
         if local:
