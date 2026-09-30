@@ -587,7 +587,7 @@ def commit_and_push_changes():
     if not has_index_changes:
         print('No changes detected – skipping commit and push.')
         return
-    utctime = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+    utctime = datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
     commit_message = f'Bot: Auto-update Tech namespace pages {utctime}'
     repo.index.commit(commit_message)
     origin = repo.remote(name='origin')
