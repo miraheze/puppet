@@ -1,10 +1,10 @@
 # type: bots::ircrcbot
 define bots::ircrcbot(
-    $nickname,
-    $network,
-    $network_port,
-    $channel,
-    $udp_port,
+    String $nickname,
+    String $network,
+    String $network_port,
+    String $channel,
+    String $udp_port,
 ) {
     include bots
 
