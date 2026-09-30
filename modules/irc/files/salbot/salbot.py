@@ -4,6 +4,7 @@
 import argparse
 import asyncio
 import base64
+import contextlib
 import fnmatch
 import hashlib
 import http.client
@@ -48,7 +49,7 @@ class Proxy:
         elif scheme == "http":
             self.kind = "http"
         else:
-            raise ValueError("Unsupported proxy scheme %r, use socks5://, socks5h:// or http://" % parts.scheme)
+            raise ValueError(f"Unsupported proxy scheme {parts.scheme!r}, use socks5://, socks5h:// or http://")
         if not parts.hostname:
             raise ValueError("Proxy URL has no host")
         self.host = parts.hostname
@@ -57,7 +58,7 @@ class Proxy:
         self.password = urllib.parse.unquote(parts.password) if parts.password else ""
 
     def __str__(self):
-        return "%s://%s:%d" % (self.kind, self.host, self.port)
+        return f"{self.kind}://{self.host}:{self.port}"
 
 
 def read_exact(sock, count):
@@ -99,7 +100,7 @@ def socks5_connect(sock, proxy, host, port):
 
     reply = read_exact(sock, 4)
     if reply[1] != 0:
-        raise ConnectionError("SOCKS5 connect failed with code %d" % reply[1])
+        raise ConnectionError(f"SOCKS5 connect failed with code {reply[1]}")
     if reply[3] == 1:
         read_exact(sock, 6)
     elif reply[3] == 4:
@@ -111,10 +112,10 @@ def socks5_connect(sock, proxy, host, port):
 
 
 def http_connect(sock, proxy, host, port):
-    target = "[%s]:%d" % (host, port) if ":" in host else "%s:%d" % (host, port)
-    lines = ["CONNECT %s HTTP/1.1" % target, "Host: " + target]
+    target = f"[{host}]:{port}" if ":" in host else f"{host}:{port}"
+    lines = [f"CONNECT {target} HTTP/1.1", f"Host: {target}"]
     if proxy.username is not None:
-        token = base64.b64encode(("%s:%s" % (proxy.username, proxy.password)).encode()).decode()
+        token = base64.b64encode(f"{proxy.username}:{proxy.password}".encode()).decode()
         lines.append("Proxy-Authorization: Basic " + token)
     sock.sendall(("\r\n".join(lines) + "\r\n\r\n").encode())
     head = b""
@@ -185,7 +186,7 @@ def extract_entry(text, task_mode="suffix"):
         return None
     actor = None
     if match.group("actor"):
-        actor = "%s@%s" % (match.group("actor"), match.group("host"))
+        actor = f"{match.group('actor')}@{match.group('host')}"
     message = match.group("message").strip()
 
     if task_mode == "any":
@@ -241,14 +242,14 @@ class Phorge:
         finally:
             conn.close()
         if status >= 400:
-            raise PhorgeError("HTTP %s" % status, retry=status >= 500)
+            raise PhorgeError(f"HTTP {status}", retry=status >= 500)
         try:
             payload = json.loads(raw)
         except ValueError as error:
-            raise PhorgeError("Bad JSON from Phorge: %s" % error, retry=True)
+            raise PhorgeError(f"Bad JSON from Phorge: {error}", retry=True)
         if payload.get("error_code"):
             raise PhorgeError(
-                "%s: %s" % (payload["error_code"], payload.get("error_info"))
+                f"{payload['error_code']}: {payload.get('error_info')}"
             )
 
 
@@ -280,9 +281,9 @@ class Bot:
         self.sal_url = config.get("sal_url", "").rstrip("/")
         self.time_format = config.get("time_format", "%Y-%m-%d %H:%M")
         sal_parts = urllib.parse.urlsplit(self.sal_url)
-        self.sal_origin = "%s://%s" % (sal_parts.scheme, sal_parts.netloc) if sal_parts.netloc else ""
+        self.sal_origin = f"{sal_parts.scheme}://{sal_parts.netloc}" if sal_parts.netloc else ""
         self.logbot_nick = config.get("logbot_nick", "MirahezeLogbot")
-        self.logbot_mask = config.get("logbot_mask", "%s!*@*" % self.logbot_nick).lower()
+        self.logbot_mask = config.get("logbot_mask", f"{self.logbot_nick}!*@*").lower()
         self.link_wait = config.get("link_wait", 60)
         self.pending = {}
         self.min_interval = config.get("min_post_interval", 1.0)
@@ -310,8 +311,8 @@ class Bot:
         return False
 
     def build_comment(self, channel, actor, message, when, link):
-        nav = "{nav icon=file, name=Mentioned in SAL (%s), href=%s}" % (channel, link)
-        return "%s [%s] <%s> %s" % (nav, when.strftime(self.time_format), actor, message)
+        nav = f"{{nav icon=file, name=Mentioned in SAL ({channel}), href={link}}}"
+        return f"{nav} [{when.strftime(self.time_format)}] <{actor}> {message}"
 
     def is_logged(self, line):
         nick = self.logbot_nick
@@ -337,7 +338,7 @@ class Bot:
         return {"actor": actor, "message": message, "tasks": tasks}
 
     def fallback_link(self, pending):
-        return "%s#%s" % (self.sal_url, pending.when.strftime("%Y-%m-%d"))
+        return f"{self.sal_url}#{pending.when.strftime('%Y-%m-%d')}"
 
     def trusted_link(self, url):
         return bool(self.sal_origin) and url.startswith(self.sal_origin + "/")
@@ -490,7 +491,7 @@ class Bot:
         if cfg.get("server_password"):
             self.send("PASS " + cfg["server_password"])
         self.send("NICK " + self.nick)
-        self.send("USER %s 0 * :%s" % (username, cfg.get("realname", "SAL Phorge bot")))
+        self.send(f"USER {username} 0 * :{cfg.get('realname', 'SAL Phorge bot')}")
 
         try:
             while True:
@@ -509,6 +510,9 @@ class Bot:
                 log.debug("<< %s", line)
                 prefix, command, params = parse_irc(line)
 
+                if command in ("902", "904", "905", "906"):
+                    raise ConnectionError(f"SASL failed ({command})")
+
                 if command == "PING":
                     self.send("PONG :" + (params[-1] if params else ""))
                 elif command == "CAP" and len(params) >= 3:
@@ -518,12 +522,10 @@ class Bot:
                         log.warning("Server refused SASL")
                         self.send("CAP END")
                 elif command == "AUTHENTICATE" and params and params[0] == "+":
-                    blob = "%s\0%s\0%s" % (username, username, password)
+                    blob = f"{username}\0{username}\0{password}"
                     self.send("AUTHENTICATE " + base64.b64encode(blob.encode()).decode())
                 elif command == "903":
                     self.send("CAP END")
-                elif command in ("902", "904", "905", "906"):
-                    raise ConnectionError("SASL failed (%s)" % command)
                 elif command == "433":
                     self.nick += "_"
                     self.send("NICK " + self.nick)
@@ -531,7 +533,7 @@ class Bot:
                     registered = True
                     log.info("Registered as %s", self.nick)
                     if password and not use_sasl:
-                        self.send("PRIVMSG NickServ :IDENTIFY %s %s" % (username, password))
+                        self.send(f"PRIVMSG NickServ :IDENTIFY {username} {password}")
                     for channel in cfg["channels"]:
                         self.send("JOIN " + channel)
                 elif command == "PRIVMSG" and len(params) >= 2 and prefix:
@@ -542,10 +544,8 @@ class Bot:
                 elif command == "ERROR":
                     raise ConnectionError(" ".join(params))
         finally:
-            try:
+            with contextlib.suppress(Exception):
                 self.writer.close()
-            except Exception:
-                pass
         return registered
 
 
@@ -555,14 +555,14 @@ def load_config(path):
     for section, keys in (("irc", ("server", "nick", "channels")), ("phorge", ("url",))):
         for key in keys:
             if key not in config.get(section, {}):
-                sys.exit("Missing %s.%s in config" % (section, key))
+                sys.exit(f"Missing {section}.{key} in config")
     for section in ("irc", "phorge"):
         url = config[section].get("proxy")
         if url:
             try:
                 Proxy(url)
             except ValueError as error:
-                sys.exit("Bad %s.proxy: %s" % (section, error))
+                sys.exit(f"Bad {section}.proxy: {error}")
     if "api_token" not in config["phorge"] and not os.environ.get("PHORGE_API_TOKEN"):
         sys.exit("Missing phorge.api_token in config")
     return config
@@ -580,10 +580,8 @@ def main():
         format="%(asctime)s %(levelname)s %(message)s",
         filename=config.get("log_file") or None,
     )
-    try:
+    with contextlib.suppress(KeyboardInterrupt):
         asyncio.run(Bot(config).run())
-    except KeyboardInterrupt:
-        pass
 
 
 if __name__ == "__main__":
