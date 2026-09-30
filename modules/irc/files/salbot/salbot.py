@@ -5,6 +5,7 @@ import argparse
 import asyncio
 import base64
 import fnmatch
+import hashlib
 import http.client
 import ipaddress
 import json
@@ -16,6 +17,7 @@ import ssl
 import sys
 import time
 import urllib.parse
+from collections import deque
 from datetime import datetime, timezone
 
 log = logging.getLogger("salbot")
@@ -26,6 +28,9 @@ LOG_LINE = re.compile(
 )
 TASK_SUFFIX = re.compile(r"\s*\((?P<task>T[0-9]+)\)\s*$")
 TASK_ANYWHERE = re.compile(r"\b(T[0-9]+)\b")
+LOGGED_REPLY = re.compile(
+    r"^Logged the message at (?P<url>https://\S+#sal-[0-9]{14}-(?P<fp>[0-9a-f]{8})(?:-[0-9]+)?)$"
+)
 
 
 class PhorgeError(Exception):
@@ -247,6 +252,21 @@ class Phorge:
             )
 
 
+def fingerprint(line):
+    body = line.split(" ", 1)[1]
+    return hashlib.sha1(body.encode("utf-8", "replace")).hexdigest()[:8]
+
+
+class Pending:
+    def __init__(self, slot, channel, entry):
+        self.slot = slot
+        self.channel = channel
+        self.entry = entry
+        self.when = datetime.now(timezone.utc)
+        self.timer = None
+        self.done = False
+
+
 class Bot:
     def __init__(self, config):
         self.config = config
@@ -259,6 +279,12 @@ class Bot:
         self.dry_run = config.get("dry_run", False)
         self.sal_url = config.get("sal_url", "").rstrip("/")
         self.time_format = config.get("time_format", "%Y-%m-%d %H:%M")
+        sal_parts = urllib.parse.urlsplit(self.sal_url)
+        self.sal_origin = "%s://%s" % (sal_parts.scheme, sal_parts.netloc) if sal_parts.netloc else ""
+        self.logbot_nick = config.get("logbot_nick", "MirahezeLogbot")
+        self.logbot_mask = config.get("logbot_mask", "%s!*@*" % self.logbot_nick).lower()
+        self.link_wait = config.get("link_wait", 60)
+        self.pending = {}
         self.min_interval = config.get("min_post_interval", 1.0)
         self.retries = config.get("retries", 3)
         self.dedupe_window = config.get("dedupe_seconds", 60)
@@ -283,37 +309,104 @@ class Bot:
         self.recent[key] = now
         return False
 
-    def build_comment(self, channel, actor, message):
-        now = datetime.now(timezone.utc)
-        link = "{nav icon=file, name=Mentioned in SAL (%s), href=%s#%s}" % (
-            channel,
-            self.sal_url,
-            now.strftime("%Y-%m-%d"),
-        )
-        return "%s [%s] <%s> %s" % (link, now.strftime(self.time_format), actor, message)
+    def build_comment(self, channel, actor, message, when, link):
+        nav = "{nav icon=file, name=Mentioned in SAL (%s), href=%s}" % (channel, link)
+        return "%s [%s] <%s> %s" % (nav, when.strftime(self.time_format), actor, message)
 
-    def handle_message(self, mask, channel, text):
-        if channel.lower() not in self.channels:
-            return
-        entry = extract_entry(text, self.task_mode)
+    def is_logged(self, line):
+        nick = self.logbot_nick
+        if line.startswith(nick) or line.startswith("!" + nick) or line.lower() == "!log help":
+            return False
+        return line.lower().startswith("!log ")
+
+    def prepare(self, mask, line):
+        entry = extract_entry(line, self.task_mode)
         if entry is None:
-            return
+            return None
         if not self.sender_allowed(mask):
             log.info("Ignored entry from %s", mask)
-            return
+            return None
         actor, message, tasks = entry
         if any(p.search(message) for p in self.skip):
             log.debug("Skipped by pattern: %s", message)
-            return
+            return None
         actor = actor or mask.split("!", 1)[0]
-        body = self.build_comment(channel, actor, message)
-        for task in tasks:
-            if self.seen_recently((task, actor, message)):
-                continue
+        tasks = [t for t in tasks if not self.seen_recently((t, actor, message))]
+        if not tasks:
+            return None
+        return {"actor": actor, "message": message, "tasks": tasks}
+
+    def fallback_link(self, pending):
+        return "%s#%s" % (self.sal_url, pending.when.strftime("%Y-%m-%d"))
+
+    def trusted_link(self, url):
+        return bool(self.sal_origin) and url.startswith(self.sal_origin + "/")
+
+    def enqueue(self, pending, link):
+        entry = pending.entry
+        body = self.build_comment(
+            pending.channel,
+            entry["actor"],
+            entry["message"],
+            pending.when,
+            link or self.fallback_link(pending),
+        )
+        for task in entry["tasks"]:
             try:
                 self.queue.put_nowait((task, body))
             except asyncio.QueueFull:
                 log.error("Queue full, dropped comment for %s", task)
+
+    def expire(self, pending):
+        if pending.done:
+            return
+        pending.done = True
+        waiting = self.pending.get(pending.slot)
+        if waiting and pending in waiting:
+            waiting.remove(pending)
+            if not waiting:
+                del self.pending[pending.slot]
+        log.warning("No logbot reply in time, using the date link")
+        self.enqueue(pending, None)
+
+    def add_pending(self, key, channel, fp, entry):
+        slot = (key, fp)
+        pending = Pending(slot, channel, entry)
+        loop = asyncio.get_running_loop()
+        pending.timer = loop.call_later(self.link_wait, self.expire, pending)
+        self.pending.setdefault(slot, deque()).append(pending)
+
+    def handle_reply(self, key, text):
+        match = LOGGED_REPLY.match(text.strip())
+        if not match:
+            return
+        slot = (key, match.group("fp"))
+        waiting = self.pending.get(slot)
+        if not waiting:
+            return
+        pending = waiting.popleft()
+        if not waiting:
+            del self.pending[slot]
+        if pending.timer:
+            pending.timer.cancel()
+        if pending.done:
+            return
+        pending.done = True
+        url = match.group("url")
+        self.enqueue(pending, url if self.trusted_link(url) else None)
+
+    def handle_message(self, mask, channel, text):
+        key = channel.lower()
+        if key not in self.channels:
+            return
+        if fnmatch.fnmatchcase(mask.lower(), self.logbot_mask):
+            self.handle_reply(key, text)
+            return
+        if not self.is_logged(text):
+            return
+        entry = self.prepare(mask, text)
+        if entry:
+            self.add_pending(key, channel, fingerprint(text), entry)
 
     async def poster(self):
         loop = asyncio.get_running_loop()
@@ -385,6 +478,7 @@ class Bot:
                 timeout=30,
             )
         self.nick = cfg["nick"]
+        self.pending.clear()
         password = cfg.get("password", "")
         username = cfg.get("username") or cfg["nick"]
         use_sasl = bool(password) and cfg.get("sasl", True)
