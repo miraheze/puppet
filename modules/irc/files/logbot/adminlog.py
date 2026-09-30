@@ -5,6 +5,7 @@ sys.path.insert(0, r'/etc/irclogbot/mwclient')
 
 import mwclient  # noqa: E402
 import datetime  # noqa: E402
+import hashlib  # noqa: E402
 
 sys.path.insert(0, r'/etc/irclogbot/mwclient')
 
@@ -42,7 +43,8 @@ def log(config, message, project, author):
     position = 0
     # Um, check the date
     now = datetime.datetime.utcnow()
-    base_id = "sal-%s" % now.strftime("%Y%m%d%H%M%S")
+    fingerprint = hashlib.sha1(message.encode("utf-8", "replace")).hexdigest()[:8]
+    base_id = "sal-%s-%s" % (now.strftime("%Y%m%d%H%M%S"), fingerprint)
     entry_id = base_id
     counter = 1
     while 'id="%s"' % entry_id in text:
