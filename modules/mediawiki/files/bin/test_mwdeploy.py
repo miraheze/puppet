@@ -549,7 +549,7 @@ class TestPathAndCommandBuilders(unittest.TestCase):
 
     def test_rsync_local_requires_no_server(self):
         assert mwdeploy._rsync_builder.build(False, '/srv/mediawiki-staging', '/srv/mediawiki', ['config']) == \
-            'sudo -u www-data rsync -R --update -r --delete --exclude=".*" /srv/mediawiki-staging/./config /srv/mediawiki/'
+            'sudo -u www-data rsync -R --update -r --delete --exclude=PrivateSettings.php --exclude=OAuth2.key --exclude=".*" /srv/mediawiki-staging/./config /srv/mediawiki/'
 
     def test_rsync_remote_without_server_raises(self):
         with pytest.raises(Exception, match='Server must be specified for a remote rsync.'):
@@ -557,29 +557,61 @@ class TestPathAndCommandBuilders(unittest.TestCase):
 
     def test_rsync_local_single_path_update(self):
         assert mwdeploy._rsync_builder.build(False, '/srv/mediawiki-staging', '/srv/mediawiki', ['version']) == \
-            'sudo -u www-data rsync -R --update -r --delete --exclude=".*" /srv/mediawiki-staging/./version /srv/mediawiki/'
+            'sudo -u www-data rsync -R --update -r --delete --exclude=PrivateSettings.php --exclude=OAuth2.key --exclude=".*" /srv/mediawiki-staging/./version /srv/mediawiki/'
+
+    def test_rsync_never_deletes_puppet_managed_secrets_but_still_deletes_real_stale_files(self):
+        import shutil
+        import subprocess
+        import tempfile
+
+        if shutil.which('rsync') is None:
+            self.skipTest('rsync is not installed in this environment')
+
+        with tempfile.TemporaryDirectory() as tmp:
+            staging = os.path.join(tmp, 'staging')
+            deployed = os.path.join(tmp, 'deployed')
+            os.makedirs(os.path.join(staging, 'config'))
+            os.makedirs(os.path.join(deployed, 'config'))
+            with open(os.path.join(staging, 'config', 'LocalSettings.php'), 'w') as f:
+                f.write('public')
+            with open(os.path.join(deployed, 'config', 'PrivateSettings.php'), 'w') as f:
+                f.write('secret')
+            with open(os.path.join(deployed, 'config', 'OAuth2.key'), 'w') as f:
+                f.write('secret-key')
+            with open(os.path.join(deployed, 'config', 'stale_leftover.php'), 'w') as f:
+                f.write('should be removed')
+
+            command = mwdeploy._rsync_builder.build(False, staging, deployed, ['config']).replace('sudo -u www-data ', '', 1)
+            result = subprocess.run(command, shell=True, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+            remaining = set(os.listdir(os.path.join(deployed, 'config')))
+
+        self.assertIn('PrivateSettings.php', remaining)
+        self.assertIn('OAuth2.key', remaining)
+        self.assertNotIn('stale_leftover.php', remaining)
 
     def test_rsync_local_multiple_paths_in_one_call(self):
         assert mwdeploy._rsync_builder.build(False, '/srv/mediawiki-staging', '/srv/mediawiki', ['version/extensions/Foo', 'version/extensions/Bar', 'config']) == \
-            'sudo -u www-data rsync -R --update -r --delete --exclude=".*" ' \
+            'sudo -u www-data rsync -R --update -r --delete --exclude=PrivateSettings.php --exclude=OAuth2.key --exclude=".*" ' \
             '/srv/mediawiki-staging/./version/extensions/Foo /srv/mediawiki-staging/./version/extensions/Bar /srv/mediawiki-staging/./config /srv/mediawiki/'
 
     def test_rsync_remote_multiple_paths_in_one_call(self):
         fqdn = socket.getfqdn()
         domain = '.'.join(fqdn.split('.')[1:])
         assert mwdeploy._rsync_builder.build(False, '/srv/mediawiki', '/srv/mediawiki', ['version/extensions/Foo', 'config'], local=False, server='meta') == \
-            f'sudo -u www-data rsync -R --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" ' \
+            f'sudo -u www-data rsync -R --update -r --delete --exclude=PrivateSettings.php --exclude=OAuth2.key -e "ssh -i /srv/mediawiki-staging/deploykey" ' \
             f'/srv/mediawiki/./version/extensions/Foo /srv/mediawiki/./config www-data@meta.{domain}:/srv/mediawiki/'
 
     def test_rsync_local_uses_inplace_when_time_is_true(self):
         assert mwdeploy._rsync_builder.build(True, '/srv/mediawiki-staging', '/srv/mediawiki', ['config']) == \
-            'sudo -u www-data rsync -R --inplace -r --delete --exclude=".*" /srv/mediawiki-staging/./config /srv/mediawiki/'
+            'sudo -u www-data rsync -R --inplace -r --delete --exclude=PrivateSettings.php --exclude=OAuth2.key --exclude=".*" /srv/mediawiki-staging/./config /srv/mediawiki/'
 
     def test_rsync_remote_uses_inplace_when_time_is_true(self):
         fqdn = socket.getfqdn()
         domain = '.'.join(fqdn.split('.')[1:])
         assert mwdeploy._rsync_builder.build(True, '/srv/mediawiki', '/srv/mediawiki', ['config'], local=False, server='meta') == \
-            f'sudo -u www-data rsync -R --inplace -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/./config www-data@meta.{domain}:/srv/mediawiki/'
+            f'sudo -u www-data rsync -R --inplace -r --delete --exclude=PrivateSettings.php --exclude=OAuth2.key -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/./config www-data@meta.{domain}:/srv/mediawiki/'
 
     def test_git_pull(self):
         assert mwdeploy._git.pull('config') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ pull --quiet'
@@ -1579,7 +1611,7 @@ class TestProcess(unittest.TestCase):
             'rebuildLocalisationCache.php --lang=en,fr',
         )
         self.assertIn(
-            'sudo -u www-data rsync -R --update -r --delete --exclude=".*" '
+            'sudo -u www-data rsync -R --update -r --delete --exclude=PrivateSettings.php --exclude=OAuth2.key --exclude=".*" '
             '/srv/mediawiki-staging/./version/vendor /srv/mediawiki-staging/./version /srv/mediawiki-staging/./config /srv/mediawiki/',
             commands,
         )
@@ -1610,7 +1642,7 @@ class TestProcess(unittest.TestCase):
 
         commands = [call.args[0] for call in env.shell.call_args_list]
         self.assertEqual(commands, [
-            'sudo -u www-data rsync -R --update -r --delete --exclude=".*" '
+            'sudo -u www-data rsync -R --update -r --delete --exclude=PrivateSettings.php --exclude=OAuth2.key --exclude=".*" '
             '/srv/mediawiki-staging/./config /srv/mediawiki-staging/./landing /srv/mediawiki-staging/./ErrorPages '
             '/srv/mediawiki-staging/./a.txt /srv/mediawiki-staging/./b.txt /srv/mediawiki-staging/./dir1 /srv/mediawiki-staging/./dir2 /srv/mediawiki/',
         ])
