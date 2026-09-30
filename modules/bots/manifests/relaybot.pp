@@ -5,8 +5,8 @@ define bots::relaybot (
 ) {
     $install_path = "/srv/${title}"
 
-    $bot_token = lookup("passwords::bots::${title}::bot_token")
-    $irc_password = lookup("passwords::bots::${title}::irc_password")
+    $bot_token = lookup("passwords::irc::${title}::bot_token")
+    $irc_password = lookup("passwords::irc::${title}::irc_password")
 
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01bots']) {
