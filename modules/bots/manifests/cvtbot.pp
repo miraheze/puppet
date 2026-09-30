@@ -1,15 +1,15 @@
-# class: irc::cvtbot
-class irc::cvtbot {
+# class: bots::cvtbot
+class bots::cvtbot {
     $install_path = '/srv/cvtbot'
     $dotnet_version = '10.0'
 
-    $password = lookup('passwords::irc::cvtbot')
+    $password = lookup('passwords::bots::cvtbot')
 
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
-    if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01irc']) {
-        file { '/etc/apt/apt.conf.d/01irc':
+    if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01bots']) {
+        file { '/etc/apt/apt.conf.d/01bots':
             ensure  => present,
-            content => epp('irc/aptproxy.epp', { 'http_proxy' => $http_proxy }),
+            content => epp('bots/aptproxy.epp', { 'http_proxy' => $http_proxy }),
             before  => Package['packages-microsoft-prod'],
         }
     }
@@ -17,7 +17,7 @@ class irc::cvtbot {
     if !defined(Package['packages-microsoft-prod']) {
         file { '/opt/packages-microsoft-prod.deb':
             ensure => present,
-            source => 'puppet:///modules/irc/packages-microsoft-prod.deb',
+            source => 'puppet:///modules/bots/packages-microsoft-prod.deb',
         }
 
         package { 'packages-microsoft-prod':
@@ -70,7 +70,7 @@ class irc::cvtbot {
         owner   => 'irc',
         group   => 'irc',
         mode    => '0644',
-        source  => 'puppet:///modules/irc/NuGet.Config',
+        source  => 'puppet:///modules/bots/NuGet.Config',
         before  => Exec['CVTBot-build'],
         require => [
             File["${install_path}/src/CVTBot/.nuget"],
@@ -108,7 +108,7 @@ class irc::cvtbot {
         owner   => 'irc',
         group   => 'irc',
         mode    => '0644',
-        source  => 'puppet:///modules/irc/NuGet.Config',
+        source  => 'puppet:///modules/bots/NuGet.Config',
         require => [
             File["${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget"],
             File["${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget/NuGet"],
@@ -131,7 +131,7 @@ class irc::cvtbot {
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
-        content => epp('irc/cvtbot/CVTBot.ini.epp', { 'password' => $password }),
+        content => epp('bots/cvtbot/CVTBot.ini.epp', { 'password' => $password }),
         require => Git::Clone['CVTBot'],
         notify  => Service['cvtbot'],
     }
