@@ -7,8 +7,9 @@ class role::bots {
     include bots::taskbot
 
     monitoring::nrpe { 'Taskbot Test':
-        command     => '/usr/lib/nagios/plugins/check_procs -C sleep -a 31337 -w 2: -c 1:',
-        phorge_task => 'any',
+        command         => '/usr/lib/nagios/plugins/check_procs -C sleep -a 31337 -w 2: -c 1:',
+        phorge_task     => 'any',
+        phorge_projects => [ 'tech-infra', 'trash' ],
     }
 
     users::user { 'pywikibot':
