@@ -16,8 +16,7 @@
 #   if it matches srange or any of src_sets. if drange or dst_sets is also given, that
 #   combination is an AND - every (source, destination) pairing gets its own rule.
 # @param dst_sets same as src_sets, but for destination addresses
-# @param notrack if true, also exempt this port from connection tracking. this needs a
-#   rule in both prerouting (for the inbound request) and output (for the reply).
+# @param notrack Optional boolean to disable connection tracking for matching traffic
 define nftables::service (
     VMlib::Protocol                          $proto,
     Optional[Nftables::Port]                 $port       = undef,
@@ -70,29 +69,13 @@ define nftables::service (
             ${proto} dport ${nft_port} notrack
             | PREROUTING
 
-        @file { sprintf('/etc/nftables/prerouting/%02d_%s_service_notrack.nft', $prio, $title):
+        @file { sprintf('/etc/nftables/notrack/%02d_%s.nft', $prio, $title):
             ensure  => $ensure,
             owner   => 'root',
             group   => 'root',
             mode    => '0444',
             content => $prerouting_content,
-            require => File['/etc/nftables/prerouting'],
-            tag     => 'nft',
-        }
-
-        $output_content = @("OUTPUT")
-            # Managed by puppet
-            # ${desc}
-            ${proto} sport ${nft_port} notrack
-            | OUTPUT
-
-        @file { sprintf('/etc/nftables/output/%02d_%s_service_notrack.nft', $prio, $title):
-            ensure  => $ensure,
-            owner   => 'root',
-            group   => 'root',
-            mode    => '0444',
-            content => $output_content,
-            require => File['/etc/nftables/output'],
+            require => File['/etc/nftables/notrack'],
             tag     => 'nft',
         }
     }
