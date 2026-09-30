@@ -1,5 +1,6 @@
 import contextlib
 import copy
+import hashlib
 import http.server
 import json
 import logging
@@ -11,6 +12,7 @@ import time
 import types
 import urllib.parse
 import urllib.request
+from pathlib import Path
 
 import pytest
 
@@ -27,6 +29,14 @@ from taskbot import (
     load_config,
     missing_keys,
 )
+
+MODULE = Path(__file__).resolve().parents[2]
+CA_FILE = Path(__file__).resolve().parent / 'icinga-ca.crt'
+TEMPLATE = MODULE / 'templates' / 'taskbot' / 'config.json.epp'
+SYSTEMD = MODULE / 'templates' / 'initscripts' / 'taskbot.systemd.epp'
+MANIFEST = MODULE / 'manifests' / 'taskbot.pp'
+
+ICINGA_CA_SHA256 = 'c83902a9260b8ad2cbd7c79b5946ad1adc770723f38e0313bf2d1c560555da57'
 
 BASE_CONFIG = {
     'icinga': {
@@ -1497,3 +1507,122 @@ class TestVerboseLogging:
             phorge.call('conduit.ping')
         assert 'Calling conduit.ping, attempt 1 of 2' in caplog.text
         assert 'api-token' not in caplog.text
+
+
+def render_template(**values):
+    text = re.sub(r'\A<%-.*?-%>\n', '', TEMPLATE.read_text(), flags=re.DOTALL)
+    return json.loads(re.sub(r'<%= stdlib::to_json\(\$(\w+)\) %>', lambda match: json.dumps(values[match.group(1)]), text))
+
+
+def rendered(**changes):
+    values = {
+        'icinga_url': 'https://mon181.example.org:5665',
+        'icinga_password': 'icinga-secret',
+        'phorge_token': 'api-token',
+        'http_proxy': None,
+    }
+    values.update(changes)
+    return render_template(**values)
+
+
+def unit_setting(name):
+    match = re.search(f'^{name}=(.*)$', SYSTEMD.read_text(), re.MULTILINE)
+    assert match, f'{name} is not set in the unit'
+    return match.group(1)
+
+
+class TestShippedCa:
+    def test_the_bot_can_load_it(self):
+        assert ssl.create_default_context(cafile=str(CA_FILE)).get_ca_certs() != []
+
+    def test_is_the_icinga_ca(self):
+        der = ssl.PEM_cert_to_DER_cert(CA_FILE.read_text())
+        assert hashlib.sha256(der).hexdigest() == ICINGA_CA_SHA256, 'update ICINGA_CA_SHA256 if the CA was replaced on purpose'
+        subjects = [certificate['subject'] for certificate in ssl.create_default_context(cafile=str(CA_FILE)).get_ca_certs()]
+        assert subjects == [((('commonName', 'Icinga CA'),),)]
+
+    def test_is_a_single_certificate_and_no_key(self):
+        text = CA_FILE.read_text()
+        assert text.count('-----BEGIN CERTIFICATE-----') == 1
+        assert 'PRIVATE KEY' not in text
+
+
+class TestConfigTemplate:
+    def test_has_every_key_the_bot_requires(self):
+        assert missing_keys(rendered()) == []
+
+    def test_has_no_key_the_bot_does_not_know(self):
+        config = rendered()
+        assert set(config) <= set(taskbot.REQUIRED)
+        for section, keys in taskbot.REQUIRED.items():
+            if keys:
+                assert set(config[section]) <= set(keys), section
+
+    def test_passes_the_values_it_is_given(self):
+        config = rendered(icinga_url='https://icinga.example.org:5665', http_proxy='http://bastion.example.org:8080')
+        assert config['icinga']['url'] == 'https://icinga.example.org:5665'
+        assert config['icinga']['password'] == 'icinga-secret'
+        assert config['phorge']['api_token'] == 'api-token'
+        assert config['phorge']['proxy'] == 'http://bastion.example.org:8080'
+
+    def test_no_proxy_is_null(self):
+        assert rendered()['phorge']['proxy'] is None
+
+    def test_awkward_secrets_survive(self):
+        config = rendered(icinga_password='a"b\\c', phorge_token='x\ny')
+        assert config['icinga']['password'] == 'a"b\\c'
+        assert config['phorge']['api_token'] == 'x\ny'
+
+    def test_triggers_only_use_known_states(self):
+        config = rendered()
+        states = set(taskbot.STATES.values())
+        assert all(set(levels) <= states for levels in config['triggers'].values())
+        assert set(config['triggers']) == {'critical', 'any'}
+
+    def test_every_triggering_state_has_a_priority(self):
+        config = rendered()
+        triggering = {state for levels in config['triggers'].values() for state in levels}
+        assert triggering <= set(config['priorities'])
+
+    def test_reconnect_delays_make_sense(self):
+        config = rendered()
+        assert 0 < config['reconnect_min'] <= config['reconnect_max']
+
+    def test_the_bot_accepts_it_as_a_config_file(self, tmp_path):
+        path = tmp_path / 'config.json'
+        path.write_text(json.dumps(rendered()))
+        assert load_config(str(path))['icinga']['username'] == 'taskbot'
+
+
+class TestDeployment:
+    def test_the_manifest_ships_the_ca_from_the_module(self):
+        manifest = MANIFEST.read_text()
+        assert "source  => 'puppet:///modules/bots/taskbot/icinga-ca.crt'" in manifest
+        assert 'icinga2_ca_cert' not in manifest
+
+    def test_the_config_points_at_the_deployed_ca(self):
+        assert f"file {{ '{rendered()['icinga']['ca_file']}':" in MANIFEST.read_text()
+
+    def test_the_service_runs_the_deployed_script_and_config(self):
+        manifest = MANIFEST.read_text()
+        command = unit_setting('ExecStart')
+        match = re.fullmatch(r'/usr/bin/python3 (\S+) -c (\S+)', command)
+        assert match, command
+        for path in match.groups():
+            assert f"file {{ '{path}':" in manifest
+
+    def test_the_state_file_lives_in_the_state_directory(self):
+        state_file = rendered()['state_file']
+        assert state_file == f"/var/lib/{unit_setting('StateDirectory')}/state.json"
+
+    def test_the_service_user_can_read_the_config(self):
+        manifest = MANIFEST.read_text()
+        config_block = manifest[manifest.index("'/etc/taskbot/config.json'"):]
+        assert f"group   => '{unit_setting('User')}'" in config_block.split('}', 1)[0]
+        assert "mode    => '0640'" in config_block.split('}', 1)[0]
+
+    def test_the_process_check_matches_the_running_script(self):
+        manifest = MANIFEST.read_text()
+        script = re.search(r'taskbot\.py', unit_setting('ExecStart'))
+        assert script
+        assert '-a taskbot.py' in manifest
