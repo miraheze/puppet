@@ -1,5 +1,5 @@
-# class: irc::pywikibot
-class irc::pywikibot {
+# class: bots::pywikibot
+class bots::pywikibot {
     $install_path = '/srv/pywikibot'
     # The directory pointed to by the PYWIKIBOT_DIR environment variable
     $base_path = '/var/local/pwb'
@@ -36,7 +36,7 @@ class irc::pywikibot {
         owner   => 'root',
         group   => 'root',
         mode    => '0555',
-        content => template('irc/pywikibot/pywikibot.sh'),
+        content => template('bots/pywikibot/pywikibot.sh'),
     }
 
     stdlib::ensure_packages([
@@ -67,7 +67,7 @@ class irc::pywikibot {
         owner   => 'pywikibot',
         group   => 'pywikibot',
         mode    => '0400',
-        content => template('irc/pywikibot/user-config.py'),
+        content => template('bots/pywikibot/user-config.py'),
         require => Git::Clone['Pywikibot-stable'],
     }
 
@@ -78,7 +78,7 @@ class irc::pywikibot {
         owner   => 'pywikibot',
         group   => 'pywikibot',
         mode    => '0644',
-        content => template('irc/pywikibot/wikitide_family.py'),
+        content => template('bots/pywikibot/wikitide_family.py'),
         require => Git::Clone['Pywikibot-stable'],
     }
 
