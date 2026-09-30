@@ -5,7 +5,9 @@ import http.server
 import json
 import logging
 import re
+import shutil
 import ssl
+import subprocess
 import sys
 import threading
 import time
@@ -241,7 +243,7 @@ class StreamHandler(http.server.BaseHTTPRequestHandler):
 def serve():
     servers = []
 
-    def start(handler=ApiHandler, reply=None, lines=(), hold=False):
+    def start(handler=ApiHandler, reply=None, lines=(), hold=False, tls=None):
         server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), handler)
         server.daemon_threads = True
         server.received = []
@@ -251,6 +253,11 @@ def serve():
         server.hold = hold
         server.release = threading.Event()
         server.url = f'http://127.0.0.1:{server.server_port}'
+        if tls:
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            context.load_cert_chain(*tls)
+            server.socket = context.wrap_socket(server.socket, server_side=True)
+            server.url = f'https://localhost:{server.server_port}'
         servers.append(server)
         threading.Thread(target=server.serve_forever, kwargs={'poll_interval': 0.01}, daemon=True).start()
         return server
@@ -764,6 +771,96 @@ class TestIcinga:
         server = serve(reply=(200, b'{"results": []}'))
         Icinga(dict(BASE_CONFIG['icinga'], url=f'{server.url}/')).query({})
         assert server.received[0]['path'] == '/v1/objects/services'
+
+
+def openssl(*args):
+    subprocess.run(['openssl', *map(str, args)], check=True, capture_output=True)
+
+
+def make_ca(directory, name):
+    config = directory / f'{name}.cnf'
+    config.write_text(
+        '[req]\ndistinguished_name=dn\nx509_extensions=v3\n[dn]\n[v3]\n'
+        'basicConstraints=critical,CA:TRUE\nsubjectKeyIdentifier=none\nauthorityKeyIdentifier=none\n'
+    )
+    key, cert = directory / f'{name}.key', directory / f'{name}.crt'
+    openssl('ecparam', '-name', 'prime256v1', '-genkey', '-noout', '-out', key)
+    openssl('req', '-x509', '-new', '-key', key, '-subj', f'/CN={name}', '-days', '3650', '-config', config, '-out', cert)
+    return key, cert
+
+
+@pytest.fixture(scope='module')
+def icinga_pki(tmp_path_factory):
+    if shutil.which('openssl') is None:
+        pytest.skip('openssl is needed to build the test certificates')
+    directory = tmp_path_factory.mktemp('pki')
+    try:
+        ca_key, ca_cert = make_ca(directory, 'Icinga CA')
+        make_ca(directory, 'Other CA')
+        (directory / 'leaf.ext').write_text('basicConstraints=CA:FALSE\nsubjectKeyIdentifier=none\nauthorityKeyIdentifier=none\n')
+        key, request, cert = directory / 'leaf.key', directory / 'leaf.csr', directory / 'leaf.crt'
+        openssl('ecparam', '-name', 'prime256v1', '-genkey', '-noout', '-out', key)
+        openssl('req', '-new', '-key', key, '-subj', '/CN=localhost', '-out', request)
+        openssl('x509', '-req', '-in', request, '-CA', ca_cert, '-CAkey', ca_key, '-CAcreateserial', '-days', '365', '-extfile', directory / 'leaf.ext', '-out', cert)
+    except subprocess.CalledProcessError as error:
+        pytest.skip(f'openssl could not build the test certificates: {error.stderr.decode().strip()}')
+    return types.SimpleNamespace(ca=str(ca_cert), other_ca=str(directory / 'Other CA.crt'), cert=str(cert), key=str(key))
+
+
+@pytest.fixture()
+def _strict_by_default(monkeypatch):
+    real = ssl.create_default_context
+
+    def strict_context(**kwargs):
+        context = real(**kwargs)
+        context.verify_flags |= ssl.VERIFY_X509_PARTIAL_CHAIN | ssl.VERIFY_X509_STRICT
+        return context
+
+    monkeypatch.setattr(taskbot.ssl, 'create_default_context', strict_context)
+
+
+@pytest.mark.usefixtures('_strict_by_default')
+class TestIcingaTls:
+    @staticmethod
+    def make(server, pki):
+        return Icinga(dict(BASE_CONFIG['icinga'], url=server.url, ca_file=pki.ca))
+
+    def test_strict_checking_is_off(self):
+        icinga = Icinga(dict(BASE_CONFIG['icinga'], url='https://icinga.example.org:5665'))
+        https = [h for h in icinga.opener.handlers if isinstance(h, urllib.request.HTTPSHandler)]
+        assert not https[0]._context.verify_flags & ssl.VERIFY_X509_STRICT
+
+    def test_the_default_context_would_reject_icinga_certificates(self, serve, icinga_pki):
+        server = serve(reply=(200, b'{"results": []}'), tls=(icinga_pki.cert, icinga_pki.key))
+        context = ssl.create_default_context(cafile=icinga_pki.ca)
+        with pytest.raises(OSError, match='Missing Authority Key Identifier'):
+            urllib.request.build_opener(urllib.request.HTTPSHandler(context=context)).open(server.url, data=b'x', timeout=5)
+
+    def test_accepts_certificates_without_key_identifiers(self, serve, icinga_pki):
+        server = serve(reply=(200, b'{"results": [{"attrs": {}}]}'), tls=(icinga_pki.cert, icinga_pki.key))
+        assert self.make(server, icinga_pki).query({}) == [{'attrs': {}}]
+        assert server.received[0]['headers']['Authorization'].startswith('Basic ')
+
+    def test_still_rejects_a_certificate_from_another_ca(self, serve, icinga_pki):
+        server = serve(reply=(200, b'{"results": []}'), tls=(icinga_pki.cert, icinga_pki.key))
+        icinga = Icinga(dict(BASE_CONFIG['icinga'], url=server.url, ca_file=icinga_pki.other_ca))
+        with pytest.raises(OSError, match='CERTIFICATE_VERIFY_FAILED'):
+            icinga.query({})
+        assert server.received == []
+
+    def test_still_checks_the_hostname(self, serve, icinga_pki):
+        server = serve(reply=(200, b'{"results": []}'), tls=(icinga_pki.cert, icinga_pki.key))
+        icinga = Icinga(dict(BASE_CONFIG['icinga'], url=f'https://127.0.0.1:{server.server_port}', ca_file=icinga_pki.ca))
+        with pytest.raises(OSError, match='mismatch'):
+            icinga.query({})
+        assert server.received == []
+
+    def test_the_password_is_not_sent_to_an_untrusted_server(self, serve, icinga_pki):
+        server = serve(reply=(200, b'{"results": []}'), tls=(icinga_pki.cert, icinga_pki.key))
+        icinga = Icinga(dict(BASE_CONFIG['icinga'], url=server.url, ca_file=icinga_pki.other_ca, password='hunter2'))
+        with pytest.raises(OSError, match='CERTIFICATE_VERIFY_FAILED'):
+            icinga.query({})
+        assert all('hunter2' not in request['body'] for request in server.received)
 
 
 class TestBotMessages:
