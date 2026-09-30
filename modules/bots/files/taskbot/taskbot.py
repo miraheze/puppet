@@ -190,6 +190,7 @@ class Icinga:
         context = None
         if self.url.startswith('https'):
             context = ssl.create_default_context(cafile=config['ca_file'] or None)
+            context.verify_flags &= ~ssl.VERIFY_X509_STRICT
         self.opener = build_opener(None, context)
 
     def request(self, path, body, timeout, override=None):
