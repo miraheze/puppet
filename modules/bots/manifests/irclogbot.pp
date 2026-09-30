@@ -35,7 +35,7 @@ class bots::irclogbot {
 
     file { '/etc/irclogbot/config.py':
         ensure  => present,
-        content => epp('irc/logbot/config.py.epp', {
+        content => epp('bots/logbot/config.py.epp', {
             'mirahezebots_password'          => $mirahezebots_password,
             'mirahezelogbot_password'        => $mirahezelogbot_password,
             'mirahezelogbot_consumer_token'  => $mirahezelogbot_consumer_token,
