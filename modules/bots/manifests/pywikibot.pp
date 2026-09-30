@@ -36,7 +36,10 @@ class bots::pywikibot {
         owner   => 'root',
         group   => 'root',
         mode    => '0555',
-        content => template('bots/pywikibot/pywikibot.sh'),
+        content => epp('bots/pywikibot/pywikibot.sh.epp', {
+            'base_path'    => $base_path,
+            'install_path' => $install_path,
+        }),
     }
 
     stdlib::ensure_packages([
@@ -67,7 +70,12 @@ class bots::pywikibot {
         owner   => 'pywikibot',
         group   => 'pywikibot',
         mode    => '0400',
-        content => template('bots/pywikibot/user-config.py'),
+        content => epp('bots/pywikibot/user-config.py.epp', {
+            'consumer_token'  => $consumer_token,
+            'consumer_secret' => $consumer_secret,
+            'access_token'    => $access_token,
+            'access_secret'   => $access_secret,
+        }),
         require => Git::Clone['Pywikibot-stable'],
     }
 
@@ -78,7 +86,7 @@ class bots::pywikibot {
         owner   => 'pywikibot',
         group   => 'pywikibot',
         mode    => '0644',
-        content => template('bots/pywikibot/wikitide_family.py'),
+        content => epp('bots/pywikibot/wikitide_family.py.epp', { 'family_langs' => $family_langs }),
         require => Git::Clone['Pywikibot-stable'],
     }
 
