@@ -1,3 +1,4 @@
+<%- | String $irc_password, String $phorge_token, Optional[String] $http_proxy | -%>
 {
 	"irc": {
 		"server": "irc.libera.chat",
@@ -5,20 +6,20 @@
 		"ssl": true,
 		"nick": "MirahezeTaskBot",
 		"username": "MirahezeTaskBot",
-		"password": "",
+		"password": <%= stdlib::to_json($irc_password) %>,
 		"sasl": true,
 		"realname": "SAL to Phorge bot",
 		"channels": [ "#miraheze-tech-ops" ],
 		"ping_interval": 180,
 		"reconnect_min": 5,
 		"reconnect_max": 300,
-		"proxy": "http://bastion.fsslc.wtnet:8080"
+		"proxy": "<%= $http_proxy %>"
 	},
 	"phorge": {
 		"url": "https://issue-tracker.miraheze.org",
-		"api_token": "",
+		"api_token": <%= stdlib::to_json($phorge_token) %>,
 		"timeout": 20,
-		"proxy": "http://bastion.fsslc.wtnet:8080"
+		"proxy": "<%= $http_proxy %>"
 	},
 	"allowed_senders": [ "*!*@miraheze/bots" ],
 	"task_mode": "suffix",
