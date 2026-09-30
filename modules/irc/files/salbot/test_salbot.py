@@ -293,7 +293,7 @@ class TestSocks5Connect:
         sock = FakeSocket(b'\x05\x02' + b'\x01\x00' + SOCKS_OK)
         socks5_connect(sock, Proxy('socks5://bast:pw@proxy:1080'), 'irc.libera.chat', 6697)
         assert sock.sent == (
-            b'\x05\x02\x00\x02' + b'\x01\x03bast\x02pw' + self.request('irc.libera.chat', 6697)
+            b'\x05\x02\x00\x02' + b'\x01\x04bast\x02pw' + self.request('irc.libera.chat', 6697)
         )
 
     def test_credentials_offered_but_proxy_wants_none(self):
