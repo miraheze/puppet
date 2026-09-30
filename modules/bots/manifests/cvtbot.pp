@@ -3,7 +3,7 @@ class bots::cvtbot {
     $install_path = '/srv/cvtbot'
     $dotnet_version = '10.0'
 
-    $password = lookup('passwords::bots::cvtbot')
+    $password = lookup('passwords::irc::cvtbot')
 
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01bots']) {
