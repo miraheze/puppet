@@ -64,7 +64,7 @@ BASE_CONFIG = {
         'proxy': None,
     },
     'triggers': {'critical': ['CRITICAL'], 'any': ['WARNING', 'CRITICAL']},
-    'priorities': {'WARNING': 'normal', 'CRITICAL': 'high', 'UNKNOWN': 'normal'},
+    'priorities': {'WARNING': 'medium', 'CRITICAL': 'high', 'UNKNOWN': 'medium'},
     'icingaweb_url': 'https://icinga.example.org',
     'skip_in_downtime': True,
     'close_on_recovery': False,
