@@ -148,6 +148,6 @@ class bots::cvtbot {
     }
 
     monitoring::nrpe { 'CVT Bot':
-        command => '/usr/lib/nagios/plugins/check_procs -a cvtbot -c 2:2'
+        command => '/usr/lib/nagios/plugins/check_procs -a cvtbot -c 2:2',
     }
 }
