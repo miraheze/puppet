@@ -42,7 +42,14 @@ def log(config, message, project, author):
     position = 0
     # Um, check the date
     now = datetime.datetime.utcnow()
-    logline = "* %02d:%02d %s: %s" % (now.hour, now.minute, author, message)
+    base_id = "sal-%s" % now.strftime("%Y%m%d%H%M%S")
+    entry_id = base_id
+    counter = 1
+    while 'id="%s"' % entry_id in text:
+        counter += 1
+        entry_id = "%s-%d" % (base_id, counter)
+    logline = '* <span id="%s">%02d:%02d %s: %s</span>' % (
+        entry_id, now.hour, now.minute, author, message)
 
     # Try extracting latest date header
     header = "=" * config.wiki_header_depth
@@ -88,4 +95,4 @@ def log(config, message, project, author):
 
     revdata = site.api('query', prop='info',
                        inprop='url', revids=page.revision)
-    return list(revdata['query']['pages'].values())[0]['canonicalurl']
+    return list(revdata['query']['pages'].values())[0]['canonicalurl'] + "#" + entry_id
