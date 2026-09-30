@@ -377,10 +377,7 @@ class Bot:
         pending.timer = loop.call_later(self.link_wait, self.expire, pending)
         self.pending.setdefault(slot, deque()).append(pending)
 
-    def handle_reply(self, key, text):
-        match = LOGGED_REPLY.match(text.strip())
-        if not match:
-            return
+    def handle_reply(self, key, match):
         slot = (key, match.group('fp'))
         waiting = self.pending.get(slot)
         if not waiting:
@@ -400,8 +397,10 @@ class Bot:
         key = channel.lower()
         if key not in self.channels:
             return
-        if fnmatch.fnmatchcase(mask.lower(), self.logbot_mask):
-            self.handle_reply(key, text)
+        reply = LOGGED_REPLY.match(text.strip())
+        if reply:
+            if fnmatch.fnmatchcase(mask.lower(), self.logbot_mask):
+                self.handle_reply(key, reply)
             return
         if not self.is_logged(text):
             return
