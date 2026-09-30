@@ -1,18 +1,18 @@
-# type: irc::ircrcbot
-define irc::ircrcbot(
+# type: bots::ircrcbot
+define bots::ircrcbot(
     $nickname     = undef,
     $network      = undef,
     $network_port = '6697',
     $channel      = undef,
     $udp_port     = '5070',
 ) {
-    include ::irc
+    include bots
 
-    $mirahezebots_password = lookup('passwords::irc::mirahezebots')
+    $mirahezebots_password = lookup('passwords::bots::mirahezebots')
 
     file { "/usr/local/bin/ircrcbot-${nickname}.py":
             ensure  => present,
-            content => template('irc/ircrcbot.py'),
+            content => template('bots/ircrcbot.py'),
             mode    => '0755',
             notify  => Service["ircrcbot-${nickname}"],
         }
