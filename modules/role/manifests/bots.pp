@@ -1,9 +1,9 @@
-# role: irc
-class role::irc {
+# role: bots
+class role::bots {
     include base
-    include irc::irclogbot
-    include irc::salbot
-    include irc::cvtbot
+    include bots::irccvtbot
+    include bots::irclogbot
+    include bots::salbot
 
     users::user { 'pywikibot':
         ensure => present,
@@ -11,13 +11,13 @@ class role::irc {
         shell  => '/bin/bash',
     }
 
-    include irc::pywikibot
+    include bots::pywikibot
 
-    irc::relaybot { 'relaybot':
+    bots::relaybot { 'relaybot':
         dotnet_version => '10.0',
     }
 
-    irc::ircrcbot { 'RCBot1' :
+    bots::ircrcbot { 'RCBot1' :
         nickname     => 'MirahezeRC',
         network      => 'irc.libera.chat',
         network_port => '6697',
@@ -25,7 +25,7 @@ class role::irc {
         udp_port     => '5070',
     }
 
-    class { 'irc::irclogserverbot':
+    class { 'bots::irclogserverbot':
         nickname     => 'MirahezeLSBot',
         network      => 'irc.libera.chat',
         network_port => '6697',
@@ -33,7 +33,7 @@ class role::irc {
         udp_port     => '5071',
     }
 
-    irc::ircrcbot { 'RCBot2' :
+    bots::ircrcbot { 'RCBot2' :
         nickname     => 'MirahezeRC2',
         network      => 'irc.libera.chat',
         network_port => '6697',
@@ -71,7 +71,7 @@ class role::irc {
         srange => "(${firewall_all_rules_str})",
     }
 
-    system::role { 'irc':
-        description => 'IRC bots server',
+    system::role { 'bots':
+        description => 'Bots server',
     }
 }
