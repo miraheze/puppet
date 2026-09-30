@@ -19,24 +19,24 @@ class role::bots {
 
     class { 'bots::irclogserverbot':
         nickname     => 'MirahezeLSBot',
-        network      => 'irc.libera.chat',
         channel      => '#miraheze-tech-ops',
+        network      => 'irc.libera.chat',
         network_port => 6697,
         udp_port     => 5071,
     }
 
     bots::ircrcbot { 'RCBot1':
         nickname     => 'MirahezeRC',
-        network      => 'irc.libera.chat',
         channel      => '#miraheze-feed',
+        network      => 'irc.libera.chat',
         network_port => 6697,
         udp_port     => 5070,
     }
 
     bots::ircrcbot { 'RCBot2':
         nickname     => 'MirahezeRC2',
-        network      => 'irc.libera.chat',
         channel      => '#miraheze-feed',
+        network      => 'irc.libera.chat',
         network_port => 6697,
         udp_port     => 5072,
     }
