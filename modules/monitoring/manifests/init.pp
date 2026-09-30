@@ -133,7 +133,7 @@ class monitoring (
     icinga2::object::apiuser { 'taskbot':
         ensure      => present,
         password    => $taskbot_api_password,
-        permissions => ['events/StateChange', 'objects/query/Service'],
+        permissions => ['events/StateChange', 'objects/query/Host', 'objects/query/Service'],
         target      => '/etc/icinga2/conf.d/api-users.conf',
         require     => Package['icinga2'],
         notify      => Service['icinga2'],
