@@ -5,6 +5,7 @@
 
 import argparse
 import contextlib
+import glob
 import json
 import os
 import re
@@ -392,6 +393,7 @@ class PathResolver:
 _paths = PathResolver(repos)
 
 NEVER_DELETE = ('PrivateSettings.php', 'OAuth2.key')
+NEVER_DELETE_GLOB = 'ExtensionMessageFiles-*.php'
 
 
 class RsyncCommandBuilder:
@@ -407,7 +409,10 @@ class RsyncCommandBuilder:
         params = '--inplace' if time else '--update'
         params += ' -r --delete'
         for protected in NEVER_DELETE:
-            params += f' --exclude={protected}'
+            if os.path.exists(os.path.join(dest_root, 'config', protected)):
+                params += f' --exclude={protected}'
+        if glob.glob(os.path.join(dest_root, 'config', NEVER_DELETE_GLOB)):
+            params += f' --exclude="{NEVER_DELETE_GLOB}"'
         sources = ' '.join(f'{source_root}/./{path}' for path in relative_paths)
 
         if local:
