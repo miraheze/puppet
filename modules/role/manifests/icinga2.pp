@@ -60,6 +60,9 @@
 #   Optional IP address or hostname to bind the Icinga 2 API listener to.
 #   If undef, the default Icinga 2 behavior is used.
 #
+# [*taskbot_api_password*]
+#   Password for the read only API user used by the bots server task bot.
+#
 class role::icinga2 (
     String $icinga2_db_host                  = lookup('icinga_ido_db_host', {'default_value' => 'db182.fsslc.wtnet'}),
     String $icinga2_db_name                  = lookup('icinga_ido_db_name', {'default_value' => 'icinga'}),
@@ -80,6 +83,7 @@ class role::icinga2 (
     String $ldap_password                    = lookup('passwords::ldap_password'),
     Optional[String] $icinga2_api_bind_host  = lookup('icinga2_api_bind_host', {'default_value' => undef}),
     String $icingaweb2_api_password          = lookup('passwords::icingaweb2_api_password'),
+    String $taskbot_api_password             = lookup('passwords::icinga2::taskbot'),
 ) {
     # include prometheus::exporter::cloudflare
 
@@ -95,6 +99,7 @@ class role::icinga2 (
         mirahezebots_password   => $mirahezebots_password,
         ticket_salt             => $ticket_salt,
         icingaweb2_api_password => $icingaweb2_api_password,
+        taskbot_api_password    => $taskbot_api_password,
     }
 
     class { '::icingaweb2':
@@ -115,6 +120,17 @@ class role::icinga2 (
         icingadb_redis_password   => $icingadb_redis_password,
         ldap_password             => $ldap_password,
         icingaweb2_api_password   => $icingaweb2_api_password,
+    }
+
+    $subquery = @("PQL")
+    resources { type = 'Class' and title = 'Role::Bots' }
+    | PQL
+    $firewall_bots_rules_str = vmlib::generate_firewall_ip($subquery)
+
+    firewall::service { 'icinga2-api':
+        proto  => 'tcp',
+        port   => 5665,
+        srange => "(${firewall_bots_rules_str})",
     }
 
     if !defined(Firewall::Service['http']) {
