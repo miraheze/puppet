@@ -727,7 +727,7 @@ class TestIsLogged:
 class TestBuildComment:
     def test_layout(self):
         bot = make_bot()
-        when = salbot.datetime(2026, 9, 29, 12, 42, 15, tzinfo=salbot.timezone.utc)
+        when = salbot.datetime(2026, 9, 29, 12, 42, 15, tzinfo=salbot.UTC)
         body = bot.build_comment(CHANNEL, 'universalomega@mw151', 'START - thing', when, f'{SAL_URL}#sal-x')
         assert body == (
             '{nav icon=file, name=Mentioned in SAL (#miraheze-tech-ops), '
@@ -737,7 +737,7 @@ class TestBuildComment:
 
     def test_time_format_is_configurable(self):
         bot = make_bot(time_format='%Y-%m-%dT%H:%M:%SZ')
-        when = salbot.datetime(2026, 9, 29, 12, 42, 15, tzinfo=salbot.timezone.utc)
+        when = salbot.datetime(2026, 9, 29, 12, 42, 15, tzinfo=salbot.UTC)
         assert '[2026-09-29T12:42:15Z]' in bot.build_comment(CHANNEL, 'a', 'm', when, 'link')
 
 
