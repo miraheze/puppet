@@ -1,6 +1,6 @@
-# class: irc::salbot
-class irc::salbot {
-    include irc
+# class: bots::salbot
+class bots::salbot {
+    include bots
 
     $irc_password = lookup('passwords::irc::salbot')
     $phorge_token = lookup('passwords::phorge::salbot')
@@ -18,7 +18,7 @@ class irc::salbot {
         owner   => 'root',
         group   => 'root',
         mode    => '0755',
-        source  => 'puppet:///modules/irc/salbot/salbot.py',
+        source  => 'puppet:///modules/bots/salbot/salbot.py',
         require => File['/etc/salbot'],
         notify  => Service['salbot'],
     }
@@ -28,10 +28,10 @@ class irc::salbot {
         owner   => 'root',
         group   => 'irc',
         mode    => '0640',
-        content => epp('irc/salbot/config.json.epp', {
+        content => epp('bots/salbot/config.json.epp', {
+            'http_proxy'   => $http_proxy,
             'irc_password' => $irc_password,
             'phorge_token' => $phorge_token,
-            'http_proxy'   => $http_proxy,
         }),
         require => File['/etc/salbot'],
         notify  => Service['salbot'],
