@@ -2,6 +2,7 @@
 class role::irc {
     include base
     include irc::irclogbot
+    include irc::salbot
     include irc::cvtbot
 
     users::user { 'pywikibot':
