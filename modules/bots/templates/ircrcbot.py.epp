@@ -1,7 +1,7 @@
-<%- | String $network,
-      String $nickname,
+<%- | String $nickname,
       String $mirahezebots_password,
       String $channel,
+      Stdlib::Host $network,
       Stdlib::Port $network_port,
       Stdlib::Port $udp_port
 | -%>
