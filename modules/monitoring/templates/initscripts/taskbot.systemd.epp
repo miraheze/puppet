@@ -1,0 +1,20 @@
+[Unit]
+Description=Icinga to Phorge task bot
+After=network.target icinga2.service
+
+[Service]
+Type=simple
+User=nagios
+Group=nagios
+SyslogIdentifier=icinga-taskbot
+StateDirectory=icinga-taskbot
+ExecStart=/usr/bin/python3 /usr/local/bin/icinga-taskbot.py --config=/etc/icinga-taskbot/config.json
+Restart=on-failure
+RestartSec=10s
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
