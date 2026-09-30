@@ -8,7 +8,7 @@ define bots::ircrcbot(
 ) {
     include bots
 
-    $mirahezebots_password = lookup('passwords::bots::mirahezebots')
+    $mirahezebots_password = lookup('passwords::irc::mirahezebots')
 
     file { "/usr/local/bin/ircrcbot-${nickname}.py":
             ensure  => present,
