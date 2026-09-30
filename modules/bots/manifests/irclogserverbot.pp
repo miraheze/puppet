@@ -12,7 +12,14 @@ class bots::irclogserverbot(
 
     file { '/usr/local/bin/irclogserverbot.py':
         ensure  => present,
-        content => template('bots/ircrcbot.py'),
+        content => epp('bots/ircrcbot.py.epp', {
+            'network'               => $network,
+            'nickname'              => $nickname,
+            'mirahezebots_password' => $mirahezebots_password,
+            'channel'               => $channel,
+            'udp_port'              => $udp_port,
+            'network_port'          => $network_port,
+        }),
         mode    => '0755',
         notify  => Service['irclogserverbot'],
     }
@@ -24,6 +31,6 @@ class bots::irclogserverbot(
     }
 
     monitoring::nrpe { 'IRC Log Server Bot':
-        command => '/usr/lib/nagios/plugins/check_procs -a irclogserverbot.py -c 1:1'
+        command => '/usr/lib/nagios/plugins/check_procs -a irclogserverbot.py -c 1:1',
     }
 }
