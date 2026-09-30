@@ -8,7 +8,7 @@ import yaml
 import os
 import subprocess
 import argparse
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, UTC
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
@@ -247,7 +247,7 @@ def sync_redirects(
         print("Updating auto-detected redirect candidates...")
     # Do this once and don't worry about the cwd for the rest of the function
     os.chdir(workdir)
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     candidates = get_auto_redirect_candidate_domains(cf_domains, wd_domains, manual_domains)
     existing_auto_redirects = load_yaml_file(REDIRECTS_AUTO_FILE, expect_exist=False)
     auto_redirects = update_auto_redirects(existing_auto_redirects, candidates, wd_yaml, now, manual_domains)
