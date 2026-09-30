@@ -41,7 +41,7 @@ CHANNEL = '#miraheze-tech-ops'
 LSBOT = 'MirahezeLSBot!~MirahezeL@miraheze/bots'
 LOGBOT = 'MirahezeLogbot!~MirahezeL@miraheze/bots'
 STRANGER = 'someone!~x@203.0.113.9'
-ADMINLOG = Path(__file__).resolve().parents[1] / 'irclogbot' / 'adminlog.py'
+ADMINLOG = Path(__file__).resolve().parents[1] / 'logbot' / 'adminlog.py'
 
 BASE_CONFIG = {
     'irc': {
