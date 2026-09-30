@@ -38,7 +38,7 @@ from salbot import (
 
 SAL_URL = 'https://meta.miraheze.org/wiki/Tech:Server_admin_log'
 CHANNEL = '#miraheze-tech-ops'
-LSBOT = 'MirahezeLSBot!~MirahezeLS@miraheze/bots'
+LSBOT = 'MirahezeLSBot!~MirahezeL@miraheze/bots'
 LOGBOT = 'MirahezeLogbot!~MirahezeL@miraheze/bots'
 STRANGER = 'someone!~x@203.0.113.9'
 ADMINLOG = Path(__file__).resolve().parents[1] / 'logbot' / 'adminlog.py'
@@ -60,7 +60,7 @@ BASE_CONFIG = {
     'sal_url': SAL_URL,
     'time_format': '%Y-%m-%d %H:%M UTC',
     'logbot_nick': 'MirahezeLogbot',
-    'logbot_mask': '*!~MirahezeL@miraheze/bots',
+    'logbot_mask': 'MirahezeLogbot!~MirahezeL@miraheze/bots',
     'link_wait': 60,
     'min_post_interval': 0,
     'dedupe_seconds': 60,
@@ -911,6 +911,32 @@ class TestHandleMessage:
             bot = make_bot()
             bot.handle_message(LSBOT, CHANNEL, line)
             bot.handle_message(STRANGER, CHANNEL, logged(line))
+            cancel_timers(bot)
+            return drain(bot)
+
+        assert asyncio.run(scenario()) == []
+
+    def test_entries_are_read_even_when_the_logbot_mask_is_too_broad(self):
+        line = '!log [a@b] real (T1)'
+
+        async def scenario():
+            bot = make_bot(logbot_mask='*!~MirahezeL@miraheze/bots')
+            bot.handle_message(LSBOT, CHANNEL, line)
+            pending = sum(len(waiting) for waiting in bot.pending.values())
+            bot.handle_message(LOGBOT, CHANNEL, logged(line))
+            return pending, drain(bot)
+
+        pending, items = asyncio.run(scenario())
+        assert pending == 1
+        assert [task for task, _ in items] == ['T1']
+
+    def test_reply_from_a_bot_sharing_the_logbots_user_and_host_is_ignored(self):
+        line = '!log [a@b] real (T1)'
+
+        async def scenario():
+            bot = make_bot()
+            bot.handle_message(LSBOT, CHANNEL, line)
+            bot.handle_message(LSBOT, CHANNEL, logged(line))
             cancel_timers(bot)
             return drain(bot)
 
