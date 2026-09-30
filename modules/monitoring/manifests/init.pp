@@ -10,6 +10,7 @@ class monitoring (
     String $ticket_salt                     = '',
     Optional[String] $icinga2_api_bind_host = undef,
     String $icingaweb2_api_password,
+    String $taskbot_api_password,
 ) {
     stdlib::ensure_packages([
         'nagios-nrpe-plugin',
@@ -124,6 +125,15 @@ class monitoring (
         ensure      => present,
         password    => $icingaweb2_api_password,
         permissions => ['status/query', 'actions/*', 'objects/modify/*', 'objects/query/*'],
+        target      => '/etc/icinga2/conf.d/api-users.conf',
+        require     => Package['icinga2'],
+        notify      => Service['icinga2'],
+    }
+
+    icinga2::object::apiuser { 'taskbot':
+        ensure      => present,
+        password    => $taskbot_api_password,
+        permissions => ['events/StateChange', 'objects/query/Service'],
         target      => '/etc/icinga2/conf.d/api-users.conf',
         require     => Package['icinga2'],
         notify      => Service['icinga2'],
@@ -274,8 +284,6 @@ class monitoring (
     class { 'monitoring::ircecho':
         mirahezebots_password => $mirahezebots_password,
     }
-
-    include monitoring::taskbot
 
     file { '/usr/lib/nagios/plugins/check_icinga_config':
         source  => 'puppet:///modules/monitoring/check_icinga_config',
