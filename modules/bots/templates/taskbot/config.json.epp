@@ -21,9 +21,9 @@
 		"any": [ "WARNING", "CRITICAL" ]
 	},
 	"priorities": {
-		"WARNING": "normal",
+		"WARNING": "medium",
 		"CRITICAL": "high",
-		"UNKNOWN": "normal"
+		"UNKNOWN": "medium"
 	},
 	"icingaweb_url": "https://monitoring.wikitide.net",
 	"skip_in_downtime": true,
