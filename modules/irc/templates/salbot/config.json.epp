@@ -31,5 +31,8 @@
 	"dry_run": false,
 	"log_level": "INFO",
 	"log_file": "",
-	"time_format": "%Y-%m-%d %H:%M UTC"
+	"time_format": "%Y-%m-%d %H:%M UTC",
+	"logbot_nick": "MirahezeLogbot",
+	"logbot_mask": "*!~MirahezeL@miraheze/bots",
+	"link_wait": 60
 }
