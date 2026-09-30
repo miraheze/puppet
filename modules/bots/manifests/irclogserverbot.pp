@@ -1,10 +1,10 @@
 # class: bots::irclogserverbot
 class bots::irclogserverbot(
-    $nickname     = undef,
-    $network      = undef,
-    $network_port = '6697',
-    $channel      = undef,
-    $udp_port     = '5071',
+    $nickname,
+    $network,
+    $network_port,
+    $channel,
+    $udp_port,
 ) {
     include bots
 
