@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Created by Universal Omega for T8845
 
 import argparse
 import base64
@@ -46,13 +47,13 @@ REQUIRED = {
         'url', 'username', 'password', 'ca_file', 'queue', 'timeout', 'stream_timeout',
     ],
     'phorge': ['url', 'api_token', 'timeout', 'retries', 'proxy'],
-    'triggers': ['critical', 'any'],
     'priorities': ['WARNING', 'CRITICAL', 'UNKNOWN'],
     'icingaweb_url': None,
     'skip_in_downtime': None,
     'close_after_recovery_seconds': None,
     'close_status': None,
     'grace_minutes': None,
+    'change_grace_minutes': None,
     'storm_limit': None,
     'storm_window_minutes': None,
     'reopen_hours': None,
@@ -90,7 +91,7 @@ def missing_keys(config):
 
 def invalid_values(config):
     problems = []
-    for key in ('grace_minutes', 'storm_window_minutes', 'reopen_hours'):
+    for key in ('grace_minutes', 'change_grace_minutes', 'storm_window_minutes', 'reopen_hours'):
         value = config[key]
         if isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0:
             problems.append(f'{key} must be a number of 0 or more')
@@ -461,7 +462,6 @@ def check_output(attrs):
 class Bot:
     def __init__(self, config):
         self.config = config
-        self.triggers = config['triggers']
         self.icinga = Icinga(config['icinga'])
         self.phorge = Phorge(config['phorge'], config['dry_run'])
         self.state = State(config['state_file'], not config['dry_run'])
@@ -504,7 +504,7 @@ class Bot:
             'Icinga alert storm summary',
         ])
 
-    def hold_off(self, attrs):
+    def blocked(self, attrs):
         host = attrs.get('host') or {}
         if self.config['skip_in_downtime']:
             if attrs.get('downtime_depth', 0) > 0:
@@ -513,10 +513,22 @@ class Bot:
                 return 'its host is in downtime'
         if host.get('state', 0) != 0:
             return 'its host is down'
-        age = time.time() - failing_since(attrs)
-        if age < self.config['grace_minutes'] * 60:
-            return f'it has only been failing for {int(age // 60)} minutes'
         return None
+
+    def too_soon(self, key, attrs, state, initial):
+        if initial:
+            minutes = self.config['grace_minutes']
+            since = failing_since(attrs)
+            what = 'failing'
+        else:
+            minutes = self.config['change_grace_minutes']
+            since = attrs.get('last_state_change') or 0
+            what = state
+        age = time.time() - since
+        if age >= minutes * 60:
+            return False
+        log.debug(f'{key} is {state} but it has only been {what} for {int(age // 60)} minutes, skipping')
+        return True
 
     def refresh(self, task, attrs, previous, state):
         info = self.phorge.details(task)
@@ -659,11 +671,15 @@ class Bot:
             return
         if entry and entry.get('storm'):
             if entry.get('active'):
-                self.storm_note(key, state, entry)
+                if not self.too_soon(key, attrs, state, False):
+                    self.storm_note(key, state, entry)
                 return
             entry = None
         if entry and self.phorge.is_open(entry['task']):
-            self.update(key, entry, attrs, state)
+            if not self.too_soon(key, attrs, state, False):
+                self.update(key, entry, attrs, state)
+            return
+        if self.too_soon(key, attrs, state, True):
             return
         if entry and self.reopen(key, entry, attrs, state):
             return
@@ -747,9 +763,9 @@ class Bot:
 
     def process(self, attrs):
         key = f"{attrs['host_name']}!{attrs['name']}"
-        mode = (attrs.get('vars') or {}).get('phorge_task')
-        if mode not in self.triggers:
-            log.debug(f'{key} does not set phorge_task, skipping')
+        triggers = (attrs.get('vars') or {}).get('phorge_triggers')
+        if not isinstance(triggers, list) or not triggers:
+            log.debug(f'{key} does not set phorge_triggers, skipping')
             return
         if int(attrs.get('state_type', 1)) != 1:
             log.debug(f'{key} is in a soft state, skipping')
@@ -758,10 +774,13 @@ class Bot:
             log.debug(f'{key} is flapping, skipping')
             return
         state = STATES.get(int(attrs['state']), 'UNKNOWN')
-        if state not in self.triggers[mode]:
+        if state not in triggers:
+            entry = self.state.get(key)
+            if state != 'OK' and entry and entry.get('active') and self.too_soon(key, attrs, state, False):
+                return
             self.clear(key, state)
             return
-        reason = self.hold_off(attrs)
+        reason = self.blocked(attrs)
         if reason:
             log.debug(f'{key} is {state} but {reason}, skipping')
             return
