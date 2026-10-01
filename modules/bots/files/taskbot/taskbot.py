@@ -721,12 +721,22 @@ class Bot:
             return
         self.create_task(key, attrs, state)
 
-    def clear(self, key, state):
+    @staticmethod
+    def tracking(entry):
+        if not entry:
+            return False
+        if entry.get('active'):
+            return True
+        return not entry.get('storm') and entry.get('state') not in ('OK', 'GONE')
+
+    def clear(self, key, state, attrs=None):
         entry = self.state.get(key)
-        if not entry or not entry.get('active'):
+        if not self.tracking(entry):
             return
         if entry.get('storm'):
             self.storm_clear(key, state, entry)
+            return
+        if state not in ('OK', 'GONE') and entry.get('state') == state:
             return
         recovering = state in ('OK', 'GONE')
         delay, spoken = self.recovery_plan(entry['task']) if recovering else (None, False)
@@ -739,6 +749,8 @@ class Bot:
         text += self.closing_notice(delay, spoken)
         closing = recovering and delay == 0
         transactions = [{'type': 'comment', 'value': text}]
+        if not recovering and attrs is not None:
+            transactions.extend(self.refresh(entry['task'], attrs, entry.get('alert'), state))
         if closing:
             transactions.append({'type': 'status', 'value': self.config['close_status']})
         self.phorge.edit(transactions, entry['task'])
@@ -747,7 +759,7 @@ class Bot:
             'task': entry['task'],
             'active': False,
             'state': state,
-            'alert': entry.get('alert') or entry.get('state'),
+            'alert': (entry.get('alert') or entry.get('state')) if recovering else state,
         }
         if closing:
             updated['closed'] = time.time()
@@ -813,10 +825,9 @@ class Bot:
             return
         state = STATES.get(int(attrs['state']), 'UNKNOWN')
         if state not in triggers:
-            entry = self.state.get(key)
-            if state != 'OK' and entry and entry.get('active') and self.too_soon(key, attrs, state, False):
+            if state != 'OK' and self.tracking(self.state.get(key)) and self.too_soon(key, attrs, state, False):
                 return
-            self.clear(key, state)
+            self.clear(key, state, attrs)
             return
         reason = self.blocked(attrs)
         if reason:
@@ -873,7 +884,7 @@ class Bot:
             seen.add(f"{attrs['host_name']}!{attrs['name']}")
             self.safe(self.process, attrs)
         for key, entry in list(self.state.services.items()):
-            if not entry.get('active') or key in seen:
+            if not self.tracking(entry) or key in seen:
                 continue
             host, _, name = key.partition('!')
             attrs = self.icinga.service(host, name)
