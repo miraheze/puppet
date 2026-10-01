@@ -8,7 +8,7 @@ class role::bots {
 
     monitoring::nrpe { 'Taskbot Test':
         command         => '/usr/lib/nagios/plugins/check_procs -C sleep -a 31337 -w 2: -c 1:',
-        phorge_task     => 'any',
+        phorge_triggers => [ 'WARNING', 'CRITICAL' ],
         phorge_projects => [ 'tech-infra', 'trash' ],
     }
 
