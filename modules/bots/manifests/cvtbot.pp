@@ -36,7 +36,7 @@ class bots::cvtbot {
     }
 
     file { $install_path:
-        ensure    => 'directory',
+        ensure    => directory,
         owner     => 'irc',
         group     => 'irc',
         mode      => '0644',
