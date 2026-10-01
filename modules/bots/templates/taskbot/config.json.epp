@@ -35,6 +35,6 @@
 	"reconnect_max": 300,
 	"state_file": "/var/lib/taskbot/state.json",
 	"heartbeat_file": "/var/lib/taskbot/last_sync",
-	"dry_run": true,
+	"dry_run": false,
 	"log_level": "INFO"
 }
