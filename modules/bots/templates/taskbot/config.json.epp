@@ -27,7 +27,7 @@
 	},
 	"icingaweb_url": "https://monitoring.wikitide.net",
 	"skip_in_downtime": true,
-	"close_on_recovery": true,
+	"close_after_recovery_seconds": 86400,
 	"close_status": "resolved",
 	"grace_minutes": 15,
 	"storm_limit": 5,
