@@ -20,6 +20,8 @@ import urllib.parse
 
 
 LOG_FORMAT = "%(asctime)-15s %(levelname)s: %(message)s"
+KEEPALIVE_INTERVAL = 60
+IDLE_TIMEOUT = 180
 
 
 class Proxy:
@@ -132,9 +134,13 @@ class ProxyConnector:
     def __call__(self, server_address):
         host, port = server_address
         sock = open_socket(host, port, 30, self.proxy)
+        try:
+            if self.wrapper:
+                sock = self.wrapper(sock)
+        except Exception:
+            sock.close()
+            raise
         sock.settimeout(None)
-        if self.wrapper:
-            return self.wrapper(sock)
         return sock
 
 
@@ -146,10 +152,32 @@ class logbot(ircbot.SingleServerIRCBot):
         server = [config.network, config.port, config.nick_password]
         proxy_url = getattr(config, 'proxy', None)
         self.proxy = Proxy(proxy_url) if proxy_url else None
+        self.last_seen = time.monotonic()
+        self.sasl_failed = False
         ircbot.SingleServerIRCBot.__init__(self, [server], config.nick, config.nick,
+                                           recon=ircbot.ExponentialBackoff(min_interval=10),
                                            sasl_login=sasl_password)
+        self.connection.add_global_handler('all_raw_messages', self.mark_seen, -30)
+        self.reactor.scheduler.execute_every(KEEPALIVE_INTERVAL, self.keepalive)
+
+    def mark_seen(self, con, event):
+        self.last_seen = time.monotonic()
+
+    def keepalive(self):
+        try:
+            if not self.connection.is_connected():
+                return
+            if time.monotonic() - self.last_seen > IDLE_TIMEOUT:
+                logging.warning('No data from the server for %ds, reconnecting' % IDLE_TIMEOUT)
+                self.connection.disconnect('Ping timeout')
+                return
+            self.connection.ping('keep-alive')
+        except Exception:
+            logging.exception('Keepalive failed')
 
     def connect(self, *args, **kwargs):
+        self.last_seen = time.monotonic()
+        self.sasl_failed = False
         wrapper = None
         if self.config.ssl:
             import ssl
@@ -217,12 +245,26 @@ class logbot(ircbot.SingleServerIRCBot):
             return True
 
     def on_welcome(self, con, event):
+        if self.sasl_failed:
+            return
         for target in self.config.targets:
             con.join(target)
 
+    def drop_connection(self, reason):
+        if self.connection.is_connected():
+            self.connection.disconnect(reason)
+
+    def on_login_failed(self, con, event):
+        logging.error('SASL login failed: %s' % ' '.join(event.arguments))
+        self.sasl_failed = True
+        self.reactor.scheduler.execute_after(0, lambda: self.drop_connection('SASL login failed'))
+
+    def on_nicknameinuse(self, con, event):
+        logging.warning('Nickname %s is in use, retrying later' % self.config.nick)
+        self.reactor.scheduler.execute_after(0, lambda: self.drop_connection('Nickname in use'))
+
     def on_disconnect(self, con, event):
-        print('Disconnected')
-        sys.exit(0)
+        logging.warning('Disconnected from IRC, will try to reconnect')
 
     def get_projects(self, event, force_reload=False):
         projects = []
