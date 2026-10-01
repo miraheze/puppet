@@ -4,6 +4,7 @@ class role::bots {
     include bots::cvtbot
     include bots::irclogbot
     include bots::salbot
+    include bots::taskbot
 
     users::user { 'pywikibot':
         ensure => present,

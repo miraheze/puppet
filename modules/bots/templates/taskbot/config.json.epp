@@ -1,0 +1,41 @@
+<%- | String $icinga_url, String $icinga_password, String $phorge_token, Optional[String] $http_proxy = undef | -%>
+{
+	"icinga": {
+		"url": <%= stdlib::to_json($icinga_url) %>,
+		"username": "taskbot",
+		"password": <%= stdlib::to_json($icinga_password) %>,
+		"ca_file": "/etc/taskbot/icinga-ca.crt",
+		"queue": "taskbot",
+		"timeout": 30,
+		"stream_timeout": 60
+	},
+	"phorge": {
+		"url": "https://issue-tracker.miraheze.org",
+		"api_token": <%= stdlib::to_json($phorge_token) %>,
+		"timeout": 20,
+		"retries": 3,
+		"proxy": <%= stdlib::to_json($http_proxy) %>
+	},
+	"priorities": {
+		"WARNING": "medium",
+		"CRITICAL": "high",
+		"UNKNOWN": "medium"
+	},
+	"icingaweb_url": "https://monitoring.wikitide.net",
+	"skip_in_downtime": true,
+	"close_after_recovery_seconds": 21600,
+	"close_after_recovery_commented_seconds": 86400,
+	"close_status": "resolved",
+	"grace_minutes": 15,
+	"change_grace_minutes": 3,
+	"storm_limit": 5,
+	"storm_window_minutes": 10,
+	"reopen_hours": 24,
+	"reconcile_interval": 60,
+	"reconnect_min": 5,
+	"reconnect_max": 300,
+	"state_file": "/var/lib/taskbot/state.json",
+	"heartbeat_file": "/var/lib/taskbot/last_sync",
+	"dry_run": false,
+	"log_level": "INFO"
+}

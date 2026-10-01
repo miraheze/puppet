@@ -60,30 +60,34 @@
 #   Optional IP address or hostname to bind the Icinga 2 API listener to.
 #   If undef, the default Icinga 2 behavior is used.
 #
+# [*taskbot_api_password*]
+#   Password for the read only API user used by the bots server task bot.
+#
 class role::icinga2 (
-    String $icinga2_db_host                  = lookup('icinga_ido_db_host', {'default_value' => 'db182.fsslc.wtnet'}),
-    String $icinga2_db_name                  = lookup('icinga_ido_db_name', {'default_value' => 'icinga'}),
-    String $icinga2_db_user                  = lookup('icinga_ido_user_name', {'default_value' => 'icinga2'}),
-    String $ido_db_user_password             = lookup('passwords::icinga_ido'),
-    String $mirahezebots_password            = lookup('passwords::irc::mirahezebots'),
-    String $icingaweb2_db_host               = lookup('icingaweb_db_host', {'default_value' => 'db182.fsslc.wtnet'}),
-    String $icingaweb2_db_name               = lookup('icingaweb_db_name', {'default_value' => 'icingaweb2'}),
-    String $icingaweb2_db_user               = lookup('icingaweb_user_name', {'default_value' => 'icingaweb2'}),
-    String $icingaweb2_db_user_password      = lookup('passwords::icingaweb2'),
-    String $icingadb_db_host                 = lookup('icingadb_db_host', {'default_value' => 'db182.fsslc.wtnet'}),
-    String $icingadb_db_name                 = lookup('icingadb_db_name', {'default_value' => 'icingadb'}),
-    String $icingadb_db_user                 = lookup('icingadb_db_user', {'default_value' => 'icinga2'}),
-    String $icingadb_redis_host              = lookup('icingadb_redis_host', {'default_value' => 'localhost'}),
-    Stdlib::Port $icingadb_redis_port        = lookup('icingadb_redis_port', {'default_value' => 6379}),
-    String $icingadb_redis_password          = lookup('passwords::icingadb_redis_password'),
-    String $ticket_salt                      = lookup('passwords::ticket_salt', {'default_value' => ''}),
-    String $ldap_password                    = lookup('passwords::ldap_password'),
-    Optional[String] $icinga2_api_bind_host  = lookup('icinga2_api_bind_host', {'default_value' => undef}),
-    String $icingaweb2_api_password          = lookup('passwords::icingaweb2_api_password'),
+    String           $icinga2_db_host             = lookup('icinga_ido_db_host', {'default_value' => 'db182.fsslc.wtnet'}),
+    String           $icinga2_db_name             = lookup('icinga_ido_db_name', {'default_value' => 'icinga'}),
+    String           $icinga2_db_user             = lookup('icinga_ido_user_name', {'default_value' => 'icinga2'}),
+    String           $ido_db_user_password        = lookup('passwords::icinga_ido'),
+    String           $mirahezebots_password       = lookup('passwords::irc::mirahezebots'),
+    String           $icingaweb2_db_host          = lookup('icingaweb_db_host', {'default_value' => 'db182.fsslc.wtnet'}),
+    String           $icingaweb2_db_name          = lookup('icingaweb_db_name', {'default_value' => 'icingaweb2'}),
+    String           $icingaweb2_db_user          = lookup('icingaweb_user_name', {'default_value' => 'icingaweb2'}),
+    String           $icingaweb2_db_user_password = lookup('passwords::icingaweb2'),
+    String           $icingadb_db_host            = lookup('icingadb_db_host', {'default_value' => 'db182.fsslc.wtnet'}),
+    String           $icingadb_db_name            = lookup('icingadb_db_name', {'default_value' => 'icingadb'}),
+    String           $icingadb_db_user            = lookup('icingadb_db_user', {'default_value' => 'icinga2'}),
+    String           $icingadb_redis_host         = lookup('icingadb_redis_host', {'default_value' => 'localhost'}),
+    Stdlib::Port     $icingadb_redis_port         = lookup('icingadb_redis_port', {'default_value' => 6379}),
+    String           $icingadb_redis_password     = lookup('passwords::icingadb_redis_password'),
+    String           $ticket_salt                 = lookup('passwords::ticket_salt', {'default_value' => ''}),
+    String           $ldap_password               = lookup('passwords::ldap_password'),
+    Optional[String] $icinga2_api_bind_host       = lookup('icinga2_api_bind_host', {'default_value' => undef}),
+    String           $icingaweb2_api_password     = lookup('passwords::icingaweb2_api_password'),
+    String           $taskbot_api_password        = lookup('passwords::icinga2::taskbot'),
 ) {
     # include prometheus::exporter::cloudflare
 
-    class { '::monitoring':
+    class { 'monitoring':
         icingadb_db_host        => $icingadb_db_host,
         icingadb_db_name        => $icingadb_db_name,
         icingadb_db_user        => $icingadb_db_user,
@@ -95,9 +99,10 @@ class role::icinga2 (
         mirahezebots_password   => $mirahezebots_password,
         ticket_salt             => $ticket_salt,
         icingaweb2_api_password => $icingaweb2_api_password,
+        taskbot_api_password    => $taskbot_api_password,
     }
 
-    class { '::icingaweb2':
+    class { 'icingaweb2':
         db_host                   => $icingaweb2_db_host,
         db_name                   => $icingaweb2_db_name,
         db_user_name              => $icingaweb2_db_user,
@@ -115,6 +120,17 @@ class role::icinga2 (
         icingadb_redis_password   => $icingadb_redis_password,
         ldap_password             => $ldap_password,
         icingaweb2_api_password   => $icingaweb2_api_password,
+    }
+
+    $subquery = @("PQL")
+    resources { type = 'Class' and title = 'Role::Bots' }
+    | PQL
+    $firewall_bots_rules_str = vmlib::generate_firewall_ip($subquery)
+
+    firewall::service { 'icinga2-api':
+        proto  => 'tcp',
+        port   => 5665,
+        srange => "(${firewall_bots_rules_str})",
     }
 
     if !defined(Firewall::Service['http']) {

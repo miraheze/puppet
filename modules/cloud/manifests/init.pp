@@ -58,15 +58,21 @@ class cloud {
 
     if ( $facts['dmi']['manufacturer'] == 'HP' ) {
         monitoring::nrpe { 'IPMI Sensors':
-            command => '/usr/lib/nagios/plugins/check_ipmi_sensors --xT Memory'
+            command         => '/usr/lib/nagios/plugins/check_ipmi_sensors --xT Memory',
+            phorge_triggers => [ 'WARNING', 'CRITICAL' ],
+            phorge_projects => [ 'cloud', 'tech-infra' ],
         }
 
         monitoring::nrpe { 'SMART':
-            command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/sd[a-z] -i cciss,[0-6] -l -s'
+            command         => '/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/sd[a-z] -i cciss,[0-6] -l -s',
+            phorge_triggers => [ 'WARNING', 'CRITICAL' ],
+            phorge_projects => [ 'cloud', 'tech-infra' ],
         }
     } else {
         monitoring::nrpe { 'IPMI Sensors':
-            command => '/usr/lib/nagios/plugins/check_ipmi_sensors --xT Drive_Slot,Entity_Presence'
+            command         => '/usr/lib/nagios/plugins/check_ipmi_sensors --xT Drive_Slot,Entity_Presence',
+            phorge_triggers => [ 'WARNING', 'CRITICAL' ],
+            phorge_projects => [ 'cloud', 'tech-infra' ],
         }
     }
 }
