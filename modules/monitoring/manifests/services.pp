@@ -1,3 +1,4 @@
+# define: monitoring::services
 define monitoring::services (
     $check_command,
     $host           = $facts['networking']['hostname'],
