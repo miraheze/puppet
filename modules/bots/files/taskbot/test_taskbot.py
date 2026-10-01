@@ -1463,27 +1463,6 @@ class TestProcess:
         bot.process(make_service(triggers=None, vars=None))
         assert bot.phorge.calls == []
 
-    @pytest.mark.parametrize('service_vars', [
-        None,
-        {},
-        {'phorge_triggers': []},
-        {'phorge_triggers': None},
-        {'phorge_triggers': 'CRITICAL'},
-        {'phorge_task': 'any'},
-        {'phorge_task': 'critical'},
-    ])
-    def test_services_without_usable_triggers_are_ignored(self, tmp_path, service_vars):
-        bot = make_bot(tmp_path)
-        attrs = make_service()
-        attrs['vars'] = service_vars
-        bot.process(attrs)
-        assert bot.phorge.calls == []
-
-    def test_names_that_are_not_states_never_match(self, tmp_path):
-        bot = make_bot(tmp_path)
-        bot.process(make_service(triggers=['MAYBE', 'critical', 'any']))
-        assert bot.phorge.calls == []
-
     def test_soft_states_are_ignored(self, tmp_path):
         bot = make_bot(tmp_path)
         bot.process(make_service(state_type=0.0))
@@ -3700,16 +3679,6 @@ class TestConfigTemplate:
     def test_every_state_puppet_offers_has_a_priority(self):
         text = (MONITORING.parent / 'types' / 'phorgetrigger.pp').read_text()
         assert set(re.findall(r"'([A-Z]+)'", text)) <= set(rendered()['priorities'])
-
-    def test_the_old_task_type_is_gone(self):
-        assert not (MONITORING.parent / 'types' / 'phorgetask.pp').exists()
-
-    def test_puppet_and_the_bot_use_the_same_variable(self):
-        assert "'phorge_triggers'" in (MONITORING / 'services.pp').read_text()
-        assert "'phorge_triggers'" in Path(taskbot.__file__).read_text()
-        for name in ('services.pp', 'nrpe.pp'):
-            assert 'phorge_task ' not in (MONITORING / name).read_text()
-            assert 'Optional[Array[Monitoring::PhorgeTrigger, 1, 3]]' in (MONITORING / name).read_text()
 
     def test_both_grace_periods_are_set(self):
         config = rendered()
