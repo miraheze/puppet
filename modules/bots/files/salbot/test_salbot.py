@@ -1437,20 +1437,54 @@ class TestMain:
 
 
 def load_adminlog(monkeypatch):
-    class FakePage:
-        redirect = False
-        revision = 1
+    class MwClientError(RuntimeError):
+        pass
 
+    class APIError(MwClientError):
+        def __init__(self, code, info=''):
+            super().__init__(code, info)
+            self.code = code
+            self.info = info
+
+    class EditError(MwClientError):
+        pass
+
+    class ProtectedPageError(EditError):
+        pass
+
+    class Stored:
         def __init__(self):
             self.body = ''
             self.saves = []
 
-        def text(self):
-            return self.body
+    def split_sections(body):
+        sections = [[]]
+        for line in body.split('\n'):
+            if re.match(r'^==.*==\s*$', line):
+                sections.append([line])
+            else:
+                sections[-1].append(line)
+        return ['\n'.join(lines).rstrip() for lines in sections]
 
-        def save(self, text, summary, bot=True):
-            self.body = text
-            self.saves.append((summary, bot))
+    class FakePage:
+        def __init__(self, site, name, info=None):
+            self.site = site
+            self.name = name
+            self.revision = 1
+            self.last_rev_time = None
+            self.edit_time = None
+
+        def edit(self, text, summary='', minor=False, bot=True, section=None):
+            stored = self.site.pages[self.name]
+            if section is None:
+                stored.body = text
+            else:
+                sections = split_sections(stored.body)
+                sections[section] = text.rstrip()
+                stored.body = '\n\n'.join(sections)
+            stored.saves.append((summary, bot, section))
+
+        save = edit
 
     class FakeSite:
         pages = {}
@@ -1459,14 +1493,51 @@ def load_adminlog(monkeypatch):
             self.Pages = self.pages
             self.queries = [(args, kwargs)]
 
+        def require(self, *args, **kwargs):
+            return False
+
+        def get(self, action, **kwargs):
+            self.queries.append(((action,), kwargs))
+            body = self.pages[kwargs['titles']].body
+            section = kwargs.get('rvsection')
+            if section is not None:
+                sections = split_sections(body)
+                if section >= len(sections):
+                    raise APIError('rvnosuchsection', 'There is no section with that number')
+                body = sections[section]
+            page = {
+                'title': kwargs['titles'],
+                'lastrevid': 1,
+                'canonicalurl': SAL_URL,
+                'revisions': [{'timestamp': '2026-01-01T00:00:00Z', '*': body}],
+            }
+            return {'query': {'pages': {'1': page}}}
+
         def api(self, *args, **kwargs):
             self.queries.append((args, kwargs))
             return {'query': {'pages': {'1': {'canonicalurl': SAL_URL}}}}
 
-    FakeSite.pages = type('Pages', (dict,), {'__missing__': lambda self, key: self.setdefault(key, FakePage())})()
+    FakeSite.pages = type('Pages', (dict,), {'__missing__': lambda self, key: self.setdefault(key, Stored())})()
+    errors = types.ModuleType('mwclient.errors')
+    errors.MwClientError = MwClientError
+    errors.APIError = APIError
+    errors.EditError = EditError
+    errors.ProtectedPageError = ProtectedPageError
+    errors.MaximumRetriesExceeded = type('MaximumRetriesExceeded', (MwClientError,), {})
+    errors.InvalidResponse = type('InvalidResponse', (MwClientError,), {})
+    page_module = types.ModuleType('mwclient.page')
+    page_module.Page = FakePage
+    util = types.ModuleType('mwclient.util')
+    util.parse_timestamp = lambda value: value
     module = types.ModuleType('mwclient')
     module.Site = FakeSite
+    module.errors = errors
+    module.page = page_module
+    module.util = util
     monkeypatch.setitem(sys.modules, 'mwclient', module)
+    monkeypatch.setitem(sys.modules, 'mwclient.errors', errors)
+    monkeypatch.setitem(sys.modules, 'mwclient.page', page_module)
+    monkeypatch.setitem(sys.modules, 'mwclient.util', util)
     spec = importlib.util.spec_from_file_location('adminlog_under_test', ADMINLOG)
     adminlog = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(adminlog)
@@ -1507,3 +1578,48 @@ class TestLogbotContract:
         assert fragments[0] != fragments[1]
         for url in urls:
             assert LOGGED_REPLY.match(f'Logged the message at {url}').group('fp') == fingerprint(line)
+
+    def test_later_entries_of_the_day_edit_only_the_top_section(self, monkeypatch):
+        adminlog, pages = load_adminlog(monkeypatch)
+        for text in ('first', 'second'):
+            adminlog.log(self.CONFIG, text, '', 'universalomega')
+        stored = pages['Tech:Server_admin_log']
+        assert [save[2] for save in stored.saves] == [None, 1]
+        assert len([line for line in stored.body.split('\n') if line.startswith('==')]) == 1
+        assert stored.body.index('second') < stored.body.index('first')
+
+    def test_retry_after_a_lost_response_does_not_log_twice(self, monkeypatch):
+        adminlog, pages = load_adminlog(monkeypatch)
+        page_class = sys.modules['mwclient.page'].Page
+        original = page_class.edit
+        calls = []
+
+        def flaky(self, *args, **kwargs):
+            original(self, *args, **kwargs)
+            calls.append(1)
+            if len(calls) == 1:
+                raise adminlog.requests.exceptions.ConnectionError('response lost')
+
+        monkeypatch.setattr(page_class, 'edit', flaky)
+        monkeypatch.setattr(page_class, 'save', flaky)
+        monkeypatch.setattr(adminlog.time, 'sleep', lambda seconds: None)
+        url = adminlog.log(self.CONFIG, 'only once', '', 'universalomega')
+        assert pages['Tech:Server_admin_log'].body.count('id="sal-') == 1
+        assert len(calls) == 1
+        assert url.split('#', 1)[1] in pages['Tech:Server_admin_log'].body
+
+    def test_permanent_errors_are_not_retried(self, monkeypatch):
+        adminlog, _ = load_adminlog(monkeypatch)
+        page_class = sys.modules['mwclient.page'].Page
+        calls = []
+
+        def protected(self, *args, **kwargs):
+            calls.append(1)
+            raise sys.modules['mwclient.errors'].ProtectedPageError('protected')
+
+        monkeypatch.setattr(page_class, 'edit', protected)
+        monkeypatch.setattr(page_class, 'save', protected)
+        monkeypatch.setattr(adminlog.time, 'sleep', lambda seconds: None)
+        with pytest.raises(sys.modules['mwclient.errors'].ProtectedPageError):
+            adminlog.log(self.CONFIG, 'nope', '', 'universalomega')
+        assert len(calls) == 1
