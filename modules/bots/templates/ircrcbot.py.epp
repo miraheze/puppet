@@ -3,22 +3,139 @@
       String $channel,
       Stdlib::Host $network,
       Stdlib::Port $network_port,
-      Stdlib::Port $udp_port
+      Stdlib::Port $udp_port,
+      Optional[String] $http_proxy = undef
 | -%>
 #!/usr/bin/python3
 
 from twisted.internet.protocol import DatagramProtocol
-from twisted.internet import reactor, ssl
+from twisted.internet import reactor, ssl, threads
+from twisted.protocols.tls import TLSMemoryBIOFactory
 from twisted.words.protocols import irc
 from twisted.internet import protocol
 
 import base64
+import ipaddress
 import socket
+import urllib.parse
 
 recver = None
 
-# Grab first valid IPv6 address for the supplied domain name
-irc_network = str(socket.getaddrinfo("<%= $network %>", None, family=socket.AF_INET6)[0][4][0])
+NETWORK = "<%= $network %>"  # noqa: E225
+NETWORK_PORT = <%= $network_port %>  # noqa: E225,E999
+USE_SSL = NETWORK_PORT == 6697
+PROXY_URL = "<%= $http_proxy %>" or None  # noqa: E225
+RETRY_DELAY = 10
+
+
+class Proxy:
+    def __init__(self, url):
+        parts = urllib.parse.urlsplit(url)
+        scheme = parts.scheme.lower()
+        if scheme in ('socks5', 'socks5h'):
+            self.kind = 'socks5'
+        elif scheme == 'http':
+            self.kind = 'http'
+        else:
+            raise ValueError('Unsupported proxy scheme %r, use socks5://, socks5h:// or http://' % parts.scheme)
+        if not parts.hostname:
+            raise ValueError('Proxy URL has no host')
+        self.host = parts.hostname
+        self.port = parts.port or (1080 if self.kind == 'socks5' else 8080)
+        self.username = urllib.parse.unquote(parts.username) if parts.username else None
+        self.password = urllib.parse.unquote(parts.password) if parts.password else ''
+
+    def __str__(self):
+        return '%s://%s:%s' % (self.kind, self.host, self.port)
+
+
+def read_exact(sock, count):
+    data = b''
+    while len(data) < count:
+        chunk = sock.recv(count - len(data))
+        if not chunk:
+            raise ConnectionError('Proxy closed the connection during handshake')
+        data += chunk
+    return data
+
+
+def socks5_connect(sock, proxy, host, port):
+    if proxy.username is not None:
+        sock.sendall(b'\x05\x02\x00\x02')
+    else:
+        sock.sendall(b'\x05\x01\x00')
+    version, method = read_exact(sock, 2)
+    if version != 5:
+        raise ConnectionError('Proxy did not answer as SOCKS5')
+    if method == 2:
+        user = proxy.username.encode()
+        password = proxy.password.encode()
+        if len(user) > 255 or len(password) > 255:
+            raise ConnectionError('Proxy credentials too long')
+        sock.sendall(b'\x01' + bytes([len(user)]) + user + bytes([len(password)]) + password)
+        if read_exact(sock, 2)[1] != 0:
+            raise ConnectionError('Proxy rejected the credentials')
+    elif method != 0:
+        raise ConnectionError('Proxy offered no acceptable auth method')
+
+    try:
+        address = ipaddress.ip_address(host)
+        target = (b'\x01' if address.version == 4 else b'\x04') + address.packed
+    except ValueError:
+        name = host.encode('idna')
+        target = b'\x03' + bytes([len(name)]) + name
+    sock.sendall(b'\x05\x01\x00' + target + port.to_bytes(2, 'big'))
+
+    reply = read_exact(sock, 4)
+    if reply[1] != 0:
+        raise ConnectionError('SOCKS5 connect failed with code %d' % reply[1])
+    if reply[3] == 1:
+        read_exact(sock, 6)
+    elif reply[3] == 4:
+        read_exact(sock, 18)
+    elif reply[3] == 3:
+        read_exact(sock, read_exact(sock, 1)[0] + 2)
+    else:
+        raise ConnectionError('SOCKS5 reply had an unknown address type')
+
+
+def http_connect(sock, proxy, host, port):
+    target = '[%s]:%d' % (host, port) if ':' in host else '%s:%d' % (host, port)
+    lines = ['CONNECT %s HTTP/1.1' % target, 'Host: %s' % target]
+    if proxy.username is not None:
+        token = base64.b64encode(('%s:%s' % (proxy.username, proxy.password)).encode()).decode()
+        lines.append('Proxy-Authorization: Basic %s' % token)
+    sock.sendall(('\r\n'.join(lines) + '\r\n\r\n').encode())
+    head = b''
+    while not head.endswith(b'\r\n\r\n'):
+        head += read_exact(sock, 1)
+        if len(head) > 8192:
+            raise ConnectionError('Proxy response headers too large')
+    status = head.split(b'\r\n', 1)[0].decode('latin-1')
+    parts = status.split(' ', 2)
+    if len(parts) < 2 or parts[1] != '200':
+        raise ConnectionError('Proxy refused CONNECT: %s' % status)
+
+
+def open_socket(host, port, timeout, proxy):
+    sock = socket.create_connection((proxy.host, proxy.port), timeout)
+    try:
+        if proxy.kind == 'socks5':
+            socks5_connect(sock, proxy, host, port)
+        else:
+            http_connect(sock, proxy, host, port)
+    except Exception:
+        sock.close()
+        raise
+    return sock
+
+
+proxy = Proxy(PROXY_URL) if PROXY_URL else None
+
+irc_network = None
+if proxy is None:
+    # Grab first valid IPv6 address for the supplied domain name
+    irc_network = str(socket.getaddrinfo(NETWORK, None, family=socket.AF_INET6)[0][4][0])
 
 
 class RCBot(irc.IRCClient):
@@ -54,6 +171,12 @@ class RCBot(irc.IRCClient):
         line = line.decode("utf-8", errors="replace")
         irc.IRCClient.lineReceived(self, line)
 
+    def connectionLost(self, reason):
+        irc.IRCClient.connectionLost(self, reason)
+        if proxy is not None:
+            print("Lost connection (%s), reconnecting." % (reason,))
+            reactor.callLater(RETRY_DELAY, connect_proxied, self.factory)
+
     def signedOn(self):
         global recver
         self.join(self.channel)
@@ -73,11 +196,34 @@ class RCFactory(protocol.ClientFactory):
     protocol = RCBot
 
     def clientConnectionLost(self, connector, reason):
-        print("Lost connection (%s), reconnecting." % (reason,))
-        connector.connect()
+        if proxy is None:
+            print("Lost connection (%s), reconnecting." % (reason,))
+            connector.connect()
 
     def clientConnectionFailed(self, connector, reason):
         print("Could not connect: %s" % (reason,))
+
+
+def adopt_socket(sock, factory):
+    sock.setblocking(False)
+    try:
+        if USE_SSL:
+            factory = TLSMemoryBIOFactory(ssl.optionsForClientTLS(NETWORK), True, factory)
+        reactor.adoptStreamConnection(sock.fileno(), sock.family, factory)
+    finally:
+        sock.close()
+
+
+def retry_proxied(failure, factory):
+    print("Could not connect through the proxy: %s" % (failure.getErrorMessage(),))
+    reactor.callLater(RETRY_DELAY, connect_proxied, factory)
+
+
+def connect_proxied(factory):
+    print("Connecting to %s:%s through %s" % (NETWORK, NETWORK_PORT, proxy))
+    d = threads.deferToThread(open_socket, NETWORK, NETWORK_PORT, 30, proxy)
+    d.addCallback(adopt_socket, factory)
+    d.addErrback(retry_proxied, factory)
 
 
 class Echo(DatagramProtocol):
@@ -90,9 +236,10 @@ class Echo(DatagramProtocol):
 
 
 reactor.listenUDP(<%= $udp_port %>, Echo(), interface='::')  # noqa: E225,E999
-<%- if $network_port == 6697 { %>  # noqa: E225
-reactor.connectSSL(irc_network, <%= $network_port %>, RCFactory(), ssl.ClientContextFactory())  # noqa: E225
-<%- } else { %>  # noqa: E225
-reactor.connectTCP(irc_network, <%= $network_port %>, RCFactory())  # noqa: E225
-<%- } %>  # noqa: E225
+if proxy is not None:
+    connect_proxied(RCFactory())
+elif USE_SSL:
+    reactor.connectSSL(irc_network, NETWORK_PORT, RCFactory(), ssl.ClientContextFactory())
+else:
+    reactor.connectTCP(irc_network, NETWORK_PORT, RCFactory())
 reactor.run()
