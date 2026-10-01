@@ -1470,11 +1470,12 @@ def load_adminlog(monkeypatch):
         def __init__(self, site, name, info=None):
             self.site = site
             self.name = name
+            self.info = info
             self.revision = 1
             self.last_rev_time = None
             self.edit_time = None
 
-        def edit(self, text, summary='', minor=False, bot=True, section=None):
+        def edit(self, text, summary='', bot=True, section=None):
             stored = self.site.pages[self.name]
             if section is None:
                 stored.body = text
@@ -1494,6 +1495,7 @@ def load_adminlog(monkeypatch):
             self.queries = [(args, kwargs)]
 
         def require(self, *args, **kwargs):
+            self.queries.append((('require',) + args, kwargs))
             return False
 
         def get(self, action, **kwargs):
@@ -1600,26 +1602,30 @@ class TestLogbotContract:
             if len(calls) == 1:
                 raise adminlog.requests.exceptions.ConnectionError('response lost')
 
+        sleeps = []
         monkeypatch.setattr(page_class, 'edit', flaky)
         monkeypatch.setattr(page_class, 'save', flaky)
-        monkeypatch.setattr(adminlog.time, 'sleep', lambda seconds: None)
+        monkeypatch.setattr(adminlog.time, 'sleep', sleeps.append)
         url = adminlog.log(self.CONFIG, 'only once', '', 'universalomega')
         assert pages['Tech:Server_admin_log'].body.count('id="sal-') == 1
         assert len(calls) == 1
+        assert len(sleeps) == 1
         assert url.split('#', 1)[1] in pages['Tech:Server_admin_log'].body
 
     def test_permanent_errors_are_not_retried(self, monkeypatch):
         adminlog, _ = load_adminlog(monkeypatch)
         page_class = sys.modules['mwclient.page'].Page
         calls = []
+        sleeps = []
 
         def protected(self, *args, **kwargs):
-            calls.append(1)
+            calls.append((args, kwargs))
             raise sys.modules['mwclient.errors'].ProtectedPageError('protected')
 
         monkeypatch.setattr(page_class, 'edit', protected)
         monkeypatch.setattr(page_class, 'save', protected)
-        monkeypatch.setattr(adminlog.time, 'sleep', lambda seconds: None)
+        monkeypatch.setattr(adminlog.time, 'sleep', sleeps.append)
         with pytest.raises(sys.modules['mwclient.errors'].ProtectedPageError):
             adminlog.log(self.CONFIG, 'nope', '', 'universalomega')
         assert len(calls) == 1
+        assert sleeps == []
