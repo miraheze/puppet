@@ -1,9 +1,9 @@
 define monitoring::nrpe (
-    String $command,
-    VMlib::Ensure $ensure = present,
-    Boolean $critical = false,
-    Optional[Stdlib::HTTPSUrl] $docs = undef,
-    Optional[Monitoring::PhorgeTask] $phorge_task = undef,
+    String                           $command,
+    VMlib::Ensure                    $ensure          = present,
+    Boolean                          $critical        = false,
+    Optional[Stdlib::HTTPSUrl]       $docs            = undef,
+    Optional[Monitoring::PhorgeTask] $phorge_task     = undef,
     Array[Monitoring::PhorgeProject] $phorge_projects = [],
 ) {
     $title_safe  = regsubst($title, '[\W]', '-', 'G')
