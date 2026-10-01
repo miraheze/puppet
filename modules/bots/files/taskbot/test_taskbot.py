@@ -64,13 +64,13 @@ BASE_CONFIG = {
         'retries': 3,
         'proxy': None,
     },
-    'triggers': {'critical': ['CRITICAL'], 'any': ['WARNING', 'CRITICAL']},
     'priorities': {'WARNING': 'medium', 'CRITICAL': 'high', 'UNKNOWN': 'medium'},
     'icingaweb_url': 'https://icinga.example.org',
     'skip_in_downtime': True,
     'close_after_recovery_seconds': None,
     'close_status': 'resolved',
     'grace_minutes': 0,
+    'change_grace_minutes': 0,
     'storm_limit': 1000,
     'storm_window_minutes': 10,
     'reopen_hours': 24,
@@ -101,12 +101,16 @@ def make_bot(tmp_path, **changes):
     return bot
 
 
-def make_service(host='mw1', name='mw1 Disk', state=2, mode='critical', details=None, **changes):
+CRITICAL = ['CRITICAL']
+WARNING_CRITICAL = ['WARNING', 'CRITICAL']
+
+
+def make_service(host='mw1', name='mw1 Disk', state=2, triggers=CRITICAL, details=None, **changes):
     attrs = {
         'name': name,
         'display_name': 'Disk',
         'host_name': host,
-        'vars': {'phorge_task': mode, 'phorge_projects': []} if mode else {},
+        'vars': {'phorge_triggers': list(triggers), 'phorge_projects': []} if triggers is not None else {},
         'state': float(state),
         'state_type': 1.0,
         'downtime_depth': 0.0,
@@ -397,7 +401,7 @@ class TestMissingKeys:
 
     @pytest.mark.parametrize('key', [
         'icingaweb_url', 'dry_run', 'log_level', 'state_file', 'reconnect_max',
-        'grace_minutes', 'storm_limit', 'storm_window_minutes', 'reopen_hours', 'heartbeat_file',
+        'grace_minutes', 'change_grace_minutes', 'storm_limit', 'storm_window_minutes', 'reopen_hours', 'heartbeat_file',
         'close_after_recovery_seconds',
     ])
     def test_missing_top_level_key(self, key):
@@ -411,7 +415,6 @@ class TestMissingKeys:
         ('icinga', 'queue'),
         ('phorge', 'api_token'),
         ('phorge', 'proxy'),
-        ('triggers', 'any'),
         ('priorities', 'UNKNOWN'),
     ])
     def test_missing_nested_key(self, section, key):
@@ -436,12 +439,12 @@ class TestInvalidValues:
     def test_a_good_config_has_no_problems(self):
         assert invalid_values(BASE_CONFIG) == []
 
-    @pytest.mark.parametrize('key', ['grace_minutes', 'storm_window_minutes', 'reopen_hours'])
+    @pytest.mark.parametrize('key', ['grace_minutes', 'change_grace_minutes', 'storm_window_minutes', 'reopen_hours'])
     @pytest.mark.parametrize('value', ['15', -1, None, True, [15]])
     def test_durations_must_be_non_negative_numbers(self, key, value):
         assert invalid_values(dict(BASE_CONFIG, **{key: value})) == [f'{key} must be a number of 0 or more']
 
-    @pytest.mark.parametrize('key', ['grace_minutes', 'storm_window_minutes', 'reopen_hours'])
+    @pytest.mark.parametrize('key', ['grace_minutes', 'change_grace_minutes', 'storm_window_minutes', 'reopen_hours'])
     @pytest.mark.parametrize('value', [0, 0.5, 15, 24.0])
     def test_durations_may_be_zero_or_fractional(self, key, value):
         assert invalid_values(dict(BASE_CONFIG, **{key: value})) == []
@@ -1452,17 +1455,33 @@ class TestBotMessages:
 class TestProcess:
     def test_ignores_services_that_do_not_opt_in(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode=None))
+        bot.process(make_service(triggers=None))
         assert bot.phorge.calls == []
 
     def test_ignores_missing_vars(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode=None, vars=None))
+        bot.process(make_service(triggers=None, vars=None))
         assert bot.phorge.calls == []
 
-    def test_ignores_unknown_modes(self, tmp_path):
+    @pytest.mark.parametrize('service_vars', [
+        None,
+        {},
+        {'phorge_triggers': []},
+        {'phorge_triggers': None},
+        {'phorge_triggers': 'CRITICAL'},
+        {'phorge_task': 'any'},
+        {'phorge_task': 'critical'},
+    ])
+    def test_services_without_usable_triggers_are_ignored(self, tmp_path, service_vars):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='sometimes'))
+        attrs = make_service()
+        attrs['vars'] = service_vars
+        bot.process(attrs)
+        assert bot.phorge.calls == []
+
+    def test_names_that_are_not_states_never_match(self, tmp_path):
+        bot = make_bot(tmp_path)
+        bot.process(make_service(triggers=['MAYBE', 'critical', 'any']))
         assert bot.phorge.calls == []
 
     def test_soft_states_are_ignored(self, tmp_path):
@@ -1470,22 +1489,40 @@ class TestProcess:
         bot.process(make_service(state_type=0.0))
         assert bot.phorge.calls == []
 
-    @pytest.mark.parametrize(('mode', 'state', 'opens'), [
-        ('critical', 1, False),
-        ('critical', 2, True),
-        ('critical', 3, False),
-        ('any', 1, True),
-        ('any', 2, True),
-        ('any', 3, False),
+    @pytest.mark.parametrize(('triggers', 'state', 'opens'), [
+        (['CRITICAL'], 1, False),
+        (['CRITICAL'], 2, True),
+        (['CRITICAL'], 3, False),
+        (['WARNING'], 1, True),
+        (['WARNING'], 2, False),
+        (['WARNING', 'CRITICAL'], 1, True),
+        (['WARNING', 'CRITICAL'], 2, True),
+        (['WARNING', 'CRITICAL'], 3, False),
+        (['CRITICAL', 'WARNING'], 1, True),
+        (['UNKNOWN'], 3, True),
+        (['UNKNOWN'], 2, False),
+        (['WARNING', 'CRITICAL', 'UNKNOWN'], 3, True),
     ])
-    def test_modes(self, tmp_path, mode, state, opens):
+    def test_only_the_listed_states_open_tasks(self, tmp_path, triggers, state, opens):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode=mode, state=state))
+        bot.process(make_service(triggers=triggers, state=state))
         assert len(bot.phorge.created()) == (1 if opens else 0)
+
+    def test_an_unknown_state_gets_the_unknown_priority(self, tmp_path):
+        bot = make_bot(tmp_path, priorities={'WARNING': 'low', 'CRITICAL': 'high', 'UNKNOWN': 'triage'})
+        bot.process(make_service(triggers=['UNKNOWN'], state=3))
+        assert bot.phorge.created()[0]['priority'] == 'triage'
+        assert bot.phorge.created()[0]['title'] == 'Disk on mw1 is UNKNOWN'
+
+    def test_an_unlisted_state_is_not_an_alert_for_an_open_task(self, tmp_path):
+        bot = make_bot(tmp_path)
+        bot.process(make_service(triggers=['WARNING'], state=1))
+        bot.process(make_service(triggers=['WARNING'], state=2))
+        assert comments(bot.phorge) == ['Now **CRITICAL**, which is not an alert state for this service.']
 
     def test_task_contents(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
         task = bot.phorge.created()[0]
         assert task['title'] == 'Disk on mw1 is WARNING'
         assert task['priority'] == 'medium'
@@ -1493,8 +1530,8 @@ class TestProcess:
 
     def test_priority_follows_the_state(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(name='a', mode='any', state=1))
-        bot.process(make_service(name='b', mode='any', state=2))
+        bot.process(make_service(name='a', triggers=WARNING_CRITICAL, state=1))
+        bot.process(make_service(name='b', triggers=WARNING_CRITICAL, state=2))
         assert [task['priority'] for task in bot.phorge.created()] == ['medium', 'high']
 
     def test_projects_are_passed_through(self, tmp_path):
@@ -1581,9 +1618,9 @@ class TestDowntimeAndHosts:
         assert len(bot.phorge.created()) == 1
 
     def test_a_host_going_down_does_not_touch_an_open_task(self, tmp_path):
-        bot = make_bot(tmp_path, triggers={'critical': ['CRITICAL'], 'any': ['WARNING', 'CRITICAL']})
-        bot.process(make_service(mode='any', state=1))
-        bot.process(make_service(mode='any', state=2, details={'state': 1.0, 'downtime_depth': 0.0}))
+        bot = make_bot(tmp_path)
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2, details={'state': 1.0, 'downtime_depth': 0.0}))
         assert comments(bot.phorge) == []
 
     def test_recovery_is_still_reported_while_the_host_is_down(self, tmp_path):
@@ -1608,9 +1645,9 @@ class TestFlapping:
 
     def test_an_open_task_is_not_commented_on_while_flapping(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=1))
-        bot.process(make_service(mode='any', state=2, flapping=True))
-        bot.process(make_service(mode='any', state=1, flapping=True))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2, flapping=True))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1, flapping=True))
         assert comments(bot.phorge) == []
 
     def test_recovery_waits_until_flapping_stops(self, tmp_path):
@@ -1671,8 +1708,8 @@ class TestGrace:
     @pytest.mark.usefixtures('clock')
     def test_going_from_warning_to_critical_does_not_restart_the_clock(self, tmp_path):
         bot = make_bot(tmp_path, grace_minutes=15)
-        bot.process(self.failing_for(30, mode='any', state=1))
-        bot.process(self.failing_for(30, mode='any', state=2, last_state_change=NOW - 30))
+        bot.process(self.failing_for(30, triggers=WARNING_CRITICAL, state=1))
+        bot.process(self.failing_for(30, triggers=WARNING_CRITICAL, state=2, last_state_change=NOW - 30))
         assert comments(bot.phorge) == ['Now **CRITICAL**.\n\n```\nDISK CRITICAL - free space: / 1 GB\n```']
 
     @pytest.mark.usefixtures('clock')
@@ -1740,15 +1777,15 @@ class TestGrace:
         bot.process(make_service(state=0, last_state_ok=NOW))
         assert comments(bot.phorge) == ['Recovered, the service is back to **OK**.']
 
-    def test_alerting_again_also_waits_for_the_grace_period(self, tmp_path, clock):
-        bot = make_bot(tmp_path, grace_minutes=15)
+    def test_alerting_again_on_an_open_task_uses_the_change_grace_not_the_initial_one(self, tmp_path, clock):
+        bot = make_bot(tmp_path, grace_minutes=15, change_grace_minutes=3)
         bot.process(self.failing_for(20))
         bot.process(make_service(state=0, last_state_ok=NOW))
-        clock.now += 300
-        bot.process(make_service(last_state_ok=NOW))
+        clock.now += 120
+        bot.process(make_service(last_state_ok=NOW, last_state_change=clock.now - 60))
         assert comments(bot.phorge) == ['Recovered, the service is back to **OK**.']
-        clock.now += 11 * 60
-        bot.process(make_service(last_state_ok=NOW))
+        clock.now += 120
+        bot.process(make_service(last_state_ok=NOW, last_state_change=clock.now - 180))
         assert comments(bot.phorge)[-1].startswith('Alerting again, **CRITICAL**.')
 
     @pytest.mark.usefixtures('clock')
@@ -1757,6 +1794,158 @@ class TestGrace:
         with caplog.at_level(logging.DEBUG, logger='taskbot'):
             bot.process(self.failing_for(7))
         assert 'mw1!mw1 Disk is CRITICAL but it has only been failing for 7 minutes, skipping' in caplog.text
+
+
+@pytest.mark.usefixtures('clock')
+class TestChangeGrace:
+    @staticmethod
+    def alerting(tmp_path, **config):
+        bot = make_bot(tmp_path, **{'grace_minutes': 15, 'change_grace_minutes': 3, **config})
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2, last_state_ok=NOW - 3600, last_state_change=NOW - 3600))
+        assert len(bot.phorge.created()) == 1
+        return bot
+
+    @staticmethod
+    def changed(state, seconds, **changes):
+        return make_service(triggers=WARNING_CRITICAL, state=state, last_state_ok=NOW - 3600, last_state_change=NOW - seconds, **changes)
+
+    def test_a_change_is_not_acted_on_until_it_has_lasted(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.process(self.changed(1, 60))
+        assert comments(bot.phorge) == []
+        assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
+        assert bot.state.get('mw1!mw1 Disk')['state'] == 'CRITICAL'
+
+    def test_it_is_acted_on_once_it_has_lasted_long_enough(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.process(self.changed(1, 180))
+        assert comments(bot.phorge)[0].startswith('Now **WARNING**.')
+        assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is WARNING'
+        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['medium']
+        assert bot.state.get('mw1!mw1 Disk')['state'] == 'WARNING'
+
+    def test_just_under_the_limit_it_still_waits(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.process(self.changed(1, 179))
+        assert comments(bot.phorge) == []
+
+    def test_the_same_change_is_acted_on_later_as_time_passes(self, tmp_path, clock):
+        bot = self.alerting(tmp_path)
+        bot.process(self.changed(1, 60))
+        clock.now += 130
+        bot.process(self.changed(1, 190))
+        assert len(comments(bot.phorge)) == 1
+
+    def test_returning_to_the_recorded_status_means_no_update_at_all(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.process(self.changed(1, 60))
+        bot.process(self.changed(2, 10))
+        assert comments(bot.phorge) == []
+        assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
+        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+
+    def test_a_service_bouncing_between_statuses_never_updates_the_task(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        for state in (1, 2, 1, 2, 1):
+            bot.process(self.changed(state, 90))
+        assert comments(bot.phorge) == []
+
+    def test_going_the_other_way_waits_too(self, tmp_path):
+        bot = make_bot(tmp_path, grace_minutes=15, change_grace_minutes=3)
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1, last_state_ok=NOW - 3600, last_state_change=NOW - 3600))
+        bot.process(self.changed(2, 60))
+        assert comments(bot.phorge) == []
+        bot.process(self.changed(2, 180))
+        assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
+        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+
+    def test_the_initial_grace_does_not_apply_to_an_open_task(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.process(make_service(
+            triggers=WARNING_CRITICAL, state=1, last_state_ok=NOW - 240, last_state_change=NOW - 200,
+        ))
+        assert comments(bot.phorge)[0].startswith('Now **WARNING**.')
+
+    def test_the_initial_grace_still_applies_to_a_new_task(self, tmp_path):
+        bot = make_bot(tmp_path, grace_minutes=15, change_grace_minutes=3)
+        bot.process(make_service(last_state_ok=NOW - 300, last_state_change=NOW - 300))
+        assert bot.phorge.created() == []
+
+    def test_a_zero_change_grace_acts_at_once(self, tmp_path):
+        bot = self.alerting(tmp_path, change_grace_minutes=0)
+        bot.process(self.changed(1, 1))
+        assert len(comments(bot.phorge)) == 1
+
+    def test_the_change_grace_can_be_fractional(self, tmp_path):
+        bot = self.alerting(tmp_path, change_grace_minutes=0.5)
+        bot.process(self.changed(1, 20))
+        assert comments(bot.phorge) == []
+        bot.process(self.changed(1, 30))
+        assert len(comments(bot.phorge)) == 1
+
+    def test_a_status_the_service_does_not_alert_on_is_noted_only_after_the_grace(self, tmp_path):
+        bot = make_bot(tmp_path, grace_minutes=15, change_grace_minutes=3)
+        bot.process(make_service(state=2, last_state_ok=NOW - 3600, last_state_change=NOW - 3600))
+        bot.process(make_service(state=1, last_state_ok=NOW - 3600, last_state_change=NOW - 60))
+        assert comments(bot.phorge) == []
+        assert bot.state.get('mw1!mw1 Disk')['active'] is True
+        bot.process(make_service(state=1, last_state_ok=NOW - 3600, last_state_change=NOW - 180))
+        assert comments(bot.phorge) == ['Now **WARNING**, which is not an alert state for this service.']
+        assert bot.state.get('mw1!mw1 Disk')['active'] is False
+
+    def test_going_back_to_critical_in_that_case_cancels_the_note(self, tmp_path):
+        bot = make_bot(tmp_path, grace_minutes=15, change_grace_minutes=3)
+        bot.process(make_service(state=2, last_state_ok=NOW - 3600, last_state_change=NOW - 3600))
+        bot.process(make_service(state=1, last_state_ok=NOW - 3600, last_state_change=NOW - 60))
+        bot.process(make_service(state=2, last_state_ok=NOW - 3600, last_state_change=NOW - 5))
+        assert comments(bot.phorge) == []
+
+    def test_recovery_never_waits(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=0, last_state_ok=NOW, last_state_change=NOW))
+        assert comments(bot.phorge) == ['Recovered, the service is back to **OK**.']
+
+    def test_a_status_without_an_open_alert_is_not_held_back_or_logged(self, tmp_path, caplog):
+        bot = make_bot(tmp_path, grace_minutes=15, change_grace_minutes=3)
+        with caplog.at_level(logging.DEBUG, logger='taskbot'):
+            bot.process(make_service(state=1, last_state_change=NOW - 10))
+        assert 'only been' not in caplog.text
+
+    def test_a_storm_member_changing_status_waits_too(self, tmp_path):
+        bot = make_bot(tmp_path, storm_limit=1, change_grace_minutes=3)
+        bot.process(make_service(name='svc1', triggers=WARNING_CRITICAL, state=2))
+        bot.process(make_service(name='svc2', triggers=WARNING_CRITICAL, state=1))
+        bot.process(make_service(name='svc2', triggers=WARNING_CRITICAL, state=2, last_state_change=NOW - 60))
+        assert comments(bot.phorge)[-1] == TestStorm.comment_for('svc2', 'WARNING')
+        bot.process(make_service(name='svc2', triggers=WARNING_CRITICAL, state=2, last_state_change=NOW - 180))
+        assert comments(bot.phorge)[-1] == '`mw1!svc2` is now **CRITICAL**.'
+
+    def test_reopening_a_closed_task_uses_the_initial_grace(self, tmp_path, clock):
+        bot = make_bot(tmp_path, grace_minutes=15, change_grace_minutes=3, close_after_recovery_seconds=0)
+        bot.process(make_service())
+        bot.process(make_service(state=0))
+        clock.now += 300
+        bot.process(make_service(last_state_ok=clock.now - 600, last_state_change=clock.now - 600))
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+        clock.now += 400
+        bot.process(make_service(last_state_ok=clock.now - 1000, last_state_change=clock.now - 1000))
+        assert bot.phorge.tasks[1]['status'] == 'open'
+
+    def test_the_reason_is_logged_at_debug(self, tmp_path, caplog):
+        bot = self.alerting(tmp_path)
+        with caplog.at_level(logging.DEBUG, logger='taskbot'):
+            bot.process(self.changed(1, 60))
+        assert 'mw1!mw1 Disk is WARNING but it has only been WARNING for 1 minutes, skipping' in caplog.text
+
+    def test_a_sync_applies_the_change_once_it_has_lasted(self, tmp_path, clock):
+        bot = self.alerting(tmp_path)
+        bot.icinga.add(self.changed(1, 60))
+        bot.reconcile()
+        assert comments(bot.phorge) == []
+        clock.now += 130
+        bot.icinga.add(self.changed(1, 190))
+        bot.reconcile()
+        assert len(comments(bot.phorge)) == 1
 
 
 class TestProblemAndClear:
@@ -1769,8 +1958,8 @@ class TestProblemAndClear:
 
     def test_escalation_is_commented_on_the_same_task(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=1))
-        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert len(bot.phorge.created()) == 1
         assert comments(bot.phorge) == ['Now **CRITICAL**.\n\n```\nDISK CRITICAL - free space: / 1 GB\n```']
         assert bot.phorge.calls[-1][1] == 1
@@ -1778,32 +1967,32 @@ class TestProblemAndClear:
 
     def test_escalation_updates_the_title_and_raises_the_priority(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is WARNING'
         assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['medium']
-        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
         assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
 
     def test_a_title_someone_edited_is_left_alone(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
         bot.phorge.tasks[1]['title'] = 'Disk on mw1 is WARNING, Alice is on it'
-        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is WARNING, Alice is on it'
         assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
 
     def test_a_higher_priority_someone_set_is_never_lowered(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
         bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES['unbreak']
-        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['unbreak']
 
     def test_dropping_from_critical_to_warning_fixes_the_title_and_lowers_the_priority(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=2))
-        bot.process(make_service(mode='any', state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is WARNING'
         assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['medium']
         assert comments(bot.phorge)[0].startswith('Now **WARNING**.')
@@ -1811,43 +2000,43 @@ class TestProblemAndClear:
     def test_the_priority_goes_back_up_when_it_returns_to_critical(self, tmp_path):
         bot = make_bot(tmp_path)
         for state in (2, 1, 2):
-            bot.process(make_service(mode='any', state=state))
+            bot.process(make_service(triggers=WARNING_CRITICAL, state=state))
         assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
 
     def test_a_priority_someone_set_is_not_lowered_when_it_improves(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES['unbreak']
-        bot.process(make_service(mode='any', state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
         assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['unbreak']
 
     def test_a_lower_priority_someone_set_is_raised_again_when_it_gets_worse(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
         bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES['low']
-        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
 
     def test_a_priority_someone_lowered_is_left_alone_when_it_improves(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES['lowest']
-        bot.process(make_service(mode='any', state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
         assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['lowest']
 
     def test_nothing_is_sent_for_a_priority_that_is_already_right(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=2))
-        bot.process(make_service(mode='any', state=1))
-        bot.process(make_service(mode='any', state=1, last_state_change=5.0))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1, last_state_change=5.0))
         assert len(comments(bot.phorge)) == 1
 
     def test_only_the_changes_are_sent(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
         bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES['high']
-        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert [transaction['type'] for transaction in bot.phorge.calls[-1][2]] == ['comment', 'title']
 
     def test_alerting_again_in_the_same_state_sends_only_a_comment(self, tmp_path):
@@ -1877,8 +2066,8 @@ class TestProblemAndClear:
 
     def test_only_recovery_closes(self, tmp_path):
         bot = make_bot(tmp_path, close_after_recovery_seconds=0)
-        bot.process(make_service(mode='critical', state=2))
-        bot.process(make_service(mode='critical', state=1))
+        bot.process(make_service(triggers=CRITICAL, state=2))
+        bot.process(make_service(triggers=CRITICAL, state=1))
         assert [t['type'] for t in bot.phorge.calls[-1][2]] == ['comment']
         assert 'closed' not in bot.state.get('mw1!mw1 Disk')
 
@@ -1902,24 +2091,24 @@ class TestProblemAndClear:
 
     def test_alerting_again_in_a_worse_state_fixes_the_title(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=1))
-        bot.process(make_service(mode='any', state=0))
-        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=0))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
 
     def test_a_task_someone_closed_while_alerting_gets_no_new_one_until_the_state_changes(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         bot.phorge.close(1, 'wontfix')
         for _ in range(3):
-            bot.process(make_service(mode='any', state=2))
+            bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert len(bot.phorge.created()) == 1
 
     def test_a_task_someone_closed_is_replaced_when_the_state_changes(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.process(make_service(mode='any', state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
         bot.phorge.close(1, 'wontfix')
-        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert len(bot.phorge.created()) == 2
         assert bot.state.get('mw1!mw1 Disk')['task'] == 2
 
@@ -2045,10 +2234,10 @@ class TestReopen:
 
     def test_reopening_refreshes_the_title_and_priority(self, tmp_path, clock):
         bot = make_bot(tmp_path, close_after_recovery_seconds=0)
-        bot.process(make_service(mode='any', state=1))
-        bot.process(make_service(mode='any', state=0))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=0))
         clock.now += 60
-        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
         assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
         assert bot.phorge.tasks[1]['status'] == 'open'
@@ -2181,9 +2370,9 @@ class TestStorm:
     @pytest.mark.usefixtures('clock')
     def test_a_member_getting_worse_is_noted_without_touching_the_summary_title(self, tmp_path):
         bot = make_bot(tmp_path, storm_limit=1)
-        bot.process(make_service(name='svc1', mode='any', state=2))
-        bot.process(make_service(name='svc2', mode='any', state=1))
-        bot.process(make_service(name='svc2', mode='any', state=2))
+        bot.process(make_service(name='svc1', triggers=WARNING_CRITICAL, state=2))
+        bot.process(make_service(name='svc2', triggers=WARNING_CRITICAL, state=1))
+        bot.process(make_service(name='svc2', triggers=WARNING_CRITICAL, state=2))
         assert comments(bot.phorge)[-1] == '`mw1!svc2` is now **CRITICAL**.'
         assert bot.phorge.tasks[2]['title'] == taskbot.STORM_TITLE
         assert bot.state.get('mw1!svc2')['state'] == 'CRITICAL'
@@ -2291,7 +2480,7 @@ class TestAdoption:
     def test_an_adopted_alert_in_a_different_state_is_updated(self, tmp_path):
         bot = make_bot(tmp_path)
         bot.phorge.add_task(title='Disk on mw1 is WARNING', priority='medium')
-        bot.icinga.add(make_service(mode='any', state=2))
+        bot.icinga.add(make_service(triggers=WARNING_CRITICAL, state=2))
         bot.prepare()
         bot.reconcile()
         assert comments(bot.phorge)[0].startswith('Now **CRITICAL**.')
@@ -2419,7 +2608,7 @@ class TestDuplicateSafety:
     def test_an_adopted_task_in_another_state_is_updated(self, tmp_path):
         bot = make_bot(tmp_path)
         bot.phorge.add_task(title='Disk on mw1 is WARNING', priority='medium')
-        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert bot.phorge.created() == []
         assert comments(bot.phorge)[0].startswith('Now **CRITICAL**.')
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
@@ -2589,7 +2778,7 @@ class TestReconcile:
     def test_opens_tasks_for_current_problems(self, tmp_path):
         bot = make_bot(tmp_path)
         bot.icinga.add(make_service(name='a'))
-        bot.icinga.add(make_service(name='b', mode=None))
+        bot.icinga.add(make_service(name='b', triggers=None))
         bot.icinga.add(make_service(name='c', state=0))
         bot.reconcile()
         assert [task['title'] for task in bot.phorge.created()] == ['Disk on mw1 is CRITICAL']
@@ -2627,9 +2816,9 @@ class TestReconcile:
 
     def test_picks_up_a_changed_state_missed_while_down(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.icinga.add(make_service(mode='any', state=1))
+        bot.icinga.add(make_service(triggers=WARNING_CRITICAL, state=1))
         bot.reconcile()
-        bot.icinga.add(make_service(mode='any', state=2))
+        bot.icinga.add(make_service(triggers=WARNING_CRITICAL, state=2))
         bot.reconcile()
         assert comments(bot.phorge)[0].startswith('Now **CRITICAL**.')
 
@@ -3395,13 +3584,13 @@ class TestVerboseLogging:
     def test_skips_are_explained(self, tmp_path, caplog):
         bot = make_bot(tmp_path)
         with caplog.at_level(logging.DEBUG, logger='taskbot'):
-            bot.process(make_service(mode=None))
+            bot.process(make_service(triggers=None))
             bot.process(make_service(state_type=0.0))
             bot.process(make_service(downtime_depth=1.0))
             bot.process(make_service(details={'state': 0.0, 'downtime_depth': 1.0}))
             bot.process(make_service(details={'state': 1.0, 'downtime_depth': 0.0}))
             bot.process(make_service(flapping=True))
-        assert 'does not set phorge_task, skipping' in caplog.text
+        assert 'does not set phorge_triggers, skipping' in caplog.text
         assert 'is in a soft state, skipping' in caplog.text
         assert 'is CRITICAL but in downtime, skipping' in caplog.text
         assert 'is CRITICAL but its host is in downtime, skipping' in caplog.text
@@ -3417,7 +3606,7 @@ class TestVerboseLogging:
     def test_quiet_by_default(self, tmp_path, caplog):
         bot = make_bot(tmp_path)
         with caplog.at_level(logging.INFO, logger='taskbot'):
-            bot.process(make_service(mode=None))
+            bot.process(make_service(triggers=None))
             bot.reconcile()
         assert caplog.text == ''
 
@@ -3503,16 +3692,28 @@ class TestConfigTemplate:
         assert config['icinga']['password'] == 'a"b\\c'
         assert config['phorge']['api_token'] == 'x\ny'
 
-    def test_triggers_only_use_known_states(self):
-        config = rendered()
-        states = set(taskbot.STATES.values())
-        assert all(set(levels) <= states for levels in config['triggers'].values())
-        assert set(config['triggers']) == {'critical', 'any'}
+    def test_the_puppet_type_offers_exactly_the_states_the_bot_can_alert_on(self):
+        text = (MONITORING.parent / 'types' / 'phorgetrigger.pp').read_text()
+        offered = set(re.findall(r"'([A-Z]+)'", text))
+        assert offered == {state for state in taskbot.STATES.values() if state != 'OK'}
 
-    def test_every_triggering_state_has_a_priority(self):
+    def test_every_state_puppet_offers_has_a_priority(self):
+        text = (MONITORING.parent / 'types' / 'phorgetrigger.pp').read_text()
+        assert set(re.findall(r"'([A-Z]+)'", text)) <= set(rendered()['priorities'])
+
+    def test_the_old_task_type_is_gone(self):
+        assert not (MONITORING.parent / 'types' / 'phorgetask.pp').exists()
+
+    def test_puppet_and_the_bot_use_the_same_variable(self):
+        assert "'phorge_triggers'" in (MONITORING / 'services.pp').read_text()
+        assert "'phorge_triggers'" in Path(taskbot.__file__).read_text()
+        for name in ('services.pp', 'nrpe.pp'):
+            assert 'phorge_task ' not in (MONITORING / name).read_text()
+            assert 'Optional[Array[Monitoring::PhorgeTrigger, 1, 3]]' in (MONITORING / name).read_text()
+
+    def test_both_grace_periods_are_set(self):
         config = rendered()
-        triggering = {state for levels in config['triggers'].values() for state in levels}
-        assert triggering <= set(config['priorities'])
+        assert config['grace_minutes'] > config['change_grace_minutes'] > 0
 
     def test_reconnect_delays_make_sense(self):
         config = rendered()
