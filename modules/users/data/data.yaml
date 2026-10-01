@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [blankeclair, macfan, oa, petramagna, skye, wwr]
+    members: [blankeclair, jenny, macfan, oa, petramagna, skye]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service apache2 *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mcrouter *',
@@ -39,7 +39,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [blankeclair, macfan, oa, petramagna, pixldev, skye, wwr]
+    members: [blankeclair, jenny, macfan, oa, petramagna, pixldev, skye]
     privileges: []
   ssl-admins:
     gid: 2006
@@ -241,14 +241,14 @@ users:
     name: PetraMagna
     realname: PetraMagna
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMJ2P83EMNaymM0IARjHKHSmYSVH2XnB9Zn9VQrwcHdb petramagna]
-  wwr:
+  jenny:
     ensure: present
     uid: 1026
-    name: WWR
-    realname: TheWWRNerdGuy
+    name: Jenny
+    realname: Jenny
     ssh_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHAdu5/IGuxAZP/RgteTGfkx3/sfS5q8asB9pv+dSFMS wwr@linuxmint
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEA03LUbyQibJSlJM0XQSl6agA/GHWkoXz/WWAv9Ft3a wwr@wsl
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHAdu5/IGuxAZP/RgteTGfkx3/sfS5q8asB9pv+dSFMS jenny@linuxmint
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEA03LUbyQibJSlJM0XQSl6agA/GHWkoXz/WWAv9Ft3a jenny@wsl
   pixldev:
     ensure: present
     uid: 1027
