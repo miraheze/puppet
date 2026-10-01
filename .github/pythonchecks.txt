@@ -26,4 +26,3 @@ filelock==3.18.0
 langcodes==3.5.1
 PyYAML==6.0.1
 internetarchive==5.4.0
-mwclient==0.11.0
