@@ -68,6 +68,7 @@ BASE_CONFIG = {
     'icingaweb_url': 'https://icinga.example.org',
     'skip_in_downtime': True,
     'close_after_recovery_seconds': None,
+    'close_after_recovery_commented_seconds': None,
     'close_status': 'resolved',
     'grace_minutes': 0,
     'change_grace_minutes': 0,
@@ -158,7 +159,10 @@ class FakePhorge:
         self.create_errors = []
         self.read_errors = []
         self.lost_replies = 0
+        self.edit_errors = []
         self.human_comments = set()
+        self.human_replies = set()
+        self.lookups = []
 
     def add_task(self, title='Disk on mw1 is CRITICAL', key='mw1!mw1 Disk', status='open', priority='high', storm=False):
         task = self.next_id
@@ -195,6 +199,8 @@ class FakePhorge:
         return task
 
     def edit(self, transactions, task=None):
+        if self.edit_errors:
+            raise self.edit_errors.pop(0)
         self.calls.append(('edit', task, transactions))
         info = self.tasks.get(task)
         for transaction in transactions if info else []:
@@ -228,7 +234,13 @@ class FakePhorge:
 
     def has_human_comment(self, task):
         self.check_reads()
-        return task in self.human_comments
+        self.lookups.append(('any', task))
+        return task in self.human_comments or task in self.human_replies
+
+    def has_human_comment_after_bot(self, task):
+        self.check_reads()
+        self.lookups.append(('after', task))
+        return task in self.human_replies
 
     def check_reads(self):
         if self.read_errors:
@@ -402,7 +414,7 @@ class TestMissingKeys:
     @pytest.mark.parametrize('key', [
         'icingaweb_url', 'dry_run', 'log_level', 'state_file', 'reconnect_max',
         'grace_minutes', 'change_grace_minutes', 'storm_limit', 'storm_window_minutes', 'reopen_hours', 'heartbeat_file',
-        'close_after_recovery_seconds',
+        'close_after_recovery_seconds', 'close_after_recovery_commented_seconds',
     ])
     def test_missing_top_level_key(self, key):
         config = copy.deepcopy(BASE_CONFIG)
@@ -449,14 +461,16 @@ class TestInvalidValues:
     def test_durations_may_be_zero_or_fractional(self, key, value):
         assert invalid_values(dict(BASE_CONFIG, **{key: value})) == []
 
+    @pytest.mark.parametrize('key', ['close_after_recovery_seconds', 'close_after_recovery_commented_seconds'])
     @pytest.mark.parametrize('value', [None, 0, 0.5, 600])
-    def test_the_close_delay_may_be_off_zero_or_a_number(self, value):
-        assert invalid_values(dict(BASE_CONFIG, close_after_recovery_seconds=value)) == []
+    def test_the_close_delays_may_be_off_zero_or_a_number(self, key, value):
+        assert invalid_values(dict(BASE_CONFIG, **{key: value})) == []
 
+    @pytest.mark.parametrize('key', ['close_after_recovery_seconds', 'close_after_recovery_commented_seconds'])
     @pytest.mark.parametrize('value', ['600', -1, True, [60]])
-    def test_the_close_delay_must_be_null_or_a_non_negative_number(self, value):
-        problems = invalid_values(dict(BASE_CONFIG, close_after_recovery_seconds=value))
-        assert problems == ['close_after_recovery_seconds must be null or a number of 0 or more']
+    def test_the_close_delays_must_be_null_or_a_non_negative_number(self, key, value):
+        problems = invalid_values(dict(BASE_CONFIG, **{key: value}))
+        assert problems == [f'{key} must be null or a number of 0 or more']
 
     @pytest.mark.parametrize('value', [0, -5, 2.5, '5', None, True])
     def test_storm_limit_is_a_positive_whole_number(self, value):
@@ -646,7 +660,7 @@ class TestState:
         path = tmp_path / 'state.json'
         State(str(path)).put('a', {'task': 1})
         assert not (tmp_path / 'state.json.tmp').exists()
-        assert json.loads(path.read_text()) == {'services': {'a': {'task': 1}}, 'created': [], 'storm': None, 'storm_recovered': None}
+        assert json.loads(path.read_text()) == {'services': {'a': {'task': 1}}, 'created': [], 'storm': None, 'storm_recovered': None, 'storm_close_after': None}
 
     def test_nothing_is_written_when_not_persisting(self, tmp_path):
         path = tmp_path / 'state.json'
@@ -1013,6 +1027,58 @@ class TestPhorgeTasks:
     def test_edits_without_a_comment_do_not_count(self, serve, transaction):
         api = Api({'user.whoami': [self.whoami()], 'transaction.search': [self.transactions(transaction)]})
         assert self.make(serve(reply=api)).has_human_comment(7) is False
+
+    @staticmethod
+    def numbered(number, author, removed=False):
+        return {'id': number, 'type': 'comment', 'authorPHID': author, 'comments': [{'removed': removed}]}
+
+    def after_bot(self, serve, *items):
+        api = Api({'user.whoami': [self.whoami()], 'transaction.search': [self.transactions(*items)]})
+        return self.make(serve(reply=api)).has_human_comment_after_bot(7)
+
+    def test_a_person_commenting_after_the_bot_is_found(self, serve):
+        assert self.after_bot(serve, self.numbered(5, 'PHID-USER-bot'), self.numbered(9, 'PHID-USER-alice')) is True
+
+    def test_a_person_who_commented_before_the_bot_is_not_counted(self, serve):
+        assert self.after_bot(serve, self.numbered(3, 'PHID-USER-alice'), self.numbered(5, 'PHID-USER-bot')) is False
+
+    def test_the_bots_latest_comment_is_the_one_that_counts(self, serve):
+        items = [self.numbered(2, 'PHID-USER-bot'), self.numbered(4, 'PHID-USER-alice'), self.numbered(6, 'PHID-USER-bot')]
+        assert self.after_bot(serve, *items) is False
+
+    def test_a_person_after_the_latest_bot_comment_is_found(self, serve):
+        items = [self.numbered(2, 'PHID-USER-bot'), self.numbered(4, 'PHID-USER-bot'), self.numbered(7, 'PHID-USER-alice')]
+        assert self.after_bot(serve, *items) is True
+
+    def test_the_order_of_the_response_does_not_matter(self, serve):
+        newest_first = [self.numbered(6, 'PHID-USER-bot'), self.numbered(4, 'PHID-USER-alice'), self.numbered(2, 'PHID-USER-bot')]
+        assert self.after_bot(serve, *newest_first) is False
+        assert self.after_bot(serve, self.numbered(9, 'PHID-USER-alice'), self.numbered(6, 'PHID-USER-bot')) is True
+
+    def test_without_a_bot_comment_every_person_counts(self, serve):
+        assert self.after_bot(serve, self.numbered(3, 'PHID-USER-alice')) is True
+
+    def test_only_the_bot_means_nobody_commented(self, serve):
+        assert self.after_bot(serve, self.numbered(3, 'PHID-USER-bot')) is False
+
+    def test_a_deleted_bot_comment_does_not_move_the_line(self, serve):
+        items = [self.numbered(5, 'PHID-USER-alice'), self.numbered(9, 'PHID-USER-bot', removed=True)]
+        assert self.after_bot(serve, *items) is True
+
+    def test_a_deleted_person_comment_does_not_count(self, serve):
+        items = [self.numbered(5, 'PHID-USER-bot'), self.numbered(9, 'PHID-USER-alice', removed=True)]
+        assert self.after_bot(serve, *items) is False
+
+    def test_the_order_is_judged_across_pages(self, serve):
+        api = Api({
+            'user.whoami': [self.whoami()],
+            'transaction.search': [
+                phorge_reply({'data': [self.numbered(5, 'PHID-USER-bot')], 'cursor': {'after': '5'}}),
+                self.transactions(self.numbered(9, 'PHID-USER-alice')),
+            ],
+        })
+        assert self.make(serve(reply=api)).has_human_comment_after_bot(7) is True
+        assert api.count['transaction.search'] == 2
 
     def test_a_task_without_transactions_has_no_human_comment(self, serve):
         api = Api({'user.whoami': [self.whoami()], 'transaction.search': [self.transactions()]})
@@ -3064,7 +3130,7 @@ class TestDelayedClose:
     def test_nothing_is_closed_straight_away(self, tmp_path):
         bot = self.recovered(tmp_path)
         assert bot.phorge.tasks[1]['status'] == 'open'
-        assert bot.state.get('mw1!mw1 Disk') == {'task': 1, 'active': False, 'state': 'OK', 'alert': 'CRITICAL', 'recovered': NOW}
+        assert bot.state.get('mw1!mw1 Disk') == {'task': 1, 'active': False, 'state': 'OK', 'alert': 'CRITICAL', 'recovered': NOW, 'close_after': 600}
 
     def test_nothing_happens_before_the_delay_is_over(self, tmp_path, clock):
         bot = self.recovered(tmp_path)
@@ -3078,7 +3144,7 @@ class TestDelayedClose:
         clock.now += 600
         bot.close_due()
         assert bot.phorge.tasks[1]['status'] == 'resolved'
-        assert comments(bot.phorge)[-1] == 'Closing automatically, the service has been back to **OK** for 10 minutes and nobody commented.'
+        assert comments(bot.phorge)[-1] == 'Closing automatically, 10 minutes after the last update with no comments from anyone since.'
         assert bot.state.get('mw1!mw1 Disk') == {'task': 1, 'active': False, 'state': 'OK', 'alert': 'CRITICAL', 'closed': clock.now}
 
     def test_the_close_status_is_used(self, tmp_path, clock):
@@ -3105,17 +3171,17 @@ class TestDelayedClose:
 
     def test_a_comment_from_a_person_keeps_the_task_open(self, tmp_path, clock):
         bot = self.recovered(tmp_path)
-        bot.phorge.human_comments.add(1)
+        bot.phorge.human_replies.add(1)
         clock.now += 600
         bot.close_due()
         assert bot.phorge.tasks[1]['status'] == 'open'
-        assert comments(bot.phorge)[-1] == 'The service has recovered, but someone commented on this task, so it stays open for a person to decide.'
+        assert comments(bot.phorge)[-1] == 'Someone commented after the last update, so this task stays open for a person to decide.'
         assert 'recovered' not in bot.state.get('mw1!mw1 Disk')
         assert 'closed' not in bot.state.get('mw1!mw1 Disk')
 
     def test_the_note_about_a_human_comment_is_posted_once(self, tmp_path, clock):
         bot = self.recovered(tmp_path)
-        bot.phorge.human_comments.add(1)
+        bot.phorge.human_replies.add(1)
         clock.now += 600
         bot.close_due()
         clock.now += 600
@@ -3233,7 +3299,7 @@ class TestDelayedClose:
         bot = make_bot(tmp_path, storm_limit=1, close_after_recovery_seconds=600)
         TestStorm.many(bot, 2)
         bot.process(make_service(name='svc2', state=0))
-        bot.phorge.human_comments.add(2)
+        bot.phorge.human_replies.add(2)
         clock.now += 600
         bot.close_due()
         assert bot.phorge.tasks[2]['status'] == 'open'
@@ -3249,6 +3315,299 @@ class TestDelayedClose:
         clock.now += 600
         second.close_due()
         assert second.phorge.tasks[2]['status'] == 'resolved'
+
+
+class TestCommentAwareDelay:
+    SHORT = 'Recovered, the service is back to **OK**. This task will be closed automatically in 6 hours unless someone comments on it.'
+    LONG = (
+        'Recovered, the service is back to **OK**. Someone has already commented on this task, so it will be closed '
+        'automatically in 24 hours unless someone comments again after this message.'
+    )
+
+    @staticmethod
+    def make(tmp_path, plain=21600, commented=86400, **config):
+        return make_bot(tmp_path, close_after_recovery_seconds=plain, close_after_recovery_commented_seconds=commented, **config)
+
+    def recover(self, tmp_path, spoken=False, **config):
+        bot = self.make(tmp_path, **config)
+        bot.process(make_service())
+        if spoken:
+            bot.phorge.human_comments.add(1)
+        bot.process(make_service(state=0))
+        return bot
+
+    @pytest.mark.usefixtures('clock')
+    def test_without_an_earlier_comment_the_short_delay_is_announced(self, tmp_path):
+        bot = self.recover(tmp_path)
+        assert comments(bot.phorge) == [self.SHORT]
+        assert bot.state.get('mw1!mw1 Disk')['close_after'] == 21600
+
+    @pytest.mark.usefixtures('clock')
+    def test_with_an_earlier_comment_the_long_delay_is_announced(self, tmp_path):
+        bot = self.recover(tmp_path, spoken=True)
+        assert comments(bot.phorge) == [self.LONG]
+        assert bot.state.get('mw1!mw1 Disk')['close_after'] == 86400
+
+    def test_an_uncommented_task_closes_after_the_short_delay(self, tmp_path, clock):
+        bot = self.recover(tmp_path)
+        clock.now += 21599
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'open'
+        clock.now += 1
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+        assert comments(bot.phorge)[-1] == 'Closing automatically, 6 hours after the last update with no comments from anyone since.'
+
+    def test_a_commented_task_waits_for_the_long_delay(self, tmp_path, clock):
+        bot = self.recover(tmp_path, spoken=True)
+        clock.now += 21600
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'open'
+        clock.now += 86400 - 21600
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+        assert comments(bot.phorge)[-1] == 'Closing automatically, 24 hours after the last update with no comments from anyone since.'
+
+    def test_a_comment_from_before_the_recovery_does_not_keep_it_open(self, tmp_path, clock):
+        bot = self.recover(tmp_path, spoken=True)
+        clock.now += 86400
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+        assert bot.phorge.lookups[-1] == ('after', 1)
+
+    @pytest.mark.parametrize('spoken', [False, True])
+    def test_a_comment_after_the_recovery_keeps_it_open(self, tmp_path, clock, spoken):
+        bot = self.recover(tmp_path, spoken=spoken)
+        bot.phorge.human_replies.add(1)
+        clock.now += 86400
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'open'
+        assert comments(bot.phorge)[-1] == 'Someone commented after the last update, so this task stays open for a person to decide.'
+
+    @pytest.mark.usefixtures('clock')
+    def test_only_the_short_delay_set(self, tmp_path):
+        (tmp_path / 'a').mkdir()
+        (tmp_path / 'b').mkdir()
+        quiet = self.recover(tmp_path / 'a', plain=600, commented=None)
+        assert quiet.state.get('mw1!mw1 Disk')['close_after'] == 600
+        spoken = self.recover(tmp_path / 'b', spoken=True, plain=600, commented=None)
+        assert comments(spoken.phorge) == ['Recovered, the service is back to **OK**.']
+        assert 'recovered' not in spoken.state.get('mw1!mw1 Disk')
+
+    @pytest.mark.usefixtures('clock')
+    def test_only_the_long_delay_set(self, tmp_path):
+        (tmp_path / 'a').mkdir()
+        (tmp_path / 'b').mkdir()
+        quiet = self.recover(tmp_path / 'a', plain=None, commented=3600)
+        assert comments(quiet.phorge) == ['Recovered, the service is back to **OK**.']
+        spoken = self.recover(tmp_path / 'b', spoken=True, plain=None, commented=3600)
+        assert spoken.state.get('mw1!mw1 Disk')['close_after'] == 3600
+        assert 'closed automatically in 1 hour' in comments(spoken.phorge)[0]
+
+    @pytest.mark.usefixtures('clock')
+    def test_with_both_off_nobody_is_asked_about_comments(self, tmp_path):
+        bot = self.recover(tmp_path, plain=None, commented=None)
+        assert comments(bot.phorge) == ['Recovered, the service is back to **OK**.']
+        assert bot.phorge.lookups == []
+
+    @pytest.mark.usefixtures('clock')
+    def test_zero_for_the_short_delay_closes_at_once(self, tmp_path):
+        bot = self.recover(tmp_path, plain=0)
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+        assert comments(bot.phorge) == ['Recovered, the service is back to **OK**.']
+
+    @pytest.mark.usefixtures('clock')
+    def test_zero_for_the_long_delay_closes_a_commented_task_at_once(self, tmp_path):
+        bot = self.recover(tmp_path, spoken=True, commented=0)
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+
+    @pytest.mark.usefixtures('clock')
+    def test_a_failed_lookup_at_recovery_is_retried(self, tmp_path):
+        bot = self.make(tmp_path)
+        bot.process(make_service())
+        bot.phorge.read_errors = [PhorgeError('down')]
+        with pytest.raises(PhorgeError, match='down'):
+            bot.process(make_service(state=0))
+        assert bot.state.get('mw1!mw1 Disk')['active'] is True
+        bot.process(make_service(state=0))
+        assert comments(bot.phorge) == [self.SHORT]
+
+    def test_the_delay_chosen_at_recovery_is_kept_if_the_config_changes(self, tmp_path, clock):
+        bot = self.recover(tmp_path, plain=600)
+        bot.config['close_after_recovery_seconds'] = 10**6
+        clock.now += 600
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+
+    def test_entries_from_before_the_two_delays_use_the_short_one(self, tmp_path, clock):
+        bot = self.make(tmp_path)
+        bot.process(make_service())
+        bot.state.put('mw1!mw1 Disk', {'task': 1, 'active': False, 'state': 'OK', 'alert': 'CRITICAL', 'recovered': NOW})
+        clock.now += 21600
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+
+    def test_a_storm_summary_nobody_commented_on_uses_the_short_delay(self, tmp_path, clock):
+        bot = self.make(tmp_path, storm_limit=1)
+        TestStorm.many(bot, 2)
+        bot.process(make_service(name='svc2', state=0))
+        assert comments(bot.phorge)[-1] == '`mw1!svc2` recovered. This task will be closed automatically in 6 hours unless someone comments on it.'
+        assert bot.state.storm_close_after == 21600
+        clock.now += 21600
+        bot.close_due()
+        assert bot.phorge.tasks[2]['status'] == 'resolved'
+
+    def test_a_storm_summary_someone_commented_on_uses_the_long_delay(self, tmp_path, clock):
+        bot = self.make(tmp_path, storm_limit=1)
+        TestStorm.many(bot, 2)
+        bot.phorge.human_comments.add(2)
+        bot.process(make_service(name='svc2', state=0))
+        assert 'Someone has already commented on this task, so it will be closed automatically in 24 hours' in comments(bot.phorge)[-1]
+        assert bot.state.storm_close_after == 86400
+        clock.now += 21600
+        bot.close_due()
+        assert bot.phorge.tasks[2]['status'] == 'open'
+        clock.now += 86400 - 21600
+        bot.close_due()
+        assert bot.phorge.tasks[2]['status'] == 'resolved'
+
+    def test_a_comment_after_the_last_storm_update_keeps_the_summary_open(self, tmp_path, clock):
+        bot = self.make(tmp_path, storm_limit=1)
+        TestStorm.many(bot, 2)
+        bot.process(make_service(name='svc2', state=0))
+        bot.phorge.human_replies.add(2)
+        clock.now += 21600
+        bot.close_due()
+        assert bot.phorge.tasks[2]['status'] == 'open'
+        assert bot.state.storm is None
+
+    def test_the_storm_delay_survives_a_restart(self, tmp_path, clock):
+        first = self.make(tmp_path, storm_limit=1)
+        TestStorm.many(first, 2)
+        first.phorge.human_comments.add(2)
+        first.process(make_service(name='svc2', state=0))
+        second = self.make(tmp_path, storm_limit=1)
+        second.phorge = first.phorge
+        assert second.state.storm_close_after == 86400
+        clock.now += 21600
+        second.close_due()
+        assert second.phorge.tasks[2]['status'] == 'open'
+
+
+class TestRemovedServices:
+    @staticmethod
+    def removed(tmp_path, **config):
+        bot = make_bot(tmp_path, **config)
+        bot.icinga.add(make_service())
+        bot.reconcile()
+        bot.icinga.services.clear()
+        return bot
+
+    def test_it_is_commented_and_no_longer_tracked_as_alerting(self, tmp_path):
+        bot = self.removed(tmp_path)
+        bot.reconcile()
+        assert comments(bot.phorge) == ['This service no longer exists in Icinga, so no further alerts are expected.']
+        assert bot.state.get('mw1!mw1 Disk') == {'task': 1, 'active': False, 'state': 'GONE', 'alert': 'CRITICAL'}
+
+    def test_the_removal_is_logged(self, tmp_path, caplog):
+        bot = self.removed(tmp_path)
+        with caplog.at_level(logging.WARNING, logger='taskbot'):
+            bot.reconcile()
+        assert 'mw1!mw1 Disk no longer exists in Icinga' in caplog.text
+
+    def test_it_is_only_reported_once(self, tmp_path):
+        bot = self.removed(tmp_path)
+        bot.reconcile()
+        bot.reconcile()
+        bot.reconcile()
+        assert len(comments(bot.phorge)) == 1
+
+    def test_the_task_closes_after_the_delay(self, tmp_path, clock):
+        bot = self.removed(tmp_path, close_after_recovery_seconds=600)
+        bot.reconcile()
+        assert comments(bot.phorge)[-1] == (
+            'This service no longer exists in Icinga, so no further alerts are expected.'
+            ' This task will be closed automatically in 10 minutes unless someone comments on it.'
+        )
+        assert bot.state.get('mw1!mw1 Disk')['close_after'] == 600
+        assert bot.phorge.tasks[1]['status'] == 'open'
+        clock.now += 600
+        bot.reconcile()
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+        assert comments(bot.phorge)[-1].startswith('Closing automatically, 10 minutes after the last update')
+
+    def test_a_comment_after_the_removal_keeps_it_open(self, tmp_path, clock):
+        bot = self.removed(tmp_path, close_after_recovery_seconds=600)
+        bot.reconcile()
+        bot.phorge.human_replies.add(1)
+        clock.now += 600
+        bot.reconcile()
+        assert bot.phorge.tasks[1]['status'] == 'open'
+        assert 'stays open for a person to decide' in comments(bot.phorge)[-1]
+
+    def test_an_earlier_comment_selects_the_long_delay(self, tmp_path, clock):
+        bot = self.removed(tmp_path, close_after_recovery_seconds=600, close_after_recovery_commented_seconds=7200)
+        bot.phorge.human_comments.add(1)
+        bot.reconcile()
+        assert bot.state.get('mw1!mw1 Disk')['close_after'] == 7200
+        clock.now += 600
+        bot.reconcile()
+        assert bot.phorge.tasks[1]['status'] == 'open'
+        clock.now += 6600
+        bot.reconcile()
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+
+    def test_a_zero_delay_closes_at_once(self, tmp_path):
+        bot = self.removed(tmp_path, close_after_recovery_seconds=0)
+        bot.reconcile()
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+
+    def test_without_a_delay_it_stays_open(self, tmp_path, clock):
+        bot = self.removed(tmp_path)
+        bot.reconcile()
+        clock.now += 10**6
+        bot.reconcile()
+        assert bot.phorge.tasks[1]['status'] == 'open'
+
+    def test_a_service_that_comes_back_alerting_cancels_the_close(self, tmp_path, clock):
+        bot = self.removed(tmp_path, close_after_recovery_seconds=600)
+        bot.reconcile()
+        clock.now += 60
+        bot.icinga.add(make_service())
+        bot.reconcile()
+        assert comments(bot.phorge)[-1].startswith('Alerting again, **CRITICAL**.')
+        assert 'recovered' not in bot.state.get('mw1!mw1 Disk')
+        clock.now += 1000
+        bot.reconcile()
+        assert bot.phorge.tasks[1]['status'] == 'open'
+
+    def test_a_failure_while_handling_the_removal_is_retried(self, tmp_path):
+        bot = self.removed(tmp_path)
+        bot.phorge.edit_errors = [PhorgeError('down')]
+        bot.reconcile()
+        assert bot.failures == 1
+        assert bot.state.get('mw1!mw1 Disk')['active'] is True
+        assert not (tmp_path / 'last_sync').exists() or bot.failures == 1
+        bot.reconcile()
+        assert bot.state.get('mw1!mw1 Disk')['state'] == 'GONE'
+        assert len(comments(bot.phorge)) == 1
+
+    def test_a_removed_storm_member_is_noted_on_the_summary(self, tmp_path):
+        bot = make_bot(tmp_path, storm_limit=1, close_after_recovery_seconds=0)
+        TestStorm.many(bot, 2)
+        for number in (1, 2):
+            bot.icinga.add(make_service(name=f'svc{number}'))
+        bot.icinga.services.clear()
+        bot.state.put('mw1!svc1', {**bot.state.get('mw1!svc1'), 'active': False})
+        bot.reconcile()
+        assert comments(bot.phorge)[-1] == '`mw1!svc2` no longer exists in Icinga.'
+        assert bot.phorge.tasks[2]['status'] == 'resolved'
+
+    def test_a_removed_service_without_a_task_in_state_does_nothing(self, tmp_path):
+        bot = make_bot(tmp_path)
+        bot.state.put('mw1!old', {'task': 4, 'active': False, 'state': 'OK'})
+        bot.reconcile()
+        assert bot.phorge.calls == []
 
 
 class PhorgeApp:
@@ -3267,9 +3626,11 @@ class PhorgeApp:
             return phorge_reply({'object': {'id': self.edit(fields)}})
         if method == 'transaction.search':
             task = self.tasks[int(fields['objectIdentifier'][0].lstrip('T'))]
-            mine = [{'type': 'comment', 'authorPHID': 'PHID-USER-bot', 'comments': [{'removed': False}]} for _ in task['comments']]
-            theirs = [{'type': 'comment', 'authorPHID': 'PHID-USER-alice', 'comments': [{'removed': False}]} for _ in range(task.get('humans', 0))]
-            return phorge_reply({'data': mine + theirs, 'cursor': {'after': None}})
+            data = [
+                {'id': number, 'type': 'comment', 'authorPHID': f'PHID-USER-{who}', 'comments': [{'removed': False}]}
+                for number, who in enumerate(task['history'], 1)
+            ]
+            return phorge_reply({'data': data, 'cursor': {'after': None}})
         return phorge_reply({})
 
     def search(self, fields):
@@ -3294,7 +3655,7 @@ class PhorgeApp:
         if 'objectIdentifier' in fields:
             task = self.tasks[int(fields['objectIdentifier'][0])]
         else:
-            task = {'id': len(self.tasks) + 1, 'title': '', 'description': '', 'status': 'open', 'priority': 50, 'comments': []}
+            task = {'id': len(self.tasks) + 1, 'title': '', 'description': '', 'status': 'open', 'priority': 50, 'comments': [], 'history': []}
             self.tasks[task['id']] = task
         index = 0
         while f'transactions[{index}][type]' in fields:
@@ -3302,6 +3663,7 @@ class PhorgeApp:
             value = fields.get(f'transactions[{index}][value]', [''])[0]
             if kind == 'comment':
                 task['comments'].append(value)
+                task['history'].append('bot')
             elif kind == 'priority':
                 task['priority'] = taskbot.PRIORITIES[value]
             elif kind in ('title', 'description', 'status'):
@@ -3372,12 +3734,38 @@ class TestEndToEnd:
         bot.reconcile()
         assert all(task['status'] == 'open' for task in app.tasks.values())
         assert 'closed automatically in 10 minutes' in app.tasks[1]['comments'][-1]
-        app.tasks[2]['humans'] = 1
+        app.tasks[2]['history'].append('alice')
         clock.now += 600
         bot.reconcile()
         assert app.tasks[1]['status'] == 'resolved'
         assert app.tasks[2]['status'] == 'open'
         assert 'stays open for a person to decide' in app.tasks[2]['comments'][-1]
+
+    def test_a_removed_service_closes_its_task_after_the_delay_through_real_http(self, serve, tmp_path, clock):
+        app = PhorgeApp()
+        phorge_server = serve(reply=app)
+        services = {'mw1!mw1 Disk': make_service(), 'mw2!mw2 Disk': make_service(host='mw2', name='mw2 Disk')}
+        icinga_server = serve(reply=self.icinga_app(services))
+        bot = self.make(
+            tmp_path, phorge_server, icinga_server,
+            close_after_recovery_seconds=600, close_after_recovery_commented_seconds=7200,
+        )
+        bot.prepare()
+        bot.reconcile()
+        app.tasks[2]['history'].append('alice')
+        del services['mw1!mw1 Disk']
+        del services['mw2!mw2 Disk']
+        bot.reconcile()
+        assert 'This service no longer exists in Icinga' in app.tasks[1]['comments'][-1]
+        assert 'closed automatically in 10 minutes' in app.tasks[1]['comments'][-1]
+        assert 'closed automatically in 2 hours unless someone comments again' in app.tasks[2]['comments'][-1]
+        clock.now += 600
+        bot.reconcile()
+        assert app.tasks[1]['status'] == 'resolved'
+        assert app.tasks[2]['status'] == 'open'
+        clock.now += 6600
+        bot.reconcile()
+        assert app.tasks[2]['status'] == 'resolved'
 
     @pytest.mark.usefixtures('clock')
     def test_events_find_the_service_through_real_http(self, serve, tmp_path):
@@ -3679,6 +4067,10 @@ class TestConfigTemplate:
     def test_every_state_puppet_offers_has_a_priority(self):
         text = (MONITORING.parent / 'types' / 'phorgetrigger.pp').read_text()
         assert set(re.findall(r"'([A-Z]+)'", text)) <= set(rendered()['priorities'])
+
+    def test_a_task_a_person_commented_on_gets_at_least_as_long_as_one_nobody_touched(self):
+        config = rendered()
+        assert config['close_after_recovery_commented_seconds'] >= config['close_after_recovery_seconds'] > 0
 
     def test_both_grace_periods_are_set(self):
         config = rendered()
