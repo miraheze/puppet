@@ -16,10 +16,6 @@
 		"retries": 3,
 		"proxy": <%= stdlib::to_json($http_proxy) %>
 	},
-	"triggers": {
-		"critical": [ "CRITICAL" ],
-		"any": [ "WARNING", "CRITICAL" ]
-	},
 	"priorities": {
 		"WARNING": "medium",
 		"CRITICAL": "high",
@@ -30,6 +26,7 @@
 	"close_after_recovery_seconds": 86400,
 	"close_status": "resolved",
 	"grace_minutes": 15,
+	"change_grace_minutes": 3,
 	"storm_limit": 5,
 	"storm_window_minutes": 10,
 	"reopen_hours": 24,
