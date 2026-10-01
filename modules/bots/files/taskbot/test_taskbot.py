@@ -1993,6 +1993,197 @@ class TestChangeGrace:
         assert len(comments(bot.phorge)) == 1
 
 
+class TestTracking:
+    @pytest.mark.parametrize(('entry', 'tracked'), [
+        (None, False),
+        ({}, False),
+        ({'active': True, 'state': 'CRITICAL'}, True),
+        ({'active': False, 'state': 'WARNING'}, True),
+        ({'active': False, 'state': 'UNKNOWN'}, True),
+        ({'active': False, 'state': 'OK'}, False),
+        ({'active': False, 'state': 'GONE'}, False),
+        ({'active': False, 'state': 'WARNING', 'storm': True}, False),
+        ({'active': True, 'state': 'CRITICAL', 'storm': True}, True),
+    ])
+    def test_which_entries_are_still_being_followed(self, entry, tracked):
+        assert Bot.tracking(entry) is tracked
+
+
+@pytest.mark.usefixtures('clock')
+class TestDropToANonAlertState:
+    NOTE = 'Now **WARNING**, which is not an alert state for this service.'
+
+    @staticmethod
+    def alerting(tmp_path, **config):
+        bot = make_bot(tmp_path, **{'grace_minutes': 15, 'change_grace_minutes': 3, **config})
+        bot.process(make_service(state=2, last_state_ok=NOW - 3600, last_state_change=NOW - 3600))
+        assert len(bot.phorge.created()) == 1
+        return bot
+
+    @staticmethod
+    def dropped(state=1, seconds=300, **changes):
+        return make_service(state=state, last_state_ok=NOW - 3600, last_state_change=NOW - seconds, **changes)
+
+    def test_the_task_is_commented_retitled_and_downgraded(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.process(self.dropped())
+        assert comments(bot.phorge) == [self.NOTE]
+        assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is WARNING'
+        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['medium']
+        assert bot.state.get('mw1!mw1 Disk') == {'task': 1, 'active': False, 'state': 'WARNING', 'alert': 'WARNING'}
+
+    def test_a_title_someone_edited_is_left_alone(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.phorge.tasks[1]['title'] = 'Disk on mw1 is CRITICAL, Alice is on it'
+        bot.process(self.dropped())
+        assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL, Alice is on it'
+        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['medium']
+
+    @pytest.mark.parametrize('keyword', ['unbreak', 'lowest'])
+    def test_a_priority_someone_set_is_left_alone(self, tmp_path, keyword):
+        bot = self.alerting(tmp_path)
+        bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES[keyword]
+        bot.process(self.dropped())
+        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES[keyword]
+
+    def test_it_waits_for_the_change_grace(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.process(self.dropped(seconds=60))
+        assert comments(bot.phorge) == []
+        assert bot.state.get('mw1!mw1 Disk')['active'] is True
+        assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
+
+    def test_a_quick_bounce_changes_nothing(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.process(self.dropped(seconds=60))
+        bot.process(make_service(state=2, last_state_ok=NOW - 3600, last_state_change=NOW - 5))
+        assert comments(bot.phorge) == []
+        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+
+    def test_repeated_syncs_do_not_repeat_the_note(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        for _ in range(4):
+            bot.process(self.dropped())
+        assert comments(bot.phorge) == [self.NOTE]
+
+    def test_recovery_afterwards_starts_the_close_timer(self, tmp_path, clock):
+        bot = self.alerting(tmp_path, close_after_recovery_seconds=600)
+        bot.process(self.dropped())
+        clock.now += 400
+        bot.process(make_service(state=0, last_state_ok=clock.now, last_state_change=clock.now))
+        assert comments(bot.phorge)[-1] == (
+            'Recovered, the service is back to **OK**. This task will be closed automatically in 10 minutes unless someone comments on it.'
+        )
+        assert bot.state.get('mw1!mw1 Disk') == {
+            'task': 1, 'active': False, 'state': 'OK', 'alert': 'WARNING', 'recovered': clock.now, 'close_after': 600,
+        }
+        clock.now += 600
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+
+    def test_recovery_afterwards_can_close_at_once(self, tmp_path, clock):
+        bot = self.alerting(tmp_path, close_after_recovery_seconds=0)
+        bot.process(self.dropped())
+        bot.process(make_service(state=0, last_state_ok=clock.now, last_state_change=clock.now))
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+
+    def test_an_earlier_comment_still_selects_the_long_delay(self, tmp_path, clock):
+        bot = self.alerting(tmp_path, close_after_recovery_seconds=600, close_after_recovery_commented_seconds=7200)
+        bot.process(self.dropped())
+        bot.phorge.human_comments.add(1)
+        bot.process(make_service(state=0, last_state_ok=clock.now, last_state_change=clock.now))
+        assert bot.state.get('mw1!mw1 Disk')['close_after'] == 7200
+
+    def test_recovery_is_only_reported_once(self, tmp_path, clock):
+        bot = self.alerting(tmp_path, close_after_recovery_seconds=600)
+        bot.process(self.dropped())
+        for _ in range(3):
+            bot.process(make_service(state=0, last_state_ok=clock.now, last_state_change=clock.now))
+        assert len([c for c in comments(bot.phorge) if c.startswith('Recovered')]) == 1
+
+    def test_going_back_to_critical_restores_the_title_and_priority(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.process(self.dropped())
+        bot.process(make_service(state=2, last_state_ok=NOW - 3600, last_state_change=NOW - 200))
+        assert comments(bot.phorge)[-1].startswith('Alerting again, **CRITICAL**.')
+        assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
+        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+        assert bot.state.get('mw1!mw1 Disk')['active'] is True
+
+    def test_going_back_to_critical_waits_for_the_change_grace(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.process(self.dropped())
+        bot.process(make_service(state=2, last_state_ok=NOW - 3600, last_state_change=NOW - 60))
+        assert len(comments(bot.phorge)) == 1
+        assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is WARNING'
+
+    def test_a_further_change_to_another_quiet_state_is_noted_too(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.process(self.dropped())
+        bot.process(self.dropped(state=3, seconds=60))
+        assert len(comments(bot.phorge)) == 1
+        bot.process(self.dropped(state=3, seconds=200))
+        assert comments(bot.phorge)[-1] == 'Now **UNKNOWN**, which is not an alert state for this service.'
+        assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is UNKNOWN'
+        assert bot.state.get('mw1!mw1 Disk')['state'] == 'UNKNOWN'
+
+    def test_a_sync_applies_the_drop_once(self, tmp_path):
+        bot = self.alerting(tmp_path)
+        bot.icinga.add(self.dropped())
+        bot.reconcile()
+        bot.reconcile()
+        assert comments(bot.phorge) == [self.NOTE]
+
+    def test_a_sync_notices_a_recovery_whose_event_was_missed(self, tmp_path, clock):
+        bot = self.alerting(tmp_path, close_after_recovery_seconds=600)
+        bot.icinga.add(self.dropped())
+        bot.reconcile()
+        bot.icinga.add(make_service(state=0, last_state_ok=clock.now, last_state_change=clock.now))
+        bot.reconcile()
+        assert comments(bot.phorge)[-1].startswith('Recovered, the service is back to **OK**.')
+        assert bot.state.get('mw1!mw1 Disk')['recovered'] == clock.now
+
+    @pytest.mark.usefixtures('clock')
+    def test_a_service_removed_while_waiting_for_recovery_is_handled(self, tmp_path):
+        bot = self.alerting(tmp_path, close_after_recovery_seconds=600)
+        bot.process(self.dropped())
+        bot.reconcile()
+        assert comments(bot.phorge)[-1].startswith('This service no longer exists in Icinga')
+        assert bot.state.get('mw1!mw1 Disk')['close_after'] == 600
+
+    @pytest.mark.usefixtures('clock')
+    def test_entries_stuck_by_the_old_behaviour_recover_now(self, tmp_path):
+        bot = make_bot(tmp_path, close_after_recovery_seconds=600)
+        bot.process(make_service())
+        bot.state.put('mw1!mw1 Disk', {'task': 1, 'active': False, 'state': 'WARNING', 'alert': 'CRITICAL'})
+        bot.process(make_service(state=0))
+        assert comments(bot.phorge)[-1].startswith('Recovered, the service is back to **OK**.')
+        assert bot.state.get('mw1!mw1 Disk')['close_after'] == 600
+
+    def test_storm_members_are_not_noted_over_and_over(self, tmp_path):
+        bot = make_bot(tmp_path, storm_limit=1)
+        TestStorm.many(bot, 2)
+        for _ in range(3):
+            bot.process(make_service(name='svc2', state=1))
+        assert [c for c in comments(bot.phorge) if 'not an alert state' in c] == [
+            '`mw1!svc2` is now **WARNING**, which is not an alert state.',
+        ]
+
+    def test_a_task_the_bot_already_closed_is_not_followed_again(self, tmp_path, clock):
+        bot = self.alerting(tmp_path, close_after_recovery_seconds=0)
+        bot.process(make_service(state=0, last_state_ok=clock.now, last_state_change=clock.now))
+        calls = len(bot.phorge.calls)
+        bot.process(make_service(state=0, last_state_ok=clock.now, last_state_change=clock.now))
+        assert len(bot.phorge.calls) == calls
+
+    def test_services_that_alert_on_warning_are_unchanged(self, tmp_path):
+        bot = make_bot(tmp_path, grace_minutes=15, change_grace_minutes=3)
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=2, last_state_ok=NOW - 3600, last_state_change=NOW - 3600))
+        bot.process(make_service(triggers=WARNING_CRITICAL, state=1, last_state_ok=NOW - 3600, last_state_change=NOW - 300))
+        assert comments(bot.phorge)[0].startswith('Now **WARNING**.')
+        assert bot.state.get('mw1!mw1 Disk')['active'] is True
+
+
 class TestProblemAndClear:
     def test_repeated_alerts_do_not_duplicate(self, tmp_path):
         bot = make_bot(tmp_path)
@@ -2113,7 +2304,7 @@ class TestProblemAndClear:
         bot = make_bot(tmp_path, close_after_recovery_seconds=0)
         bot.process(make_service(triggers=CRITICAL, state=2))
         bot.process(make_service(triggers=CRITICAL, state=1))
-        assert [t['type'] for t in bot.phorge.calls[-1][2]] == ['comment']
+        assert [t['type'] for t in bot.phorge.calls[-1][2]] == ['comment', 'title', 'priority']
         assert 'closed' not in bot.state.get('mw1!mw1 Disk')
 
     @pytest.mark.parametrize('state', [1, 3])
@@ -3766,6 +3957,31 @@ class TestEndToEnd:
         clock.now += 6600
         bot.reconcile()
         assert app.tasks[2]['status'] == 'resolved'
+
+    def test_a_critical_only_service_dropping_to_warning_then_ok_through_real_http(self, serve, tmp_path, clock):
+        app = PhorgeApp()
+        phorge_server = serve(reply=app)
+        services = {'mw1!mw1 Disk': make_service(last_state_ok=NOW - 3600, last_state_change=NOW - 3600)}
+        icinga_server = serve(reply=self.icinga_app(services))
+        bot = self.make(tmp_path, phorge_server, icinga_server, close_after_recovery_seconds=600, change_grace_minutes=3)
+        bot.prepare()
+        bot.reconcile()
+        assert app.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
+        services['mw1!mw1 Disk'] = make_service(state=1, last_state_ok=NOW - 3600, last_state_change=NOW - 10)
+        bot.reconcile()
+        assert app.tasks[1]['comments'] == []
+        clock.now += 200
+        services['mw1!mw1 Disk'] = make_service(state=1, last_state_ok=NOW - 3600, last_state_change=NOW - 10)
+        bot.reconcile()
+        assert app.tasks[1]['title'] == 'Disk on mw1 is WARNING'
+        assert app.tasks[1]['priority'] == taskbot.PRIORITIES['medium']
+        assert 'not an alert state' in app.tasks[1]['comments'][-1]
+        services['mw1!mw1 Disk'] = make_service(state=0)
+        bot.reconcile()
+        assert 'closed automatically in 10 minutes' in app.tasks[1]['comments'][-1]
+        clock.now += 600
+        bot.reconcile()
+        assert app.tasks[1]['status'] == 'resolved'
 
     @pytest.mark.usefixtures('clock')
     def test_events_find_the_service_through_real_http(self, serve, tmp_path):
