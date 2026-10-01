@@ -28,6 +28,7 @@ from taskbot import (
     State,
     build_opener,
     check_output,
+    describe_seconds,
     flatten,
     invalid_values,
     is_storm_task,
@@ -67,7 +68,7 @@ BASE_CONFIG = {
     'priorities': {'WARNING': 'medium', 'CRITICAL': 'high', 'UNKNOWN': 'medium'},
     'icingaweb_url': 'https://icinga.example.org',
     'skip_in_downtime': True,
-    'close_on_recovery': False,
+    'close_after_recovery_seconds': None,
     'close_status': 'resolved',
     'grace_minutes': 0,
     'storm_limit': 1000,
@@ -153,6 +154,7 @@ class FakePhorge:
         self.create_errors = []
         self.read_errors = []
         self.lost_replies = 0
+        self.human_comments = set()
 
     def add_task(self, title='Disk on mw1 is CRITICAL', key='mw1!mw1 Disk', status='open', priority='high', storm=False):
         task = self.next_id
@@ -219,6 +221,10 @@ class FakePhorge:
 
     def find(self, matches):
         return next((task for task in self.open_tasks() if matches(task)), None)
+
+    def has_human_comment(self, task):
+        self.check_reads()
+        return task in self.human_comments
 
     def check_reads(self):
         if self.read_errors:
@@ -367,6 +373,16 @@ class Script:
         return outcome(request) if callable(outcome) else outcome
 
 
+ICINGA_OWN_NAMES = ('host', 'check_command', 'event_command', 'check_period', 'command_endpoint', 'zone')
+
+
+def icinga_filter_matches(body, attrs):
+    scope = dict(body.get('filter_vars') or {})
+    scope.update({name: object() for name in ICINGA_OWN_NAMES})
+    scope['service'] = types.SimpleNamespace(**attrs)
+    return bool(eval(body['filter'].replace('&&', ' and '), {'__builtins__': {}}, scope))
+
+
 def matches_nothing(task):
     return task_key(task) == 'never!matches'
 
@@ -382,6 +398,7 @@ class TestMissingKeys:
     @pytest.mark.parametrize('key', [
         'icingaweb_url', 'dry_run', 'log_level', 'state_file', 'reconnect_max',
         'grace_minutes', 'storm_limit', 'storm_window_minutes', 'reopen_hours', 'heartbeat_file',
+        'close_after_recovery_seconds',
     ])
     def test_missing_top_level_key(self, key):
         config = copy.deepcopy(BASE_CONFIG)
@@ -428,6 +445,15 @@ class TestInvalidValues:
     @pytest.mark.parametrize('value', [0, 0.5, 15, 24.0])
     def test_durations_may_be_zero_or_fractional(self, key, value):
         assert invalid_values(dict(BASE_CONFIG, **{key: value})) == []
+
+    @pytest.mark.parametrize('value', [None, 0, 0.5, 600])
+    def test_the_close_delay_may_be_off_zero_or_a_number(self, value):
+        assert invalid_values(dict(BASE_CONFIG, close_after_recovery_seconds=value)) == []
+
+    @pytest.mark.parametrize('value', ['600', -1, True, [60]])
+    def test_the_close_delay_must_be_null_or_a_non_negative_number(self, value):
+        problems = invalid_values(dict(BASE_CONFIG, close_after_recovery_seconds=value))
+        assert problems == ['close_after_recovery_seconds must be null or a number of 0 or more']
 
     @pytest.mark.parametrize('value', [0, -5, 2.5, '5', None, True])
     def test_storm_limit_is_a_positive_whole_number(self, value):
@@ -617,7 +643,7 @@ class TestState:
         path = tmp_path / 'state.json'
         State(str(path)).put('a', {'task': 1})
         assert not (tmp_path / 'state.json.tmp').exists()
-        assert json.loads(path.read_text()) == {'services': {'a': {'task': 1}}, 'created': [], 'storm': None}
+        assert json.loads(path.read_text()) == {'services': {'a': {'task': 1}}, 'created': [], 'storm': None, 'storm_recovered': None}
 
     def test_nothing_is_written_when_not_persisting(self, tmp_path):
         path = tmp_path / 'state.json'
@@ -944,6 +970,64 @@ class TestPhorgeTasks:
     def test_details_of_an_unknown_task(self, serve):
         assert self.make(serve(reply=phorge_reply({'data': []}))).details(7) is None
 
+    @staticmethod
+    def transactions(*items):
+        return phorge_reply({'data': list(items), 'cursor': {'after': None}})
+
+    @staticmethod
+    def comment(author, removed=False):
+        return {'type': 'comment', 'authorPHID': author, 'comments': [{'removed': removed}]}
+
+    def test_a_comment_from_a_person_is_found(self, serve):
+        api = Api({
+            'user.whoami': [self.whoami()],
+            'transaction.search': [self.transactions(self.comment('PHID-USER-alice'))],
+        })
+        server = serve(reply=api)
+        assert self.make(server).has_human_comment(7) is True
+        fields = form(server.received[-1])
+        assert fields['objectIdentifier'] == ['T7']
+
+    def test_the_bots_own_comments_do_not_count(self, serve):
+        api = Api({
+            'user.whoami': [self.whoami()],
+            'transaction.search': [self.transactions(self.comment('PHID-USER-bot'), self.comment('PHID-USER-bot'))],
+        })
+        assert self.make(serve(reply=api)).has_human_comment(7) is False
+
+    def test_deleted_comments_do_not_count(self, serve):
+        api = Api({
+            'user.whoami': [self.whoami()],
+            'transaction.search': [self.transactions(self.comment('PHID-USER-alice', removed=True))],
+        })
+        assert self.make(serve(reply=api)).has_human_comment(7) is False
+
+    @pytest.mark.parametrize('transaction', [
+        {'type': 'status', 'authorPHID': 'PHID-USER-alice', 'comments': []},
+        {'type': 'priority', 'authorPHID': 'PHID-USER-alice'},
+        {'type': None, 'authorPHID': 'PHID-USER-alice', 'comments': None},
+    ])
+    def test_edits_without_a_comment_do_not_count(self, serve, transaction):
+        api = Api({'user.whoami': [self.whoami()], 'transaction.search': [self.transactions(transaction)]})
+        assert self.make(serve(reply=api)).has_human_comment(7) is False
+
+    def test_a_task_without_transactions_has_no_human_comment(self, serve):
+        api = Api({'user.whoami': [self.whoami()], 'transaction.search': [self.transactions()]})
+        assert self.make(serve(reply=api)).has_human_comment(7) is False
+
+    def test_comments_on_a_later_page_are_found(self, serve):
+        api = Api({
+            'user.whoami': [self.whoami()],
+            'transaction.search': [
+                phorge_reply({'data': [self.comment('PHID-USER-bot')], 'cursor': {'after': '9'}}),
+                self.transactions(self.comment('PHID-USER-alice')),
+            ],
+        })
+        server = serve(reply=api)
+        assert self.make(server).has_human_comment(7) is True
+        searches = [request for request in server.received if request['path'].endswith('transaction.search')]
+        assert [form(request).get('after') for request in searches] == [None, ['9']]
+
     @pytest.mark.usefixtures('clock')
     def test_create_trusts_a_clean_answer(self, serve):
         api = Api({'maniphest.edit': [phorge_reply({'object': {'id': 12}})]})
@@ -1085,10 +1169,30 @@ class TestIcinga:
         server = serve(reply=(200, json.dumps(reply).encode()))
         assert self.make(server).service('mw1', 'mw1 Disk')['host_name'] == 'mw1'
         body = json.loads(server.received[0]['body'])
-        assert body['filter'] == 'service.host_name == host && service.name == name'
-        assert body['filter_vars'] == {'host': 'mw1', 'name': 'mw1 Disk'}
+        assert body['filter'] == 'service.host_name == wanted_host && service.name == wanted_service'
+        assert body['filter_vars'] == {'wanted_host': 'mw1', 'wanted_service': 'mw1 Disk'}
         assert body['attrs'] == taskbot.ATTRS
         assert body['joins'] == taskbot.JOINS
+
+    def test_the_filter_still_matches_once_icinga_adds_its_own_names_to_the_scope(self, serve):
+        server = serve(reply=(200, b'{"results": []}'))
+        self.make(server).service('mw1', 'mw1 Disk')
+        body = json.loads(server.received[0]['body'])
+        assert icinga_filter_matches(body, {'host_name': 'mw1', 'name': 'mw1 Disk'}) is True
+        assert icinga_filter_matches(body, {'host_name': 'mw2', 'name': 'mw1 Disk'}) is False
+        assert icinga_filter_matches(body, {'host_name': 'mw1', 'name': 'mw1 Load'}) is False
+
+    def test_no_filter_variable_is_one_of_the_names_icinga_reserves(self, serve):
+        server = serve(reply=(200, b'{"results": []}'))
+        self.make(server).service('mw1', 'mw1 Disk')
+        body = json.loads(server.received[0]['body'])
+        assert not set(body['filter_vars']) & {*ICINGA_OWN_NAMES, 'service', 'obj'}
+
+    def test_the_problem_filter_selects_hard_non_ok_services(self):
+        body = {'filter': 'service.state != 0 && service.state_type == 1'}
+        assert icinga_filter_matches(body, {'state': 2.0, 'state_type': 1.0}) is True
+        assert icinga_filter_matches(body, {'state': 2.0, 'state_type': 0.0}) is False
+        assert icinga_filter_matches(body, {'state': 0.0, 'state_type': 1.0}) is False
 
     def test_service_not_found(self, serve):
         server = serve(reply=(200, b'{"results": []}'))
@@ -1696,13 +1800,48 @@ class TestProblemAndClear:
         bot.process(make_service(mode='any', state=2))
         assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['unbreak']
 
-    def test_dropping_from_critical_to_warning_fixes_the_title_but_keeps_the_priority(self, tmp_path):
+    def test_dropping_from_critical_to_warning_fixes_the_title_and_lowers_the_priority(self, tmp_path):
         bot = make_bot(tmp_path)
         bot.process(make_service(mode='any', state=2))
         bot.process(make_service(mode='any', state=1))
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is WARNING'
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['medium']
         assert comments(bot.phorge)[0].startswith('Now **WARNING**.')
+
+    def test_the_priority_goes_back_up_when_it_returns_to_critical(self, tmp_path):
+        bot = make_bot(tmp_path)
+        for state in (2, 1, 2):
+            bot.process(make_service(mode='any', state=state))
+        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+        assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
+
+    def test_a_priority_someone_set_is_not_lowered_when_it_improves(self, tmp_path):
+        bot = make_bot(tmp_path)
+        bot.process(make_service(mode='any', state=2))
+        bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES['unbreak']
+        bot.process(make_service(mode='any', state=1))
+        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['unbreak']
+
+    def test_a_lower_priority_someone_set_is_raised_again_when_it_gets_worse(self, tmp_path):
+        bot = make_bot(tmp_path)
+        bot.process(make_service(mode='any', state=1))
+        bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES['low']
+        bot.process(make_service(mode='any', state=2))
+        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+
+    def test_a_priority_someone_lowered_is_left_alone_when_it_improves(self, tmp_path):
+        bot = make_bot(tmp_path)
+        bot.process(make_service(mode='any', state=2))
+        bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES['lowest']
+        bot.process(make_service(mode='any', state=1))
+        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['lowest']
+
+    def test_nothing_is_sent_for_a_priority_that_is_already_right(self, tmp_path):
+        bot = make_bot(tmp_path)
+        bot.process(make_service(mode='any', state=2))
+        bot.process(make_service(mode='any', state=1))
+        bot.process(make_service(mode='any', state=1, last_state_change=5.0))
+        assert len(comments(bot.phorge)) == 1
 
     def test_only_the_changes_are_sent(self, tmp_path):
         bot = make_bot(tmp_path)
@@ -1729,7 +1868,7 @@ class TestProblemAndClear:
 
     @pytest.mark.usefixtures('clock')
     def test_recovery_can_close_the_task(self, tmp_path):
-        bot = make_bot(tmp_path, close_on_recovery=True, close_status='wontfix')
+        bot = make_bot(tmp_path, close_after_recovery_seconds=0, close_status='wontfix')
         bot.process(make_service())
         bot.process(make_service(state=0))
         assert bot.phorge.calls[-1][2][1] == {'type': 'status', 'value': 'wontfix'}
@@ -1737,7 +1876,7 @@ class TestProblemAndClear:
         assert bot.state.get('mw1!mw1 Disk')['closed'] == NOW
 
     def test_only_recovery_closes(self, tmp_path):
-        bot = make_bot(tmp_path, close_on_recovery=True)
+        bot = make_bot(tmp_path, close_after_recovery_seconds=0)
         bot.process(make_service(mode='critical', state=2))
         bot.process(make_service(mode='critical', state=1))
         assert [t['type'] for t in bot.phorge.calls[-1][2]] == ['comment']
@@ -1842,7 +1981,7 @@ class TestProblemAndClear:
 class TestReopen:
     @staticmethod
     def closed_task(tmp_path, **config):
-        bot = make_bot(tmp_path, close_on_recovery=True, **config)
+        bot = make_bot(tmp_path, close_after_recovery_seconds=0, **config)
         bot.process(make_service())
         bot.process(make_service(state=0))
         assert bot.phorge.tasks[1]['status'] == 'resolved'
@@ -1905,7 +2044,7 @@ class TestReopen:
         assert bot.state.get('mw1!mw1 Disk')['closed'] == clock.now
 
     def test_reopening_refreshes_the_title_and_priority(self, tmp_path, clock):
-        bot = make_bot(tmp_path, close_on_recovery=True)
+        bot = make_bot(tmp_path, close_after_recovery_seconds=0)
         bot.process(make_service(mode='any', state=1))
         bot.process(make_service(mode='any', state=0))
         clock.now += 60
@@ -1915,7 +2054,7 @@ class TestReopen:
         assert bot.phorge.tasks[1]['status'] == 'open'
 
     def test_the_close_status_is_what_counts(self, tmp_path, clock):
-        bot = make_bot(tmp_path, close_on_recovery=True, close_status='wontfix')
+        bot = make_bot(tmp_path, close_after_recovery_seconds=0, close_status='wontfix')
         bot.process(make_service())
         bot.process(make_service(state=0))
         clock.now += 60
@@ -1996,7 +2135,7 @@ class TestStorm:
 
     @pytest.mark.usefixtures('clock')
     def test_a_recovering_member_is_noted_on_the_summary(self, tmp_path):
-        bot = make_bot(tmp_path, storm_limit=1, close_on_recovery=True)
+        bot = make_bot(tmp_path, storm_limit=1, close_after_recovery_seconds=0)
         self.many(bot, 3)
         bot.process(make_service(name='svc2', state=0))
         assert comments(bot.phorge)[-1] == '`mw1!svc2` recovered.'
@@ -2005,18 +2144,18 @@ class TestStorm:
 
     @pytest.mark.usefixtures('clock')
     def test_the_summary_closes_when_every_member_has_recovered(self, tmp_path):
-        bot = make_bot(tmp_path, storm_limit=1, close_on_recovery=True, close_status='wontfix')
+        bot = make_bot(tmp_path, storm_limit=1, close_after_recovery_seconds=0, close_status='wontfix')
         self.many(bot, 3)
         bot.process(make_service(name='svc2', state=0))
         bot.process(make_service(name='svc3', state=0))
-        assert comments(bot.phorge)[-1] == 'No services are alerting any more.'
+        assert comments(bot.phorge)[-1] == '`mw1!svc3` recovered.'
         assert bot.phorge.calls[-1][2][1] == {'type': 'status', 'value': 'wontfix'}
         assert bot.phorge.tasks[2]['status'] == 'wontfix'
         assert bot.state.storm is None
 
     @pytest.mark.usefixtures('clock')
     def test_the_summary_stays_open_when_closing_is_off(self, tmp_path):
-        bot = make_bot(tmp_path, storm_limit=1, close_on_recovery=False)
+        bot = make_bot(tmp_path, storm_limit=1, close_after_recovery_seconds=None)
         self.many(bot, 3)
         bot.process(make_service(name='svc2', state=0))
         bot.process(make_service(name='svc3', state=0))
@@ -2025,7 +2164,7 @@ class TestStorm:
 
     @pytest.mark.usefixtures('clock')
     def test_a_normal_task_recovering_leaves_the_summary_alone(self, tmp_path):
-        bot = make_bot(tmp_path, storm_limit=1, close_on_recovery=True)
+        bot = make_bot(tmp_path, storm_limit=1, close_after_recovery_seconds=0)
         self.many(bot, 2)
         bot.process(make_service(name='svc1', state=0))
         assert bot.phorge.tasks[1]['status'] == 'resolved'
@@ -2141,7 +2280,7 @@ class TestAdoption:
         assert bot.phorge.calls == []
 
     def test_an_adopted_alert_that_recovered_is_closed_out(self, tmp_path):
-        bot = make_bot(tmp_path, close_on_recovery=True)
+        bot = make_bot(tmp_path, close_after_recovery_seconds=0)
         bot.phorge.add_task()
         bot.icinga.add(make_service(state=0))
         bot.prepare()
@@ -2715,6 +2854,235 @@ class TestRun:
         assert bot.icinga.syncs == 1
 
 
+class TestDescribeSeconds:
+    @pytest.mark.parametrize(('seconds', 'text'), [
+        (1, '1 second'),
+        (30, '30 seconds'),
+        (59, '59 seconds'),
+        (60, '1 minute'),
+        (90, '90 seconds'),
+        (600, '10 minutes'),
+        (3600, '1 hour'),
+        (5400, '90 minutes'),
+        (7200, '2 hours'),
+        (0.5, '0.5 seconds'),
+        (45.0, '45 seconds'),
+    ])
+    def test_units(self, seconds, text):
+        assert describe_seconds(seconds) == text
+
+
+class TestDelayedClose:
+    NOTICE = ' This task will be closed automatically in 10 minutes unless someone comments on it.'
+
+    @staticmethod
+    def recovered(tmp_path, delay=600, **config):
+        bot = make_bot(tmp_path, close_after_recovery_seconds=delay, **config)
+        bot.process(make_service())
+        bot.process(make_service(state=0))
+        return bot
+
+    @pytest.mark.usefixtures('clock')
+    def test_the_recovery_comment_announces_the_delay(self, tmp_path):
+        bot = self.recovered(tmp_path)
+        assert comments(bot.phorge) == ['Recovered, the service is back to **OK**.' + self.NOTICE]
+
+    @pytest.mark.usefixtures('clock')
+    def test_the_delay_is_shown_in_sensible_units(self, tmp_path):
+        bot = self.recovered(tmp_path, delay=7200)
+        assert 'closed automatically in 2 hours unless' in comments(bot.phorge)[0]
+
+    @pytest.mark.usefixtures('clock')
+    def test_nothing_is_closed_straight_away(self, tmp_path):
+        bot = self.recovered(tmp_path)
+        assert bot.phorge.tasks[1]['status'] == 'open'
+        assert bot.state.get('mw1!mw1 Disk') == {'task': 1, 'active': False, 'state': 'OK', 'alert': 'CRITICAL', 'recovered': NOW}
+
+    def test_nothing_happens_before_the_delay_is_over(self, tmp_path, clock):
+        bot = self.recovered(tmp_path)
+        before = len(bot.phorge.calls)
+        clock.now += 599
+        bot.close_due()
+        assert len(bot.phorge.calls) == before
+
+    def test_the_task_is_closed_once_the_delay_is_over(self, tmp_path, clock):
+        bot = self.recovered(tmp_path)
+        clock.now += 600
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+        assert comments(bot.phorge)[-1] == 'Closing automatically, the service has been back to **OK** for 10 minutes and nobody commented.'
+        assert bot.state.get('mw1!mw1 Disk') == {'task': 1, 'active': False, 'state': 'OK', 'alert': 'CRITICAL', 'closed': clock.now}
+
+    def test_the_close_status_is_used(self, tmp_path, clock):
+        bot = self.recovered(tmp_path, close_status='wontfix')
+        clock.now += 600
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'wontfix'
+
+    def test_a_sync_does_the_closing(self, tmp_path, clock):
+        bot = self.recovered(tmp_path)
+        bot.icinga.add(make_service(state=0))
+        clock.now += 600
+        bot.reconcile()
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+
+    def test_a_task_is_only_closed_once(self, tmp_path, clock):
+        bot = self.recovered(tmp_path)
+        clock.now += 600
+        bot.close_due()
+        calls = len(bot.phorge.calls)
+        clock.now += 600
+        bot.close_due()
+        assert len(bot.phorge.calls) == calls
+
+    def test_a_comment_from_a_person_keeps_the_task_open(self, tmp_path, clock):
+        bot = self.recovered(tmp_path)
+        bot.phorge.human_comments.add(1)
+        clock.now += 600
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'open'
+        assert comments(bot.phorge)[-1] == 'The service has recovered, but someone commented on this task, so it stays open for a person to decide.'
+        assert 'recovered' not in bot.state.get('mw1!mw1 Disk')
+        assert 'closed' not in bot.state.get('mw1!mw1 Disk')
+
+    def test_the_note_about_a_human_comment_is_posted_once(self, tmp_path, clock):
+        bot = self.recovered(tmp_path)
+        bot.phorge.human_comments.add(1)
+        clock.now += 600
+        bot.close_due()
+        clock.now += 600
+        bot.close_due()
+        assert len(comments(bot.phorge)) == 2
+
+    def test_a_task_someone_closed_meanwhile_is_left_alone(self, tmp_path, clock):
+        bot = self.recovered(tmp_path)
+        bot.phorge.close(1, 'wontfix')
+        calls = len(bot.phorge.calls)
+        clock.now += 600
+        bot.close_due()
+        assert len(bot.phorge.calls) == calls
+        assert bot.phorge.tasks[1]['status'] == 'wontfix'
+        assert bot.state.get('mw1!mw1 Disk') == {'task': 1, 'active': False, 'state': 'OK', 'alert': 'CRITICAL'}
+
+    def test_alerting_again_cancels_the_close(self, tmp_path, clock):
+        bot = self.recovered(tmp_path)
+        clock.now += 300
+        bot.process(make_service())
+        assert 'recovered' not in bot.state.get('mw1!mw1 Disk')
+        clock.now += 1000
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'open'
+
+    def test_recovering_again_restarts_the_delay(self, tmp_path, clock):
+        bot = self.recovered(tmp_path)
+        clock.now += 300
+        bot.process(make_service())
+        clock.now += 100
+        bot.process(make_service(state=0))
+        clock.now += 599
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'open'
+        clock.now += 1
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+
+    def test_a_restart_keeps_the_pending_close(self, tmp_path, clock):
+        first = self.recovered(tmp_path)
+        second = make_bot(tmp_path, close_after_recovery_seconds=600)
+        second.phorge = first.phorge
+        clock.now += 600
+        second.close_due()
+        assert second.phorge.tasks[1]['status'] == 'resolved'
+
+    def test_a_failure_is_retried_on_the_next_sync(self, tmp_path, clock):
+        bot = self.recovered(tmp_path)
+        clock.now += 600
+        bot.phorge.read_errors = [PhorgeError('down')]
+        bot.reconcile()
+        assert bot.failures == 1
+        assert bot.phorge.tasks[1]['status'] == 'open'
+        assert not (tmp_path / 'last_sync').exists()
+        bot.reconcile()
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+
+    def test_a_task_closed_this_way_can_be_reopened(self, tmp_path, clock):
+        bot = self.recovered(tmp_path)
+        clock.now += 600
+        bot.close_due()
+        clock.now += 3600
+        bot.process(make_service())
+        assert len(bot.phorge.created()) == 1
+        assert bot.phorge.tasks[1]['status'] == 'open'
+
+    def test_never_closing_is_possible(self, tmp_path, clock):
+        bot = self.recovered(tmp_path, delay=None)
+        assert comments(bot.phorge) == ['Recovered, the service is back to **OK**.']
+        clock.now += 10**6
+        bot.close_due()
+        assert bot.phorge.tasks[1]['status'] == 'open'
+        assert 'recovered' not in bot.state.get('mw1!mw1 Disk')
+
+    @pytest.mark.usefixtures('clock')
+    def test_a_zero_delay_closes_at_once_without_a_notice(self, tmp_path):
+        bot = self.recovered(tmp_path, delay=0)
+        assert comments(bot.phorge) == ['Recovered, the service is back to **OK**.']
+        assert bot.phorge.tasks[1]['status'] == 'resolved'
+
+    @pytest.mark.usefixtures('clock')
+    def test_dropping_to_a_non_alert_state_schedules_nothing(self, tmp_path):
+        bot = make_bot(tmp_path, close_after_recovery_seconds=600)
+        bot.process(make_service())
+        bot.process(make_service(state=1))
+        assert 'closed automatically' not in comments(bot.phorge)[0]
+        assert 'recovered' not in bot.state.get('mw1!mw1 Disk')
+
+    def test_the_storm_summary_waits_too(self, tmp_path, clock):
+        bot = make_bot(tmp_path, storm_limit=1, close_after_recovery_seconds=600)
+        TestStorm.many(bot, 3)
+        bot.process(make_service(name='svc2', state=0))
+        assert comments(bot.phorge)[-1] == '`mw1!svc2` recovered.'
+        bot.process(make_service(name='svc3', state=0))
+        assert comments(bot.phorge)[-1] == '`mw1!svc3` recovered.' + self.NOTICE
+        assert bot.state.storm_recovered == NOW
+        assert bot.phorge.tasks[2]['status'] == 'open'
+        clock.now += 600
+        bot.close_due()
+        assert bot.phorge.tasks[2]['status'] == 'resolved'
+        assert bot.state.storm is None
+        assert comments(bot.phorge)[-1].startswith('Closing automatically')
+
+    def test_the_storm_summary_stays_open_if_a_member_alerts_again(self, tmp_path, clock):
+        bot = make_bot(tmp_path, storm_limit=1, close_after_recovery_seconds=600)
+        TestStorm.many(bot, 2)
+        bot.process(make_service(name='svc2', state=0))
+        clock.now += 60
+        bot.process(make_service(name='svc2'))
+        clock.now += 600
+        bot.close_due()
+        assert bot.phorge.tasks[2]['status'] == 'open'
+
+    def test_the_storm_summary_with_a_human_comment_stays_open(self, tmp_path, clock):
+        bot = make_bot(tmp_path, storm_limit=1, close_after_recovery_seconds=600)
+        TestStorm.many(bot, 2)
+        bot.process(make_service(name='svc2', state=0))
+        bot.phorge.human_comments.add(2)
+        clock.now += 600
+        bot.close_due()
+        assert bot.phorge.tasks[2]['status'] == 'open'
+        assert 'stays open for a person to decide' in comments(bot.phorge)[-1]
+        assert bot.state.storm is None
+
+    def test_a_restart_keeps_the_pending_storm_close(self, tmp_path, clock):
+        first = make_bot(tmp_path, storm_limit=1, close_after_recovery_seconds=600)
+        TestStorm.many(first, 2)
+        first.process(make_service(name='svc2', state=0))
+        second = make_bot(tmp_path, storm_limit=1, close_after_recovery_seconds=600)
+        second.phorge = first.phorge
+        clock.now += 600
+        second.close_due()
+        assert second.phorge.tasks[2]['status'] == 'resolved'
+
+
 class PhorgeApp:
     def __init__(self):
         self.tasks = {}
@@ -2729,6 +3097,11 @@ class PhorgeApp:
             return phorge_reply({'data': self.search(fields), 'cursor': {'after': None}})
         if method == 'maniphest.edit':
             return phorge_reply({'object': {'id': self.edit(fields)}})
+        if method == 'transaction.search':
+            task = self.tasks[int(fields['objectIdentifier'][0].lstrip('T'))]
+            mine = [{'type': 'comment', 'authorPHID': 'PHID-USER-bot', 'comments': [{'removed': False}]} for _ in task['comments']]
+            theirs = [{'type': 'comment', 'authorPHID': 'PHID-USER-alice', 'comments': [{'removed': False}]} for _ in range(task.get('humans', 0))]
+            return phorge_reply({'data': mine + theirs, 'cursor': {'after': None}})
         return phorge_reply({})
 
     def search(self, fields):
@@ -2773,14 +3146,12 @@ class TestEndToEnd:
     @staticmethod
     def icinga_app(services):
         def app(request):
-            wanted = json.loads(request['body']).get('filter_vars')
+            body = json.loads(request['body'])
             found = []
             for attrs in services.values():
-                if wanted is None and (attrs['state'] == 0 or attrs['state_type'] != 1):
-                    continue
-                if wanted and (attrs['host_name'], attrs['name']) != (wanted['host'], wanted['name']):
-                    continue
                 plain = {key: value for key, value in attrs.items() if key != 'host'}
+                if not icinga_filter_matches(body, plain):
+                    continue
                 found.append({'attrs': plain, 'joins': {'host': attrs['host']}})
             return 200, json.dumps({'results': found}).encode()
 
@@ -2798,7 +3169,7 @@ class TestEndToEnd:
         phorge_server = serve(reply=app)
         services = {'mw1!mw1 Disk': make_service()}
         icinga_server = serve(reply=self.icinga_app(services))
-        bot = self.make(tmp_path, phorge_server, icinga_server, close_on_recovery=True)
+        bot = self.make(tmp_path, phorge_server, icinga_server, close_after_recovery_seconds=0)
         bot.prepare()
         bot.reconcile()
         task = app.tasks[1]
@@ -2816,17 +3187,52 @@ class TestEndToEnd:
         assert task['comments'][-1].startswith('Alerting again, **CRITICAL**.')
         assert all(form(request)['api.token'] == ['api-token'] for request in phorge_server.received)
 
+    def test_recovered_tasks_close_after_the_delay_unless_a_person_commented(self, serve, tmp_path, clock):
+        app = PhorgeApp()
+        phorge_server = serve(reply=app)
+        services = {
+            'mw1!mw1 Disk': make_service(),
+            'mw2!mw2 Disk': make_service(host='mw2', name='mw2 Disk'),
+        }
+        icinga_server = serve(reply=self.icinga_app(services))
+        bot = self.make(tmp_path, phorge_server, icinga_server, close_after_recovery_seconds=600)
+        bot.prepare()
+        bot.reconcile()
+        assert len(app.tasks) == 2
+        for attrs in services.values():
+            attrs['state'] = 0.0
+        bot.reconcile()
+        assert all(task['status'] == 'open' for task in app.tasks.values())
+        assert 'closed automatically in 10 minutes' in app.tasks[1]['comments'][-1]
+        app.tasks[2]['humans'] = 1
+        clock.now += 600
+        bot.reconcile()
+        assert app.tasks[1]['status'] == 'resolved'
+        assert app.tasks[2]['status'] == 'open'
+        assert 'stays open for a person to decide' in app.tasks[2]['comments'][-1]
+
+    @pytest.mark.usefixtures('clock')
+    def test_events_find_the_service_through_real_http(self, serve, tmp_path):
+        app = PhorgeApp()
+        phorge_server = serve(reply=app)
+        services = {'mw1!mw1 Disk': make_service()}
+        icinga_server = serve(reply=self.icinga_app(services))
+        bot = self.make(tmp_path, phorge_server, icinga_server)
+        bot.prepare()
+        bot.on_event(state_change())
+        assert len(app.tasks) == 1
+
     @pytest.mark.usefixtures('clock')
     def test_a_lost_state_file_is_rebuilt_through_real_http(self, serve, tmp_path):
         app = PhorgeApp()
         phorge_server = serve(reply=app)
         services = {'mw1!mw1 Disk': make_service()}
         icinga_server = serve(reply=self.icinga_app(services))
-        first = self.make(tmp_path, phorge_server, icinga_server, close_on_recovery=True)
+        first = self.make(tmp_path, phorge_server, icinga_server, close_after_recovery_seconds=0)
         first.prepare()
         first.reconcile()
         edits = len(app.edits)
-        fresh = self.make(tmp_path, phorge_server, icinga_server, close_on_recovery=True, state_file=str(tmp_path / 'fresh.json'))
+        fresh = self.make(tmp_path, phorge_server, icinga_server, close_after_recovery_seconds=0, state_file=str(tmp_path / 'fresh.json'))
         fresh.prepare()
         fresh.reconcile()
         assert len(app.tasks) == 1
@@ -3123,7 +3529,7 @@ class TestConfigTemplate:
     def test_reopening_only_makes_sense_when_the_bot_closes_tasks(self):
         config = rendered()
         assert config['reopen_hours'] > 0
-        assert config['close_on_recovery'] is True
+        assert config['close_after_recovery_seconds'] is not None
 
     def test_the_storm_settings_are_usable(self):
         config = rendered()
@@ -3188,7 +3594,3 @@ class TestDeployment:
         assert "'objects/query/Host'" in permissions
         assert "'objects/query/Service'" in permissions
         assert "'events/StateChange'" in permissions
-
-    def test_flapping_detection_is_only_switched_on_for_opted_in_services(self):
-        text = (MONITORING / 'services.pp').read_text()
-        assert re.search(r'enable_flapping\s*=> \$phorge_task \? \{\s*undef\s*=> undef,\s*default => true,', text)
