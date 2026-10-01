@@ -1,11 +1,11 @@
 # define: monitoring::nrpe
 define monitoring::nrpe (
-    String                           $command,
-    VMlib::Ensure                    $ensure          = present,
-    Boolean                          $critical        = false,
-    Optional[Stdlib::HTTPSUrl]       $docs            = undef,
-    Optional[Monitoring::PhorgeTask] $phorge_task     = undef,
-    Array[Monitoring::PhorgeProject] $phorge_projects = [],
+    String                                           $command,
+    VMlib::Ensure                                    $ensure          = present,
+    Boolean                                          $critical        = false,
+    Optional[Stdlib::HTTPSUrl]                       $docs            = undef,
+    Optional[Array[Monitoring::PhorgeTrigger, 1, 3]] $phorge_triggers = undef,
+    Array[Monitoring::PhorgeProject]                 $phorge_projects = [],
 ) {
     $title_safe  = regsubst($title, '[\W]', '-', 'G')
     @file { "/etc/nagios/nrpe.d/${title_safe}.cfg":
@@ -23,7 +23,7 @@ define monitoring::nrpe (
             check_command   => 'nrpe',
             docs            => $docs,
             critical        => $critical,
-            phorge_task     => $phorge_task,
+            phorge_triggers => $phorge_triggers,
             phorge_projects => $phorge_projects,
             vars            => {
                 nrpe_command => "check_${title}",
