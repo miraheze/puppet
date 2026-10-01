@@ -1,16 +1,17 @@
+# class: monitoring
 class monitoring (
-    String $icingadb_db_host,
-    String $icingadb_db_name                = 'icingadb',
-    String $icingadb_db_user                = 'icinga2',
-    String $icingadb_db_password,
-    String $icingadb_redis_host             = 'localhost',
-    Stdlib::Port $icingadb_redis_port       = 6379,
-    String $icingadb_redis_password,
-    String $mirahezebots_password,
-    String $ticket_salt                     = '',
-    Optional[String] $icinga2_api_bind_host = undef,
-    String $icingaweb2_api_password,
-    String $taskbot_api_password,
+    String           $icingadb_db_host,
+    String           $icingadb_db_name        = 'icingadb',
+    String           $icingadb_db_user        = 'icinga2',
+    String           $icingadb_db_password,
+    String           $icingadb_redis_host     = 'localhost',
+    Stdlib::Port     $icingadb_redis_port     = 6379,
+    String           $icingadb_redis_password,
+    String           $mirahezebots_password,
+    String           $ticket_salt             = '',
+    Optional[String] $icinga2_api_bind_host   = undef,
+    String           $icingaweb2_api_password,
+    String           $taskbot_api_password,
 ) {
     stdlib::ensure_packages([
         'nagios-nrpe-plugin',
@@ -106,9 +107,7 @@ class monitoring (
     }
 
     include icinga2::feature::command
-
     include icinga2::feature::notification
-
     include icinga2::feature::perfdata
 
     class { 'icinga2::feature::icingadb':
@@ -263,7 +262,7 @@ class monitoring (
         .sort()
 
     file { '/etc/icinga2/conf.d/ssl.conf':
-        ensure  => 'present',
+        ensure  => present,
         content => template('monitoring/ssl.conf.erb'),
         owner   => 'root',
         group   => 'root',
@@ -273,7 +272,7 @@ class monitoring (
     }
 
     file { '/etc/icinga2/scripts/ssl-renew.sh':
-        ensure => 'present',
+        ensure => present,
         source => 'puppet:///modules/monitoring/scripts/ssl-renew.sh',
         owner  => 'root',
         group  => 'root',
@@ -321,7 +320,7 @@ class monitoring (
 
     # Icinga monitoring
     monitoring::nrpe { 'Check correctness of the icinga configuration':
-        command => '/usr/lib/nagios/plugins/check_icinga_config'
+        command => '/usr/lib/nagios/plugins/check_icinga_config',
     }
 
     systemd::timer::job { 'remove_icinga2_perfdata':
