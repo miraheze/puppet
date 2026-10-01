@@ -2,9 +2,9 @@
 class bots::salbot {
     include bots
 
+    $http_proxy   = lookup('http_proxy', {'default_value' => undef})
     $irc_password = lookup('passwords::irc::salbot')
     $phorge_token = lookup('passwords::phorge::salbot')
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
 
     file { '/etc/salbot':
         ensure => directory,
