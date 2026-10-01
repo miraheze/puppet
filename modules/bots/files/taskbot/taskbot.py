@@ -50,7 +50,7 @@ REQUIRED = {
     'priorities': ['WARNING', 'CRITICAL', 'UNKNOWN'],
     'icingaweb_url': None,
     'skip_in_downtime': None,
-    'close_on_recovery': None,
+    'close_after_recovery_seconds': None,
     'close_status': None,
     'grace_minutes': None,
     'storm_limit': None,
@@ -94,6 +94,9 @@ def invalid_values(config):
         value = config[key]
         if isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0:
             problems.append(f'{key} must be a number of 0 or more')
+    delay = config['close_after_recovery_seconds']
+    if delay is not None and (isinstance(delay, bool) or not isinstance(delay, (int, float)) or delay < 0):
+        problems.append('close_after_recovery_seconds must be null or a number of 0 or more')
     limit = config['storm_limit']
     if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
         problems.append('storm_limit must be a whole number of 1 or more')
@@ -158,6 +161,15 @@ def is_storm_task(task):
 def title_state(task):
     match = TITLE_STATE.search((task.get('fields') or {}).get('name') or '')
     return match.group(1) if match else 'UNKNOWN'
+
+
+def describe_seconds(seconds):
+    for size, unit in ((3600, 'hour'), (60, 'minute')):
+        if seconds >= size and seconds % size == 0:
+            count = int(seconds // size)
+            return f"{count} {unit}{'' if count == 1 else 's'}"
+    count = int(seconds) if float(seconds).is_integer() else seconds
+    return f"{count} second{'' if count == 1 else 's'}"
 
 
 def failing_since(attrs):
@@ -275,6 +287,20 @@ class Phorge:
         })
         return bool(result['data'])
 
+    def has_human_comment(self, task):
+        bot = self.whoami()
+        params = {'objectIdentifier': f'T{task}', 'limit': 100}
+        while True:
+            result = self.call('transaction.search', params)
+            for transaction in result['data']:
+                comments = transaction.get('comments') or []
+                if transaction.get('authorPHID') != bot and any(not comment.get('removed') for comment in comments):
+                    return True
+            after = (result.get('cursor') or {}).get('after')
+            if not after:
+                return False
+            params = {**params, 'after': after}
+
     def details(self, task):
         result = self.call('maniphest.search', {
             'queryKey': 'all',
@@ -340,8 +366,8 @@ class Icinga:
 
     def service(self, host, name):
         services = self.query({
-            'filter': 'service.host_name == host && service.name == name',
-            'filter_vars': {'host': host, 'name': name},
+            'filter': 'service.host_name == wanted_host && service.name == wanted_service',
+            'filter_vars': {'wanted_host': host, 'wanted_service': name},
         })
         return services[0] if services else None
 
@@ -363,6 +389,7 @@ class State:
         self.services = {}
         self.created = []
         self.storm = None
+        self.storm_recovered = None
         try:
             with open(path) as handle:
                 data = json.load(handle)
@@ -378,6 +405,7 @@ class State:
             self.services = data['services']
             self.created = data.get('created') or []
             self.storm = data.get('storm')
+            self.storm_recovered = data.get('storm_recovered')
         else:
             self.services = data
 
@@ -387,7 +415,12 @@ class State:
         temp = f'{self.path}.tmp'
         with open(temp, 'w') as handle:
             json.dump(
-                {'services': self.services, 'created': self.created, 'storm': self.storm},
+                {
+                    'services': self.services,
+                    'created': self.created,
+                    'storm': self.storm,
+                    'storm_recovered': self.storm_recovered,
+                },
                 handle,
                 indent=2,
                 sort_keys=True,
@@ -411,6 +444,11 @@ class State:
 
     def set_storm(self, task):
         self.storm = task
+        self.storm_recovered = None
+        self.save()
+
+    def set_storm_recovered(self, when):
+        self.storm_recovered = when
         self.save()
 
 
@@ -487,8 +525,13 @@ class Bot:
         transactions = []
         if previous and previous != state and info['title'] == self.title(attrs, previous):
             transactions.append({'type': 'title', 'value': self.title(attrs, state)})
-        wanted = self.config['priorities'][state]
-        if PRIORITIES[wanted] > info['priority']:
+        priorities = self.config['priorities']
+        wanted = priorities[state]
+        current = info['priority']
+        target = PRIORITIES[wanted]
+        ours = PRIORITIES[priorities[previous]] if previous in priorities else None
+        worse = ours is None or target > ours
+        if target != current and (current == ours or (worse and target > current)):
             transactions.append({'type': 'priority', 'value': wanted})
         return transactions
 
@@ -561,26 +604,38 @@ class Bot:
         self.phorge.edit([{'type': 'comment', 'value': f'`{key}` is now **{state}**.'}], entry['task'])
         self.state.put(key, {**entry, 'state': state, 'alert': state})
 
+    def storm_members(self, task, skip=None):
+        return [
+            other for key, other in self.state.services.items()
+            if other.get('storm') and other.get('active') and other['task'] == task and key != skip
+        ]
+
+    def closing_notice(self):
+        delay = self.config['close_after_recovery_seconds']
+        if not delay:
+            return ''
+        return f' This task will be closed automatically in {describe_seconds(delay)} unless someone comments on it.'
+
     def storm_clear(self, key, state, entry):
+        task = entry['task']
+        last = not self.storm_members(task, skip=key)
         if state == 'OK':
             text = f'`{key}` recovered.'
         else:
             text = f'`{key}` is now **{state}**, which is not an alert state.'
-        task = entry['task']
-        self.phorge.edit([{'type': 'comment', 'value': text}], task)
+        if last:
+            text += self.closing_notice()
+        transactions = [{'type': 'comment', 'value': text}]
+        closing = last and self.config['close_after_recovery_seconds'] == 0
+        if closing:
+            transactions.append({'type': 'status', 'value': self.config['close_status']})
+        self.phorge.edit(transactions, task)
         self.state.put(key, {**entry, 'active': False, 'state': state})
-        active = [
-            other for other in self.state.services.values()
-            if other.get('storm') and other.get('active') and other['task'] == task
-        ]
-        if not active and self.config['close_on_recovery']:
-            closing = [
-                {'type': 'comment', 'value': 'No services are alerting any more.'},
-                {'type': 'status', 'value': self.config['close_status']},
-            ]
-            self.phorge.edit(closing, task)
+        if closing:
             log.info(f'Closed alert storm task T{task}')
             self.state.set_storm(None)
+        elif last and self.config['close_after_recovery_seconds']:
+            self.state.set_storm_recovered(time.time())
 
     def create_task(self, key, attrs, state):
         if self.storming():
@@ -625,11 +680,12 @@ class Bot:
         if entry.get('storm'):
             self.storm_clear(key, state, entry)
             return
+        delay = self.config['close_after_recovery_seconds']
         if state == 'OK':
-            text = 'Recovered, the service is back to **OK**.'
+            text = 'Recovered, the service is back to **OK**.' + self.closing_notice()
         else:
             text = f'Now **{state}**, which is not an alert state for this service.'
-        closing = state == 'OK' and self.config['close_on_recovery']
+        closing = state == 'OK' and delay == 0
         transactions = [{'type': 'comment', 'value': text}]
         if closing:
             transactions.append({'type': 'status', 'value': self.config['close_status']})
@@ -643,7 +699,51 @@ class Bot:
         }
         if closing:
             updated['closed'] = time.time()
+        elif state == 'OK' and delay:
+            updated['recovered'] = time.time()
         self.state.put(key, updated)
+
+    def close_unless_handled(self, task):
+        if not self.phorge.is_open(task):
+            return False
+        if self.phorge.has_human_comment(task):
+            note = 'The service has recovered, but someone commented on this task, so it stays open for a person to decide.'
+            self.phorge.edit([{'type': 'comment', 'value': note}], task)
+            log.info(f'Left T{task} open because someone commented on it')
+            return False
+        delay = describe_seconds(self.config['close_after_recovery_seconds'])
+        note = f'Closing automatically, the service has been back to **OK** for {delay} and nobody commented.'
+        self.phorge.edit([
+            {'type': 'comment', 'value': note},
+            {'type': 'status', 'value': self.config['close_status']},
+        ], task)
+        log.info(f'Closed T{task} after it recovered')
+        return True
+
+    def close_recovered(self, key, entry):
+        settled = {name: value for name, value in entry.items() if name != 'recovered'}
+        if self.close_unless_handled(entry['task']):
+            settled['closed'] = time.time()
+        self.state.put(key, settled)
+
+    def close_storm(self, task):
+        self.close_unless_handled(task)
+        self.state.set_storm(None)
+
+    def close_due(self):
+        delay = self.config['close_after_recovery_seconds']
+        if not delay:
+            return
+        now = time.time()
+        for key, entry in list(self.state.services.items()):
+            recovered = entry.get('recovered')
+            if entry.get('active') or recovered is None or now - recovered < delay:
+                continue
+            self.safe(self.close_recovered, key, entry)
+        task = self.state.storm
+        recovered = self.state.storm_recovered
+        if task is not None and recovered is not None and now - recovered >= delay and not self.storm_members(task):
+            self.safe(self.close_storm, task)
 
     def process(self, attrs):
         key = f"{attrs['host_name']}!{attrs['name']}"
@@ -725,6 +825,7 @@ class Bot:
             else:
                 log.warning(f'{key} no longer exists in Icinga')
                 self.state.put(key, {**entry, 'active': False, 'state': 'GONE'})
+        self.close_due()
         self.last_reconcile = time.monotonic()
         self.beat()
 
