@@ -4,13 +4,13 @@ class bots::pywikibot {
     # The directory pointed to by the PYWIKIBOT_DIR environment variable
     $base_path = '/var/local/pwb'
 
-    $consumer_token = lookup('passwords::pywikibot::consumer_token')
+    $consumer_token  = lookup('passwords::pywikibot::consumer_token')
     $consumer_secret = lookup('passwords::pywikibot::consumer_secret')
-    $access_token = lookup('passwords::pywikibot::access_token')
-    $access_secret = lookup('passwords::pywikibot::access_secret')
+    $access_token    = lookup('passwords::pywikibot::access_token')
+    $access_secret   = lookup('passwords::pywikibot::access_secret')
 
     file { $install_path:
-        ensure    => 'directory',
+        ensure    => directory,
         owner     => 'pywikibot',
         group     => 'pywikibot',
         mode      => '0644',
@@ -18,21 +18,21 @@ class bots::pywikibot {
     }
 
     file { $base_path:
-        ensure => 'directory',
+        ensure => directory,
         owner  => 'pywikibot',
         group  => 'pywikibot',
         mode   => '0644',
     }
 
     file { "${base_path}/families":
-        ensure => 'directory',
+        ensure => directory,
         owner  => 'pywikibot',
         group  => 'pywikibot',
         mode   => '0644',
     }
 
     file { '/usr/local/bin/pywikibot':
-        ensure  => 'present',
+        ensure  => present,
         owner   => 'root',
         group   => 'root',
         mode    => '0555',
