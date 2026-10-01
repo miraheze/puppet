@@ -5,7 +5,7 @@ define bots::relaybot (
 ) {
     $install_path = "/srv/${title}"
 
-    $bot_token = lookup("passwords::irc::${title}::bot_token")
+    $bot_token    = lookup("passwords::irc::${title}::bot_token")
     $irc_password = lookup("passwords::irc::${title}::irc_password")
 
     $http_proxy = lookup('http_proxy', {'default_value' => undef})

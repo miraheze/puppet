@@ -1,7 +1,7 @@
-# type: bots::ircrcbot
+# define: bots::ircrcbot
 define bots::ircrcbot(
-    String $nickname,
-    String $channel,
+    String       $nickname,
+    String       $channel,
     Stdlib::Host $network,
     Stdlib::Port $network_port,
     Stdlib::Port $udp_port,
