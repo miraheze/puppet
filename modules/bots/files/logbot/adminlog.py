@@ -20,13 +20,19 @@ def log(config, message, project, author):
     if config.wiki_category:
         import re
 
+    connection_options = {}
+    proxy = getattr(config, 'proxy', None)
+    if proxy:
+        connection_options['proxies'] = {'http': proxy, 'https': proxy}
+
     site = mwclient.Site(config.wiki_connection,
                          path=config.wiki_path,
                          clients_useragent='WikiTide-LogBot/0.2 run by the WikiTide Technology team',
                          consumer_token=config.wiki_consumer_token,
                          consumer_secret=config.wiki_consumer_secret,
                          access_token=config.wiki_access_token,
-                         access_secret=config.wiki_access_secret
+                         access_secret=config.wiki_access_secret,
+                         connection_options=connection_options
                         )
     if config.enable_projects:
         project = project.capitalize()
