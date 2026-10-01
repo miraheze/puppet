@@ -1,3 +1,4 @@
+# define: monitoring::nrpe
 define monitoring::nrpe (
     String                           $command,
     VMlib::Ensure                    $ensure          = present,
@@ -17,7 +18,7 @@ define monitoring::nrpe (
         tag     => 'nrpe',
     }
 
-    if $ensure == 'present' {
+    if $ensure == present {
         monitoring::services { $title:
             check_command   => 'nrpe',
             docs            => $docs,
