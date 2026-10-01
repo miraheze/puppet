@@ -10,11 +10,11 @@ define monitoring::services (
     $docs           = undef,
     $critical       = false,
     $vars           = undef,
-    Optional[Monitoring::PhorgeTask] $phorge_task     = undef,
-    Array[Monitoring::PhorgeProject] $phorge_projects = [],
+    Optional[Array[Monitoring::PhorgeTrigger, 1, 3]] $phorge_triggers = undef,
+    Array[Monitoring::PhorgeProject]                 $phorge_projects = [],
 ) {
-    if $phorge_task == undef and !$phorge_projects.empty {
-        fail("monitoring::services[${title}] sets phorge_projects without phorge_task")
+    if $phorge_triggers == undef and !$phorge_projects.empty {
+        fail("monitoring::services[${title}] sets phorge_projects without phorge_triggers")
     }
 
     $base_vars = $vars ? {
@@ -22,10 +22,10 @@ define monitoring::services (
         default => $vars,
     }
 
-    $service_vars = $phorge_task ? {
+    $service_vars = $phorge_triggers ? {
         undef   => $vars,
         default => $base_vars + {
-            'phorge_task'     => $phorge_task,
+            'phorge_triggers' => $phorge_triggers,
             'phorge_projects' => $phorge_projects,
         },
     }
