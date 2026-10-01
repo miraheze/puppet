@@ -2,10 +2,10 @@
 class bots::taskbot {
     include bots
 
-    $icinga_host = lookup('icinga2_host', {'default_value' => 'mon181.fsslc.wtnet'})
+    $http_proxy      = lookup('http_proxy', {'default_value' => undef})
+    $icinga_host     = lookup('icinga2_host', {'default_value' => 'mon181.fsslc.wtnet'})
     $icinga_password = lookup('passwords::icinga2::taskbot')
-    $phorge_token = lookup('passwords::phorge::monitoring_bot')
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
+    $phorge_token    = lookup('passwords::phorge::monitoring_bot')
 
     file { '/etc/taskbot':
         ensure => directory,
