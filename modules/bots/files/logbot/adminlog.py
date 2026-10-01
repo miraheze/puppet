@@ -97,6 +97,49 @@ def page_url(site, info, page):
     return url
 
 
+def fetch_page(site, pagename, section=None):
+    query = {}
+    if site.require(1, 32, raise_error=False):
+        query['rvslots'] = 'main'
+    if section is not None:
+        query['rvsection'] = section
+    result = site.get('query', prop='info|revisions', titles=pagename,
+                      inprop='protection|url', rvprop='content|timestamp',
+                      redirects='', **query)
+    info = dict(list(result['query']['pages'].values())[0])
+    revisions = info.pop('revisions', [])
+    page = Page(site, pagename, info=info)
+    text = ''
+    if revisions:
+        rev = revisions[0]
+        text = rev['slots']['main']['*'] if 'slots' in rev else rev['*']
+        page.last_rev_time = parse_timestamp(rev['timestamp'])
+    page.edit_time = time.gmtime()
+    return page, info, text
+
+
+def make_entry(now, message, author, text):
+    fingerprint = hashlib.sha1(message.encode("utf-8", "replace")).hexdigest()[:8]
+    base_id = "sal-%s-%s" % (now.strftime("%Y%m%d%H%M%S"), fingerprint)
+    entry_id = base_id
+    counter = 1
+    while 'id="%s"' % entry_id in text:
+        counter += 1
+        entry_id = "%s-%d" % (base_id, counter)
+    logline = '* <span id="%s">%02d:%02d %s: %s</span>' % (
+        entry_id, now.hour, now.minute, author, message)
+    return entry_id, logline
+
+
+def header_date_of(line, header):
+    if not line.startswith(header):
+        return None
+    try:
+        return [int(x) for x in line.strip(" =").split("-")]
+    except ValueError:
+        return None
+
+
 def write_entry(config, message, project, author, now, state):
     if config.enable_identica:
         import statusnet
@@ -111,49 +154,44 @@ def write_entry(config, message, project, author, now, state):
     else:
         pagename = config.wiki_page
 
-    query = {}
-    if site.require(1, 32, raise_error=False):
-        query['rvslots'] = 'main'
-    result = site.get('query', prop='info|revisions', titles=pagename,
-                      inprop='protection|url', rvprop='content|timestamp',
-                      redirects='', **query)
-    info = dict(list(result['query']['pages'].values())[0])
-    revisions = info.pop('revisions', [])
-    page = Page(site, pagename, info=info)
-    text = ''
-    if revisions:
-        rev = revisions[0]
-        text = rev['slots']['main']['*'] if 'slots' in rev else rev['*']
-        page.last_rev_time = parse_timestamp(rev['timestamp'])
-    page.edit_time = time.gmtime()
-
-    lines = text.split('\n')
-    position = 0
+    summary = "%s (%s)" % (message, author)
+    bot = getattr(config, 'wiki_bot', True)
+    header = "=" * config.wiki_header_depth
+    today = [now.year, now.month, now.day]
     previous = state.get('entry_id')
+    page = None
+
+    if not config.wiki_category:
+        try:
+            page, info, text = fetch_page(site, pagename, section=1)
+        except mwclient.errors.APIError as error:
+            if error.code != 'rvnosuchsection':
+                raise
+        if page is not None:
+            if previous and 'id="%s"' % previous in text:
+                return page_url(site, info, page) + "#" + previous
+            lines = text.split('\n')
+            if header_date_of(lines[0], header) == today:
+                entry_id, logline = make_entry(now, message, author, text)
+                lines.insert(1, logline)
+                state['entry_id'] = entry_id
+                page.edit('\n'.join(lines), summary, bot=bot, section=1)
+                return page_url(site, info, page) + "#" + entry_id
+
+    page, info, text = fetch_page(site, pagename)
     if previous and 'id="%s"' % previous in text:
         return page_url(site, info, page) + "#" + previous
-    fingerprint = hashlib.sha1(message.encode("utf-8", "replace")).hexdigest()[:8]
-    base_id = "sal-%s-%s" % (now.strftime("%Y%m%d%H%M%S"), fingerprint)
-    entry_id = base_id
-    counter = 1
-    while 'id="%s"' % entry_id in text:
-        counter += 1
-        entry_id = "%s-%d" % (base_id, counter)
-    logline = '* <span id="%s">%02d:%02d %s: %s</span>' % (
-        entry_id, now.hour, now.minute, author, message)
+    lines = text.split('\n')
+    entry_id, logline = make_entry(now, message, author, text)
 
-    # Try extracting latest date header
-    header = "=" * config.wiki_header_depth
+    position = 0
     header_date = None
     for line in lines:
         position += 1
         if line.startswith(header):
-            try:
-                header_date = [int(x) for x in line.strip(" =").split("-")]
-            except ValueError:
-                header_date = None
+            header_date = header_date_of(line, header)
             break
-    if header_date != [now.year, now.month, now.day]:
+    if header_date != today:
         lines.insert(position - 1, "")
         lines.insert(position - 1, logline)
         lines.insert(position - 1, now.strftime("{0} %Y-%m-%d {0}".format(header)))
@@ -166,11 +204,7 @@ def write_entry(config, message, project, author, now, state):
                          + config.wiki_category + ']]</noinclude>')
 
     state['entry_id'] = entry_id
-    page.save(
-        '\n'.join(lines),
-        "%s (%s)" % (message, author),
-        bot=getattr(config, 'wiki_bot', True)
-    )
+    page.save('\n'.join(lines), summary, bot=bot)
 
     micro_update = ("%s: %s" % (author, message))[:140]
 
