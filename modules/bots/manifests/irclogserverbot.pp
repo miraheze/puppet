@@ -1,5 +1,5 @@
 # class: bots::irclogserverbot
-class bots::irclogserverbot(
+class bots::irclogserverbot (
     String       $nickname,
     String       $channel,
     Stdlib::Host $network,
