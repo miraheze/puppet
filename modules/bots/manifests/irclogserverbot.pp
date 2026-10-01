@@ -8,6 +8,7 @@ class bots::irclogserverbot(
 ) {
     include bots
 
+    $http_proxy            = lookup('http_proxy', {'default_value' => undef})
     $mirahezebots_password = lookup('passwords::irc::mirahezebots')
 
     file { '/usr/local/bin/irclogserverbot.py':
@@ -19,6 +20,7 @@ class bots::irclogserverbot(
             'network'               => $network,
             'network_port'          => $network_port,
             'udp_port'              => $udp_port,
+            'http_proxy'            => $http_proxy,
         }),
         mode    => '0755',
         notify  => Service['irclogserverbot'],
