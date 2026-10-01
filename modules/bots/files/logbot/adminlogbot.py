@@ -443,13 +443,12 @@ class logbot(ircbot.SingleServerIRCBot):
                 logging.exception('Failed to log message: %r' % e)
                 try:
                     self.connection.privmsg(
-                        event.target(),
+                        event.target,
                         "An exception was raised while trying to log "
-                        "your message, {author}".format(author=title)
+                        "your message, {author}".format(author=author)
                     )
                 except Exception:
                     pass
-
 
 parser = argparse.ArgumentParser(description='IRC log bot.',
                                  epilog='When run without args it will'
