@@ -1,5 +1,5 @@
 # define: bots::ircrcbot
-define bots::ircrcbot(
+define bots::ircrcbot (
     String       $nickname,
     String       $channel,
     Stdlib::Host $network,
@@ -8,6 +8,7 @@ define bots::ircrcbot(
 ) {
     include bots
 
+    $http_proxy            = lookup('http_proxy', {'default_value' => undef})
     $mirahezebots_password = lookup('passwords::irc::mirahezebots')
 
     file { "/usr/local/bin/ircrcbot-${nickname}.py":
@@ -19,6 +20,7 @@ define bots::ircrcbot(
             'network'               => $network,
             'network_port'          => $network_port,
             'udp_port'              => $udp_port,
+            'http_proxy'            => $http_proxy,
         }),
         mode    => '0755',
         notify  => Service["ircrcbot-${nickname}"],
