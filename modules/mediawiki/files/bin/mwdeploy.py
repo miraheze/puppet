@@ -414,6 +414,9 @@ class RsyncCommandBuilder:
                     params += f' --exclude={protected}'
             if glob.glob(os.path.join(dest_root, 'config', NEVER_DELETE_GLOB)):
                 params += f' --exclude="{NEVER_DELETE_GLOB}"'
+        for path in relative_paths:
+            if os.path.exists(os.path.join(dest_root, path, 'LocalSettings.php')):
+                params += ' --exclude=LocalSettings.php'
         sources = ' '.join(f'{source_root}/./{path}' for path in relative_paths)
 
         if local:
