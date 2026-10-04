@@ -8,7 +8,7 @@ class role::jobrunner_haproxy (
 
     haproxy::site { 'lb':
         ensure  => present,
-        content => template('role/jobrunner_haproxy/lb.cfg.erb'),
+        content => epp('role/jobrunner_haproxy/lb.cfg.epp', { 'backends' => $backends }),
     }
 
     rsyslog::conf { 'haproxy':

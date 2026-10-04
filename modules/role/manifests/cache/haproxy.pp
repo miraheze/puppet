@@ -75,8 +75,8 @@ class role::cache::haproxy(
     }
 
     class { '::haproxy':
-        config_content => template('role/cache/haproxy.cfg.erb'),
-        systemd_content => template('role/cache/haproxy.service.erb'),
+        config_content => epp('role/cache/haproxy.cfg.epp', { 'socket' => $socket, 'numa_iface' => $numa_iface, 'use_graylog' => $use_graylog, 'log_length' => $log_length, 'extended_logging' => $extended_logging }),
+        systemd_content => epp('role/cache/haproxy.service.epp', { 'pid' => $pid, 'enable_coredumps' => $enable_coredumps, 'do_systemd_hardening' => $do_systemd_hardening }),
     }
 
     ensure_packages('python3-pystemd')

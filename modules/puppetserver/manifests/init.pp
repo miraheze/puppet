@@ -254,7 +254,7 @@ class puppetserver(
 
     file { '/root/geoipupdate':
         ensure  => present,
-        content => template('puppetserver/geoipupdate'),
+        content => epp('puppetserver/geoipupdate.epp', { 'geoip_key' => $geoip_key }),
         mode    => '0555',
     }
 
@@ -274,7 +274,7 @@ class puppetserver(
 
     file { '/root/updatesfs':
         ensure  => present,
-        content => template('puppetserver/updatesfs'),
+        content => epp('puppetserver/updatesfs.epp'),
         mode    => '0555',
     }
 
@@ -297,7 +297,7 @@ class puppetserver(
 
     file { '/usr/local/bin/listdomains':
         ensure  => present,
-        content => template('puppetserver/listdomains.py'),
+        content => epp('puppetserver/listdomains.py.epp', { 'cloudflare_api_token' => $cloudflare_api_token, 'cloudflare_zone_id' => $cloudflare_zone_id }),
         mode    => '0555',
     }
 

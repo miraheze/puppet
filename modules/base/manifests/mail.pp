@@ -14,7 +14,7 @@ class base::mail (
         ensure  => present,
         owner   => 'postfix',
         group   => 'postfix',
-        content => template('base/mail/main.cf'),
+        content => epp('base/mail/main.cf.epp', { 'relayhost' => $relayhost }),
         require => Package['postfix'],
         notify  => Service['postfix'],
     }

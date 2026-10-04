@@ -1,0 +1,40 @@
+<%- | String $ldap_password,
+      String $ido_db_host,
+      String $ido_db_name,
+      String $ido_db_user_name,
+      String $ido_db_user_password,
+      String $icingadb_db_host,
+      String $icingadb_db_name,
+      String $icingadb_db_user,
+      String $icingadb_db_user_password
+| -%>
+[auth_ldap]
+type = "ldap"
+hostname = "ldap.wikitide.net"
+port = "636"
+root_dn = "dc=miraheze,dc=org"
+bind_dn = "cn=write-user,dc=miraheze,dc=org"
+bind_pw = "<%= $ldap_password %>"
+encryption = "ldaps"
+
+[icinga_ido]
+type = "db"
+db = "mysql"
+host = "<%= $ido_db_host %>"
+port = ""
+dbname = "<%= $ido_db_name %>"
+username = "<%= $ido_db_user_name %>"
+password = "<%= $ido_db_user_password %>"
+charset = ""
+persistent = "0"
+
+[icingadb]
+type = "db"
+db = "mysql"
+host = "<%= $icingadb_db_host %>"
+port = ""
+dbname = "<%= $icingadb_db_name %>"
+username = "<%= $icingadb_db_user %>"
+password = "<%= $icingadb_db_user_password %>"
+charset = ""
+persistent = "0"

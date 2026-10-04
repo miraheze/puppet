@@ -1,0 +1,87 @@
+<%- | String $title,
+      String $description,
+      Optional[String] $after,
+      Optional[String] $path_exists,
+      String $user,
+      Optional[String] $group,
+      Boolean $private_tmp,
+      Hash[String, String] $environment,
+      Optional[Stdlib::Unixpath] $environment_file,
+      Optional[String] $syslog_identifier,
+      Optional[Pattern[/\w+\.slice/]] $slice,
+      Optional[Systemd::Timer::Interval] $timeout_start_sec,
+      Boolean $send_mail,
+      String $send_mail_to,
+      Boolean $send_mail_only_on_error,
+      Boolean $ignore_errors,
+      Systemd::Command $command,
+      Optional[Systemd::Command] $exec_start_pre,
+      Optional[Integer] $max_runtime_seconds,
+      Optional[Systemd::Input] $stdin,
+      Optional[Systemd::Output] $stdout,
+      Optional[Systemd::Output] $stderr,
+      Optional[Stdlib::Unixpath] $working_directory,
+      Array[Integer[1, 255]] $success_exit_status
+| -%>
+[Unit]
+Description=<%= $description %>
+<%- if $after { -%>
+After=<%= $after %>
+<%- } -%>
+<%- unless $path_exists =~ Undef { -%>
+ConditionPathExists=<%= $path_exists %>
+<%- } -%>
+
+[Service]
+Type=oneshot
+User=<%= $user %>
+<%- if $group { -%>
+Group=<%= $group %>
+<%- } -%>
+<%- if $private_tmp { -%>
+PrivateTmp=true
+<%- } -%>
+<%- if $environment.length > 0 { -%>
+<%- $environment.keys.sort.each |$key| { -%>
+Environment="<%= $key -%>=<%= $environment[$key] %>"
+<%- } -%>
+<%- } -%>
+<%- if $environment_file { -%>
+EnvironmentFile=<%= $environment_file %>
+<%- } -%>
+<%- if $syslog_identifier { -%>
+SyslogIdentifier=<%= $syslog_identifier %>
+<%- } -%>
+<%- if $slice { -%>
+Slice=<%= $slice %>
+<%- } -%>
+<%- if $timeout_start_sec { -%>
+TimeoutStartSec=<%= $timeout_start_sec %>
+<%- } -%>
+<%- if $send_mail { -%>
+SyslogIdentifier=<%= $command.split(' ')[0].split('/')[-1] %>
+ExecStart=<%- if $ignore_errors { %>-<%- } %>/usr/local/bin/systemd-timer-mail-wrapper --subject <%= $title %> --mail-to <%= $send_mail_to %><%- if $send_mail_only_on_error { %> --only-on-error<%- } %> <%= $command %>
+<%- } else { -%>
+ExecStart=<%- if $ignore_errors { %>-<%- } %><%= $command %>
+<%- } -%>
+<%- if $exec_start_pre { -%>
+ExecStartPre=<%= $exec_start_pre %>
+<%- } -%>
+<%- if $max_runtime_seconds { -%>
+RuntimeMaxSec=<%= $max_runtime_seconds %>
+<%- } -%>
+<%- if $stdin { -%>
+StandardInput=<%= $stdin %>
+<%- } -%>
+<%- if $stdout { -%>
+StandardOutput=<%= $stdout %>
+<%- } -%>
+<%- if $stderr { -%>
+StandardError=<%= $stderr %>
+<%- } -%>
+<%- if $working_directory { -%>
+WorkingDirectory=<%= $working_directory %>
+<%- } -%>
+<%- unless $success_exit_status.length == 0 { -%>
+SuccessExitStatus=<%= $success_exit_status.join(' ') %>
+<%- } -%>
