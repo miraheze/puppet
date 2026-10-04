@@ -1,9 +1,9 @@
-<%- | String $network,
-      String $nickname,
+<%- | String $nickname,
       String $mirahezebots_password,
       String $channel,
-      String $udp_port,
-      String $network_port
+      Stdlib::Host $network,
+      Stdlib::Port $network_port,
+      Stdlib::Port $udp_port
 | -%>
 #!/usr/bin/python3
 
@@ -90,7 +90,7 @@ class Echo(DatagramProtocol):
 
 
 reactor.listenUDP(<%= $udp_port %>, Echo(), interface='::')  # noqa: E225,E999
-<%- if $network_port == '6697' { %>  # noqa: E225
+<%- if $network_port == 6697 { %>  # noqa: E225
 reactor.connectSSL(irc_network, <%= $network_port %>, RCFactory(), ssl.ClientContextFactory())  # noqa: E225
 <%- } else { %>  # noqa: E225
 reactor.connectTCP(irc_network, <%= $network_port %>, RCFactory())  # noqa: E225

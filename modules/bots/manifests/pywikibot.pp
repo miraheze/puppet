@@ -1,16 +1,16 @@
-# class: irc::pywikibot
-class irc::pywikibot {
+# class: bots::pywikibot
+class bots::pywikibot {
     $install_path = '/srv/pywikibot'
     # The directory pointed to by the PYWIKIBOT_DIR environment variable
     $base_path = '/var/local/pwb'
 
-    $consumer_token = lookup('passwords::pywikibot::consumer_token')
+    $consumer_token  = lookup('passwords::pywikibot::consumer_token')
     $consumer_secret = lookup('passwords::pywikibot::consumer_secret')
-    $access_token = lookup('passwords::pywikibot::access_token')
-    $access_secret = lookup('passwords::pywikibot::access_secret')
+    $access_token    = lookup('passwords::pywikibot::access_token')
+    $access_secret   = lookup('passwords::pywikibot::access_secret')
 
     file { $install_path:
-        ensure    => 'directory',
+        ensure    => directory,
         owner     => 'pywikibot',
         group     => 'pywikibot',
         mode      => '0644',
@@ -18,25 +18,25 @@ class irc::pywikibot {
     }
 
     file { $base_path:
-        ensure => 'directory',
+        ensure => directory,
         owner  => 'pywikibot',
         group  => 'pywikibot',
         mode   => '0644',
     }
 
     file { "${base_path}/families":
-        ensure => 'directory',
+        ensure => directory,
         owner  => 'pywikibot',
         group  => 'pywikibot',
         mode   => '0644',
     }
 
     file { '/usr/local/bin/pywikibot':
-        ensure  => 'present',
+        ensure  => present,
         owner   => 'root',
         group   => 'root',
         mode    => '0555',
-        content => epp('irc/pywikibot/pywikibot.sh.epp', {
+        content => epp('bots/pywikibot/pywikibot.sh.epp', {
             'base_path'    => $base_path,
             'install_path' => $install_path,
         }),
@@ -70,7 +70,7 @@ class irc::pywikibot {
         owner   => 'pywikibot',
         group   => 'pywikibot',
         mode    => '0400',
-        content => epp('irc/pywikibot/user-config.py.epp', {
+        content => epp('bots/pywikibot/user-config.py.epp', {
             'consumer_token'  => $consumer_token,
             'consumer_secret' => $consumer_secret,
             'access_token'    => $access_token,
@@ -86,7 +86,7 @@ class irc::pywikibot {
         owner   => 'pywikibot',
         group   => 'pywikibot',
         mode    => '0644',
-        content => epp('irc/pywikibot/wikitide_family.py.epp', { 'family_langs' => $family_langs }),
+        content => epp('bots/pywikibot/wikitide_family.py.epp', { 'family_langs' => $family_langs }),
         require => Git::Clone['Pywikibot-stable'],
     }
 

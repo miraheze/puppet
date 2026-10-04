@@ -1,0 +1,12 @@
+[Unit]
+Description=WikiTide SAL to Phorge bot
+
+[Service]
+Type=simple
+User=irc
+SyslogIdentifier=salbot
+ExecStart=/usr/bin/python3 /etc/salbot/salbot.py --config=/etc/salbot/config.json
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

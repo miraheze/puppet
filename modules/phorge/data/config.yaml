@@ -44,6 +44,11 @@ phabricator.serious-business: true
 phd.garbage-collection:
   'user.logs': 1296000
   
+# GitHub integration
+github.allowed-owners:
+  - 'miraheze'
+github.bot-username: 'GitHubBot'
+
 # Maniphest priorities
 maniphest.priorities:
   '100':

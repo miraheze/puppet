@@ -1,0 +1,19 @@
+[Unit]
+Description=Icinga to Phorge task bot
+After=network.target
+
+[Service]
+Type=simple
+User=irc
+SyslogIdentifier=taskbot
+StateDirectory=taskbot
+ExecStart=/usr/bin/python3 /etc/taskbot/taskbot.py -c /etc/taskbot/config.json
+Restart=on-failure
+RestartSec=10s
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,3 +1,4 @@
+# define: monitoring::services
 define monitoring::services (
     $check_command,
     $host           = $facts['networking']['hostname'],
@@ -9,7 +10,26 @@ define monitoring::services (
     $docs           = undef,
     $critical       = false,
     $vars           = undef,
+    Optional[Array[Monitoring::PhorgeTrigger, 1, 3]] $phorge_triggers = undef,
+    Array[Monitoring::PhorgeProject]                 $phorge_projects = [],
 ) {
+    if $phorge_triggers == undef and !$phorge_projects.empty {
+        fail("monitoring::services[${title}] sets phorge_projects without phorge_triggers")
+    }
+
+    $base_vars = $vars ? {
+        undef   => {},
+        default => $vars,
+    }
+
+    $service_vars = $phorge_triggers ? {
+        undef   => $vars,
+        default => $base_vars + {
+            'phorge_triggers' => $phorge_triggers,
+            'phorge_projects' => $phorge_projects,
+        },
+    }
+
     @@icinga2::object::service { "${facts['networking']['hostname']} ${title}":
         ensure                => $ensure,
         import                => ['generic-service'],
@@ -26,6 +46,6 @@ define monitoring::services (
         event_command         => $event_command,
         notes_url             => $docs,
         target                => '/etc/icinga2/conf.d/puppet_services.conf',
-        vars                  => $vars,
+        vars                  => $service_vars,
     }
 }

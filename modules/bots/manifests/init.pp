@@ -1,5 +1,5 @@
-# class: irc
-class irc {
+# class: bots
+class bots {
     stdlib::ensure_packages([
         'python3',
         'python3-irc',
