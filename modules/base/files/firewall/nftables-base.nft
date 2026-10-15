@@ -10,6 +10,9 @@ table inet base {
 		# Include any puppet-managed connection tracking exceptions
 		# and custom rules targeting prerouting
 		include "/etc/nftables/prerouting/*.nft"
+
+		# Include puppet-managed exceptions from connection tracking
+		include "/etc/nftables/notrack/*.nft"
 	}
 
 	chain input {

@@ -12,11 +12,7 @@
 #   list, or an array.
 # @param dst_sets names of nftables::set resources to also allow traffic towards,
 #   declared separately (see firewall::set). combined with drange as an OR.
-# @param notrack if true, also exempt this port from connection tracking. this needs a
-#   rule in output (for the outbound request), prerouting (for the reply), and an
-#   explicit input accept, since without conntrack state the usual
-#   "ct state established,related accept" rule at the top of input never matches the
-#   reply traffic.
+# @param notrack Optional boolean to disable connection tracking for matching traffic
 define nftables::client (
     VMlib::Protocol                          $proto,
     Optional[Nftables::Port]                 $port       = undef,
@@ -63,35 +59,19 @@ define nftables::client (
     }
 
     if $notrack {
-        $output_notrack_content = @("OUTPUT")
-            # Managed by puppet
-            # ${desc}
-            ${proto} dport ${nft_port} notrack
-            | OUTPUT
-
-        @file { sprintf('/etc/nftables/output/%02d_%s_client_notrack.nft', $prio, $title):
-            ensure  => $ensure,
-            owner   => 'root',
-            group   => 'root',
-            mode    => '0444',
-            content => $output_notrack_content,
-            require => File['/etc/nftables/output'],
-            tag     => 'nft',
-        }
-
         $prerouting_notrack_content = @("PREROUTING")
             # Managed by puppet
             # ${desc}
             ${proto} sport ${nft_port} notrack
             | PREROUTING
 
-        @file { sprintf('/etc/nftables/prerouting/%02d_%s_client_notrack.nft', $prio, $title):
+        @file { sprintf('/etc/nftables/notrack/%02d_%s.nft', $prio, $title):
             ensure  => $ensure,
             owner   => 'root',
             group   => 'root',
             mode    => '0444',
             content => $prerouting_notrack_content,
-            require => File['/etc/nftables/prerouting'],
+            require => File['/etc/nftables/notrack'],
             tag     => 'nft',
         }
 
