@@ -48,6 +48,7 @@ phd.garbage-collection:
 github.allowed-owners:
   - 'miraheze'
 github.bot-username: 'GitHubBot'
+github.open-pr-tag: 'pull_request_ready'
 
 # Maniphest priorities
 maniphest.priorities:
