@@ -11,7 +11,7 @@ ui.header-color: 'blue'
 # MySQL
 mysql.port: '3306'
 mysql.user: 'phorge'
-mysql.host: 'db182.fsslc.wtnet'
+mysql.host: 'db193.fsslc.wtnet'
 
 # Sets phorge into read-only
 cluster.read-only: true
