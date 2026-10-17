@@ -58,12 +58,22 @@ class prometheus::exporter::node (
     $collectors_enabled = concat($collectors_default, $collectors_extra)
 
     file { '/etc/default/prometheus-node-exporter':
-          ensure  => present,
-          mode    => '0444',
-          owner   => 'root',
-          group   => 'root',
-          content => template('prometheus/etc/default/prometheus-node-exporter.erb'),
-          notify  => Service['prometheus-node-exporter'],
+        ensure  => present,
+        mode    => '0444',
+        owner   => 'root',
+        group   => 'root',
+        content => epp('prometheus/etc/default/prometheus-node-exporter.epp', {
+            'web_listen_address'   => $web_listen_address,
+            'collectors_enabled'   => $collectors_enabled,
+            'ignored_mount_points' => $ignored_mount_points,
+            'ignored_fs_types'     => $ignored_fs_types,
+            'ignored_devices'      => $ignored_devices,
+            'textfile_directory'   => $textfile_directory,
+            'netstat_fields'       => $netstat_fields,
+            'vmstat_fields'        => $vmstat_fields,
+            'collector_ntp_server' => $collector_ntp_server,
+        }),
+        notify  => Service['prometheus-node-exporter'],
     }
 
     # members of this group are able to publish metrics
@@ -78,8 +88,10 @@ class prometheus::exporter::node (
         mode    => '0770',
         owner   => 'prometheus',
         group   => 'prometheus-node-exporter',
-        require => [Package['prometheus-node-exporter'],
-                    Group['prometheus-node-exporter']],
+        require => [
+            Package['prometheus-node-exporter'],
+            Group['prometheus-node-exporter'],
+        ],
     }
 
     service { 'prometheus-node-exporter':

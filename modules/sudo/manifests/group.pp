@@ -15,7 +15,7 @@ define sudo::group(
             owner   => 'root',
             group   => 'root',
             mode    => '0440',
-            content => template('sudo/sudoers.erb'),
+            content => epp('sudo/sudoers.epp', { 'privileges' => $privileges, 'user' => undef, 'group' => $group }),
         }
 
         exec { "sudo_group_${title}_linting":

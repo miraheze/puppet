@@ -1,0 +1,17 @@
+{
+  "files.associations": {
+    "*.php.epp": "php",
+    "*.py.epp": "python",
+    "*.sh.epp": "shellscript",
+    "*.yaml.epp": "yaml",
+    "*.yml.epp": "yaml",
+    "*.html.epp": "html",
+    "*.css.epp": "css",
+    "*.js.epp": "javascript",
+    "*.json.epp": "json",
+    "*.ini.epp": "ini",
+    "*.conf.epp": "properties",
+    "*.vcl.epp": "vcl",
+    "*.sql.epp": "sql"
+  }
+}

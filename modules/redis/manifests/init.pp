@@ -10,7 +10,7 @@ class redis (
     stdlib::ensure_packages('redis-server')
 
     file { '/etc/redis/redis.conf':
-        content => template('redis/redis.conf.erb'),
+        content => epp('redis/redis.conf.epp', { 'port' => $port, 'persist' => $persist, 'password' => $password, 'maxmemory' => $maxmemory, 'maxmemory_policy' => $maxmemory_policy, 'maxmemory_samples' => $maxmemory_samples }),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',

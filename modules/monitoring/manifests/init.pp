@@ -263,7 +263,7 @@ class monitoring (
 
     file { '/etc/icinga2/conf.d/ssl.conf':
         ensure  => present,
-        content => template('monitoring/ssl.conf.erb'),
+        content => template('monitoring/ssl.conf.epp'),
         owner   => 'root',
         group   => 'root',
         mode    => '0664',

@@ -1,0 +1,71 @@
+<%- | Array[String] $allow_from,
+      Array[String] $listen_addresses,
+      Integer $listen_port,
+      Boolean $do_ipv4,
+      Boolean $do_ipv6,
+      Array[String] $query_local_address,
+      Hash $zone_forwards,
+      Hash $forward_zones_recurse,
+      Integer $threads
+| -%>
+dnssec:
+  validation: off
+incoming:
+  allow_from:
+<%- $allow_from.each |$cidr| { -%>
+  - <%= $cidr %>
+<%- } -%>
+  listen:
+<%- $listen_addresses.each |$addr| { -%>
+  - "<%= $addr %>"
+<%- } -%>
+  port: <%= $listen_port %>
+  pdns_distributes_queries: false
+  reuseport: true
+  max_tcp_clients: 128
+  max_tcp_per_client: 100
+logging:
+  quiet: true
+outgoing:
+  source_address:
+  <%- if $do_ipv4 { -%>
+    - 0.0.0.0
+  <%- } -%>
+  <%- if $do_ipv6 { -%>
+    - "::"
+  <%- } -%>
+<%- $query_local_address.each |$addr| { -%>
+  - <%= $addr %>
+<%- } -%>
+recordcache:
+  max_entries: 3000000
+  max_negative_ttl: 3600
+recursor:
+  config_dir: /etc/powerdns/
+  daemon: true
+  extended_resolution_errors: true
+  forward_zones:
+<%- $zone_forwards.each |$zone, $ips| { -%>
+  - zone: <%= $zone %>
+    forwarders:
+<%- $ips.each |$ip| { -%>
+      - <%= $ip %>
+<%- } -%>
+<%- } -%>
+<%- unless $forward_zones_recurse.length == 0 { -%>
+  forward_zones_recurse:
+<%- $forward_zones_recurse.each |$zone, $ips| { -%>
+  - zone: <%= $zone %>
+    forwarders:
+<%- $ips.each |$ip| { -%>
+      - <%= $ip %>
+<%- } -%>
+<%- } -%>
+<%- } -%>
+  hint_file: /usr/share/dns/root.hints
+  security_poll_suffix: ''
+  setgid: pdns
+  setuid: pdns
+  stats_ringbuffer_entries: 1000
+  threads: <%= $threads %>
+  max_mthreads: 2048

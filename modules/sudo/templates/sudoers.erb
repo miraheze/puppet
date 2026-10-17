@@ -1,9 +1,0 @@
-# Puppet
-
-<%- @privileges.each do |privilege| -%>
-<%- if @user then -%>
-<%= @user %> <%= privilege %>
-<%- elsif @group then -%>
-%<%= @group %> <%= privilege %>
-<%- end -%>
-<%- end -%>

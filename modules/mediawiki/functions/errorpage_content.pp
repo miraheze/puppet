@@ -13,6 +13,6 @@ function mediawiki::errorpage_content(Optional[Mediawiki::Errorpage::Options] $o
         'browsersec_comment' => false,
     }
     $errorpage = $defaults.merge($options)
-    template('mediawiki/errorpage.html.erb')
+    epp('mediawiki/errorpage.html.epp', { 'errorpage' => $errorpage })
 }
 

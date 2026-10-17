@@ -15,7 +15,7 @@ define sudo::user(
             owner   => 'root',
             group   => 'root',
             mode    => '0440',
-            content => template('sudo/sudoers.erb'),
+            content => epp('sudo/sudoers.epp', { 'privileges' => $privileges, 'user' => $user, 'group' => undef }),
         }
 
         exec { "sudo_user_${title}_linting":

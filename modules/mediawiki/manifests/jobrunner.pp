@@ -76,7 +76,7 @@ class mediawiki::jobrunner {
 
     httpd::site { 'jobrunner':
         priority => 1,
-        content  => template('mediawiki/jobrunner.conf.erb'),
+        content  => epp('mediawiki/jobrunner.conf.epp', { 'port' => $port, 'local_only_port' => $local_only_port, 'php_fpm_sock' => $php_fpm_sock }),
     }
 
     $subquery = @("PQL")

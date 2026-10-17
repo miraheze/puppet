@@ -1,0 +1,42 @@
+<%- | String $name,
+      String $path,
+      String $read_only,
+      String $write_only,
+      String $list,
+      Optional[String] $uid,
+      Optional[String] $gid,
+      Boolean $chroot,
+      Optional[String] $incoming_chmod,
+      Optional[String] $outgoing_chmod,
+      String $max_connections,
+      String $lock_file,
+      Optional[String] $comment,
+      Optional[String] $secrets_file,
+      Optional[Variant[String, Array[String]]] $auth_users,
+      Optional[Array[String]] $frag_hosts_allow,
+      Optional[Variant[String, Array[String]]] $hosts_deny
+| -%>
+# This file is being maintained by Puppet.
+# DO NOT EDIT
+
+[ <%= $name %> ]
+path            = <%= $path %>
+read only       = <%= $read_only %>
+write only      = <%= $write_only %>
+list            = <%= $list %>
+<%- if $uid { -%>
+uid             = <%= $uid %>
+<%- } -%>
+<%- if $gid { -%>
+gid             = <%= $gid %>
+<%- } -%>
+use chroot      = <%- if $chroot { %>yes<%- } else { %>no<%- } %>
+<%- if $incoming_chmod { %>incoming chmod = <%= $incoming_chmod %><%- } %>
+<%- if $outgoing_chmod { %>outgoing chmod = <%= $outgoing_chmod %><%- } %>
+max connections = <%= $max_connections %>
+<%- if Integer($max_connections) > 0 { %>lock file =     <%= $lock_file %><%- } %>
+<%- if $comment { %>comment               = <%= $comment %><%- } %>
+<%- if $secrets_file { %>secrets file = <%= $secrets_file %><%- } %>
+<%- if $auth_users { %>auth users = <%= Array($auth_users).join(', ') %><%- } %>
+<%- if $frag_hosts_allow { %>hosts allow = <%= $frag_hosts_allow.join(' ').regsubst('::/64', '::', 'G') %><%- } %>
+<%- if $hosts_deny { %>hosts deny = <%= Array($hosts_deny).join(' ').regsubst('::/64', '::', 'G') %><%- } %>

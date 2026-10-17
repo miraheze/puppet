@@ -30,7 +30,7 @@ class varnish::nginx {
 
     nginx::site { 'mediawiki':
         ensure  => present,
-        content => template('varnish/mediawiki.conf.erb'),
+        content => epp('varnish/mediawiki.conf.epp', { 'backends' => $backends, 'sslredirects' => $sslredirects, 'sslcerts' => $sslcerts }),
     }
 
     include ssl::all_certs

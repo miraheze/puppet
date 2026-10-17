@@ -1,0 +1,10 @@
+<%- | Array $privileges, Optional[String] $user, Optional[String] $group | -%>
+# Puppet
+
+<%- $privileges.each |$privilege| { -%>
+<%- if $user { -%>
+<%= $user %> <%= $privilege %>
+<%- } elsif $group { -%>
+%<%= $group %> <%= $privilege %>
+<%- } -%>
+<%- } -%>
