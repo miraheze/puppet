@@ -9,3 +9,5 @@ mariadb::version: '11.8'
 role::db::enable_ssl: false
 role::db::is_beta_db: false
 role::db::wait_timeout: 28800
+# https://matomo.org/faq/on-premise/how-to-configure-matomo-for-speed/#configure-your-database-server-for-speed
+mariadb::config::flush_log_at_trx_commit: '2'
