@@ -64,16 +64,16 @@
 #   Password for the read only API user used by the bots server task bot.
 #
 class role::icinga2 (
-    String           $icinga2_db_host             = lookup('icinga_ido_db_host', {'default_value' => 'db182.fsslc.wtnet'}),
+    String           $icinga2_db_host             = lookup('icinga_ido_db_host', {'default_value' => 'db193.fsslc.wtnet'}),
     String           $icinga2_db_name             = lookup('icinga_ido_db_name', {'default_value' => 'icinga'}),
     String           $icinga2_db_user             = lookup('icinga_ido_user_name', {'default_value' => 'icinga2'}),
     String           $ido_db_user_password        = lookup('passwords::icinga_ido'),
     String           $mirahezebots_password       = lookup('passwords::irc::mirahezebots'),
-    String           $icingaweb2_db_host          = lookup('icingaweb_db_host', {'default_value' => 'db182.fsslc.wtnet'}),
+    String           $icingaweb2_db_host          = lookup('icingaweb_db_host', {'default_value' => 'db193.fsslc.wtnet'}),
     String           $icingaweb2_db_name          = lookup('icingaweb_db_name', {'default_value' => 'icingaweb2'}),
     String           $icingaweb2_db_user          = lookup('icingaweb_user_name', {'default_value' => 'icingaweb2'}),
     String           $icingaweb2_db_user_password = lookup('passwords::icingaweb2'),
-    String           $icingadb_db_host            = lookup('icingadb_db_host', {'default_value' => 'db182.fsslc.wtnet'}),
+    String           $icingadb_db_host            = lookup('icingadb_db_host', {'default_value' => 'db193.fsslc.wtnet'}),
     String           $icingadb_db_name            = lookup('icingadb_db_name', {'default_value' => 'icingadb'}),
     String           $icingadb_db_user            = lookup('icingadb_db_user', {'default_value' => 'icinga2'}),
     String           $icingadb_redis_host         = lookup('icingadb_redis_host', {'default_value' => 'localhost'}),
