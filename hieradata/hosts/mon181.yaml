@@ -1,5 +1,5 @@
-icinga_ido_db_host: 'db182.fsslc.wtnet'
-icingaweb_db_host: 'db182.fsslc.wtnet'
+icinga_ido_db_host: 'db193.fsslc.wtnet'
+icingaweb_db_host: 'db193.fsslc.wtnet'
 
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
