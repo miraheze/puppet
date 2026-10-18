@@ -13,8 +13,9 @@ define monitoring::hosts (
         $address6 = $facts['networking']['ip6']
     }
 
-    @@icinga2::object::host { $title:
+    icinga2::object::host { $title:
         ensure   => $ensure,
+        export   => lookup('icinga2_host', {'default_value' => 'mon181.fsslc.wtnet'}),
         import   => ['generic-host'],
         address  => $address,
         address6 => $address6,
