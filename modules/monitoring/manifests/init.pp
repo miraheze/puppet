@@ -102,7 +102,6 @@ class monitoring (
 
     class { 'icinga2::query_objects':
         destination => lookup('icinga2_host', {'default_value' => 'mon181.fsslc.wtnet'}),
-        require     => Class['icinga2'],
     }
 
     class { 'icinga2::feature::api':
