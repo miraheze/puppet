@@ -37,6 +37,31 @@ class mediawiki {
         require            => Package['libjpeg-dev'],
     }
 
+    file { '/usr/share/GeoIP':
+        ensure => directory,
+    }
+
+    file { '/usr/share/GeoIP/GeoLite2-Country.mmdb':
+        ensure  => present,
+        source  => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
+        mode    => '0444',
+        require => File['/usr/share/GeoIP']
+    }
+
+    file { '/usr/share/GeoIP/GeoLite2-City.mmdb':
+        ensure  => present,
+        source  => 'puppet:///private/geoip/GeoLite2-City.mmdb',
+        mode    => '0444',
+        require => File['/usr/share/GeoIP']
+    }
+
+    file { '/usr/share/GeoIP/GeoLite2-ASN.mmdb':
+        ensure  => present,
+        source  => 'puppet:///private/geoip/GeoLite2-ASN.mmdb',
+        mode    => '0444',
+        require => File['/usr/share/GeoIP']
+    }
+
     file { '/etc/polkit-1/rules.d/90-mediawiki-shellbox.rules':
         ensure => present,
         source => 'puppet:///modules/mediawiki/polkit/90-mediawiki-shellbox.rules',
