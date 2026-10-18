@@ -34,7 +34,7 @@ end
 
 Facter.add('mongodb_is_master') do
   setcode do
-    if %w[mongosh mongod].all? { |m| Facter::Util::Resolution.which m }
+    if %w[mongosh mongod].all? { |m| Facter::Core::Execution.which m }
       file = mongod_conf_file
       if file
         options = get_options_from_config(file)
