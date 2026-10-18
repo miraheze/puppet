@@ -40,10 +40,10 @@ Facter.add('mongodb_is_master') do
         options = get_options_from_config(file)
 
         # Check if the mongodb server is responding:
-        Facter::Core::Execution.exec("mongosh --quiet #{options} --eval \"EJSON.stringify(db.adminCommand({ ping: 1 }))\"")
+        Facter::Core::Execution.execute("mongosh --quiet #{options} --eval \"EJSON.stringify(db.adminCommand({ ping: 1 }))\"")
 
         if $CHILD_STATUS.success?
-          Facter::Core::Execution.exec("mongosh --quiet #{options} --eval \"db.isMaster().ismaster\"")
+          Facter::Core::Execution.execute("mongosh --quiet #{options} --eval \"db.isMaster().ismaster\"")
         else
           'not_responding'
         end
