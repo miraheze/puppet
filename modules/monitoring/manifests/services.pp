@@ -30,8 +30,9 @@ define monitoring::services (
         },
     }
 
-    @@icinga2::object::service { "${facts['networking']['hostname']} ${title}":
+    icinga2::object::service { "${facts['networking']['hostname']} ${title}":
         ensure                => $ensure,
+        export                => lookup('icinga2_host', {'default_value' => 'mon181.fsslc.wtnet'}),
         import                => ['generic-service'],
         host_name             => $host,
         display_name          => $title,
