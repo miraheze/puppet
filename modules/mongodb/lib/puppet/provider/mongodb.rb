@@ -62,7 +62,7 @@ class Puppet::Provider::Mongodb < Puppet::Provider
   def self.mongosh_cmd(db, host, cmd)
     config = mongo_conf
 
-    host = conn_string if host.nil? || host.split(':')[0] == Facter.value(:fqdn) || host == '127.0.0.1'
+    host = conn_string if host.nil? || host.split(':')[0] == Facter.value('networking.fqdn') || host == '127.0.0.1'
 
     args = [db, '--quiet', '--host', host]
     args.push('--ipv6') if ipv6_is_enabled(config)
