@@ -337,7 +337,4 @@ class monitoring (
         },
         user        => 'root',
     }
-
-    Icinga2::Object::Host <<||>> ~> Service['icinga2']
-    Icinga2::Object::Service <<||>> ~> Service['icinga2']
 }
