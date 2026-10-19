@@ -100,6 +100,10 @@ class monitoring (
         }
     }
 
+    class { 'icinga2::query_objects':
+        destination => lookup('icinga2_host', {'default_value' => 'mon181.fsslc.wtnet'}),
+    }
+
     class { 'icinga2::feature::api':
         bind_host   => $icinga2_api_bind_host,
         ca_host     => $facts['networking']['fqdn'],
@@ -333,7 +337,4 @@ class monitoring (
         },
         user        => 'root',
     }
-
-    Icinga2::Object::Host <<||>> ~> Service['icinga2']
-    Icinga2::Object::Service <<||>> ~> Service['icinga2']
 }
