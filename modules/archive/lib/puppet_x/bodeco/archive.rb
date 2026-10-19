@@ -9,7 +9,7 @@ module PuppetX
     class Archive
       def initialize(file)
         @file = file
-        @file_path =  if Facter.value(:osfamily) == 'windows'
+        @file_path =  if Facter.value('os.family') == 'windows'
                         "\"#{file}\""
                       else
                         Shellwords.shellescape file
@@ -26,7 +26,7 @@ module PuppetX
       end
 
       def root_dir
-        if Facter.value(:osfamily) == 'windows'
+        if Facter.value('os.family') == 'windows'
           'C:\\'
         else
           '/'
@@ -103,7 +103,7 @@ module PuppetX
       end
 
       def command(options)
-        if Facter.value(:osfamily) == 'windows'
+        if Facter.value('os.family') == 'windows'
           opt = parse_flags('x -aoa', options, '7z')
           cmd = win_7zip
           cmd =~ %r{7z.exe} ? "#{cmd} #{opt} #{@file_path}" : cmd
@@ -113,7 +113,7 @@ module PuppetX
             opt = parse_flags('xf', options, 'tar')
             "tar #{opt} #{@file_path}"
           when %r{(\.tgz|\.tar\.gz)$}
-            case Facter.value(:osfamily)
+            case Facter.value('os.family')
             when 'Solaris', 'AIX'
               gunzip_opt = parse_flags('-dc', options, 'gunzip')
               tar_opt = parse_flags('xf', options, 'tar')
@@ -123,7 +123,7 @@ module PuppetX
               "tar #{opt} #{@file_path}"
             end
           when %r{(\.tbz|\.tar\.bz2)$}
-            case Facter.value(:osfamily)
+            case Facter.value('os.family')
             when 'Solaris', 'AIX'
               bunzip_opt = parse_flags('-dc', options, 'bunzip')
               tar_opt = parse_flags('xf', options, 'tar')
