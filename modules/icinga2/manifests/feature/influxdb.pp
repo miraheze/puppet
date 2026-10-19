@@ -85,8 +85,8 @@ class icinga2::feature::influxdb (
   Enum['absent', 'present']                     $ensure                 = present,
   Optional[Stdlib::Host]                        $host                   = undef,
   Optional[Stdlib::Port]                        $port                   = undef,
-  Optional[String[1]]                              $database               = undef,
-  Optional[String[1]]                              $username               = undef,
+  Optional[String[1]]                           $database               = undef,
+  Optional[String[1]]                           $username               = undef,
   Optional[Icinga::Secret]                      $password               = undef,
   Optional[Icinga2::BasicAuth]                  $basic_auth             = undef,
   Optional[Boolean]                             $enable_ssl             = undef,
@@ -162,21 +162,12 @@ class icinga2::feature::influxdb (
       'ssl_key'               => $cert['key_file'],
     }
 
-    # Workaround, icinga::cert doesn't accept undef values for owner and group!
-    if $facts['os']['family'] != 'windows' {
-      icinga::cert { 'InfluxdbWriter_influxdb':
-        args   => $cert,
-        owner  => $owner,
-        group  => $group,
-        notify => $_notify,
-      }
-    } else {
-      icinga::cert { 'InfluxdbWriter_influxdb':
-        args   => $cert,
-        owner  => 'foo',
-        group  => 'bar',
-        notify => $_notify,
-      }
+    icinga::cert { 'InfluxdbWriter_influxdb':
+      args    => $cert,
+      owner   => $owner,
+      group   => $group,
+      seltype => 'icinga2_var_lib_t',
+      notify  => $_notify,
     }
   } else {
     $attrs_ssl = {
