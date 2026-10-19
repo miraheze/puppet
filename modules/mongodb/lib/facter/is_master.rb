@@ -19,7 +19,7 @@ def get_options_from_hash_config(config)
   result << "--port #{port}" unless port.nil?
   result << '--ipv6' if ipv6
   unless tls_mode.nil? || tls_mode == 'disabled'
-    result << "--tls --host #{Facter.value(:fqdn)}"
+    result << "--tls --host #{Facter.value('networking.fqdn')}"
     result << "--tlsCertificateKeyFile #{tls_cert_key}" unless tls_cert_key.nil?
     result << "--tlsCAFile #{tls_ca}" unless tls_ca.nil?
   end
