@@ -6,11 +6,14 @@ class role::opensearch (
     $use_tls = lookup('role::opensearch::use_tls', {'default_value' => false}),
     $enable_exporter = lookup('role::opensearch::enable_exporter', {'default_value' => true}),
     Boolean $sudachi_dictionary = lookup('role::opensearch::sudachi_dictionary', {'default_value' => false}),
+    Pattern[/\A\d+\.\d+\.\d+\z/] $os_version = lookup('role::opensearch::version'),
 ) {
     include java
 
+    $os_major_version = split($os_version, /\./)[0]
+
     class { 'opensearch::repo':
-        version => '2.x',
+        version => "${os_major_version}.x",
     }
 
     if $use_tls {
@@ -44,7 +47,7 @@ class role::opensearch (
             'node.roles'                            => $os_roles,
             'network.host'                          => '0.0.0.0',
         } + $tls_config,
-        version                       => '2.19.4',
+        version                       => $os_version,
         manage_repo                   => true,
         jvm_options                   => [ '-Xms4g', '-Xmx4g' ],
         templates                     => {
