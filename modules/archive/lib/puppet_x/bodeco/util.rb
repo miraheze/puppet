@@ -80,7 +80,7 @@ module PuppetX
           @proxy_port = uri.port
         end
 
-        ENV['SSL_CERT_FILE'] = File.expand_path(File.join(__FILE__, '..', 'cacert.pem')) if Facter.value(:osfamily) == 'windows' && !ENV.key?('SSL_CERT_FILE')
+        ENV['SSL_CERT_FILE'] = File.expand_path(File.join(__FILE__, '..', 'cacert.pem')) if Facter.value('os.family') == 'windows' && !ENV.key?('SSL_CERT_FILE')
       end
 
       def generate_request(uri)
