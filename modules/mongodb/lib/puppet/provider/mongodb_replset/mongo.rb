@@ -176,7 +176,7 @@ Puppet::Type.type(:mongodb_replset).provide(:mongo, parent: Puppet::Provider::Mo
       host = member['host']
       Puppet.debug "Checking replicaset member #{host} ..."
       begin
-        status = if host.split(':').first == Facter.value(:fqdn)
+        status = if host.split(':').first == Facter.value('networking.fqdn')
                    rs_status(conn_string)
                  else
                    rs_status(host)
