@@ -1,6 +1,6 @@
 {
   "name": "puppet-icinga2",
-  "version": "6.1.0",
+  "version": "7.0.0",
   "author": "Vox Pupuli",
   "summary": "Icinga 2 Puppet Module",
   "license": "Apache-2.0",
@@ -10,86 +10,95 @@
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 6.6.0 < 10.0.0"
+      "version_requirement": ">= 6.6.0 < 11.0.0"
     },
     {
       "name": "puppetlabs/concat",
-      "version_requirement": ">= 6.4.0 < 10.0.0"
+      "version_requirement": ">= 6.4.0 < 11.0.0"
     },
     {
       "name": "puppet/icinga",
-      "version_requirement": ">= 3.0.0 < 7.0.0"
+      "version_requirement": ">= 7.2.0 < 9.0.0"
+    },
+    {
+      "name": "puppet/selinux",
+      "version_requirement": ">= 5.0.0 < 7.0.0"
     }
   ],
   "operatingsystem_support": [
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "AlmaLinux",
       "operatingsystemrelease": [
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "Rocky",
       "operatingsystemrelease": [
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "11",
-        "12"
+        "12",
+        "13"
       ]
     },
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "20.04",
         "22.04",
-        "24.04"
+        "24.04",
+        "26.04"
       ]
     },
     {
       "operatingsystem": "Fedora",
       "operatingsystemrelease": [
-        "39",
-        "40"
+        "43",
+        "44"
       ]
     },
     {
       "operatingsystem": "SLES",
       "operatingsystemrelease": [
-        "12",
         "15"
       ]
     },
     {
       "operatingsystem": "FreeBSD",
       "operatingsystemrelease": [
-        "12",
-        "13"
+        "13",
+        "14",
+        "15"
       ]
     },
     {
@@ -102,12 +111,8 @@
   ],
   "requirements": [
     {
-      "name": "puppet",
-      "version_requirement": ">= 7.9.0 < 9.0.0"
-    },
-    {
       "name": "openvox",
-      "version_requirement": ">= 7.9.0 < 9.0.0"
+      "version_requirement": ">= 8.19.0 < 9.0.0"
     }
   ],
   "tags": [
