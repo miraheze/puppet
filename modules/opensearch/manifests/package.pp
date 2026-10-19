@@ -151,6 +151,19 @@ class opensearch::package {
     }
   }
 
+  if $opensearch::version =~ String and versioncmp($opensearch::version, '3.0.0') >= 0 {
+    exec { 'opensearch_remove_security_manager':
+      command => "sed -i '/java.security.manager/d' ${opensearch::configdir}/jvm.options",
+      onlyif  => "grep -qs 'java.security.manager' ${opensearch::configdir}/jvm.options",
+      before  => Package['opensearch'],
+    }
+
+    file { '/run/opensearch':
+      ensure => 'directory',
+      before => Package['opensearch'],
+    }
+  }
+
   if ($opensearch::package_provider == 'package') {
     package { 'opensearch':
       ensure => $package_ensure,
