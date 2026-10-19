@@ -13,23 +13,22 @@ define monitoring::hosts (
         $address6 = $facts['networking']['ip6']
     }
 
-    if $ensure == present {
-        icinga2::object::host { $title:
-            export   => lookup('icinga2_host', {'default_value' => 'mon181.fsslc.wtnet'}),
-            import   => ['generic-host'],
-            address  => $address,
-            address6 => $address6,
-            target   => '/etc/icinga2/conf.d/puppet_hosts.conf',
-            vars     => {
-                notification => {
-                    mail => {
-                        groups => $contacts,
-                    },
-                    irc  => {
-                        groups => [ 'icingaadmins' ],
-                    },
+    icinga2::object::host { $title:
+        ensure   => $ensure,
+        export   => lookup('icinga2_host', {'default_value' => 'mon181.fsslc.wtnet'}),
+        import   => ['generic-host'],
+        address  => $address,
+        address6 => $address6,
+        target   => '/etc/icinga2/conf.d/puppet_hosts.conf',
+        vars     => {
+            notification => {
+                mail => {
+                    groups => $contacts,
+                },
+                irc  => {
+                    groups => [ 'icingaadmins' ],
                 },
             },
-        }
+        },
     }
 }
