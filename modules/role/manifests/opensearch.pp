@@ -8,6 +8,7 @@ class role::opensearch (
     Boolean $sudachi_dictionary = lookup('role::opensearch::sudachi_dictionary', {'default_value' => false}),
     Pattern[/\A\d+\.\d+\.\d+\z/] $os_version = lookup('role::opensearch::version'),
 ) {
+    include base
     include java
 
     $os_major_version = split($os_version, /\./)[0]

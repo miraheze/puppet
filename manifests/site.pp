@@ -40,8 +40,7 @@ node 'eventgate182.fsslc.wtnet' {
 }
 
 node /^os[12][0569][12]\.fsslc\.wtnet$/ {
-    include base
-    include role::opensearch
+    role(opensearch)
 }
 
 node 'graylog161.fsslc.wtnet' {
