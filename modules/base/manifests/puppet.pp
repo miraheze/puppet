@@ -1,7 +1,7 @@
 # class base::puppet
 class base::puppet (
     Integer[1,59] $interval              = lookup('base::puppet::interval', {'default_value' => 30}),
-    Integer       $puppet_major_version  = lookup('puppet_major_version', {'default_value' => 8}),
+    Integer       $openvox_major_version = lookup('openvox_major_version'),
     String        $puppetserver_hostname = lookup('puppetserver_hostname'),
 ) {
     file { '/etc/apt/trusted.gpg.d/openvox-keyring.gpg':
@@ -11,7 +11,7 @@ class base::puppet (
 
     apt::source { 'openvox':
         location => 'https://apt.voxpupuli.org',
-        repos    => "openvox${puppet_major_version}",
+        repos    => "openvox${openvox_major_version}",
         release  => "debian${facts['os']['release']['major']}",
         require  => File['/etc/apt/trusted.gpg.d/openvox-keyring.gpg'],
         notify   => Exec['apt_update_openvox'],
