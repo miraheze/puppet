@@ -23,4 +23,4 @@ opensearch::plugins:
     url: "https://github.com/WorksApplications/elasticsearch-sudachi/releases/download/v3.6.0/opensearch-%{lookup('role::opensearch::version')}-analysis-sudachi-3.6.0.zip"
   analysis-ukrainian: {}
   opensearch-analysis-stconvert:
-    url: "https://github.com/Universal-Omega/opensearch-analysis-stconvert/releases/download/%{lookup('role::opensearch::version')}/opensearch-analysis-stconvert.zip"
+    url: "https://github.com/miraheze/opensearch-analysis-stconvert/releases/download/%{lookup('role::opensearch::version')}/opensearch-analysis-stconvert.zip"
