@@ -39,7 +39,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [blankeclair, jenny, macfan, oa, petramagna, pixldev, skye]
+    members: [blankeclair, elisapoly, jenny, macfan, oa, petramagna, pixldev, skye]
     privileges: []
   ssl-admins:
     gid: 2006
@@ -50,7 +50,7 @@ groups:
   mediawiki-test-admins:
     gid: 2007
     description: sudo on the MediaWiki test server
-    members: [pixldev]
+    members: [elisapoly, pixldev]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.4-fpm *',
@@ -257,3 +257,11 @@ users:
     ssh_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOHs/0a4J7OuWVgI8LNmo5GTZtQbaNdb7LkvidH11XZy pixldev@fedora
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPYfqH3k4MsvAd7C9gUzLmftIpgbrTF4Tf9KSgwr8cXY pixldev@iterm
+  elisapoly:
+    ensure: present
+    uid: 1028
+    name: Elisapoly
+    realname: Elisapoly
+    ssh_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHccxJlE70gjTlJXm2lRG2upC2LBRFDK1bChN/Yqu6zz elisapoly@windows
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINxxZLSP7H+wfpBYgZxCP9PBewRYwQK8RXGbFDxL0OfT elisapoly@windows2
