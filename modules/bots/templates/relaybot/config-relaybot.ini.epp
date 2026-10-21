@@ -33,4 +33,4 @@ Proxy = <%= $http_proxy %>
 
 [IgnoreUsers]
 IRC = none
-Discord = none
+Discord = Glue Stick
