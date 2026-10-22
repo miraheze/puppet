@@ -20,7 +20,7 @@ opensearch::plugins:
   analysis-smartcn: {}
   analysis-stempel: {}
   analysis-sudachi:
-    url: "https://github.com/miraheze/opensearch-sudachi/releases/download/v3.6.0/opensearch-%{lookup('role::opensearch::version')}-analysis-sudachi-3.6.0.zip"
+    url: "https://github.com/miraheze/opensearch-sudachi/releases/download/%{lookup('role::opensearch::version')}/opensearch-%{lookup('role::opensearch::version')}-analysis-sudachi-3.6.1-SNAPSHOT.zip"
   analysis-ukrainian: {}
   opensearch-analysis-stconvert:
     url: "https://github.com/miraheze/opensearch-analysis-stconvert/releases/download/%{lookup('role::opensearch::version')}/opensearch-analysis-stconvert.zip"
