@@ -58,6 +58,23 @@ class role::opensearch (
         }
     }
 
+    file { '/usr/local/bin/opensearch-plugin-sync':
+        ensure => file,
+        mode   => '0755',
+        source => 'puppet:///modules/role/opensearch/opensearch-plugin-sync.sh',
+    }
+
+    $plugin_names = join(keys($opensearch::plugins), ' ')
+    $plugin_sync = "/usr/local/bin/opensearch-plugin-sync %s ${opensearch::real_plugindir} ${os_version} ${plugin_names}"
+
+    exec { 'remove outdated opensearch plugins':
+        command => sprintf($plugin_sync, 'remove'),
+        onlyif  => sprintf($plugin_sync, 'check'),
+        path    => ['/usr/bin', '/bin'],
+        require => [Package['opensearch'], File['/usr/local/bin/opensearch-plugin-sync']],
+        before  => Opensearch::Plugin <| |>,
+    }
+
     if $sudachi_dictionary {
         $http_proxy = lookup('http_proxy', {'default_value' => undef})
         $sudachi_dict_env = $http_proxy ? {
