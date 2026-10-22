@@ -72,8 +72,9 @@ class role::opensearch (
         onlyif  => sprintf($plugin_sync, 'check'),
         path    => ['/usr/bin', '/bin'],
         require => [Package['opensearch'], File['/usr/local/bin/opensearch-plugin-sync']],
-        before  => Opensearch::Plugin <| |>,
     }
+
+    Exec['remove outdated opensearch plugins'] -> Opensearch::Plugin <| |>
 
     if $sudachi_dictionary {
         $http_proxy = lookup('http_proxy', {'default_value' => undef})
