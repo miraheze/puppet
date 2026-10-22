@@ -53,9 +53,11 @@ class base::monitoring {
     monitoring::hosts { $facts['networking']['hostname']: }
 
     monitoring::nrpe { 'Disk Space':
-        command  => '/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /',
-        docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Disk_Space',
-        critical => true
+        command         => '/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /',
+        docs            => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Disk_Space',
+        critical        => true
+        phorge_triggers => [ 'CRITICAL' ],
+        phorge_projects => [ 'tech-infra' ],
     }
 
     $load_critical = $facts['processors']['count'] * 2.0
