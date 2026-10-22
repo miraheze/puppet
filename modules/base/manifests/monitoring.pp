@@ -55,7 +55,7 @@ class base::monitoring {
     monitoring::nrpe { 'Disk Space':
         command         => '/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /',
         docs            => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Disk_Space',
-        critical        => true
+        critical        => true,
         phorge_triggers => [ 'CRITICAL' ],
         phorge_projects => [ 'tech-infra' ],
     }
@@ -64,27 +64,27 @@ class base::monitoring {
     $load_warning = $facts['processors']['count'] * 1.7
     monitoring::nrpe { 'Current Load':
         command => "/usr/lib/nagios/plugins/check_load -w ${load_warning} -c ${load_critical}",
-        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Current_Load'
+        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Current_Load',
     }
 
     monitoring::nrpe { 'Puppet':
         command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_puppet_run -w 3600 -c 43200',
-        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Puppet'
+        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Puppet',
     }
 
     monitoring::services { 'SSH':
         check_command => 'ssh',
-        docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#SSH'
+        docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#SSH',
     }
 
     monitoring::nrpe { 'APT':
         command => '/usr/lib/nagios/plugins/check_apt -o -t 60',
-        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#APT'
+        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#APT',
     }
 
     monitoring::nrpe { 'chrony':
         command => '/usr/lib/nagios/plugins/check_chrony -w 50 -c 100 -W 5 -C 10',
-        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Chrony'
+        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Chrony',
     }
 
     # Collect all NRPE command files
