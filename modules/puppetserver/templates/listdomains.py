@@ -278,7 +278,7 @@ def write_files(workdir, cf_list=None, wd_yaml=None, wd_domains=None, redirect_l
         wd_set = set(wd_domains)
         exempt_set = set(EXEMPT_DOMAINS)
 
-        only_in_cf = {domain for domain in cf_set if ".miraheze.org" not in domain}
+        only_in_cf = {domain for domain in cf_set if ".miraheze.org" not in domain and ".wikitide.org" not in domain}
         only_in_cf = only_in_cf - wd_set - exempt_set
         if redirect_list is not None:
             redirect_set = set(redirect_list)
