@@ -311,7 +311,7 @@ def git_push(workdir):
 
     subprocess.run(["git", "-C", workdir, "config", "user.name", "WikiTideBot"], check=True)
     subprocess.run(["git", "-C", workdir, "config", "user.email", "noreply@wikitide.org"], check=True)
-    subprocess.run(["git", "add", CLOUDFLARE_OUTPUT, WIKIDISCOVER_OUTPUT, LOG_FILE, REDIRECTS_OUTPUT_FILE, REDIRECTS_AUTO_FILE], check=True)
+    subprocess.run(["git", "add", CLOUDFLARE_OUTPUT, WIKIDISCOVER_OUTPUT, LOG_FILE, REDIRECTS_OUTPUT_FILE, REDIRECTS_AUTO_FILE, WIKITIDEORG_LIST], check=True)
 
     result = subprocess.run(["git", "diff", "--cached", "--quiet"])
     if result.returncode == 0:
