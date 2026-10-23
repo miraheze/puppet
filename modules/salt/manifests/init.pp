@@ -22,8 +22,7 @@ class salt {
     apt::pin { 'salt_pin':
         priority => 1001,
         packages => 'salt-*',
-        # TODO: Migrate to LTS once a version greater than 3007 becomes lts.
-        version  => '3007.*',
+        version  => '3008.*',
     }
 
     # First installs can trip without this
