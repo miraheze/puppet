@@ -4,7 +4,7 @@ class varnish (
     String $cache_file_size = '22G',
     Integer[1] $thread_pool_max = lookup('varnish::thread_pool_max'),
     Integer $transient_gb = lookup('varnish::transient_storage'),
-    Hash $backends
+    Hash $backends,
 ) {
     include prometheus::exporter::varnish
 
@@ -155,12 +155,6 @@ class varnish (
     file { '/usr/lib/nagios/plugins/check_varnishbackends':
         ensure => present,
         source => 'puppet:///modules/varnish/icinga/check_varnishbackends.py',
-        mode   => '0755',
-    }
-
-    file { '/usr/lib/nagios/plugins/check_nginx_errorrate':
-        ensure => present,
-        source => 'puppet:///modules/varnish/icinga/check_nginx_errorrate',
         mode   => '0755',
     }
 
