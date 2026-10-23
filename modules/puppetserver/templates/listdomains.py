@@ -280,7 +280,7 @@ def write_files(workdir, cf_list=None, wd_yaml=None, wd_domains=None, redirect_l
         exempt_set = set(EXEMPT_DOMAINS)
         wikitideorg_set = {domain for domain in cf_set if ".wikitide.org" in domain}
 
-        with open(WIKITIDEORG_LIST, "w":) as f:
+        with open(WIKITIDEORG_LIST, "w") as f:
             f.writelines(f"{domain}\n" for domain in sorted(wikitideorg_set))
 
         only_in_cf = {domain for domain in cf_set if ".miraheze.org" not in domain}
