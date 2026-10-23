@@ -15,6 +15,7 @@ from urllib3.util.retry import Retry
 # Variables for output files and proxy settings
 CLOUDFLARE_OUTPUT = "cloudflare_domains"
 WIKIDISCOVER_OUTPUT = "wikidiscover_output.yaml"
+WIKITIDEORG_LIST = "wikitideorg_list"
 LOG_FILE = "domain_comparisons"
 REDIRECTS_OUTPUT_FILE = "redirects.yaml"
 REDIRECTS_MANUAL_FILE = "redirects_manual.yaml"
@@ -277,9 +278,13 @@ def write_files(workdir, cf_list=None, wd_yaml=None, wd_domains=None, redirect_l
         cf_set = set(cf_list)
         wd_set = set(wd_domains)
         exempt_set = set(EXEMPT_DOMAINS)
+        wikitideorg_set = {domain for domain in cf_set if ".wikitide.org" in domain}
 
-        only_in_cf = {domain for domain in cf_set if ".miraheze.org" not in domain and ".wikitide.org" not in domain}
-        only_in_cf = only_in_cf - wd_set - exempt_set
+        with open(WIKITIDEORG_LIST, "w":) as f:
+            f.writelines(f"{domain}\n" for domain in sorted(wikitideorg_set))
+
+        only_in_cf = {domain for domain in cf_set if ".miraheze.org" not in domain}
+        only_in_cf = only_in_cf - wd_set - exempt_set - wikitideorg_set
         if redirect_list is not None:
             redirect_set = set(redirect_list)
             only_in_cf = only_in_cf - redirect_set
