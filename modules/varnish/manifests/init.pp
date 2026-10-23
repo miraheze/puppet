@@ -4,12 +4,8 @@ class varnish (
     String $cache_file_size = '22G',
     Integer[1] $thread_pool_max = lookup('varnish::thread_pool_max'),
     Integer $transient_gb = lookup('varnish::transient_storage'),
-    Hash $backends = lookup('varnish::backends'),
-    Boolean $use_nginx = true,
+    Hash $backends
 ) {
-    if $use_nginx {
-        include varnish::nginx
-    }
     include prometheus::exporter::varnish
 
     stdlib::ensure_packages([
@@ -182,18 +178,6 @@ class varnish (
 
     monitoring::nrpe { 'Varnish Backends':
         command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_varnishbackends'
-    }
-
-    if $use_nginx {
-        monitoring::nrpe { 'HTTP 4xx/5xx ERROR Rate':
-            command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_nginx_errorrate'
-        }
-    }
-
-    $backends.each | $name, $property | {
-        monitoring::nrpe { "Nginx Backend for ${name}":
-            command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${property['port']}",
-        }
     }
 
     $subquery = @("PQL")
