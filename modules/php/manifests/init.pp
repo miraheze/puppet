@@ -40,6 +40,7 @@ class php(
             'save_path' => '/tmp',
         },
         'upload_max_filesize'   => '100M',
+        'session.upload_progress.enabled' => 0,
     }
 
     # Let's install the packages and configure PHP for each of the selected
