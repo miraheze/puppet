@@ -20,12 +20,7 @@ node /^cloud[12][0156789]\.fsslc\.wtnet$/ {
     include role::cloud
 }
 
-node 'cp161.wikitide.net' {
-    include base
-    include role::varnish
-}
-
-node /^cp([12][079]1)\.wikitide\.net$/ {
+node /^cp([12][0679]1)\.wikitide\.net$/ {
     role(cache::cache)
 }
 
