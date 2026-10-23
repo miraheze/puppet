@@ -1,0 +1,15 @@
+<%- | Stdlib::Absolutepath $socket,
+      Stdlib::Absolutepath $acl_file,
+| -%>
+# This file is managed by puppet.
+#
+# Cloudflare connects to us, so a firewall ban on the client address would
+# never match. Bans go into an HAProxy ACL instead, which is keyed on the real
+# client address after set-src. The list file is what survives a reload.
+
+[Definition]
+actionstart =
+actionstop =
+actioncheck =
+actionban = echo "add acl <%= $acl_file %> <ip>" | socat stdio <%= $socket %>; grep -qxF '<ip>' <%= $acl_file %> || echo '<ip>' >> <%= $acl_file %>
+actionunban = echo "del acl <%= $acl_file %> <ip>" | socat stdio <%= $socket %>; grep -vxF '<ip>' <%= $acl_file %> > <%= $acl_file %>.tmp; mv -f <%= $acl_file %>.tmp <%= $acl_file %>

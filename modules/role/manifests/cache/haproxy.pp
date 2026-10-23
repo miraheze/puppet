@@ -46,6 +46,9 @@ class role::cache::haproxy(
     # used on haproxy.cfg.erb
     $socket = '/run/haproxy/haproxy.sock'
 
+    # used on tls_terminator.cfg.erb and by fail2ban
+    $f2b_acl_file = '/etc/haproxy/f2b_banned.lst'
+
     # We don't need to use all our certificates, only these three.
     $certificates = {
         'miraheze-origin-cert' => '',
@@ -180,6 +183,23 @@ class role::cache::haproxy(
     logrotate::conf { 'haproxy':
         ensure => present,
         source => 'puppet:///modules/role/cache/haproxy/logrotate',
+    }
+
+    # HAProxy refuses to start if this file is missing. Contents are written
+    # by fail2ban, so puppet must never reset them.
+    file { $f2b_acl_file:
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        replace => false,
+        before  => Service['haproxy'],
+    }
+
+    class { 'fail2ban':
+        socket   => $socket,
+        acl_file => $f2b_acl_file,
+        require  => File[$f2b_acl_file],
     }
 
     $subquery = @("PQL")
