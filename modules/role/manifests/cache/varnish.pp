@@ -4,8 +4,7 @@ class role::cache::varnish (
 ) {
 
     class { 'varnish':
-        backends  => $backends,
-        use_nginx => false,
+        backends => $backends,
     }
 
     include prometheus::exporter::varnishreqs
