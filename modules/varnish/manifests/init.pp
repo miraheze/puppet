@@ -180,12 +180,6 @@ class varnish (
         command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_varnishbackends'
     }
 
-    $backends.each | $name, $property | {
-        monitoring::nrpe { "Backend for ${name}":
-            command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${property['port']}",
-        }
-    }
-
     $subquery = @("PQL")
     (resources { type = 'Class' and title = 'Role::Icinga2' } or
     resources { type = 'Class' and title = 'Role::Mediawiki' } or
