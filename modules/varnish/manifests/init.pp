@@ -13,7 +13,7 @@ class varnish (
         'varnish-modules',
         'python3-flask',
         'python3-pyotp',
-        'gunicorn'
+        'gunicorn',
     ])
 
     file { '/opt/varnish-depool':
@@ -168,12 +168,6 @@ class varnish (
     sudo::user { 'nrpe_sudo_checkvarnishbackends':
         user       => 'nagios',
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_varnishbackends' ],
-    }
-
-    # FIXME: Can't read access files without root
-    sudo::user { 'nrpe_sudo_checknginxerrorrate':
-        user       => 'nagios',
-        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_nginx_errorrate' ],
     }
 
     monitoring::nrpe { 'Varnish Backends':
