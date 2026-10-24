@@ -66,8 +66,8 @@ class varnish (
     $csp = loadyaml("${module_path}/data/csp.yaml")
     $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
     $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
-    $interval_check = lookup('varnish::interval-check')
-    $interval_timeout = lookup('varnish::interval-timeout')
+    $interval_check = lookup('varnish::interval_check')
+    $interval_timeout = lookup('varnish::interval_timeout')
 
     $debug_access_key = lookup('passwords::varnish::debug_access_key')
 
