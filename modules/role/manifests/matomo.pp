@@ -2,16 +2,17 @@
 class role::matomo (
     Boolean $enable_redis = lookup('role::matomo::enable_redis', {'default_value' => false}),
 ) {
+    include base
 
     if $enable_redis {
         include prometheus::exporter::redis
-        class { '::redis':
+        class { 'redis':
             maxmemory_policy => 'allkeys-lru',
             password         => lookup('passwords::redis::master')
         }
     }
 
-    include ::matomo
+    include matomo
 
     $subquery = @("PQL")
     (resources { type = 'Class' and title = 'Role::Varnish' } or
