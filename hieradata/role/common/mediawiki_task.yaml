@@ -35,7 +35,7 @@ mediawiki::php::fpm_config:
   max_execution_time: 259210
 
 mediawiki::php::increase_open_files: true
-mediawiki::php::enable_request_profiling: true
+mediawiki::php::enable_request_profiling: false
 
 role::mediawiki::php::restarts::ensure: present
 role::mediawiki::php::restarts::opcache_limit: 200
