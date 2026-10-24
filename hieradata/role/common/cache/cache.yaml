@@ -1,7 +1,7 @@
 users::groups: 'cache-admins'
 varnish::cache_file_size: '345G'
-varnish::interval-check: '10s'
-varnish::interval-timeout: '10s'
+varnish::interval_check: '10s'
+varnish::interval_timeout: '10s'
 varnish::thread_pool_max: 12000
 varnish::transient_storage: 5
 role::cache::cache::restrict_firewall: true
