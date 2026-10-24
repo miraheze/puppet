@@ -5,5 +5,3 @@ nginx::logrotate_number: 3
 php::fpm::fpm_workers_multiplier: 2.0
 php::fpm::fpm_min_child: 8
 php::php_version: '8.4'
-
-redis::maxmemory: '1gb'
