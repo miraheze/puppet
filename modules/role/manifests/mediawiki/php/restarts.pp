@@ -4,7 +4,7 @@ class role::mediawiki::php::restarts (
 ) {
   stdlib::ensure_packages('python3-pyotp')
 
-  $php_version = lookup('php::php_version', {'default_value' => '8.4'})
+  $php_version = lookup('php::php_version')
 
   # Check, then restart php-fpm if needed.
   # This implicitly depends on the other MediaWiki/PHP profiles
