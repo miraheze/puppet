@@ -1,1 +1,2 @@
 role::matomo::enable_redis: true
+redis::maxmemory: '1gb'
