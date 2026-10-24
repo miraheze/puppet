@@ -59,7 +59,7 @@ class icingaweb2 (
         'ldap',
     ]
 
-    $php_version = lookup('php::php_version', {'default_value' => '8.4'})
+    $php_version = lookup('php::php_version')
 
     # Install the runtime
     class { '::php':
