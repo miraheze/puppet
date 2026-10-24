@@ -37,7 +37,7 @@ mediawiki::php::fpm_config:
   upload_max_filesize: '250M'
   max_execution_time: 210
 
-mediawiki::php::enable_request_profiling: true
+mediawiki::php::enable_request_profiling: false
 
 mediawiki::use_staging: true
 mediawiki::monitoring::host: 'test.mirabeta.org'
