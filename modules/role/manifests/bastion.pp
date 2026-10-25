@@ -1,5 +1,5 @@
 class role::bastion (
-    Boolean $webproxy_gateway = lookup('role::bastion::webproxy_gateway', {'default_value' => false}),
+    Boolean $webproxy_gateway = false,
 ) {
     include base
     include squid
