@@ -35,7 +35,7 @@ class role::bastion (
 
     if $webproxy_gateway {
         $webproxy_clients_query = @("PQL")
-            (resources { type = 'Class' and title = 'Role::MediaWiki' } or
+            (resources { type = 'Class' and title = 'Role::Mediawiki' } or
             resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
             resources { type = 'Class' and title = 'Role::Mediawiki_beta' })
             | PQL
