@@ -1,0 +1,77 @@
+<%- | Stdlib::Port $port, Array[String[1]] $allow, Hash $upstreams | -%>
+<% $upstreams.each |$name, $cfg| { -%>
+proxy_cache_path /var/cache/nginx/webproxy/<%= $name %> levels=1:2 keys_zone=webproxy_<%= $name %>:<%= $cfg['zone_size'] %> max_size=<%= $cfg['cache_size'] %> inactive=<%= $cfg['stale_ttl'] %> use_temp_path=off;
+<% } -%>
+
+log_format webproxy_gateway '$remote_addr [$time_local] "$request" $status $body_bytes_sent '
+	'$upstream_cache_status $request_time $upstream_response_time $upstream_status';
+
+server {
+	listen <%= $port %>;
+
+	server_name _;
+
+<% $allow.each |$cidr| { -%>
+	allow <%= $cidr %>;
+<% } -%>
+	deny all;
+
+	access_log /var/log/nginx/webproxy-gateway.log webproxy_gateway;
+
+	resolver 127.0.0.1 valid=300s ipv6=off;
+
+<% $upstreams.each |$name, $cfg| { -%>
+	location = /<%= $name %><%= $cfg['path'] %> {
+		limit_except GET {
+			deny all;
+		}
+<% $cfg['required_args'].each |$arg, $value| { -%>
+
+		if ($arg_<%= $arg %> != "<%= $value %>") {
+			return 403;
+		}
+<% } -%>
+
+		set $upstream_host <%= $cfg['host'] %>;
+
+		proxy_pass https://$upstream_host<%= $cfg['path'] %>$is_args$args;
+		proxy_http_version 1.1;
+		proxy_set_header Host $upstream_host;
+		proxy_set_header Connection "";
+		proxy_set_header Accept-Encoding "";
+
+		proxy_ssl_server_name on;
+		proxy_ssl_name $upstream_host;
+		proxy_ssl_verify on;
+		proxy_ssl_verify_depth 3;
+		proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+
+		proxy_connect_timeout 3s;
+		proxy_send_timeout 6s;
+		proxy_read_timeout 6s;
+		proxy_next_upstream error timeout;
+		proxy_next_upstream_tries 2;
+		proxy_next_upstream_timeout 6s;
+		proxy_ignore_client_abort on;
+
+		proxy_cache webproxy_<%= $name %>;
+		proxy_cache_key $request_uri;
+		proxy_cache_lock on;
+		proxy_cache_lock_timeout 3s;
+		proxy_cache_lock_age 6s;
+		proxy_cache_background_update on;
+		proxy_cache_use_stale error timeout updating http_429 http_500 http_502 http_503 http_504;
+		proxy_cache_valid 200 <%= $cfg['fresh_ttl'] %>;
+		proxy_cache_valid 429 502 503 504 <%= $cfg['error_ttl'] %>;
+		proxy_no_cache $upstream_http_mediawiki_api_error;
+		proxy_ignore_headers Cache-Control Expires Set-Cookie Vary X-Accel-Expires;
+		proxy_hide_header Set-Cookie;
+
+		add_header X-Cache-Status $upstream_cache_status always;
+	}
+
+<% } -%>
+	location / {
+		return 404;
+	}
+}

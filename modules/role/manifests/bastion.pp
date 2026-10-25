@@ -1,15 +1,8 @@
 class role::bastion (
-    Optional[Boolean] $higher_timeout = lookup('role::bastion::higher_timeout', {'default_value' => undef}),
+    Boolean $webproxy_gateway = false,
 ) {
     include base
-
-    if $higher_timeout {
-        class { 'squid':
-            config_source => 'puppet:///modules/role/bastion/squid.conf'
-        }
-    } else {
-        include squid
-    }
+    include squid
 
     system::role { 'bastion':
         description => 'core access bastion host'
@@ -38,6 +31,20 @@ class role::bastion (
         proto  => 'tcp',
         port   => 8080,
         srange => "(${squid_access_hosts_internal})",
+    }
+
+    if $webproxy_gateway {
+        $webproxy_clients_query = @("PQL")
+            (resources { type = 'Class' and title = 'Role::Mediawiki' } or
+            resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
+            resources { type = 'Class' and title = 'Role::Mediawiki_beta' })
+            | PQL
+        $webproxy_clients = vmlib::generate_firewall_ip($webproxy_clients_query)
+
+        class { 'webproxy::gateway':
+            srange => "(${webproxy_clients})",
+            allow  => ['127.0.0.1'] + split($webproxy_clients, ' ').filter |$ip| { $ip != '' },
+        }
     }
 
     firewall::service { 'bastion-ntp':
