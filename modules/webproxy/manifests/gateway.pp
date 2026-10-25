@@ -12,7 +12,7 @@ class webproxy::gateway (
         Optional[error_ttl]     => Pattern[/\A\d+[smhd]\z/],
         Optional[cache_size]    => Pattern[/\A\d+[kmg]\z/],
         Optional[zone_size]     => Pattern[/\A\d+[kmg]\z/],
-    }]] $upstreams = {},
+    }]] $upstreams,
 ) {
     include nginx
 
