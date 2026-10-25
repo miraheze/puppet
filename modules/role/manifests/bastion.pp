@@ -1,16 +1,8 @@
 class role::bastion (
-    Optional[Boolean] $higher_timeout = lookup('role::bastion::higher_timeout', {'default_value' => undef}),
     Boolean $webproxy_gateway = lookup('role::bastion::webproxy_gateway', {'default_value' => false}),
 ) {
     include base
-
-    if $higher_timeout {
-        class { 'squid':
-            config_source => 'puppet:///modules/role/bastion/squid.conf'
-        }
-    } else {
-        include squid
-    }
+    include squid
 
     system::role { 'bastion':
         description => 'core access bastion host'
