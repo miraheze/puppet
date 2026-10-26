@@ -16,6 +16,8 @@ class webproxy::gateway (
 ) {
     include nginx
 
+    $use_graylog = lookup('nginx::use_graylog', {'default_value' => false})
+
     $defaults = {
         'required_args' => {},
         'fresh_ttl'     => '2d',
@@ -49,9 +51,10 @@ class webproxy::gateway (
         ensure  => present,
         monitor => false,
         content => epp('webproxy/gateway.conf.epp', {
-            'port'      => $port,
-            'allow'     => $allow,
-            'upstreams' => $resolved,
+            'port'        => $port,
+            'allow'       => $allow,
+            'upstreams'   => $resolved,
+            'use_graylog' => $use_graylog,
         }),
     }
 
