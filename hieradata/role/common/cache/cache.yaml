@@ -24,7 +24,8 @@ role::cache::haproxy::lb_pools:
     agent: false
     check_uri: /healthcheck
     check_host: swift-lb.wikitide.net
-    check_status: 200
+    # swift answers 404 here, only the proxy can, nginx would return 502 when it is down
+    check_status: 404
     check_method: GET
   matomo:
     port: 8153
