@@ -1,10 +1,27 @@
 <%- | Stdlib::Port $port, Array[String[1]] $allow, Hash $upstreams | -%>
 <% $upstreams.each |$name, $cfg| { -%>
-proxy_cache_path /var/cache/nginx/webproxy/<%= $name %> levels=1:2 keys_zone=webproxy_<%= $name %>:<%= $cfg['zone_size'] %> max_size=<%= $cfg['cache_size'] %> inactive=<%= $cfg['stale_ttl'] %> use_temp_path=off;
+proxy_cache_path /var/cache/nginx/webproxy/<%= $name %> levels=1:2 keys_zone=webproxy_<%= $name %>:<%= $cfg['zone_size'] %> max_size=<%= $cfg['cache_size'] %> min_free=1g inactive=<%= $cfg['stale_ttl'] %> use_temp_path=off;
 <% } -%>
 
 log_format webproxy_gateway '$remote_addr [$time_local] "$request" $status $body_bytes_sent '
 	'$upstream_cache_status $request_time $upstream_response_time $upstream_status';
+
+log_format webproxy_gateway_json escape=json '{ "timestamp": "$time_iso8601", '
+	'"remote_addr": "$remote_addr", '
+	'"request_method": "$request_method", '
+	'"request_uri": "$scheme://$host$request_uri", '
+	'"status": "$status", '
+	'"body_bytes_sent": "$body_bytes_sent", '
+	'"request_time": "$request_time", '
+	'"upstream_cache_status": "$upstream_cache_status", '
+	'"upstream_response_time": "$upstream_response_time", '
+	'"upstream_status": "$upstream_status", '
+	'"nginx_access_log": true }';
+
+map $status $webproxy_log_failed {
+	~^2 0;
+	default 1;
+}
 
 server {
 	listen <%= $port %>;
@@ -16,7 +33,8 @@ server {
 <% } -%>
 	deny all;
 
-	access_log /var/log/nginx/webproxy-gateway.log webproxy_gateway;
+	access_log syslog:server=127.0.0.1:10514 webproxy_gateway_json;
+	access_log /var/log/nginx/webproxy-gateway.log webproxy_gateway if=$webproxy_log_failed;
 
 	resolver 127.0.0.1 valid=300s ipv6=off;
 
