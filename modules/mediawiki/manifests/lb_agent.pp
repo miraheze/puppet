@@ -40,10 +40,15 @@ class mediawiki::lb_agent (
         notrack => true,
     }
 
+    $address = $facts['networking']['interfaces']['ens19'] ? {
+        undef   => $facts['networking']['ip'],
+        default => $facts['networking']['interfaces']['ens19']['ip'],
+    }
+
     monitoring::services { 'MediaWiki LB agent':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $facts['networking']['interfaces']['ens19']['ip'],
+            tcp_address => $address,
             tcp_port    => String($port),
         },
     }
