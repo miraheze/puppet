@@ -26,7 +26,7 @@ class role::cache::haproxy(
     Optional[Integer] $log_length = lookup('role::cache::haproxy::log_length', {'default_value'                                               => 8192}),
     Boolean $numa_networking = lookup('role::cache::haproxy::numa_networking', {'default_value'                                               => false}),
     Boolean $use_graylog = lookup('role::cache::haproxy::use_graylog', {'default_value'                                                       => false}),
-    Optional[Stdlib::Port] $mediawiki_lb_port = lookup('role::cache::haproxy::mediawiki_lb_port', {'default_value' => undef}),
+    Stdlib::Port $mediawiki_lb_port = lookup('role::cache::haproxy::mediawiki_lb_port'),
     Integer[1] $mediawiki_lb_timeout_queue = lookup('role::cache::haproxy::mediawiki_lb_timeout_queue', {'default_value' => 30}),
     Stdlib::Port $mediawiki_agent_port = lookup('mediawiki::lb_agent::port', {'default_value' => 9590}),
 ) {
@@ -143,20 +143,14 @@ class role::cache::haproxy(
     $mediawiki_lb_servers = $varnish_backends.filter |$name, $property| { $property['pool'] == true }
 
     haproxy::site { 'mediawiki-lb':
-        ensure  => $mediawiki_lb_port ? {
-            undef   => absent,
-            default => present,
-        },
-        content => $mediawiki_lb_port ? {
-            undef   => undef,
-            default => epp('role/cache/haproxy/mediawiki_lb.cfg.epp', {
-                'port'          => $mediawiki_lb_port,
-                'timeout'       => $timeout,
-                'timeout_queue' => $mediawiki_lb_timeout_queue,
-                'agent_port'    => $mediawiki_agent_port,
-                'servers'       => $mediawiki_lb_servers,
-            }),
-        },
+        ensure  => present,
+        content => epp('role/cache/haproxy/mediawiki_lb.cfg.epp', {
+            'port'          => $mediawiki_lb_port,
+            'timeout'       => $timeout,
+            'timeout_queue' => $mediawiki_lb_timeout_queue,
+            'agent_port'    => $mediawiki_agent_port,
+            'servers'       => $mediawiki_lb_servers,
+        }),
     }
 
     if ($facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18']) {
@@ -197,10 +191,8 @@ class role::cache::haproxy(
         }
     }
 
-    if $mediawiki_lb_port {
-        monitoring::nrpe { 'Haproxy MediaWiki balancer':
-            command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${mediawiki_lb_port}",
-        }
+    monitoring::nrpe { 'Haproxy MediaWiki balancer':
+        command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${mediawiki_lb_port}",
     }
 
     rsyslog::conf { 'haproxy@tls':
