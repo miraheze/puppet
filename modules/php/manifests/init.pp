@@ -41,6 +41,7 @@ class php(
         },
         'upload_max_filesize'   => '100M',
         'session.upload_progress.enabled' => 0,
+        'zend.assertions'       => -1,
     }
 
     # Let's install the packages and configure PHP for each of the selected
