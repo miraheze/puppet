@@ -17,7 +17,8 @@ app = Flask(__name__)
 app.config["TOTP_SECRET"] = os.environ.get("TOTP_SECRET")
 PORT = int(os.environ.get("PORT", 5001))  # optional, default 5001
 HAPROXY_SOCKET = os.environ.get("HAPROXY_SOCKET", "/run/haproxy/haproxy.sock")
-HAPROXY_LB = "mediawiki_lb"
+HAPROXY_LB_PREFIX = "lb_"
+NODE_NAME = re.compile(r"[a-z]+\d+")
 
 if not app.config["TOTP_SECRET"]:
     raise RuntimeError("TOTP_SECRET environment variable must be set")
@@ -40,14 +41,27 @@ def haproxy_command(cmd):
             chunks.append(data)
     return b"".join(chunks).decode().strip()
 
+def lb_servers():
+    """Return the stat rows of all servers in the balancer pools"""
+    out = haproxy_command("show stat")
+    return [
+        row for row in csv.DictReader(io.StringIO(out.lstrip("# ")))
+        if row["pxname"].startswith(HAPROXY_LB_PREFIX) and NODE_NAME.fullmatch(row["svname"])
+    ]
+
 def set_haproxy_state(name, state):
-    """Set the server state on the HAProxy balancer"""
+    """Set the server state in every pool it belongs to"""
     target = "maint" if state == "sick" else "ready"
     try:
-        reply = haproxy_command(f"set server {HAPROXY_LB}/{name} state {target}")
+        proxies = [row["pxname"] for row in lb_servers() if row["svname"] == name]
+        if not proxies:
+            return False
+        for proxy in proxies:
+            if haproxy_command(f"set server {proxy}/{name} state {target}") != "":
+                return False
     except OSError:
         return False
-    return reply == ""
+    return True
 
 def json_response(data, status=200):
     """Return a Flask Response with JSON content"""
@@ -77,7 +91,7 @@ def enforce_security():
 
 @app.route("/backend/<name>/<state>", methods=["POST"])
 def set_backend(name, state):
-    if not re.match(r"^mw\d+$", name):
+    if not NODE_NAME.fullmatch(name):
         return json_response({"status": "error", "error": "invalid backend name"}, status=400)
 
     state = state.lower()
@@ -91,16 +105,16 @@ def set_backend(name, state):
 
 @app.route("/backend/list", methods=["GET"])
 def list_backends():
-    """Return the 'mw' servers (e.g., mw151) of the balancer with status and load"""
+    """Return the servers of all balancer pools (e.g., mw151) with status and load"""
     try:
-        out = haproxy_command("show stat")
+        rows = lb_servers()
     except OSError:
         return json_response({"status": "error", "error": "failed to list backends"}, status=500)
 
-    lines = ["Backend name\tStatus\tWeight\tSessions\tQueue"]
-    for row in csv.DictReader(io.StringIO(out.lstrip("# "))):
-        if row["pxname"] == HAPROXY_LB and re.match(r"^mw\d+$", row["svname"]):
-            lines.append("\t".join([row["svname"], row["status"], row["weight"], row["scur"], row["qcur"]]))
+    lines = ["Pool\tBackend name\tStatus\tWeight\tSessions\tQueue"]
+    for row in sorted(rows, key=lambda r: (r["pxname"], r["svname"])):
+        pool = row["pxname"][len(HAPROXY_LB_PREFIX):]
+        lines.append("\t".join([pool, row["svname"], row["status"], row["weight"], row["scur"], row["qcur"]]))
 
     return Response("\n".join(lines), mimetype="text/plain")
 
