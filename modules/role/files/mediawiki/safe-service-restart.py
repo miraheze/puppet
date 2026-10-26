@@ -62,8 +62,8 @@ class SafeServiceRestarter:
         return {"X-TOTP": code, "accept": "application/json"}
 
     def _valid_backend_name(self):
-        """Ensure backend name is valid (mw + digits)"""
-        return re.match(r"^mw\d+$", self.backend)
+        """Ensure backend name is valid (letters + digits, e.g. mw151)"""
+        return re.fullmatch(r"[a-z]+\d+", self.backend)
 
     def run(self):
         """Safe restart: depool → restart services → repool"""
