@@ -5,33 +5,14 @@ class varnish (
     Integer[1] $thread_pool_max = lookup('varnish::thread_pool_max'),
     Integer $transient_gb = lookup('varnish::transient_storage'),
     Hash $backends,
+    Haproxy::Lbpools $lb_pools,
 ) {
     include prometheus::exporter::varnish
 
     stdlib::ensure_packages([
         'varnish',
         'varnish-modules',
-        'python3-flask',
-        'python3-pyotp',
-        'gunicorn',
     ])
-
-    file { '/opt/varnish-depool':
-        ensure => directory,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0700',
-    }
-
-    file { '/opt/varnish-depool/varnish-depool.py':
-        ensure  => present,
-        source  => 'puppet:///modules/varnish/varnish-depool.py',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0700',
-        notify  => Service['varnish-depool'],
-        require => File['/opt/varnish-depool']
-    }
 
     $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
     $reload_vcl_opts = "-f /etc/varnish/default.vcl -d ${vcl_reload_delay_s} -a"
@@ -113,13 +94,6 @@ class varnish (
         require => Service['varnish'],
     }
 
-    $varnish_totp_secret = lookup('passwords::varnish::varnish_totp_secret')
-    systemd::service { 'varnish-depool':
-        ensure  => present,
-        content => systemd_template('varnish-depool', { 'varnish_totp_secret' => $varnish_totp_secret }),
-        restart => true,
-    }
-
     service { 'varnishncsa':
         ensure  => 'stopped',
         require => Package['varnish'],
@@ -166,33 +140,5 @@ class varnish (
 
     monitoring::nrpe { 'Varnish Backends':
         command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_varnishbackends'
-    }
-
-    $subquery = @("PQL")
-    (resources { type = 'Class' and title = 'Role::Icinga2' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_task' })
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    firewall::service { "${facts['networking']['fqdn']} varnish depool service port 5001":
-        proto  => 'tcp',
-        port   => 5001,
-        srange => "(${firewall_rules_str})",
-    }
-
-    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
-        $address = $facts['networking']['interfaces']['ens19']['ip']
-    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
-        $address = $facts['networking']['interfaces']['ens18']['ip6']
-    } else {
-        $address = $facts['networking']['ip6']
-    }
-
-    monitoring::services { 'varnish-depool service':
-        check_command => 'tcp',
-        vars          => {
-            tcp_address => $address,
-            tcp_port    => '5001',
-        },
     }
 }

@@ -13,6 +13,7 @@ class role::matomo (
     }
 
     include matomo
+    include haproxy::lb_agent
 
     $subquery = @("PQL")
     (resources { type = 'Class' and title = 'Role::Varnish' } or
