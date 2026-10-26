@@ -2,4 +2,5 @@ base::bots_hostname: 'bots171.public.fsslc.wtnet'
 base::ntp_servers:
   - 'time.cloudflare.com'
 base::syslog::syslog_host: [ 'graylog161.public.fsslc.wtnet:12210' ]
+base::dns::smtp_relay_override: false
 backup::use_http_proxy: false

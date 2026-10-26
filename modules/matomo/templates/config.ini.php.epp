@@ -36,11 +36,8 @@ port = 8080
 defaultHostnameIfEmpty = "wikitide.org"
 transport = "smtp"
 port = 465
-host = "ssl://bastion.fsslc.wtnet"
+host = "ssl://smtp-relay.gmail.com"
 encryption = "tls"
-ssl_disallow_self_signed = 0
-ssl_verify_peer = 0
-ssl_verify_peer_name = 0
 
 [Plugins]
 Plugins[] = "CoreVue"

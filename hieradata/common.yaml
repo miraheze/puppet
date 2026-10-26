@@ -4,7 +4,6 @@ puppetserver: false
 
 openvox_major_version: 9
 
-base::mail::relayhost: 'bastion.fsslc.wtnet'
 base::ntp_servers:
   - 'ntp.fsslc.wtnet'
 
