@@ -107,10 +107,9 @@ location ~ ^/[^/]+wiki(?:beta)?/w/load\.php$ {
 	rewrite ^/[^/]+wiki(?:beta)?/w/load\.php$ /w/load.php last;
 }
 
-# Support SUL3-style resources access via /<wiki>/<version>/resources
-location ~ ^/[^/]+wiki(?:beta)?/1\.\d\d/resources {
-	rewrite ^/[^/]+wiki(?:beta)?/(1\.\d\d/resources.*)$ /$1 last;
-	expires 1d;
+# Support SUL3-style asset access via /<wiki>/<version>/(resources|skins|extensions)
+location ~ ^/[^/]+wiki(?:beta)?/1\.\d\d/(resources|skins|extensions)/ {
+	rewrite ^/[^/]+wiki(?:beta)?/(1\.\d\d/(?:resources|skins|extensions)/.*)$ /$1 last;
 }
 
 location @wiki {
