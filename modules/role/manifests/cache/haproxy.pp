@@ -149,7 +149,13 @@ class role::cache::haproxy(
         },
         content => $mediawiki_lb_port ? {
             undef   => undef,
-            default => template('role/cache/haproxy/mediawiki_lb.cfg.erb'),
+            default => epp('role/cache/haproxy/mediawiki_lb.cfg.epp', {
+                'port'          => $mediawiki_lb_port,
+                'timeout'       => $timeout,
+                'timeout_queue' => $mediawiki_lb_timeout_queue,
+                'agent_port'    => $mediawiki_agent_port,
+                'servers'       => $mediawiki_lb_servers,
+            }),
         },
     }
 
