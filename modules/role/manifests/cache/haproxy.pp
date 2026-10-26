@@ -26,7 +26,7 @@ class role::cache::haproxy(
     Optional[Integer] $log_length = lookup('role::cache::haproxy::log_length', {'default_value'                                               => 8192}),
     Boolean $numa_networking = lookup('role::cache::haproxy::numa_networking', {'default_value'                                               => false}),
     Boolean $use_graylog = lookup('role::cache::haproxy::use_graylog', {'default_value'                                                       => false}),
-    Stdlib::Port $mediawiki_lb_port = lookup('role::cache::haproxy::mediawiki_lb_port'),
+    Haproxy::Lbpools $mediawiki_lb_pools = lookup('role::cache::haproxy::mediawiki_lb_pools'),
     Integer[1] $mediawiki_lb_timeout_queue = lookup('role::cache::haproxy::mediawiki_lb_timeout_queue', {'default_value' => 30}),
     Stdlib::Port $mediawiki_agent_port = lookup('mediawiki::lb_agent::port', {'default_value' => 9590}),
 ) {
@@ -140,16 +140,31 @@ class role::cache::haproxy(
         content => template('role/cache/haproxy/tls_terminator.cfg.erb'),
     }
 
-    $mediawiki_lb_servers = $varnish_backends.filter |$name, $property| { $property['pool'] == true }
+    $default_pools = $mediawiki_lb_pools.filter |$pool_name, $pool| { $pool['default'] == true }
+    if $default_pools.length != 1 {
+        fail('role::cache::haproxy::mediawiki_lb_pools needs exactly one pool with default: true')
+    }
+
+    ['swift', 'matomo'].each |$required| {
+        if !($required in $mediawiki_lb_pools) {
+            fail("role::cache::haproxy::mediawiki_lb_pools needs a ${required} pool, the VCL refers to it")
+        }
+    }
+
+    $varnish_backends.each |$name, $property| {
+        if $property['lb_pool'] and !($property['lb_pool'] in $mediawiki_lb_pools) {
+            fail("${name} uses lb_pool ${property['lb_pool']} which is not in mediawiki_lb_pools")
+        }
+    }
 
     haproxy::site { 'mediawiki-lb':
         ensure  => present,
         content => epp('role/cache/haproxy/mediawiki_lb.cfg.epp', {
-            'port'          => $mediawiki_lb_port,
+            'pools'         => $mediawiki_lb_pools,
+            'servers'       => $varnish_backends,
             'timeout'       => $timeout,
             'timeout_queue' => $mediawiki_lb_timeout_queue,
             'agent_port'    => $mediawiki_agent_port,
-            'servers'       => $mediawiki_lb_servers,
         }),
     }
 
@@ -191,8 +206,10 @@ class role::cache::haproxy(
         }
     }
 
-    monitoring::nrpe { 'Haproxy MediaWiki balancer':
-        command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${mediawiki_lb_port}",
+    $mediawiki_lb_pools.each |$pool_name, $pool| {
+        monitoring::nrpe { "Haproxy MediaWiki balancer ${pool_name}":
+            command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${pool['port']}",
+        }
     }
 
     rsyslog::conf { 'haproxy@tls':
