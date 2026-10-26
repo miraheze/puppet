@@ -1,0 +1,21 @@
+<%- | Stdlib::Port $port,
+        Integer[1] $lb_count,
+        Float $maxconn_overcommit,
+| -%>
+[Unit]
+Description=MediaWiki HAProxy agent check
+After=network.target nginx.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/mw-lb-agent --port <%= $port %> --lb-count <%= $lb_count %> --maxconn-overcommit <%= $maxconn_overcommit %>
+DynamicUser=yes
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
