@@ -14,24 +14,6 @@ import vsthrottle;
 import xkey;
 
 # MediaWiki configuration
-probe mwhealth {
-	.request = "GET /check HTTP/1.1"
-		"Host: health.wikitide.net"
-		"User-Agent: Varnish healthcheck"
-		"Connection: close";
-	# Check each <%= @interval_check %>
-	.interval = <%= @interval_check %>;
-	# <%= @interval_timeout %> should be our upper limit for responding to a fair light web request
-	.timeout = <%= @interval_timeout %>;
-	# At least 4 out of 5 checks must be successful
-	# to mark the backend as healthy
-	.window = 5;
-	.threshold = 4;
-	.initial = 4;
-	.expected_response = 204;
-}
-
-<%- if @mediawiki_lb_port -%>
 probe mwlbhealth {
 	.url = "/__lb_status";
 	.interval = <%= @interval_check %>;
@@ -52,20 +34,18 @@ backend mediawiki_lb {
 	.max_connections = 30000;
 }
 
-<%- end -%>
 <%- @backends.each_pair do | name, property | -%>
+<%- unless property['pool'] -%>
 backend <%= name %> {
 	.host = "127.0.0.1";
 	.port = "<%= property['port'] %>";
-<%- if property['probe'] -%>
-	.probe = <%= property['probe'] %>;
-<%- end -%>
         .connect_timeout = 3s;
         .first_byte_timeout = 65s;
         .between_bytes_timeout = 31s;
         .max_connections = 5000;
 }
 
+<%- end -%>
 <%- if property['xdebug'] -%>
 backend <%= name %>_test {
 	.host = "127.0.0.1";
@@ -80,13 +60,6 @@ backend <%= name %>_test {
 
 # Initialize vcl
 sub vcl_init {
-	new mediawiki = directors.random();
-<%- @backends.each_pair do | name, property | -%>
-<%- if property['pool'] -%>
-	mediawiki.add_backend(<%= name %>, 100);
-<%- end -%>
-<%- end -%>
-
 	new swift = directors.random();
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['swiftpool'] -%>
@@ -324,11 +297,7 @@ sub mw_request {
 		unset req.http.X-WikiTide-Debug;
 	}
 
-<%- if @mediawiki_lb_port -%>
 	set req.backend_hint = mediawiki_lb;
-<%- else -%>
-	set req.backend_hint = mediawiki.backend();
-<%- end -%>
 
 <%- if @backends.any? { |_name, property| property['thumbpool'] } -%>
 	if (req.url ~ "^/w/thumb(_handler)?\.php") {
