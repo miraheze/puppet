@@ -33,7 +33,8 @@ server {
 <% } -%>
 	deny all;
 
-	access_log /var/log/nginx/webproxy-gateway.log webproxy_gateway;
+	access_log syslog:server=127.0.0.1:10514 webproxy_gateway_json;
+	access_log /var/log/nginx/webproxy-gateway.log webproxy_gateway if=$webproxy_log_failed;
 
 	resolver 127.0.0.1 valid=300s ipv6=off;
 
