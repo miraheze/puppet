@@ -5,7 +5,7 @@ class varnish (
     Integer[1] $thread_pool_max = lookup('varnish::thread_pool_max'),
     Integer $transient_gb = lookup('varnish::transient_storage'),
     Hash $backends,
-    Optional[Stdlib::Port] $mediawiki_lb_port = undef,
+    Stdlib::Port $mediawiki_lb_port,
 ) {
     include prometheus::exporter::varnish
 
