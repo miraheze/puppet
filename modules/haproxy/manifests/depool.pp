@@ -74,28 +74,4 @@ class haproxy::depool (
             tcp_port    => '5001',
         },
     }
-
-    # TODO: remove once puppet runs
-    systemd::service { 'varnish-depool':
-        ensure  => absent,
-        content => '',
-        before  => Service['haproxy-depool'],
-    }
-
-    file { '/opt/varnish-depool':
-        ensure  => absent,
-        force   => true,
-        require => Systemd::Service['varnish-depool'],
-    }
-
-    firewall::service { "${facts['networking']['fqdn']} varnish depool service port 5001":
-        ensure => absent,
-        proto  => 'tcp',
-        port   => 5001,
-    }
-
-    monitoring::services { 'varnish-depool service':
-        ensure        => absent,
-        check_command => 'tcp',
-    }
 }
