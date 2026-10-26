@@ -31,6 +31,28 @@ probe mwhealth {
 	.expected_response = 204;
 }
 
+<%- if @mediawiki_lb_port -%>
+probe mwlbhealth {
+	.url = "/__lb_status";
+	.interval = <%= @interval_check %>;
+	.timeout = <%= @interval_timeout %>;
+	.window = 5;
+	.threshold = 3;
+	.initial = 3;
+	.expected_response = 200;
+}
+
+backend mediawiki_lb {
+	.host = "127.0.0.1";
+	.port = "<%= @mediawiki_lb_port %>";
+	.probe = mwlbhealth;
+	.connect_timeout = 3s;
+	.first_byte_timeout = 65s;
+	.between_bytes_timeout = 31s;
+	.max_connections = 30000;
+}
+
+<%- end -%>
 <%- @backends.each_pair do | name, property | -%>
 backend <%= name %> {
 	.host = "127.0.0.1";
@@ -302,7 +324,11 @@ sub mw_request {
 		unset req.http.X-WikiTide-Debug;
 	}
 
+<%- if @mediawiki_lb_port -%>
+	set req.backend_hint = mediawiki_lb;
+<%- else -%>
 	set req.backend_hint = mediawiki.backend();
+<%- end -%>
 
 <%- if @backends.any? { |_name, property| property['thumbpool'] } -%>
 	if (req.url ~ "^/w/thumb(_handler)?\.php") {
