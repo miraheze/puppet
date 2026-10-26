@@ -11,7 +11,7 @@ class role::mediawiki (
         include role::mediawiki::nutcracker
     }
     include mediawiki
-    include mediawiki::lb_agent
+    include haproxy::lb_agent
     include role::mediawiki::php::restarts
 
     if $strict_firewall {
