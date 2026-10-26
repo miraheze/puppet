@@ -12,7 +12,7 @@ import std;
 import vsthrottle;
 import xkey;
 
-# MediaWiki configuration
+# Backend configuration
 probe lbhealth {
 	.url = "/__lb_status";
 	.interval = <%= @interval_check %>;
@@ -23,7 +23,7 @@ probe lbhealth {
 	.expected_response = 200;
 }
 
-<%- @mediawiki_lb_pools.each_pair do | pool_name, pool | -%>
+<%- @lb_pools.each_pair do | pool_name, pool | -%>
 backend lb_<%= pool_name %> {
 	.host = "127.0.0.1";
 	.port = "<%= pool['port'] %>";
@@ -272,9 +272,9 @@ sub mw_request {
 		unset req.http.X-WikiTide-Debug;
 	}
 
-<%- default_pool = @mediawiki_lb_pools.find { |_name, pool| pool['default'] }.first -%>
+<%- default_pool = @lb_pools.find { |_name, pool| pool['default'] }.first -%>
 	set req.backend_hint = lb_<%= default_pool %>;
-<%- @mediawiki_lb_pools.each_pair do | pool_name, pool | -%>
+<%- @lb_pools.each_pair do | pool_name, pool | -%>
 <%- conditions = [] -%>
 <%- conditions << "req.url ~ \"#{pool['url_regex']}\"" if pool['url_regex'] -%>
 <%- conditions << "req.http.Host ~ \"#{pool['host_regex']}\"" if pool['host_regex'] -%>
