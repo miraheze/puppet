@@ -1,12 +1,12 @@
 # role: cache::varnish
 class role::cache::varnish (
     Hash $backends = lookup('role::cache::haproxy::varnish_backends'),
-    Stdlib::Port $mediawiki_lb_port = lookup('role::cache::haproxy::mediawiki_lb_port'),
+    Haproxy::Lbpools $mediawiki_lb_pools = lookup('role::cache::haproxy::mediawiki_lb_pools'),
 ) {
 
     class { 'varnish':
-        backends          => $backends,
-        mediawiki_lb_port => $mediawiki_lb_port,
+        backends           => $backends,
+        mediawiki_lb_pools => $mediawiki_lb_pools,
     }
 
     include prometheus::exporter::varnishreqs
