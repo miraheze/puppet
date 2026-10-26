@@ -1,7 +1,7 @@
 # === Class haproxy::depool
 #
 # API used by safe-service-restart to depool a backend from the load balancer
-# pools of a cache host.
+# pools of a cache host, and the lb-ctl tool for the same on a single host.
 class haproxy::depool (
     Stdlib::Absolutepath $state_file = '/var/lib/haproxy/server-state',
 ) {
@@ -26,6 +26,14 @@ class haproxy::depool (
         mode    => '0700',
         notify  => Service['haproxy-depool'],
         require => File['/opt/haproxy-depool'],
+    }
+
+    file { '/usr/local/sbin/lb-ctl':
+        ensure => present,
+        source => 'puppet:///modules/haproxy/lb-ctl.py',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0555',
     }
 
     $totp_secret = lookup('passwords::varnish::varnish_totp_secret')
