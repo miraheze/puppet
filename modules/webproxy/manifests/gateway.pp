@@ -53,8 +53,8 @@ class webproxy::gateway (
         content => epp('webproxy/gateway.conf.epp', {
             'port'        => $port,
             'allow'       => $allow,
-            'use_graylog' => $use_graylog,
             'upstreams'   => $resolved,
+            'use_graylog' => $use_graylog,
         }),
     }
 
