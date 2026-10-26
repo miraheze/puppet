@@ -26,6 +26,9 @@ class role::cache::haproxy(
     Optional[Integer] $log_length = lookup('role::cache::haproxy::log_length', {'default_value'                                               => 8192}),
     Boolean $numa_networking = lookup('role::cache::haproxy::numa_networking', {'default_value'                                               => false}),
     Boolean $use_graylog = lookup('role::cache::haproxy::use_graylog', {'default_value'                                                       => false}),
+    Optional[Stdlib::Port] $mediawiki_lb_port = lookup('role::cache::haproxy::mediawiki_lb_port', {'default_value' => undef}),
+    Integer[1] $mediawiki_lb_timeout_queue = lookup('role::cache::haproxy::mediawiki_lb_timeout_queue', {'default_value' => 30}),
+    Stdlib::Port $mediawiki_agent_port = lookup('mediawiki::lb_agent::port', {'default_value' => 9590}),
 ) {
 
     $site_resource = Haproxy::Site['tls']
@@ -137,6 +140,19 @@ class role::cache::haproxy(
         content => template('role/cache/haproxy/tls_terminator.cfg.erb'),
     }
 
+    $mediawiki_lb_servers = $varnish_backends.filter |$name, $property| { $property['pool'] == true }
+
+    haproxy::site { 'mediawiki-lb':
+        ensure  => $mediawiki_lb_port ? {
+            undef   => absent,
+            default => present,
+        },
+        content => $mediawiki_lb_port ? {
+            undef   => undef,
+            default => template('role/cache/haproxy/mediawiki_lb.cfg.erb'),
+        },
+    }
+
     if ($facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18']) {
         $address = $facts['networking']['interfaces']['ens19']['ip']
     } elsif ($facts['networking']['interfaces']['ens18']) {
@@ -172,6 +188,12 @@ class role::cache::haproxy(
     $varnish_backends.each | $name, $property | {
         monitoring::nrpe { "Haproxy TLS backend for ${name}":
             command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${property['port']}",
+        }
+    }
+
+    if $mediawiki_lb_port {
+        monitoring::nrpe { 'Haproxy MediaWiki balancer':
+            command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${mediawiki_lb_port}",
         }
     }
 
