@@ -72,6 +72,15 @@ sub vcl_init {
 <%- end -%>
 <%- end -%>
 
+<%- if @backends.any? { |_name, property| property['thumbpool'] } -%>
+	new thumb = directors.random();
+<%- @backends.each_pair do | name, property | -%>
+<%- if property['thumbpool'] -%>
+	thumb.add_backend(<%= name %>, 100);
+<%- end -%>
+<%- end -%>
+<%- end -%>
+
 	new matomo = directors.random();
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['matomopool'] -%>
@@ -294,6 +303,12 @@ sub mw_request {
 	}
 
 	set req.backend_hint = mediawiki.backend();
+
+<%- if @backends.any? { |_name, property| property['thumbpool'] } -%>
+	if (req.url ~ "^/w/thumb(_handler)?\.php") {
+		set req.backend_hint = thumb.backend();
+	}
+<%- end -%>
 
 	# Rewrite hostname to static.wikitide.net for caching
 	if (req.url ~ "^/static/") {
