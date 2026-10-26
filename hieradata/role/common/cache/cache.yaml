@@ -12,136 +12,142 @@ role::cache::haproxy::cache_backends:
   cp191: 10.0.19.146
   cp201: 10.0.20.166
 
-role::cache::haproxy::mediawiki_lb_port: 8140
+role::cache::haproxy::mediawiki_lb_pools:
+  mediawiki:
+    port: 8150
+    default: true
+  thumb:
+    port: 8151
+    agent: false
+    url_regex: '^/w/thumb(_handler)?\.php'
+  swift:
+    port: 8152
+    agent: false
+    check_uri: /healthcheck
+    check_host: swift-lb.wikitide.net
+    check_status: 200
+    check_method: GET
+  matomo:
+    port: 8153
+    check_uri: /check
+    check_status: 200
+    check_method: GET
 
 role::cache::haproxy::varnish_backends:
   mw151:
     port: 8113
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw152:
     port: 8114
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw161:
     port: 8115
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw162:
     port: 8116
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw171:
     port: 8117
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw172:
     port: 8118
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw181:
     port: 8119
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw182:
     port: 8120
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw153:
     port: 8121
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw163:
     port: 8123
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw173:
     port: 8125
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw183:
     port: 8127
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw191:
     port: 8129
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw192:
     port: 8130
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw193:
     port: 8131
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw201:
     port: 8132
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw202:
     port: 8133
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mw203:
     port: 8134
-    pool: true
+    lb_pool: mediawiki
     xdebug: true
   mwtask171:
     port: 8161
-    pool: false
-    thumbpool: true
+    lb_pool: thumb
     xdebug: true
   mwtask181:
     port: 8160
-    pool: false
-    thumbpool: true
+    lb_pool: thumb
+    lb_agent: true
     xdebug: true
   mwtask151:
     port: 8162
-    pool: false
-    thumbpool: true
+    lb_pool: thumb
     xdebug: true
   mwtask161:
     port: 8163
-    pool: false
-    thumbpool: true
+    lb_pool: thumb
     xdebug: true
   test151:
     port: 8181
-    pool: false
     xdebug: true
   mon181:
     port: 8201
-    pool: false
   phorge171:
     port: 8202
-    pool: false
   matomo151:
     port: 8203
-    pool: false
-    matomopool: true
+    lb_pool: matomo
   puppet181:
     port: 8204
-    pool: false
   reports171:
     port: 8205
-    pool: false
   swiftproxy161:
     port: 8206
-    pool: false
-    swiftpool: true
+    lb_pool: swift
   swiftproxy171:
     port: 8207
-    pool: false
-    swiftpool: true
+    lb_pool: swift
   speedscope211:
     port: 8208
-    pool: false
   matomo211:
     port: 8209
-    pool: false
-    matomopool: true
+    lb_pool: matomo
 
 role::cache::haproxy::post_acl_actions:
   tls:
