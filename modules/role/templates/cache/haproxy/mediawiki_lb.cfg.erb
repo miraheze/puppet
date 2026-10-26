@@ -1,0 +1,35 @@
+listen mediawiki_lb
+    no log
+    bind 127.0.0.1:<%= @mediawiki_lb_port %>
+
+    option http-keep-alive
+    http-reuse always
+
+    timeout http-request <%= @timeout['http_request'] %>s
+    timeout http-keep-alive <%= @timeout['keep_alive'] %>s
+    timeout client <%= @timeout['client'] %>s
+    timeout client-fin <%= @timeout['client_fin'] %>s
+    timeout connect <%= @timeout['connect'] %>s
+    timeout server <%= @timeout['server'] %>s
+    timeout tunnel <%= @timeout['tunnel'] %>s
+    timeout queue <%= @mediawiki_lb_timeout_queue %>s
+    timeout check 3s
+
+    # Polled by the Varnish probe. Fails once no server is left.
+    monitor-uri /__lb_status
+    monitor fail if { nbsrv(mediawiki_lb) lt 1 }
+
+    balance leastconn
+    retries 3
+    option redispatch
+
+    option httpchk
+    http-check send meth HEAD uri /check ver HTTP/1.1 hdr Host health.wikitide.net
+    http-check expect status 204
+
+    default-server ssl verify none tfo alpn h2,http/1.1 check check-ssl check-sni health.wikitide.net inter 3s fastinter 1s downinter 3s fall 3 rise 2 slowstart 30s agent-check agent-port <%= @mediawiki_agent_port %> agent-inter 2s
+
+<%- @mediawiki_lb_servers.keys.sort.each do |name| -%>
+<%- property = @mediawiki_lb_servers[name] -%>
+    server <%= name %> <%= name %>.<%= property['domain'] || 'fsslc.wtnet' %>:443 weight <%= property['lb_weight'] || 100 %><%= property['lb_maxconn'] ? " maxconn #{property['lb_maxconn']}" : "" %>
+<%- end -%>
