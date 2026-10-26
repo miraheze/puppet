@@ -79,7 +79,7 @@ node 'mon181.fsslc.wtnet' {
     include role::icinga2
 }
 
-node /^mw[12][056789][1234]\.fsslc\.wtnet$/ {
+node /^mw[12][0156789][123]\.fsslc\.wtnet$/ {
     role(mediawiki)
 }
 
