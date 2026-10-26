@@ -26,9 +26,9 @@ class role::cache::haproxy(
     Optional[Integer] $log_length = lookup('role::cache::haproxy::log_length', {'default_value'                                               => 8192}),
     Boolean $numa_networking = lookup('role::cache::haproxy::numa_networking', {'default_value'                                               => false}),
     Boolean $use_graylog = lookup('role::cache::haproxy::use_graylog', {'default_value'                                                       => false}),
-    Haproxy::Lbpools $mediawiki_lb_pools = lookup('role::cache::haproxy::mediawiki_lb_pools'),
-    Integer[1] $mediawiki_lb_timeout_queue = lookup('role::cache::haproxy::mediawiki_lb_timeout_queue', {'default_value' => 30}),
-    Stdlib::Port $mediawiki_agent_port = lookup('mediawiki::lb_agent::port', {'default_value' => 9590}),
+    Haproxy::Lbpools $lb_pools = lookup('role::cache::haproxy::lb_pools'),
+    Integer[1] $lb_timeout_queue = lookup('role::cache::haproxy::lb_timeout_queue', {'default_value' => 30}),
+    Stdlib::Port $lb_agent_port = lookup('haproxy::lb_agent::port', {'default_value' => 9590}),
 ) {
 
     $site_resource = Haproxy::Site['tls']
@@ -48,6 +48,9 @@ class role::cache::haproxy(
 
     # used on haproxy.cfg.erb
     $socket = '/run/haproxy/haproxy.sock'
+
+    # used on haproxy.cfg.erb and haproxy.service.erb
+    $server_state_file = '/var/lib/haproxy/server-state'
 
     # used on tls_terminator.cfg.erb and by fail2ban
     $f2b_acl_file = '/etc/haproxy/f2b_banned.lst'
@@ -140,31 +143,31 @@ class role::cache::haproxy(
         content => template('role/cache/haproxy/tls_terminator.cfg.erb'),
     }
 
-    $default_pools = $mediawiki_lb_pools.filter |$pool_name, $pool| { $pool['default'] == true }
+    $default_pools = $lb_pools.filter |$pool_name, $pool| { $pool['default'] == true }
     if $default_pools.length != 1 {
-        fail('role::cache::haproxy::mediawiki_lb_pools needs exactly one pool with default: true')
+        fail('role::cache::haproxy::lb_pools needs exactly one pool with default: true')
     }
 
     ['swift', 'matomo'].each |$required| {
-        if !($required in $mediawiki_lb_pools) {
-            fail("role::cache::haproxy::mediawiki_lb_pools needs a ${required} pool, the VCL refers to it")
+        if !($required in $lb_pools) {
+            fail("role::cache::haproxy::lb_pools needs a ${required} pool, the VCL refers to it")
         }
     }
 
     $varnish_backends.each |$name, $property| {
-        if $property['lb_pool'] and !($property['lb_pool'] in $mediawiki_lb_pools) {
-            fail("${name} uses lb_pool ${property['lb_pool']} which is not in mediawiki_lb_pools")
+        if $property['lb_pool'] and !($property['lb_pool'] in $lb_pools) {
+            fail("${name} uses lb_pool ${property['lb_pool']} which is not in lb_pools")
         }
     }
 
-    haproxy::site { 'mediawiki-lb':
+    haproxy::site { 'lb-pools':
         ensure  => present,
-        content => epp('role/cache/haproxy/mediawiki_lb.cfg.epp', {
-            'pools'         => $mediawiki_lb_pools,
+        content => epp('role/cache/haproxy/lb_pools.cfg.epp', {
+            'pools'         => $lb_pools,
             'servers'       => $varnish_backends,
             'timeout'       => $timeout,
-            'timeout_queue' => $mediawiki_lb_timeout_queue,
-            'agent_port'    => $mediawiki_agent_port,
+            'timeout_queue' => $lb_timeout_queue,
+            'agent_port'    => $lb_agent_port,
         }),
     }
 
@@ -206,10 +209,14 @@ class role::cache::haproxy(
         }
     }
 
-    $mediawiki_lb_pools.each |$pool_name, $pool| {
-        monitoring::nrpe { "Haproxy MediaWiki balancer ${pool_name}":
+    $lb_pools.each |$pool_name, $pool| {
+        monitoring::nrpe { "Haproxy balancer ${pool_name}":
             command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${pool['port']}",
         }
+    }
+
+    class { 'haproxy::depool':
+        state_file => $server_state_file,
     }
 
     rsyslog::conf { 'haproxy@tls':
