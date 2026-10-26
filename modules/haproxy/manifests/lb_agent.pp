@@ -73,27 +73,4 @@ class haproxy::lb_agent (
             tcp_port    => String($port),
         },
     }
-
-    # TODO: remove once puppet runs
-    systemd::service { 'mw-lb-agent':
-        ensure  => absent,
-        content => '',
-        before  => Systemd::Service['lb-agent'],
-    }
-
-    file { '/usr/local/bin/mw-lb-agent':
-        ensure  => absent,
-        require => Systemd::Service['mw-lb-agent'],
-    }
-
-    firewall::service { "mediawiki lb agent port ${port}":
-        ensure => absent,
-        proto  => 'tcp',
-        port   => $port,
-    }
-
-    monitoring::services { 'MediaWiki LB agent':
-        ensure        => absent,
-        check_command => 'tcp',
-    }
 }
