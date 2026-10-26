@@ -1,7 +1,7 @@
 # role: cache::varnish
 class role::cache::varnish (
     Hash $backends = lookup('role::cache::haproxy::varnish_backends'),
-    Optional[Stdlib::Port] $mediawiki_lb_port = lookup('role::cache::haproxy::mediawiki_lb_port', {'default_value' => undef}),
+    Stdlib::Port $mediawiki_lb_port = lookup('role::cache::haproxy::mediawiki_lb_port'),
 ) {
 
     class { 'varnish':
