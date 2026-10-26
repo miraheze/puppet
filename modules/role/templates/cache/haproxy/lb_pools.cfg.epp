@@ -39,7 +39,7 @@ listen lb_<%= $pool_name %>
     http-check send meth <%= $check_method %> uri <%= $check_uri %> ver HTTP/1.1 hdr Host <%= $check_host %>
     http-check expect status <%= $check_status %>
 
-    default-server ssl verify none tfo alpn h2,http/1.1 check check-ssl check-sni <%= $check_host %> inter 3s fastinter 1s downinter 3s fall 3 rise 2 slowstart 30s
+    default-server ssl verify none tfo alpn h2,http/1.1 check check-ssl check-alpn http/1.1 check-sni <%= $check_host %> inter 3s fastinter 1s downinter 3s fall 3 rise 2 slowstart 30s
 
 <%- $servers.keys.sort.each |$name| { -%>
 <%- $property = $servers[$name] -%>
