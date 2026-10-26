@@ -5,12 +5,10 @@ Each connection gets one line such as "72% maxconn:18" and is closed.
 """
 
 import argparse
-import errno
 import http.client
 import json
 import math
 import os
-import socket
 import socketserver
 import threading
 import time
@@ -76,24 +74,9 @@ class Server(socketserver.ThreadingTCPServer):
     allow_reuse_address = True
     daemon_threads = True
 
-    def __init__(self, address, family, sampler):
-        self.address_family = family
+    def __init__(self, address, sampler):
         self.sampler = sampler
         super().__init__(address, Handler)
-
-    def server_bind(self):
-        if self.address_family == socket.AF_INET6:
-            self.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
-        super().server_bind()
-
-
-def make_server(port, sampler):
-    try:
-        return Server(('::', port), socket.AF_INET6, sampler)
-    except OSError as err:
-        if err.errno != errno.EAFNOSUPPORT:
-            raise
-        return Server(('0.0.0.0', port), socket.AF_INET, sampler)
 
 
 def parse_args():
@@ -112,7 +95,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    with make_server(args.port, Sampler(args)) as server:
+    with Server(('0.0.0.0', args.port), Sampler(args)) as server:
         server.serve_forever()
 
 
