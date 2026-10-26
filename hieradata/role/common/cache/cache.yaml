@@ -107,21 +107,25 @@ role::cache::haproxy::varnish_backends:
     port: 8161
     probe: false
     pool: false
+    thumbpool: true
     xdebug: true
   mwtask181:
     port: 8160
     probe: false
     pool: false
+    thumbpool: true
     xdebug: true
   mwtask151:
     port: 8162
     probe: false
     pool: false
+    thumbpool: true
     xdebug: true
   mwtask161:
     port: 8163
     probe: false
     pool: false
+    thumbpool: true
     xdebug: true
   test151:
     port: 8181
