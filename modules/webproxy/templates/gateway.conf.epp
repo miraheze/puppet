@@ -1,4 +1,4 @@
-<%- | Stdlib::Port $port, Array[String[1]] $allow, Hash $upstreams | -%>
+<%- | Stdlib::Port $port, Array[String[1]] $allow, Hash $upstreams, Boolean $use_graylog | -%>
 <% $upstreams.each |$name, $cfg| { -%>
 proxy_cache_path /var/cache/nginx/webproxy/<%= $name %> levels=1:2 keys_zone=webproxy_<%= $name %>:<%= $cfg['zone_size'] %> max_size=<%= $cfg['cache_size'] %> min_free=1g inactive=<%= $cfg['stale_ttl'] %> use_temp_path=off;
 <% } -%>
@@ -33,8 +33,12 @@ server {
 <% } -%>
 	deny all;
 
+<% if $use_graylog { -%>
 	access_log syslog:server=127.0.0.1:10514 webproxy_gateway_json;
 	access_log /var/log/nginx/webproxy-gateway.log webproxy_gateway if=$webproxy_log_failed;
+<% } else { -%>
+	access_log /var/log/nginx/webproxy-gateway.log webproxy_gateway;
+<% } -%>
 
 	resolver 127.0.0.1 valid=300s ipv6=off;
 
