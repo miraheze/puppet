@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
+import csv
+import io
 import os
 import re
 import json
 import socket
-import subprocess
 import pyotp
 from flask import Flask, Response, request
 
@@ -25,17 +26,6 @@ if not app.config["TOTP_SECRET"]:
 # Helper Functions
 # ========================================
 
-def run_varnishadm(cmd):
-    """Run varnishadm and return (returncode, stdout/stderr)"""
-    result = subprocess.run(
-        ["/usr/bin/varnishadm"] + cmd,
-        capture_output=True, text=True
-    )
-    if result.returncode == 0:
-        return 0, result.stdout.strip()
-    else:
-        return result.returncode, result.stderr.strip()
-
 def haproxy_command(cmd):
     """Send one command to the HAProxy admin socket and return the reply"""
     with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
@@ -51,13 +41,13 @@ def haproxy_command(cmd):
     return b"".join(chunks).decode().strip()
 
 def set_haproxy_state(name, state):
-    """Mirror the Varnish state on the HAProxy balancer. Missing server or backend is fine"""
+    """Set the server state on the HAProxy balancer"""
     target = "maint" if state == "sick" else "ready"
     try:
         reply = haproxy_command(f"set server {HAPROXY_LB}/{name} state {target}")
     except OSError:
         return False
-    return reply == "" or reply.startswith("No such")
+    return reply == ""
 
 def json_response(data, status=200):
     """Return a Flask Response with JSON content"""
@@ -94,31 +84,25 @@ def set_backend(name, state):
     if state not in ["sick", "healthy", "auto"]:
         return json_response({"status": "error", "error": "invalid state"}, status=400)
 
-    rc, _ = run_varnishadm(["backend.set_health", name, state])
-    if rc != 0:
-        return json_response({"status": "error", "error": "failed to set backend state"}, status=500)
-
     if not set_haproxy_state(name, state):
-        return json_response({"status": "error", "error": "failed to set haproxy state"}, status=500)
+        return json_response({"status": "error", "error": "failed to set backend state"}, status=500)
 
     return json_response({"status": "ok"})
 
 @app.route("/backend/list", methods=["GET"])
 def list_backends():
-    """Return only 'mw' backends (e.g., mw151), ignoring mwtask"""
-    rc, out = run_varnishadm(["backend.list"])
-    if rc != 0:
+    """Return the 'mw' servers (e.g., mw151) of the balancer with status and load"""
+    try:
+        out = haproxy_command("show stat")
+    except OSError:
         return json_response({"status": "error", "error": "failed to list backends"}, status=500)
 
-    filtered_lines = []
-    for line in out.splitlines():
-        if line.startswith("Backend name"):
-            filtered_lines.append(line)
-            continue
-        if re.search(r"\.mw\d+\b", line):
-            filtered_lines.append(line)
+    lines = ["Backend name\tStatus\tWeight\tSessions\tQueue"]
+    for row in csv.DictReader(io.StringIO(out.lstrip("# "))):
+        if row["pxname"] == HAPROXY_LB and re.match(r"^mw\d+$", row["svname"]):
+            lines.append("\t".join([row["svname"], row["status"], row["weight"], row["scur"], row["qcur"]]))
 
-    return Response("\n".join(filtered_lines), mimetype="text/plain")
+    return Response("\n".join(lines), mimetype="text/plain")
 
 # ========================================
 # Note for developers
