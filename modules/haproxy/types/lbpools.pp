@@ -6,7 +6,8 @@
 #   Exactly one pool sets this. Requests that match no other pool go there
 # agent
 #   Set to false when the servers of this pool do not run the agent check.
-#   A server can override this with lb_agent. Defaults to true
+#   A server can override this with lb_agent. Defaults to true. Before
+#   removing the agent from a server, set lb_agent: false for it here
 # url_regex
 #   VCL regex matched against req.url to send a request to this pool
 # host_regex
