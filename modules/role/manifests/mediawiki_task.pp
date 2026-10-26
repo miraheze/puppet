@@ -2,7 +2,6 @@
 class role::mediawiki_task (
     Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false}),
     Boolean $use_mcrouter = lookup('role::mediawiki::use_mcrouter', {'default_value' => false}),
-    Boolean $lb_agent = lookup('role::mediawiki_task::lb_agent', {'default_value' => false}),
 ) {
     include base
     include role::mathoid
@@ -13,9 +12,7 @@ class role::mediawiki_task (
         include role::mediawiki::nutcracker
     }
     include mediawiki
-    if $lb_agent {
-        include mediawiki::lb_agent
-    }
+    include haproxy::lb_agent
     include role::mediawiki::php::restarts
 
     if $strict_firewall {
