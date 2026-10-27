@@ -106,6 +106,18 @@ role::cache::haproxy::varnish_backends:
     port: 8134
     lb_pool: mediawiki
     xdebug: true
+  mw211:
+    port: 8135
+    lb_pool: mediawiki
+    xdebug: true
+  mw212:
+    port: 8136
+    lb_pool: mediawiki
+    xdebug: true
+  mw213:
+    port: 8137
+    lb_pool: mediawiki
+    xdebug: true
   mwtask171:
     port: 8161
     lb_pool: thumb
