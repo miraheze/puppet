@@ -17,20 +17,4 @@ class haproxy::lb_monitoring {
     monitoring::nrpe { 'HAProxy Servers':
         command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_haproxy_servers',
     }
-
-    # TODO: remove once puppet runs
-    file { '/usr/lib/nagios/plugins/check_haproxy_backends':
-        ensure => absent,
-    }
-
-    sudo::user { 'nrpe_sudo_checkhaproxybackends':
-        ensure     => absent,
-        user       => 'nagios',
-        privileges => [],
-    }
-
-    monitoring::nrpe { 'HAProxy Backends':
-        ensure  => absent,
-        command => '/bin/true',
-    }
 }
