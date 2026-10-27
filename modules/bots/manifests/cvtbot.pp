@@ -5,15 +5,6 @@ class bots::cvtbot {
 
     $password = lookup('passwords::irc::cvtbot')
 
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
-    if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01bots']) {
-        file { '/etc/apt/apt.conf.d/01bots':
-            ensure  => present,
-            content => epp('bots/aptproxy.epp', { 'http_proxy' => $http_proxy }),
-            before  => Package['packages-microsoft-prod'],
-        }
-    }
-
     if !defined(Package['packages-microsoft-prod']) {
         file { '/opt/packages-microsoft-prod.deb':
             ensure => present,
