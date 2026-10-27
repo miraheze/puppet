@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Nagios check for the servers of the HAProxy load balancer pools.
 
-Critical when a server is down, warning when one is depooled or draining.
+Critical when a server is down, warning when one is in maint or drain.
 """
 
 import argparse
@@ -61,13 +61,13 @@ def main():
         print('UNKNOWN: no pool servers found')
         sys.exit(3)
     if down:
-        suffix = f'; depooled: {describe(admin)}' if admin else ''
-        print(f'CRITICAL: {len(down)} backend{"s" if len(down) != 1 else ""} down: {describe(down)}{suffix}')
+        suffix = f'; maint or drain: {describe(admin)}' if admin else ''
+        print(f'CRITICAL: {len(down)} server{"s" if len(down) != 1 else ""} down: {describe(down)}{suffix}')
         sys.exit(2)
     if admin:
-        print(f'WARNING: {len(admin)} backend{"s" if len(admin) != 1 else ""} depooled or draining: {describe(admin)}')
+        print(f'WARNING: {len(admin)} server{"s" if len(admin) != 1 else ""} in maint or drain: {describe(admin)}')
         sys.exit(1)
-    print(f'OK: all {total} backends are up')
+    print(f'OK: all {total} servers are up')
     sys.exit(0)
 
 
