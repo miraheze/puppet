@@ -96,7 +96,7 @@ class mcrouter(
         'libfmt10',
         'libgflags2.2',
         'libevent-2.1-7t64',
-        'libgoogle-glog0v6',
+        'libgoogle-glog0v6t64',
         'libdouble-conversion3',
         'libsnappy1v5',
     ])
@@ -113,7 +113,7 @@ class mcrouter(
             Package['libfmt10'],
             Package['libgflags2.2'],
             Package['libevent-2.1-7t64'],
-            Package['libgoogle-glog0v6'],
+            Package['libgoogle-glog0v6t64'],
             Package['libdouble-conversion3'],
             Package['libsnappy1v5']
         ]
