@@ -24,7 +24,9 @@ class haproxy::lb_monitoring {
     }
 
     sudo::user { 'nrpe_sudo_checkhaproxybackends':
-        ensure => absent,
+        ensure     => absent,
+        user       => 'nagios',
+        privileges => [],
     }
 
     monitoring::nrpe { 'HAProxy Backends':
