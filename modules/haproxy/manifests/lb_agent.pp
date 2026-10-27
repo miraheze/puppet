@@ -3,22 +3,26 @@
 # Reports weight and maxconn of a backend to the HAProxy load balancer pools.
 # To remove it from a host, set lb_agent: false for the server in the
 # balancer hiera first, then set ensure to absent.
+#
+# balancers maps a balancer role class to how many pools it has that use this
+# host. The total divides the maxconn this host reports, and the balancer
+# hosts are allowed to connect to the agent port.
 class haproxy::lb_agent (
     VMlib::Ensure $ensure = lookup('haproxy::lb_agent::ensure', {'default_value' => present}),
     Stdlib::Port $port = lookup('haproxy::lb_agent::port', {'default_value' => 9590}),
     Float $maxconn_overcommit = lookup('haproxy::lb_agent::maxconn_overcommit', {'default_value' => 1.5}),
+    Hash[Pattern[/\ARole::[A-Za-z0-9_:]+\z/], Integer[1], 1] $balancers = lookup('haproxy::lb_agent::balancers', {'default_value' => {'Role::Cache::Cache' => 1}}),
 ) {
     if $ensure == present {
-        $cache_subquery = @("PQL")
-        resources { type = 'Class' and title = 'Role::Cache::Cache' }
-        | PQL
-        $lb_count = max(1, puppetdb::query_facts(['networking'], $cache_subquery).keys().flatten.sort.unique.length)
+        $lb_count = max(1, $balancers.reduce(0) |$total, $balancer| {
+            $nodes = puppetdb::query_facts(['networking'], "resources { type = 'Class' and title = '${balancer[0]}' }").keys().flatten.sort.unique.length
+            $total + ($nodes * $balancer[1])
+        })
 
-        $subquery = @("PQL")
-        (resources { type = 'Class' and title = 'Role::Cache::Cache' } or
-        resources { type = 'Class' and title = 'Role::Icinga2' })
-        | PQL
-        $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
+        $clauses = ($balancers.keys + ['Role::Icinga2']).map |$class_name| {
+            "resources { type = 'Class' and title = '${class_name}' }"
+        }
+        $firewall_rules_str = vmlib::generate_firewall_ip("(${clauses.join(' or ')})")
 
         $service_content = systemd_template('lb-agent', {
             'port'               => $port,
