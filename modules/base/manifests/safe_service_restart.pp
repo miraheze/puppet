@@ -3,16 +3,11 @@
 # Creates a safe service restart script for the titled resource.
 #
 # What this script will do:
-# * Depool
+# * Depool the server from the load balancer pools on the cache hosts
 # * Restart the service with name $title
 # * Repool
-#
-# === Parameters
-#
-# If no pool is provided, or the realm is not production, the restart scripts will not use conftool
-# and will just be a stub.
 define base::safe_service_restart(
-    Array[String] $nodes
+    Array[String] $nodes,
 ) {
 
     $subquery = @("PQL")
@@ -26,7 +21,7 @@ define base::safe_service_restart(
         $_facts['networking']['fqdn']
     }.flatten.sort.unique
 
-    $varnish_totp_secret = lookup('passwords::varnish::varnish_totp_secret')
+    $totp_secret = lookup('passwords::varnish::varnish_totp_secret')
 
     # This file will be created independently of the presence of pools to remove or not.
     file { "/usr/local/sbin/restart-${title}":
