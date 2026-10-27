@@ -28,14 +28,6 @@ class monitoring (
         allowdupe => false,
     }
 
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
-    if $http_proxy and !defined(File['/etc/apt/apt.conf.d/02mariadb']) {
-        file { '/etc/apt/apt.conf.d/02mariadb':
-            ensure  => present,
-            content => epp('mariadb/aptproxy.epp', { 'http_proxy' => $http_proxy }),
-        }
-    }
-
     $version = lookup('mariadb::version', {'default_value' => '11.8'})
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
