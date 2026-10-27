@@ -1,5 +1,5 @@
 class role::jobrunner_haproxy (
-    Hash $backends = lookup('jobrunner_haproxy::backends'),
+    Hash $servers = lookup('jobrunner_haproxy::servers'),
     Integer $agent_port = lookup('haproxy::lb_agent::port', {'default_value' => 9590}),
     String $timeout_queue = lookup('jobrunner_haproxy::timeout_queue', {'default_value' => '600s'}),
 ) {
