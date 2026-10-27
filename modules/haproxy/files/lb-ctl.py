@@ -16,19 +16,12 @@ import re
 import socket
 import sys
 
-SOCKETS = ['/run/haproxy/haproxy.sock', '/run/haproxy/admin.sock']
+SOCKET = '/run/haproxy/haproxy.sock'
 STATE_FILE = '/var/lib/haproxy/server-state'
 PREFIX = 'lb_'
 NODE_NAME = re.compile(r'[a-z]+\d+')
 STATES = {'depool': 'maint', 'drain': 'drain', 'repool': 'ready'}
 COLUMNS = ['pool', 'server', 'status', 'weight', 'scur', 'qcur', 'check_status', 'check_code', 'last_chk', 'last_agt']
-
-
-def find_socket():
-    for path in SOCKETS:
-        if os.path.exists(path):
-            return path
-    return SOCKETS[0]
 
 
 def command(sock_path, cmd):
@@ -91,7 +84,7 @@ def change(args):
 
 def main():
     parser = argparse.ArgumentParser(description='Inspect and change the load balancer pools of this host.')
-    parser.add_argument('--socket', default=find_socket())
+    parser.add_argument('--socket', default=SOCKET)
     parser.add_argument('--state-file', default=STATE_FILE)
     sub = parser.add_subparsers(dest='action', required=True)
     status = sub.add_parser('status', help='show all servers of all pools')
