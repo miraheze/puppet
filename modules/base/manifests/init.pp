@@ -57,16 +57,6 @@ class base (
         }
     }
 
-    $legacy_apt_proxy_files = [
-        '/etc/apt/apt.conf.d/01bots',
-        '/etc/apt/apt.conf.d/01icinga',
-        '/etc/apt/apt.conf.d/01mariadb',
-        '/etc/apt/apt.conf.d/01ollama',
-        '/etc/apt/apt.conf.d/01salt',
-        '/etc/apt/apt.conf.d/02mariadb',
-        '/etc/apt/apt.conf.d/speedscope',
-    ]
-
     if $http_proxy {
         file { '/etc/gitconfig':
             ensure  => present,
@@ -80,11 +70,6 @@ class base (
         }
 
         Apt::Setting['conf-http-proxy'] -> Apt::Source <| |>
-
-        file { $legacy_apt_proxy_files:
-            ensure  => absent,
-            require => Apt::Setting['conf-http-proxy'],
-        }
     }
 
     class { 'apt::backports':
