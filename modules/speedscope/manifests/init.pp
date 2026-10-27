@@ -8,7 +8,6 @@ class speedscope (
   String $version,
 ) {
   $http_proxy = lookup('http_proxy', {'default_value' => undef})
-
   file { '/srv/speedscope':
     ensure => directory,
   }
