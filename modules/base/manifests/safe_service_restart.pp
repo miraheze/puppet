@@ -1,11 +1,17 @@
 # == define base::safe_service_restart
 #
-# Creates a safe service restart script for the titled resource.
+# Creates restart-${title}, which restarts the service with that name.
 #
-# What this script will do:
-# * Depool the server from the load balancer pools on the cache hosts
-# * Restart the service with name $title
-# * Repool
+# On the servers in $nodes the script does this:
+# * Set the server to maint in the pools of every cache host
+# * Restart the service
+# * Set the server back to ready
+#
+# === Parameters
+#
+# [*nodes*]
+#   FQDNs of the servers that are in the cache host pools. Any other host
+#   restarts the service directly. An empty list means every host.
 define base::safe_service_restart(
     Array[String] $nodes,
 ) {
@@ -23,7 +29,6 @@ define base::safe_service_restart(
 
     $totp_secret = lookup('passwords::varnish::varnish_totp_secret')
 
-    # This file will be created independently of the presence of pools to remove or not.
     file { "/usr/local/sbin/restart-${title}":
         ensure  => present,
         content => template('base/safe-restart.erb'),
