@@ -1,6 +1,6 @@
 # === Class haproxy::lb_agent
 #
-# Reports weight and maxconn of a backend to the HAProxy load balancer pools.
+# Reports weight and maxconn of a server to the HAProxy load balancer pools.
 # To remove it from a host, set lb_agent: false for the server in the
 # balancer hiera first, then set ensure to absent.
 #
