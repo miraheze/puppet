@@ -4,14 +4,6 @@ class mariadb::packages(
 ) {
     stdlib::ensure_packages('percona-toolkit')
 
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
-    if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01mariadb']) {
-        file { '/etc/apt/apt.conf.d/01mariadb':
-            ensure  => present,
-            content => epp('mariadb/aptproxy.epp', { 'http_proxy' => $http_proxy }),
-        }
-    }
-
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
         location => "https://mirror.mariadb.org/repo/${version}/debian",
