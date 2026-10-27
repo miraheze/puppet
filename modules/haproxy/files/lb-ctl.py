@@ -2,7 +2,7 @@
 """Inspect and change the load balancer pools of this cache host.
 
   lb-ctl status [pool]
-  lb-ctl depool|drain|repool <server> [--pool POOL]
+  lb-ctl maint|drain|ready <server> [--pool POOL]
 
 Changes only affect the HAProxy on this host. Use safe-service-restart to
 change a server on every cache host.
@@ -20,7 +20,7 @@ SOCKET = '/run/haproxy/haproxy.sock'
 STATE_FILE = '/var/lib/haproxy/server-state'
 PREFIX = 'lb_'
 NODE_NAME = re.compile(r'[a-z]+\d+')
-STATES = {'depool': 'maint', 'drain': 'drain', 'repool': 'ready'}
+STATES = ('maint', 'drain', 'ready')
 COLUMNS = ['pool', 'server', 'status', 'weight', 'scur', 'qcur', 'check_status', 'check_code', 'last_chk', 'last_agt']
 
 
@@ -72,10 +72,10 @@ def change(args):
     if not rows:
         sys.exit(f'{args.server} is not in any pool' + (f' {args.pool}' if args.pool else ''))
     for row in rows:
-        reply = command(args.socket, f"set server {row['pxname']}/{args.server} state {STATES[args.action]}")
+        reply = command(args.socket, f"set server {row['pxname']}/{args.server} state {args.action}")
         if reply:
             sys.exit(f"{row['pxname']}/{args.server}: {reply}")
-        print(f"{row['pool']}/{args.server}: {STATES[args.action]}")
+        print(f"{row['pool']}/{args.server}: {args.action}")
     try:
         save_state(args.socket, args.state_file)
     except OSError as e:
@@ -90,7 +90,7 @@ def main():
     status = sub.add_parser('status', help='show all servers of all pools')
     status.add_argument('pool', nargs='?')
     for name in STATES:
-        cmd = sub.add_parser(name)
+        cmd = sub.add_parser(name, help=f'set the server to {name}')
         cmd.add_argument('server')
         cmd.add_argument('--pool')
     args = parser.parse_args()

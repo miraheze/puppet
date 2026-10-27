@@ -35,7 +35,7 @@ class role::mediawiki::php::restarts (
     $subquery
   ).keys().flatten.sort.unique
 
-  $varnish_totp_secret = lookup('passwords::varnish::varnish_totp_secret')
+  $totp_secret = lookup('passwords::varnish::varnish_totp_secret')
   file { '/usr/local/bin/safe-service-restart':
     ensure => present,
     owner  => 'root',

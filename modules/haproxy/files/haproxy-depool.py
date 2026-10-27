@@ -21,7 +21,7 @@ HAPROXY_SOCKET = os.environ.get("HAPROXY_SOCKET", "/run/haproxy/haproxy.sock")
 STATE_FILE = os.environ.get("HAPROXY_STATE_FILE", "/var/lib/haproxy/server-state")
 HAPROXY_LB_PREFIX = "lb_"
 NODE_NAME = re.compile(r"[a-z]+\d+")
-ADMIN_STATES = {"sick": "maint", "drain": "drain", "healthy": "ready", "auto": "ready"}
+SERVER_STATES = {"maint", "drain", "ready"}
 
 if not app.config["TOTP_SECRET"]:
     raise RuntimeError("TOTP_SECRET environment variable must be set")
@@ -45,7 +45,7 @@ def haproxy_command(cmd):
     return b"".join(chunks).decode().strip()
 
 def lb_servers():
-    """Return the stat rows of all servers in the balancer pools"""
+    """Return the stat rows of all servers in the pools"""
     out = haproxy_command("show stat")
     return [
         row for row in csv.DictReader(io.StringIO(out.lstrip("# ")))
@@ -64,20 +64,22 @@ def save_state():
         return False
     return True
 
-def set_haproxy_state(name, state):
-    """Set the server state in every pool it belongs to"""
-    target = ADMIN_STATES[state]
+def set_server_state(name, state):
+    """Set the state in every pool the server belongs to.
+
+    Returns ok, unknown (not in any pool) or error.
+    """
     try:
         proxies = [row["pxname"] for row in lb_servers() if row["svname"] == name]
         if not proxies:
-            return False
+            return "unknown"
         for proxy in proxies:
-            if haproxy_command(f"set server {proxy}/{name} state {target}") != "":
-                return False
+            if haproxy_command(f"set server {proxy}/{name} state {state}") != "":
+                return "error"
     except OSError:
-        return False
+        return "error"
     save_state()
-    return True
+    return "ok"
 
 def json_response(data, status=200):
     """Return a Flask Response with JSON content"""
@@ -105,29 +107,32 @@ def enforce_security():
 # Routes
 # ========================================
 
-@app.route("/backend/<name>/<state>", methods=["POST"])
-def set_backend(name, state):
+@app.route("/server/<name>/<state>", methods=["POST"])
+def set_server(name, state):
     if not NODE_NAME.fullmatch(name):
-        return json_response({"status": "error", "error": "invalid backend name"}, status=400)
+        return json_response({"status": "error", "error": "invalid server name"}, status=400)
 
     state = state.lower()
-    if state not in ADMIN_STATES:
+    if state not in SERVER_STATES:
         return json_response({"status": "error", "error": "invalid state"}, status=400)
 
-    if not set_haproxy_state(name, state):
-        return json_response({"status": "error", "error": "failed to set backend state"}, status=500)
+    result = set_server_state(name, state)
+    if result == "unknown":
+        return json_response({"status": "error", "error": "unknown server"}, status=404)
+    if result != "ok":
+        return json_response({"status": "error", "error": "failed to set server state"}, status=500)
 
     return json_response({"status": "ok"})
 
-@app.route("/backend/list", methods=["GET"])
-def list_backends():
-    """Return the servers of all balancer pools (e.g., mw151) with status and load"""
+@app.route("/server/list", methods=["GET"])
+def list_servers():
+    """Return the servers of all pools (e.g., mw151) with status and load"""
     try:
         rows = lb_servers()
     except OSError:
-        return json_response({"status": "error", "error": "failed to list backends"}, status=500)
+        return json_response({"status": "error", "error": "failed to list servers"}, status=500)
 
-    lines = ["Pool\tBackend name\tStatus\tWeight\tSessions\tQueue"]
+    lines = ["Pool\tServer\tStatus\tWeight\tSessions\tQueue"]
     for row in sorted(rows, key=lambda r: (r["pxname"], r["svname"])):
         pool = row["pxname"][len(HAPROXY_LB_PREFIX):]
         lines.append("\t".join([pool, row["svname"], row["status"], row["weight"], row["scur"], row["qcur"]]))
