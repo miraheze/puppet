@@ -98,7 +98,7 @@ class mcrouter(
             Package['libboost-program-options1.83.0'],
             Package['libjemalloc2'],
             Package['libboost-regex1.83.0'],
-            Package['libfmt9'],
+            Package['libfmt10'],
             Package['libgflags2.2'],
             Package['libgoogle-glog0v6'],
             Package['libdouble-conversion3'],
