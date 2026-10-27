@@ -7,12 +7,21 @@ Critical when a server is down, warning when one is depooled or draining.
 import argparse
 import csv
 import io
+import os
 import re
 import socket
 import sys
 
 PREFIX = 'lb_'
+SOCKETS = ['/run/haproxy/haproxy.sock', '/run/haproxy/admin.sock']
 NODE_NAME = re.compile(r'[a-z]+\d+')
+
+
+def find_socket():
+    for path in SOCKETS:
+        if os.path.exists(path):
+            return path
+    return SOCKETS[0]
 
 
 def stat(sock_path):
@@ -35,7 +44,7 @@ def describe(rows):
 
 def main():
     parser = argparse.ArgumentParser(description='Check the servers of the HAProxy load balancer pools.')
-    parser.add_argument('-s', '--socket', default='/run/haproxy/haproxy.sock')
+    parser.add_argument('-s', '--socket', default=find_socket())
     args = parser.parse_args()
 
     try:
