@@ -187,6 +187,7 @@ ENVIRONMENTS = {
             'mw181', 'mw182', 'mw183',
             'mw191', 'mw192', 'mw193',
             'mw201', 'mw202', 'mw203',
+            'mw211', 'mw212', 'mw213',
             'mwtask151', 'mwtask161', 'mwtask171', 'mwtask181',
         ],
     ),
