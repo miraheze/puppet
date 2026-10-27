@@ -28,13 +28,7 @@ class haproxy::depool (
         require => File['/opt/haproxy-depool'],
     }
 
-    file { '/usr/local/sbin/lb-ctl':
-        ensure => present,
-        source => 'puppet:///modules/haproxy/lb-ctl.py',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0555',
-    }
+    include haproxy::lb_ctl
 
     $totp_secret = lookup('passwords::varnish::varnish_totp_secret')
     systemd::service { 'haproxy-depool':
