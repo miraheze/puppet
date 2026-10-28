@@ -87,20 +87,33 @@ class mcrouter(
     Optional[Boolean] $disable_tko_tracking     = undef,
     Optional[Integer] $timeouts_until_tko       = undef,
 ) {
-    stdlib::ensure_packages(['libboost-context1.74.0', 'libboost-filesystem1.74.0', 'libboost-program-options1.74.0', 'libjemalloc2', 'libboost-regex1.74.0', 'libfmt9', 'libgflags2.2', 'libgoogle-glog0v6', 'libdouble-conversion3', 'libsnappy1v5'])
+    stdlib::ensure_packages([
+        'libboost-context1.83.0',
+        'libboost-filesystem1.83.0',
+        'libboost-program-options1.83.0',
+        'libjemalloc2',
+        'libboost-regex1.83.0',
+        'libfmt10',
+        'libgflags2.2',
+        'libevent-2.1-7t64',
+        'libgoogle-glog0v6t64',
+        'libdouble-conversion3',
+        'libsnappy1v5',
+    ])
 
-    file { '/opt/mcrouter_2023.07.17.00-1_amd64.deb':
+    file { '/opt/mcrouter_2026.10.26.00-1_amd64.deb':
         ensure  => present,
-        source  => 'puppet:///private/mcrouter/mcrouter_2023.07.17.00-1_amd64.deb',
+        source  => 'puppet:///private/mcrouter/mcrouter_2026.10.26.00-1_amd64.deb',
         require => [
-            Package['libboost-context1.74.0'],
-            Package['libboost-filesystem1.74.0'],
-            Package['libboost-program-options1.74.0'],
+            Package['libboost-context1.83.0'],
+            Package['libboost-filesystem1.83.0'],
+            Package['libboost-program-options1.83.0'],
             Package['libjemalloc2'],
-            Package['libboost-regex1.74.0'],
-            Package['libfmt9'],
+            Package['libboost-regex1.83.0'],
+            Package['libfmt10'],
             Package['libgflags2.2'],
-            Package['libgoogle-glog0v6'],
+            Package['libevent-2.1-7t64'],
+            Package['libgoogle-glog0v6t64'],
             Package['libdouble-conversion3'],
             Package['libsnappy1v5']
         ]
@@ -109,8 +122,8 @@ class mcrouter(
     package { 'mcrouter':
         ensure   => installed,
         provider => dpkg,
-        source   => '/opt/mcrouter_2023.07.17.00-1_amd64.deb',
-        require  => File['/opt/mcrouter_2023.07.17.00-1_amd64.deb'],
+        source   => '/opt/mcrouter_2026.10.26.00-1_amd64.deb',
+        require  => File['/opt/mcrouter_2026.10.26.00-1_amd64.deb'],
     }
 
     $config = { 'pools' => $pools, 'routes' => $routes }

@@ -20,16 +20,11 @@ node /^cloud[12][0156789]\.fsslc\.wtnet$/ {
     include role::cloud
 }
 
-node 'cp161.wikitide.net' {
-    include base
-    include role::varnish
-}
-
-node /^cp([12][079]1)\.wikitide\.net$/ {
+node /^cp([12][0679]1)\.wikitide\.net$/ {
     role(cache::cache)
 }
 
-node /^db[12]([056789][12])\.fsslc\.wtnet$/ {
+node /^db[12]([056789][123])\.fsslc\.wtnet$/ {
     include base
     include role::db
 }
@@ -40,8 +35,7 @@ node 'eventgate182.fsslc.wtnet' {
 }
 
 node /^os[12][0569][12]\.fsslc\.wtnet$/ {
-    include base
-    include role::opensearch
+    role(opensearch)
 }
 
 node 'graylog161.fsslc.wtnet' {
@@ -65,14 +59,8 @@ node 'llm191.fsslc.wtnet' {
     include role::llm
 }
 
-node 'matomo151.fsslc.wtnet' {
-    include base
-    include role::matomo
-}
-
-node 'matomo211.fsslc.wtnet' {
-    include base
-    include role::matomo
+node /^matomo[12][15]1\.fsslc\.wtnet$/ {
+    role(matomo)
 }
 
 node 'mattermost2.vps.wtnet' {
@@ -91,7 +79,7 @@ node 'mon181.fsslc.wtnet' {
     include role::icinga2
 }
 
-node /^mw[12][056789][1234]\.fsslc\.wtnet$/ {
+node /^mw[12][0156789][123]\.fsslc\.wtnet$/ {
     role(mediawiki)
 }
 

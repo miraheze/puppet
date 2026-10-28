@@ -8,14 +8,6 @@ class ollama (
     String $bind_host = '0.0.0.0', # API bind; 127.0.0.1 for local-only
     String $allowed_origins = '*', # tighten for prod
 ) {
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
-    if $http_proxy {
-        file { '/etc/apt/apt.conf.d/01ollama':
-            ensure  => present,
-            content => epp('ollama/aptproxy.epp', { 'http_proxy' => $http_proxy }),
-        }
-    }
-
     group { $group:
         ensure => present,
         system => true,

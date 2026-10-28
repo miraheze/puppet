@@ -1,1 +1,7 @@
-role::bastion::higher_timeout: true
+squid::forward_timeout: 240
+squid::read_timeout: 900
+squid::request_timeout: 300
+squid::client_lifetime: 86400
+squid::quick_abort_min: 16
+squid::quick_abort_max: 16
+squid::read_ahead_gap: 16

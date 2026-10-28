@@ -1,15 +1,8 @@
 class role::bastion (
-    Optional[Boolean] $higher_timeout = lookup('role::bastion::higher_timeout', {'default_value' => undef}),
+    Boolean $webproxy_gateway = false,
 ) {
     include base
-
-    if $higher_timeout {
-        class { 'squid':
-            config_source => 'puppet:///modules/role/bastion/squid.conf'
-        }
-    } else {
-        include squid
-    }
+    include squid
 
     system::role { 'bastion':
         description => 'core access bastion host'
@@ -38,6 +31,31 @@ class role::bastion (
         proto  => 'tcp',
         port   => 8080,
         srange => "(${squid_access_hosts_internal})",
+    }
+
+    if $webproxy_gateway {
+        $webproxy_clients_query = @("PQL")
+            (resources { type = 'Class' and title = 'Role::Mediawiki' } or
+            resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
+            resources { type = 'Class' and title = 'Role::Mediawiki_beta' })
+            | PQL
+        $webproxy_clients = split(vmlib::generate_firewall_ip($webproxy_clients_query), ' ')
+            .filter |$ip| { $ip != '' }
+
+        # Icinga only opens a TCP connection for the port check, so it needs
+        # the firewall rule but not an nginx allow entry.
+        $webproxy_monitoring_query = @("PQL")
+            resources { type = 'Class' and title = 'Role::Icinga2' }
+            | PQL
+        $webproxy_monitoring = split(vmlib::generate_firewall_ip($webproxy_monitoring_query), ' ')
+            .filter |$ip| { $ip != '' }
+
+        $webproxy_srange = join(($webproxy_clients + $webproxy_monitoring).unique().sort(), ' ')
+
+        class { 'webproxy::gateway':
+            srange => "(${webproxy_srange})",
+            allow  => ['127.0.0.1'] + $webproxy_clients,
+        }
     }
 
     firewall::service { 'bastion-ntp':

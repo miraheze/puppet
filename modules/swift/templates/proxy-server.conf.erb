@@ -18,6 +18,10 @@ log_statsd_sample_rate_factor = 1
 
 conn_timeout = 1.5
 
+eventlet_hub = epolls
+max_clients = 10000
+backlog = 4096
+
 [pipeline:main]
 pipeline = proxy-logging listing_formats ensure_max_age rewrite healthcheck cache container_sync tempurl ratelimit tempauth cors proxy-logging proxy-server
 
@@ -43,6 +47,7 @@ memcache_servers = <%= @swift_main_memcached %>:11211
 memcache_serialization_support = 2
 # per worker!
 memcache_max_connections = 12
+memcache_pool_timeout = 2.0
 
 [filter:ratelimit]
 use = egg:swift#ratelimit

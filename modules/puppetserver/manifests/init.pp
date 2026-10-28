@@ -6,7 +6,7 @@
 #
 # [*use_puppetdb*] Enables or disable openvoxdb support.
 #
-# [*puppet_major_version*] Specify the openvox-server version you want to support / install.
+# [*openvox_major_version*] Specify the openvox-server version you want to support / install.
 #
 # [*puppetserver_hostname*] Hostname of the openvox server.
 #
@@ -15,7 +15,7 @@
 class puppetserver(
     String  $puppetdb_hostname,
     Boolean $puppetdb_enable,
-    Integer $puppet_major_version,
+    Integer $openvox_major_version,
     String  $puppetserver_hostname,
     String  $puppetserver_java_opts,
 ) {

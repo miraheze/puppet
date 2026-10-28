@@ -2,20 +2,147 @@
 
 import adminlog
 import argparse
+import base64
 import importlib.util
+import ipaddress
 import irc.client  # for exceptions.
 import irc.bot as ircbot
 import json
 import logging
 import os
 import re
+import socket
 from socket import gethostname
 import sys
 import time
 import urllib
+import urllib.parse
 
 
 LOG_FORMAT = "%(asctime)-15s %(levelname)s: %(message)s"
+LOG_LEVEL = logging.INFO
+KEEPALIVE_INTERVAL = 60
+IDLE_TIMEOUT = 180
+
+
+class Proxy:
+    def __init__(self, url):
+        parts = urllib.parse.urlsplit(url)
+        scheme = parts.scheme.lower()
+        if scheme in ('socks5', 'socks5h'):
+            self.kind = 'socks5'
+        elif scheme == 'http':
+            self.kind = 'http'
+        else:
+            raise ValueError('Unsupported proxy scheme %r, use socks5://, socks5h:// or http://' % parts.scheme)
+        if not parts.hostname:
+            raise ValueError('Proxy URL has no host')
+        self.host = parts.hostname
+        self.port = parts.port or (1080 if self.kind == 'socks5' else 8080)
+        self.username = urllib.parse.unquote(parts.username) if parts.username else None
+        self.password = urllib.parse.unquote(parts.password) if parts.password else ''
+
+    def __str__(self):
+        return '%s://%s:%s' % (self.kind, self.host, self.port)
+
+
+def read_exact(sock, count):
+    data = b''
+    while len(data) < count:
+        chunk = sock.recv(count - len(data))
+        if not chunk:
+            raise ConnectionError('Proxy closed the connection during handshake')
+        data += chunk
+    return data
+
+
+def socks5_connect(sock, proxy, host, port):
+    if proxy.username is not None:
+        sock.sendall(b'\x05\x02\x00\x02')
+    else:
+        sock.sendall(b'\x05\x01\x00')
+    version, method = read_exact(sock, 2)
+    if version != 5:
+        raise ConnectionError('Proxy did not answer as SOCKS5')
+    if method == 2:
+        user = proxy.username.encode()
+        password = proxy.password.encode()
+        if len(user) > 255 or len(password) > 255:
+            raise ConnectionError('Proxy credentials too long')
+        sock.sendall(b'\x01' + bytes([len(user)]) + user + bytes([len(password)]) + password)
+        if read_exact(sock, 2)[1] != 0:
+            raise ConnectionError('Proxy rejected the credentials')
+    elif method != 0:
+        raise ConnectionError('Proxy offered no acceptable auth method')
+
+    try:
+        address = ipaddress.ip_address(host)
+        target = (b'\x01' if address.version == 4 else b'\x04') + address.packed
+    except ValueError:
+        name = host.encode('idna')
+        target = b'\x03' + bytes([len(name)]) + name
+    sock.sendall(b'\x05\x01\x00' + target + port.to_bytes(2, 'big'))
+
+    reply = read_exact(sock, 4)
+    if reply[1] != 0:
+        raise ConnectionError('SOCKS5 connect failed with code %d' % reply[1])
+    if reply[3] == 1:
+        read_exact(sock, 6)
+    elif reply[3] == 4:
+        read_exact(sock, 18)
+    elif reply[3] == 3:
+        read_exact(sock, read_exact(sock, 1)[0] + 2)
+    else:
+        raise ConnectionError('SOCKS5 reply had an unknown address type')
+
+
+def http_connect(sock, proxy, host, port):
+    target = '[%s]:%d' % (host, port) if ':' in host else '%s:%d' % (host, port)
+    lines = ['CONNECT %s HTTP/1.1' % target, 'Host: %s' % target]
+    if proxy.username is not None:
+        token = base64.b64encode(('%s:%s' % (proxy.username, proxy.password)).encode()).decode()
+        lines.append('Proxy-Authorization: Basic %s' % token)
+    sock.sendall(('\r\n'.join(lines) + '\r\n\r\n').encode())
+    head = b''
+    while not head.endswith(b'\r\n\r\n'):
+        head += read_exact(sock, 1)
+        if len(head) > 8192:
+            raise ConnectionError('Proxy response headers too large')
+    status = head.split(b'\r\n', 1)[0].decode('latin-1')
+    parts = status.split(' ', 2)
+    if len(parts) < 2 or parts[1] != '200':
+        raise ConnectionError('Proxy refused CONNECT: %s' % status)
+
+
+def open_socket(host, port, timeout, proxy):
+    sock = socket.create_connection((proxy.host, proxy.port), timeout)
+    try:
+        if proxy.kind == 'socks5':
+            socks5_connect(sock, proxy, host, port)
+        else:
+            http_connect(sock, proxy, host, port)
+    except Exception:
+        sock.close()
+        raise
+    return sock
+
+
+class ProxyConnector:
+    def __init__(self, proxy, wrapper=None):
+        self.proxy = proxy
+        self.wrapper = wrapper
+
+    def __call__(self, server_address):
+        host, port = server_address
+        sock = open_socket(host, port, 30, self.proxy)
+        try:
+            if self.wrapper:
+                sock = self.wrapper(sock)
+        except Exception:
+            sock.close()
+            raise
+        sock.settimeout(None)
+        return sock
 
 
 class logbot(ircbot.SingleServerIRCBot):
@@ -24,19 +151,48 @@ class logbot(ircbot.SingleServerIRCBot):
         self.name = name
         sasl_password = config.nick_username + '\0' + config.nick_password
         server = [config.network, config.port, config.nick_password]
+        proxy_url = getattr(config, 'proxy', None)
+        self.proxy = Proxy(proxy_url) if proxy_url else None
+        self.last_seen = time.monotonic()
+        self.sasl_failed = False
         ircbot.SingleServerIRCBot.__init__(self, [server], config.nick, config.nick,
+                                           recon=ircbot.ExponentialBackoff(min_interval=10),
                                            sasl_login=sasl_password)
+        self.connection.add_global_handler('all_raw_messages', self.mark_seen, -30)
+        self.reactor.scheduler.execute_every(KEEPALIVE_INTERVAL, self.keepalive)
+
+    def mark_seen(self, con, event):
+        self.last_seen = time.monotonic()
+
+    def keepalive(self):
+        try:
+            if not self.connection.is_connected():
+                return
+            if time.monotonic() - self.last_seen > IDLE_TIMEOUT:
+                logging.warning('No data from the server for %ds, reconnecting' % IDLE_TIMEOUT)
+                self.connection.disconnect('Ping timeout')
+                return
+            self.connection.ping('keep-alive')
+        except Exception:
+            logging.exception('Keepalive failed')
 
     def connect(self, *args, **kwargs):
+        self.last_seen = time.monotonic()
+        self.sasl_failed = False
+        wrapper = None
         if self.config.ssl:
             import ssl
             context = ssl.create_default_context()
-            def ssl_wrapper(sock):
+
+            def wrapper(sock):
                 return context.wrap_socket(sock, server_hostname=self.config.network)
-            ssl_factory = irc.connection.Factory(ipv6=True, wrapper=ssl_wrapper)
-            self.connection.connect(*args, connect_factory=ssl_factory, **kwargs)
-        else:
-            self.connection.connect(*args, **kwargs)
+        if self.proxy:
+            logging.info('Connecting to %s:%s through %s' %
+                         (self.config.network, self.config.port, self.proxy))
+            kwargs['connect_factory'] = ProxyConnector(self.proxy, wrapper)
+        elif wrapper:
+            kwargs['connect_factory'] = irc.connection.Factory(ipv6=True, wrapper=wrapper)
+        self.connection.connect(*args, **kwargs)
 
     def get_version(self):
         return ('Miraheze Log Bot -- '
@@ -90,12 +246,26 @@ class logbot(ircbot.SingleServerIRCBot):
             return True
 
     def on_welcome(self, con, event):
+        if self.sasl_failed:
+            return
         for target in self.config.targets:
             con.join(target)
 
+    def drop_connection(self, reason):
+        if self.connection.is_connected():
+            self.connection.disconnect(reason)
+
+    def on_login_failed(self, con, event):
+        logging.error('SASL login failed: %s' % ' '.join(event.arguments))
+        self.sasl_failed = True
+        self.reactor.scheduler.execute_after(0, lambda: self.drop_connection('SASL login failed'))
+
+    def on_nicknameinuse(self, con, event):
+        logging.warning('Nickname %s is in use, retrying later' % self.config.nick)
+        self.reactor.scheduler.execute_after(0, lambda: self.drop_connection('Nickname in use'))
+
     def on_disconnect(self, con, event):
-        print('Disconnected')
-        sys.exit(0)
+        logging.warning('Disconnected from IRC, will try to reconnect')
 
     def get_projects(self, event, force_reload=False):
         projects = []
@@ -274,13 +444,12 @@ class logbot(ircbot.SingleServerIRCBot):
                 logging.exception('Failed to log message: %r' % e)
                 try:
                     self.connection.privmsg(
-                        event.target(),
+                        event.target,
                         "An exception was raised while trying to log "
-                        "your message, {author}".format(author=title)
+                        "your message, {author}".format(author=author)
                     )
                 except Exception:
                     pass
-
 
 parser = argparse.ArgumentParser(description='IRC log bot.',
                                  epilog='When run without args it will'
@@ -316,7 +485,7 @@ if args.confarg is not None:
         enable_projects = True
 
     bots.append(logbot(module, conf))
-    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG,
+    logging.basicConfig(stream=sys.stderr, level=LOG_LEVEL,
                         format=LOG_FORMAT)
 else:
     # Enumerate bot configs in /etc/adminbot;
@@ -342,7 +511,7 @@ else:
 
             if ('enable_projects' in conf.__dict__) and conf.enable_projects:
                 enable_projects = True
-    logging.basicConfig(filename="/var/log/adminbot.log", level=logging.DEBUG,
+    logging.basicConfig(filename="/var/log/adminbot.log", level=LOG_LEVEL,
                         format=LOG_FORMAT)
 
 if not bots:

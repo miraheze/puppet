@@ -2,7 +2,7 @@ global
         log /dev/log    local0                                   
         log /dev/log    local1 notice
         chroot /var/lib/haproxy
-        stats socket /run/haproxy/admin.sock mode 660 level admin
+        stats socket /run/haproxy/haproxy.sock mode 660 level admin
         stats timeout 30s  
         user haproxy
         group haproxy
@@ -19,6 +19,8 @@ global
 
         hard-stop-after 5m
 
+        server-state-file /var/lib/haproxy/server-state
+
 defaults
         log     global
         mode    http
@@ -28,6 +30,7 @@ defaults
         option  accept-invalid-http-response
         option  http-ignore-probes
 		option  http-server-close
+        load-server-state-from-file global
         timeout connect 50000
         timeout client 259202000
         timeout server 259202000

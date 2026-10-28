@@ -1,4 +1,4 @@
-# role: varnish
+# role: cache::cache
 class role::cache::cache (
     Boolean $restrict_firewall = lookup('role::cache::cache::restrict_firewall', {'default_value' => false}),
 ) {

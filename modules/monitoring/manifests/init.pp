@@ -28,14 +28,6 @@ class monitoring (
         allowdupe => false,
     }
 
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
-    if $http_proxy and !defined(File['/etc/apt/apt.conf.d/02mariadb']) {
-        file { '/etc/apt/apt.conf.d/02mariadb':
-            ensure  => present,
-            content => epp('mariadb/aptproxy.epp', { 'http_proxy' => $http_proxy }),
-        }
-    }
-
     $version = lookup('mariadb::version', {'default_value' => '11.8'})
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
@@ -98,6 +90,10 @@ class monitoring (
         constants    => {
             'TicketSalt' => Sensitive($ticket_salt),
         }
+    }
+
+    class { 'icinga2::query_objects':
+        destination => lookup('icinga2_host', {'default_value' => 'mon181.fsslc.wtnet'}),
     }
 
     class { 'icinga2::feature::api':
@@ -333,7 +329,4 @@ class monitoring (
         },
         user        => 'root',
     }
-
-    Icinga2::Object::Host <<||>> ~> Service['icinga2']
-    Icinga2::Object::Service <<||>> ~> Service['icinga2']
 }

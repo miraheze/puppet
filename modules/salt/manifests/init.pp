@@ -1,13 +1,4 @@
 class salt {
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
-    if $http_proxy {
-        file { '/etc/apt/apt.conf.d/01salt':
-            ensure  => present,
-            content => epp('salt/apt/01salt.epp', { 'http_proxy' => $http_proxy }),
-            before  => Apt::Source['salt_apt'],
-        }
-    }
-
     apt::source { 'salt_apt':
         location => 'https://packages.broadcom.com/artifactory/saltproject-deb',
         release  => 'stable',
@@ -22,8 +13,7 @@ class salt {
     apt::pin { 'salt_pin':
         priority => 1001,
         packages => 'salt-*',
-        # TODO: Migrate to LTS once a version greater than 3007 becomes lts.
-        version  => '3007.*',
+        version  => '3008.*',
     }
 
     # First installs can trip without this

@@ -20,7 +20,7 @@ opensearch::plugins:
   analysis-smartcn: {}
   analysis-stempel: {}
   analysis-sudachi:
-    url: 'https://github.com/WorksApplications/elasticsearch-sudachi/releases/download/v3.6.0/opensearch-2.19.4-analysis-sudachi-3.6.0.zip'
+    url: "https://github.com/WorksApplications/elasticsearch-sudachi/releases/download/v3.6.0/opensearch-%{lookup('role::opensearch::version')}-analysis-sudachi-3.6.0.zip"
   analysis-ukrainian: {}
   opensearch-analysis-stconvert:
-    url: 'https://github.com/Universal-Omega/opensearch-analysis-stconvert/releases/download/2.19.4/opensearch-analysis-stconvert.zip'
+    url: "https://github.com/miraheze/opensearch-analysis-stconvert/releases/download/%{lookup('role::opensearch::version')}/opensearch-analysis-stconvert.zip"

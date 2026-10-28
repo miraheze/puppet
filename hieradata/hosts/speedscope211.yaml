@@ -3,4 +3,5 @@ http_proxy: 'http://bastion.fsslc.wtnet:8080'
 base::syslog::rsyslog_udp_localhost: true
 
 base::dns::do_ipv4: true
+base::dns::do_ipv6: false
 base::dns::forward_use_internal: true

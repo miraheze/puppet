@@ -11,7 +11,7 @@ ui.header-color: 'blue'
 # MySQL
 mysql.port: '3306'
 mysql.user: 'phorge'
-mysql.host: 'db182.fsslc.wtnet'
+mysql.host: 'db193.fsslc.wtnet'
 
 # https://we.phorge.it/book/phorge/article/configuring_file_storage/
 # Needs to match php.ini upload_max_filesize
@@ -48,6 +48,7 @@ phd.garbage-collection:
 github.allowed-owners:
   - 'miraheze'
 github.bot-username: 'GitHubBot'
+github.open-pr-tag: 'pull_request_ready'
 
 # Maniphest priorities
 maniphest.priorities:

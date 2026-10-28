@@ -8,7 +8,7 @@ class matomo (
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '5.13.0', # Current stable
+        branch             => '5.14.2', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
@@ -64,7 +64,7 @@ class matomo (
         'apc.shm_size' => '512M',
     }
 
-    $php_version = lookup('php::php_version', {'default_value' => '8.4'})
+    $php_version = lookup('php::php_version')
 
     # Install the runtime
     class { 'php':

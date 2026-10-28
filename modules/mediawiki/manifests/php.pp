@@ -1,13 +1,12 @@
 # === Class mediawiki::php
 class mediawiki::php (
-    Float $fpm_workers_multiplier        = lookup('mediawiki::php::fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
-    Integer $request_timeout             = lookup('mediawiki::php::request_timeout', {'default_value' => 240}),
-    String $apc_shm_size                 = lookup('mediawiki::php::apc_shm_size', {'default_value' => '3072M'}),
-    VMlib::Php_version $php_version      = lookup('php::php_version', {'default_value' => '8.4'}),
-    Boolean $enable_fpm                  = lookup('mediawiki::php::enable_fpm', {'default_value' => true}),
-    Boolean $enable_request_profiling    = lookup('mediawiki::php::enable_request_profiling', {'default_value' => false}),
-    Optional[Hash] $fpm_config           = lookup('mediawiki::php::fpm_config', {default_value => undef}),
-    Boolean $increase_open_files         = lookup('mediawiki::php::increase_open_files', {'default_value' => false}),
+    Float              $fpm_workers_multiplier = lookup('mediawiki::php::fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
+    Integer            $request_timeout        = lookup('mediawiki::php::request_timeout', {'default_value' => 240}),
+    String             $apc_shm_size           = lookup('mediawiki::php::apc_shm_size', {'default_value' => '3072M'}),
+    VMlib::Php_version $php_version            = lookup('php::php_version'),
+    Boolean            $enable_fpm             = lookup('mediawiki::php::enable_fpm', {'default_value' => true}),
+    Optional[Hash]     $fpm_config             = lookup('mediawiki::php::fpm_config', {'default_value' => undef}),
+    Boolean            $increase_open_files    = lookup('mediawiki::php::increase_open_files', {'default_value' => false}),
 ) {
 
     $config_cli = {
@@ -189,29 +188,6 @@ class mediawiki::php (
             group        => 'www-data',
             readable_by  => 'group',
             log_filename => 'error.log'
-        }
-    }
-
-    # Install tideways-xhprof
-    $profiling_ensure = $enable_request_profiling ? {
-        true    => 'present',
-        default => 'absent'
-    }
-
-    # Follow https://support.tideways.com/documentation/reference/tideways-xhprof/tideways-xhprof-extension.html
-    file { '/usr/lib/php/20240924/xhprof.so':
-        ensure => $profiling_ensure,
-        mode   => '0755',
-        source => 'puppet:///modules/mediawiki/php/xhprof.php84.so',
-        before => Php::Extension['xhprof'],
-    }
-
-    php::extension { 'xhprof':
-        ensure       => $profiling_ensure,
-        package_name => '',
-        priority     => 30,
-        config       => {
-            'extension' => 'xhprof.so',
         }
     }
 

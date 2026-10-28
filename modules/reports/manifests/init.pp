@@ -5,7 +5,7 @@ class reports {
     git::clone { 'TSPortal':
         directory => '/srv/TSPortal',
         origin    => 'https://github.com/miraheze/TSPortal',
-        branch    => 'v36',
+        branch    => 'v37',
         owner     => 'www-data',
         group     => 'www-data',
     }
@@ -55,7 +55,7 @@ class reports {
         'upload_max_filesize' => '100M',
     }
 
-    $php_version = lookup('php::php_version', {'default_value' => '8.4'})
+    $php_version = lookup('php::php_version')
 
     # Install the runtime
     class { '::php':

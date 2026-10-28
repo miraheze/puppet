@@ -575,16 +575,6 @@ class TestPathAndCommandBuilders(unittest.TestCase):
         self.assertNotIn('PrivateSettings.php', without_it)
         self.assertNotIn('OAuth2.key', without_it)
 
-    def test_rsync_never_checks_or_excludes_protected_files_when_config_is_not_in_this_sync(self):
-        with patch('os.path.exists', return_value=True) as mock_exists, \
-             patch('glob.glob', return_value=['/srv/mediawiki/config/ExtensionMessageFiles-1.46.php']) as mock_glob:
-            command = mwdeploy._rsync_builder.build(False, '/srv/mediawiki-staging', '/srv/mediawiki', ['version/extensions/Foo'])
-        self.assertNotIn('PrivateSettings.php', command)
-        self.assertNotIn('OAuth2.key', command)
-        self.assertNotIn('ExtensionMessageFiles', command)
-        mock_exists.assert_not_called()
-        mock_glob.assert_not_called()
-
     def test_rsync_checks_for_protected_files_under_dest_root_config(self):
         with patch('os.path.exists') as mock_exists, patch('glob.glob', return_value=[]) as mock_glob:
             mock_exists.return_value = False

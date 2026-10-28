@@ -2,7 +2,7 @@ changeprop::jobqueue: true
 changeprop::jobrunner_host: 'http://localhost:9007'
 changeprop::jobrunner_high_timeout_host: 'http://localhost:9008'
 changeprop::videoscaler_host: 'http://localhost:9009'
-jobrunner_haproxy::backends:
+jobrunner_haproxy::servers:
   mwtask151:
     ip: 10.0.15.150
     port: 9006

@@ -1,0 +1,7 @@
+role::bastion::webproxy_gateway: true
+
+nginx::use_graylog: false
+nginx::logrotate_maxsize: '200M'
+nginx::logrotate_number: 3
+
+base::syslog::rsyslog_udp_localhost: true

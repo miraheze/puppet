@@ -1,0 +1,18 @@
+<%- | String $totp_secret,
+      Stdlib::Absolutepath $state_file,
+| -%>
+[Unit]
+Description=Depool/repool service to safely restart services non-interactively
+After=haproxy.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/haproxy-depool
+Environment="TOTP_SECRET=<%= $totp_secret -%>"
+Environment="HAPROXY_STATE_FILE=<%= $state_file -%>"
+ExecStart=/usr/bin/gunicorn -b [::]:5001 haproxy-depool:app -w 2
+User=root
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

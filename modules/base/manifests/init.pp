@@ -62,6 +62,14 @@ class base (
             ensure  => present,
             content => epp('base/git/gitconfig.epp', { 'http_proxy' => $http_proxy }),
         }
+
+        $apt_proxy = regsubst($http_proxy, '/+$', '')
+        apt::setting { 'conf-http-proxy':
+            priority => '01',
+            content  => epp('base/apt/proxy.epp', { 'http_proxy' => $apt_proxy }),
+        }
+
+        Apt::Setting['conf-http-proxy'] -> Apt::Source <| |>
     }
 
     class { 'apt::backports':

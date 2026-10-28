@@ -3,7 +3,7 @@
 # Basic installation of php - only cli modules.
 #
 class php(
-    VMlib::Php_version $version               = lookup('php::php_version', {'default_value' => '8.4'}),
+    VMlib::Php_version $version               = lookup('php::php_version'),
     VMlib::Ensure $ensure                     = present,
     Array[Php::Sapi] $sapis                   = ['cli'],
     Hash $config_by_sapi                      = {},
@@ -40,6 +40,8 @@ class php(
             'save_path' => '/tmp',
         },
         'upload_max_filesize'   => '100M',
+        'session.upload_progress.enabled' => 0,
+        'zend.assertions'       => -1,
     }
 
     # Let's install the packages and configure PHP for each of the selected

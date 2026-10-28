@@ -1,0 +1,14 @@
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
+# This is in GiB
+mariadb::config::innodb_buffer_pool_size: '14G'
+role::db::weekly_misc: ['reports']
+role::db::fortnightly_misc: ['icinga', 'icingaweb2']
+role::db::monthly_misc: []
+role::db::backup_sql: false
+role::db::enable_bin_logs: false
+mariadb::version: '11.8'
+role::db::enable_ssl: false
+mariadb::config::server_id: 10
+role::db::is_beta_db: false
+base::dns::do_ipv4: true
+base::dns::forward_use_internal: true

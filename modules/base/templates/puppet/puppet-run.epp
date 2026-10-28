@@ -5,7 +5,7 @@ set -e
 
 # Check this before apt-get update, so that our update doesn't screw up
 # package installs in a running (manual and/or initial install) puppet run
-PUPPETLOCK=$(puppet agent --configprint agent_catalog_run_lockfile)
+PUPPETLOCK=$(puppet config print agent_catalog_run_lockfile --section agent)
 
 # From here out, make a best effort to continue in the face of failure
 set +e

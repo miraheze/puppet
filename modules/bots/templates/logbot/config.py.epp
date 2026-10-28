@@ -3,7 +3,8 @@
       String $mirahezelogbot_consumer_token,
       String $mirahezelogbot_consumer_secret,
       String $mirahezelogbot_access_token,
-      String $mirahezelogbot_access_secret
+      String $mirahezelogbot_access_secret,
+      Optional[String] $http_proxy = undef
 | -%>
 # If true, !log <project> <message>
 # If false, !log <message>
@@ -57,6 +58,7 @@ network = "irc.libera.chat"
 port = 6697
 
 ssl = True
+proxy = "<%= $http_proxy %>" or None
 
 # Map irc nick to real name
 author_map = {
