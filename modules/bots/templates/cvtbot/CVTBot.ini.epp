@@ -1,4 +1,4 @@
-<%- | String $password | -%>
+<%- | String $password, Optional[String] $http_proxy | -%>
 # User
 botnick=MirahezeCVTBot
 readerbotnick=CVTBotReader
@@ -8,6 +8,9 @@ botrealname=MirahezeCVTBot
 ircserver=irc.libera.chat
 ircport=6697
 ircusessl=true
+ircusesasl=true
+ircproxy=<%= $http_proxy %>
+ircreaderproxy=<%= $http_proxy %>
 feedchannel=#miraheze-cvt-feed
 controlchannel=#miraheze-cvt
 broadcastchannel=#miraheze-cvt-feed
