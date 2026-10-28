@@ -1,0 +1,21 @@
+[Unit]
+Description=MediaWiki database section health probe
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+ExecStart=/usr/local/bin/mw-db-health /etc/mw-db-health.json
+RuntimeDirectory=mw-db-health
+RuntimeDirectoryMode=0755
+ProtectSystem=strict
+PrivateTmp=true
+NoNewPrivileges=true
+SyslogIdentifier=mw-db-health
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
