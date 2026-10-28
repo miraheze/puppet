@@ -1,0 +1,2 @@
+<%- | Hash $config | -%>
+<%= stdlib::to_json_pretty($config) %>
