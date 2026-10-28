@@ -11,6 +11,7 @@ class role::mediawiki (
         include role::mediawiki::nutcracker
     }
     include mediawiki
+    include mediawiki::dbhealth
     include haproxy::lb_agent
     include role::mediawiki::php::restarts
 
