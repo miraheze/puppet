@@ -73,7 +73,7 @@ class role::bots {
     }
 
     $subquery_icinga = @("PQL")
-    resources { type = 'Class' and title = 'Role::Icinga2' }
+    resources { type = 'Class' and title = 'Role::Grafana' }
     | PQL
     $firewall_icinga_rules_str = vmlib::generate_firewall_ip($subquery_icinga)
 
