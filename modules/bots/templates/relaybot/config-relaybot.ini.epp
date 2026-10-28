@@ -5,6 +5,8 @@ Port = 6697
 Nickname = MirahezeRelay
 Password = <%= $irc_password %>
 UseSSL = true
+UseSASL = true
+Proxy = <%= $http_proxy %>
 
 [Discord]
 BotToken = <%= $bot_token %>
