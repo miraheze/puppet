@@ -4,17 +4,23 @@
 import argparse
 import base64
 import contextlib
+import http.server
+import ipaddress
 import json
 import logging
 import os
 import re
+import socket
+import socketserver
 import ssl
 import sys
+import threading
 import time
 import urllib.parse
 import urllib.request
+from collections import deque
 
-log = logging.getLogger('taskbot')
+log = logging.getLogger('icingabot')
 
 STATES = {0: 'OK', 1: 'WARNING', 2: 'CRITICAL', 3: 'UNKNOWN'}
 
@@ -42,11 +48,28 @@ STORM = re.compile(r'^Icinga alert storm summary$', re.MULTILINE)
 TITLE_STATE = re.compile(r' is (WARNING|CRITICAL|UNKNOWN)$')
 STORM_TITLE = 'Many Icinga services are alerting'
 
+POLL_SECONDS = 0.5
+REGISTER_TIMEOUT = 120
+RESTART_MIN = 5
+RESTART_MAX = 300
+IRC_LIMIT = 400
+CONTROL = re.compile(r'[\x00-\x1f\x7f]')
+NICK = re.compile(r'[A-Za-z0-9\[\]\\`_^{|}-]+')
+CHANNEL = re.compile(r'[#&][^\s,\x00-\x1f\x7f]+')
+JOIN_FAILED = {'403', '405', '471', '473', '474', '475', '476', '477', '520'}
+SASL_FAILED = {'902', '904', '905', '906'}
+
 REQUIRED = {
     'icinga': [
         'url', 'username', 'password', 'ca_file', 'queue', 'timeout', 'stream_timeout',
     ],
     'phorge': ['url', 'api_token', 'timeout', 'retries', 'proxy'],
+    'irc': [
+        'server', 'port', 'ssl', 'nick', 'username', 'password', 'sasl', 'realname', 'channels',
+        'ping_interval', 'reconnect_min', 'reconnect_max', 'proxy', 'queue', 'queue_size',
+        'message_interval', 'notify_users', 'heartbeat_file', 'heartbeat_interval',
+    ],
+    'grafana': ['host', 'port', 'max_lines', 'max_body'],
     'priorities': ['WARNING', 'CRITICAL', 'UNKNOWN'],
     'icingaweb_url': None,
     'skip_in_downtime': None,
@@ -90,15 +113,83 @@ def missing_keys(config):
     return missing
 
 
+def is_number(value):
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
+def is_whole(value, low, high=None):
+    return isinstance(value, int) and not isinstance(value, bool) and value >= low and (high is None or value <= high)
+
+
+def is_plain(value):
+    return isinstance(value, str) and not CONTROL.search(value)
+
+
+def irc_problems(irc):
+    problems = []
+    for key in ('server', 'queue', 'heartbeat_file'):
+        if not isinstance(irc[key], str) or not irc[key]:
+            problems.append(f'irc.{key} must be a non-empty string')
+    for key in ('nick', 'username'):
+        if not isinstance(irc[key], str) or not NICK.fullmatch(irc[key]):
+            problems.append(f'irc.{key} must be a valid IRC name')
+    for key in ('realname', 'password'):
+        if not is_plain(irc[key]):
+            problems.append(f'irc.{key} must be a string without line breaks')
+    if not is_whole(irc['port'], 1, 65535):
+        problems.append('irc.port must be a whole number from 1 to 65535')
+    for key in ('ssl', 'sasl'):
+        if not isinstance(irc[key], bool):
+            problems.append(f'irc.{key} must be true or false')
+    channels = irc['channels']
+    if not isinstance(channels, list) or not channels or not all(
+        isinstance(name, str) and CHANNEL.fullmatch(name) for name in channels
+    ):
+        problems.append('irc.channels must be a list of channel names')
+    users = irc['notify_users']
+    if not isinstance(users, list) or not all(isinstance(name, str) for name in users):
+        problems.append('irc.notify_users must be a list of Icinga user names')
+    for key in ('ping_interval', 'reconnect_min', 'heartbeat_interval'):
+        if not is_number(irc[key]) or irc[key] <= 0:
+            problems.append(f'irc.{key} must be a number above 0')
+    if is_number(irc['reconnect_min']) and is_number(irc['reconnect_max']):
+        if irc['reconnect_max'] < irc['reconnect_min']:
+            problems.append('irc.reconnect_max must not be lower than irc.reconnect_min')
+    else:
+        problems.append('irc.reconnect_max must be a number above 0')
+    if not is_number(irc['message_interval']) or irc['message_interval'] < 0:
+        problems.append('irc.message_interval must be a number of 0 or more')
+    if not is_whole(irc['queue_size'], 1):
+        problems.append('irc.queue_size must be a whole number of 1 or more')
+    if irc['proxy']:
+        try:
+            Proxy(irc['proxy'])
+        except (ValueError, AttributeError, TypeError) as error:
+            problems.append(f'irc.proxy is not usable: {error}')
+    return problems
+
+
+def grafana_problems(grafana):
+    problems = []
+    if not isinstance(grafana['host'], str) or not grafana['host']:
+        problems.append('grafana.host must be a non-empty string')
+    if not is_whole(grafana['port'], 1, 65535):
+        problems.append('grafana.port must be a whole number from 1 to 65535')
+    for key in ('max_lines', 'max_body'):
+        if not is_whole(grafana[key], 1):
+            problems.append(f'grafana.{key} must be a whole number of 1 or more')
+    return problems
+
+
 def invalid_values(config):
     problems = []
     for key in ('grace_minutes', 'change_grace_minutes', 'storm_window_minutes', 'reopen_hours'):
         value = config[key]
-        if isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0:
+        if not is_number(value) or value < 0:
             problems.append(f'{key} must be a number of 0 or more')
     for key in ('close_after_recovery_seconds', 'close_after_recovery_commented_seconds'):
         delay = config[key]
-        if delay is not None and (isinstance(delay, bool) or not isinstance(delay, (int, float)) or delay < 0):
+        if delay is not None and (not is_number(delay) or delay < 0):
             problems.append(f'{key} must be null or a number of 0 or more')
     limit = config['storm_limit']
     if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
@@ -108,6 +199,8 @@ def invalid_values(config):
         for state, keyword in config['priorities'].items()
         if keyword not in PRIORITIES
     )
+    problems.extend(irc_problems(config['irc']))
+    problems.extend(grafana_problems(config['grafana']))
     return problems
 
 
@@ -178,6 +271,111 @@ def describe_seconds(seconds):
 def failing_since(attrs):
     ok = attrs.get('last_state_ok') or 0
     return ok if ok > 0 else attrs.get('last_state_change') or 0
+
+
+class Proxy:
+    def __init__(self, url):
+        parts = urllib.parse.urlsplit(url)
+        scheme = parts.scheme.lower()
+        if scheme in ('socks5', 'socks5h'):
+            self.kind = 'socks5'
+        elif scheme == 'http':
+            self.kind = 'http'
+        else:
+            raise ValueError(f'Unsupported proxy scheme {parts.scheme!r}, use socks5://, socks5h:// or http://')
+        if not parts.hostname:
+            raise ValueError('Proxy URL has no host')
+        self.host = parts.hostname
+        self.port = parts.port or (1080 if self.kind == 'socks5' else 8080)
+        self.username = urllib.parse.unquote(parts.username) if parts.username else None
+        self.password = urllib.parse.unquote(parts.password) if parts.password else ''
+
+    def __str__(self):
+        return f'{self.kind}://{self.host}:{self.port}'
+
+
+def read_exact(sock, count):
+    data = b''
+    while len(data) < count:
+        chunk = sock.recv(count - len(data))
+        if not chunk:
+            raise ConnectionError('Proxy closed the connection during handshake')
+        data += chunk
+    return data
+
+
+def socks5_connect(sock, proxy, host, port):
+    if proxy.username is not None:
+        sock.sendall(b'\x05\x02\x00\x02')
+    else:
+        sock.sendall(b'\x05\x01\x00')
+    version, method = read_exact(sock, 2)
+    if version != 5:
+        raise ConnectionError('Proxy did not answer as SOCKS5')
+    if method == 2:
+        user = proxy.username.encode()
+        password = proxy.password.encode()
+        if len(user) > 255 or len(password) > 255:
+            raise ConnectionError('Proxy credentials too long')
+        sock.sendall(b'\x01' + bytes([len(user)]) + user + bytes([len(password)]) + password)
+        if read_exact(sock, 2)[1] != 0:
+            raise ConnectionError('Proxy rejected the credentials')
+    elif method != 0:
+        raise ConnectionError('Proxy offered no acceptable auth method')
+
+    try:
+        address = ipaddress.ip_address(host)
+        target = (b'\x01' if address.version == 4 else b'\x04') + address.packed
+    except ValueError:
+        name = host.encode('idna')
+        target = b'\x03' + bytes([len(name)]) + name
+    sock.sendall(b'\x05\x01\x00' + target + port.to_bytes(2, 'big'))
+
+    reply = read_exact(sock, 4)
+    if reply[1] != 0:
+        raise ConnectionError(f'SOCKS5 connect failed with code {reply[1]}')
+    if reply[3] == 1:
+        read_exact(sock, 6)
+    elif reply[3] == 4:
+        read_exact(sock, 18)
+    elif reply[3] == 3:
+        read_exact(sock, read_exact(sock, 1)[0] + 2)
+    else:
+        raise ConnectionError('SOCKS5 reply had an unknown address type')
+
+
+def http_connect(sock, proxy, host, port):
+    target = f'[{host}]:{port}' if ':' in host else f'{host}:{port}'
+    lines = [f'CONNECT {target} HTTP/1.1', f'Host: {target}']
+    if proxy.username is not None:
+        token = base64.b64encode(f'{proxy.username}:{proxy.password}'.encode()).decode()
+        lines.append(f'Proxy-Authorization: Basic {token}')
+    sock.sendall(('\r\n'.join(lines) + '\r\n\r\n').encode())
+    head = b''
+    while not head.endswith(b'\r\n\r\n'):
+        head += read_exact(sock, 1)
+        if len(head) > 8192:
+            raise ConnectionError('Proxy response headers too large')
+    status = head.split(b'\r\n', 1)[0].decode('latin-1')
+    parts = status.split(' ', 2)
+    if len(parts) < 2 or parts[1] != '200':
+        raise ConnectionError(f'Proxy refused CONNECT: {status}')
+
+
+def open_socket(host, port, timeout, proxy=None):
+    """Plain TCP connection, or a tunnel through the proxy. The proxy resolves the target name."""
+    if proxy is None:
+        return socket.create_connection((host, port), timeout)
+    sock = socket.create_connection((proxy.host, proxy.port), timeout)
+    try:
+        if proxy.kind == 'socks5':
+            socks5_connect(sock, proxy, host, port)
+        else:
+            http_connect(sock, proxy, host, port)
+    except Exception:
+        sock.close()
+        raise
+    return sock
 
 
 class Phorge:
@@ -329,9 +527,9 @@ class Phorge:
 
 
 class Icinga:
-    def __init__(self, config):
+    def __init__(self, config, queue=None):
         self.url = config['url'].rstrip('/')
-        self.queue = config['queue']
+        self.queue = queue or config['queue']
         self.timeout = config['timeout']
         self.stream_timeout = config['stream_timeout']
         self.warned = False
@@ -383,8 +581,8 @@ class Icinga:
         })
         return services[0] if services else None
 
-    def events(self):
-        body = {'queue': self.queue, 'types': ['StateChange']}
+    def events(self, types=('StateChange',)):
+        body = {'queue': self.queue, 'types': list(types)}
         with self.request('/v1/events', body, self.stream_timeout) as response:
             log.debug('Connected to the Icinga event stream')
             with contextlib.suppress(TimeoutError):
@@ -467,6 +665,14 @@ class State:
         self.storm_recovered = when
         self.storm_close_after = delay
         self.save()
+
+
+def write_heartbeat(path):
+    try:
+        with open(path, 'w') as handle:
+            handle.write(f'{int(time.time())}\n')
+    except OSError as error:
+        log.error(f'Could not write the heartbeat file: {error}')
 
 
 def check_output(attrs):
@@ -870,11 +1076,7 @@ class Bot:
         if self.failures:
             log.warning(f'{self.failures} problems during the sync, not marking it healthy')
             return
-        try:
-            with open(self.config['heartbeat_file'], 'w') as handle:
-                handle.write(f'{int(time.time())}\n')
-        except OSError as error:
-            log.error(f'Could not write the heartbeat file: {error}')
+        write_heartbeat(self.config['heartbeat_file'])
 
     def reconcile(self):
         log.debug('Syncing with current Icinga state')
@@ -919,8 +1121,364 @@ class Bot:
             time.sleep(delay)
 
 
+def clean_text(text):
+    return ' '.join(CONTROL.sub(' ', str(text)).split())
+
+
+def truncate(text, limit=IRC_LIMIT):
+    data = text.encode('utf-8')
+    if len(data) <= limit:
+        return text
+    return data[:limit - 3].decode('utf-8', 'ignore').rstrip() + '...'
+
+
+def format_notification(event):
+    host = clean_text(event.get('host') or '')
+    if not host:
+        return None
+    result = event.get('check_result') or {}
+    kind = clean_text(event.get('notification_type') or 'NOTIFICATION').upper()
+    try:
+        code = int(result.get('state'))
+    except (TypeError, ValueError):
+        code = None
+    output = clean_text(result.get('output') or '')
+    service = clean_text(event.get('service') or '')
+    if service:
+        line = f"{kind} - {service} on {host} is {STATES.get(code, 'UNKNOWN')}: {output}"
+    else:
+        state = 'UNKNOWN' if code is None else 'UP' if code == 0 else 'DOWN'
+        line = f'{kind} - Host {host} is {state}: {output}'
+    extra = clean_text(f"{event.get('author') or ''} {event.get('text') or ''}")
+    if extra:
+        line = f'{line} {extra}'
+    return truncate(line.strip())
+
+
+def parse_irc(line):
+    prefix = None
+    if line.startswith(':'):
+        prefix, _, line = line[1:].partition(' ')
+    if ' :' in line:
+        head, _, trailing = line.partition(' :')
+        params = head.split()
+        params.append(trailing)
+    else:
+        params = line.split()
+    if not params:
+        return prefix, '', []
+    return prefix, params[0].upper(), params[1:]
+
+
+class IrcRelay:
+    def __init__(self, config):
+        self.cfg = config['irc']
+        self.icinga = Icinga(config['icinga'], self.cfg['queue'])
+        self.stream_timeout = config['icinga']['stream_timeout']
+        self.proxy = Proxy(self.cfg['proxy']) if self.cfg['proxy'] else None
+        self.users = set(self.cfg['notify_users'])
+        self.outbox = deque(maxlen=self.cfg['queue_size'])
+        self.stream_seen = time.monotonic()
+
+    def wanted(self, event):
+        if event.get('type') != 'Notification':
+            return False
+        if not self.users:
+            return True
+        users = event.get('users')
+        return isinstance(users, list) and any(name in self.users for name in users)
+
+    def handle(self, event):
+        if not self.wanted(event):
+            log.debug(f"Ignored a notification for {event.get('users')}")
+            return
+        text = format_notification(event)
+        if text:
+            self.push(text)
+
+    def push(self, text):
+        if len(self.outbox) == self.outbox.maxlen:
+            log.warning('The IRC outbox is full, dropping the oldest message')
+        self.outbox.append(text)
+
+    def healthy(self):
+        return time.monotonic() - self.stream_seen < 3 * self.stream_timeout
+
+    def pump(self):
+        delay = self.cfg['reconnect_min']
+        while True:
+            try:
+                for event in self.icinga.events(['Notification']):
+                    self.stream_seen = time.monotonic()
+                    delay = self.cfg['reconnect_min']
+                    try:
+                        self.handle(event)
+                    except Exception:
+                        log.exception('Could not handle a notification')
+            except (OSError, ValueError) as error:
+                log.error(f'Icinga notification stream problem: {error}')
+                time.sleep(delay)
+                delay = min(delay * 2, self.cfg['reconnect_max'])
+                continue
+            self.stream_seen = time.monotonic()
+            delay = self.cfg['reconnect_min']
+            time.sleep(1)
+
+    def run(self):
+        delay = self.cfg['reconnect_min']
+        while True:
+            link = IrcLink(self)
+            try:
+                link.run()
+            except OSError as error:
+                log.warning(f'IRC connection problem: {error}')
+            if link.joined:
+                delay = self.cfg['reconnect_min']
+            log.info(f'Reconnecting to IRC in {delay}s')
+            time.sleep(delay)
+            delay = min(delay * 2, self.cfg['reconnect_max'])
+
+
+class IrcLink:
+    def __init__(self, relay):
+        self.relay = relay
+        self.cfg = relay.cfg
+        self.nick = self.cfg['nick']
+        self.username = self.cfg['username']
+        self.password = self.cfg['password']
+        self.use_sasl = bool(self.password) and self.cfg['sasl']
+        self.waiting = {name.lower() for name in self.cfg['channels']}
+        self.joined = False
+        self.buffer = b''
+        self.sock = None
+        self.last_read = time.monotonic()
+        self.pinged = None
+
+    def run(self):
+        cfg = self.cfg
+        server, port = cfg['server'], cfg['port']
+        if self.relay.proxy:
+            log.info(f'Connecting to {server}:{port} through {self.relay.proxy}')
+        else:
+            log.info(f'Connecting to {server}:{port}')
+        raw = open_socket(server, port, 30, self.relay.proxy)
+        try:
+            sock = ssl.create_default_context().wrap_socket(raw, server_hostname=server) if cfg['ssl'] else raw
+        except Exception:
+            raw.close()
+            raise
+        try:
+            sock.settimeout(POLL_SECONDS)
+            self.sock = sock
+            self.talk()
+        finally:
+            with contextlib.suppress(OSError):
+                sock.close()
+
+    def send(self, line):
+        shown = 'AUTHENTICATE ***' if line.startswith('AUTHENTICATE ') else line
+        log.debug(f'>> {shown}')
+        self.sock.sendall(f'{line}\r\n'.encode('utf-8'))
+
+    def talk(self):
+        cfg = self.cfg
+        started = time.monotonic()
+        last_beat = next_post = 0.0
+        if self.use_sasl:
+            self.send('CAP REQ :sasl')
+        self.send(f'NICK {self.nick}')
+        self.send(f"USER {self.username} 0 * :{cfg['realname']}")
+        while True:
+            self.fill()
+            now = time.monotonic()
+            if not self.joined:
+                if now - started > REGISTER_TIMEOUT:
+                    raise ConnectionError('registration timed out')
+            else:
+                if self.relay.outbox and now >= next_post:
+                    self.post()
+                    next_post = now + cfg['message_interval']
+                if now - last_beat >= cfg['heartbeat_interval'] and self.relay.healthy():
+                    write_heartbeat(cfg['heartbeat_file'])
+                    last_beat = now
+            self.keepalive(now)
+
+    def fill(self):
+        try:
+            chunk = self.sock.recv(4096)
+        except TimeoutError:
+            return
+        if not chunk:
+            raise ConnectionError('server closed the connection')
+        self.last_read = time.monotonic()
+        self.pinged = None
+        self.buffer += chunk
+        while True:
+            line, found, rest = self.buffer.partition(b'\n')
+            if not found:
+                break
+            self.buffer = rest
+            self.handle(line.decode('utf-8', 'replace').rstrip('\r'))
+        if len(self.buffer) > 8192:
+            raise ConnectionError('server sent a line that is too long')
+
+    def keepalive(self, now):
+        if self.pinged is not None:
+            if now - self.pinged > self.cfg['ping_interval']:
+                raise ConnectionError('ping timeout')
+        elif now - self.last_read > self.cfg['ping_interval']:
+            self.send('PING :keepalive')
+            self.pinged = now
+
+    def post(self):
+        text = self.relay.outbox.popleft()
+        try:
+            for channel in self.cfg['channels']:
+                self.send(f'PRIVMSG {channel} :{text}')
+        except OSError:
+            self.relay.outbox.appendleft(text)
+            raise
+        log.debug(f'Relayed {text}')
+
+    def check_failure(self, command, params):
+        if command in SASL_FAILED:
+            raise ConnectionError(f'SASL failed ({command})')
+        if command == '433':
+            raise ConnectionError(f'the nickname {self.nick} is already in use')
+        if command in JOIN_FAILED and len(params) >= 2:
+            raise ConnectionError(f'cannot join {params[1]} ({command})')
+        if command == 'KICK' and len(params) >= 2 and params[1].lower() == self.nick.lower():
+            raise ConnectionError(f'kicked from {params[0]}')
+        if command == 'ERROR':
+            raise ConnectionError(' '.join(params))
+
+    def handle(self, line):
+        log.debug(f'<< {line}')
+        _, command, params = parse_irc(line)
+        self.check_failure(command, params)
+        if command == 'PING':
+            self.send(f"PONG :{params[-1] if params else ''}")
+        elif command == 'CAP' and len(params) >= 3:
+            if params[1] == 'ACK' and 'sasl' in params[2].split():
+                self.send('AUTHENTICATE PLAIN')
+            elif params[1] == 'NAK':
+                log.warning('The server refused SASL')
+                self.send('CAP END')
+        elif command == 'AUTHENTICATE' and params and params[0] == '+':
+            blob = f'{self.username}\0{self.username}\0{self.password}'
+            self.send(f'AUTHENTICATE {base64.b64encode(blob.encode()).decode()}')
+        elif command == '903':
+            self.send('CAP END')
+        elif command == '001':
+            log.info(f'Registered as {self.nick}')
+            if self.password and not self.use_sasl:
+                self.send(f'PRIVMSG NickServ :IDENTIFY {self.username} {self.password}')
+            for channel in self.cfg['channels']:
+                self.send(f'JOIN {channel}')
+        elif command == '366' and len(params) >= 2:
+            self.waiting.discard(params[1].lower())
+            if not self.waiting and not self.joined:
+                self.joined = True
+                log.info(f"Joined {', '.join(self.cfg['channels'])}")
+
+
+def grafana_messages(content, limit):
+    message = content['message']
+    if not isinstance(message, str):
+        raise TypeError('message is not a string')
+    lines = [truncate(clean_text(line)) for line in message.splitlines()]
+    lines = [line for line in lines if line]
+    if len(lines) <= limit:
+        return lines
+    return [*lines[:limit], f'[Grafana] {len(lines) - limit} more lines not shown']
+
+
+class HookServer(http.server.ThreadingHTTPServer):
+    daemon_threads = True
+
+    def server_bind(self):
+        socketserver.TCPServer.server_bind(self)
+        self.server_name, self.server_port = self.server_address[:2]
+
+
+class GrafanaHook:
+    def __init__(self, config, relay):
+        self.cfg = config['grafana']
+        self.relay = relay
+        self.server = None
+
+    def receive(self, path, headers, rfile):
+        if path != '/':
+            return 404
+        try:
+            length = int(headers.get('Content-Length', ''))
+        except ValueError:
+            return 411
+        if length < 0:
+            return 400
+        if length > self.cfg['max_body']:
+            return 413
+        try:
+            content = json.loads(rfile.read(length))
+            messages = grafana_messages(content, self.cfg['max_lines'])
+        except OSError as error:
+            log.warning(f'Could not read the Grafana request: {error}')
+            return 408
+        except (ValueError, KeyError, TypeError) as error:
+            log.warning(f'Bad Grafana request: {error!r}')
+            return 400
+        for message in messages:
+            self.relay.push(message)
+        log.info(f'Queued {len(messages)} Grafana messages')
+        return 204
+
+    def handler(self):
+        hook = self
+
+        class Handler(http.server.BaseHTTPRequestHandler):
+            timeout = 10
+
+            def do_POST(self):
+                status = hook.receive(self.path, self.headers, self.rfile)
+                self.send_response(status)
+                self.send_header('Content-Length', '0')
+                self.end_headers()
+
+            def log_message(self, *args):
+                log.debug(f'Grafana listener: {args}')
+
+        return Handler
+
+    def serve(self):
+        host, port = self.cfg['host'], self.cfg['port']
+        with HookServer((host, port), self.handler()) as server:
+            self.server = server
+            log.info(f'Listening for Grafana on {host}:{port}')
+            server.serve_forever()
+
+
+def supervise(name, target):
+    delay = RESTART_MIN
+    while True:
+        started = time.monotonic()
+        try:
+            target()
+            return
+        except Exception:
+            log.exception(f'{name} crashed')
+        if time.monotonic() - started > RESTART_MAX:
+            delay = RESTART_MIN
+        log.info(f'Restarting {name} in {delay}s')
+        time.sleep(delay)
+        delay = min(delay * 2, RESTART_MAX)
+
+
+def start_thread(name, target):
+    threading.Thread(target=supervise, args=(name, target), name=name, daemon=True).start()
+
+
 def main():
-    parser = argparse.ArgumentParser(description='Icinga to Phorge task bot')
+    parser = argparse.ArgumentParser(description='Icinga to IRC and Phorge bot')
     parser.add_argument('-c', '--config', default='config.json')
     parser.add_argument('-v', '--verbose', action='store_true')
     args = parser.parse_args()
@@ -928,11 +1486,15 @@ def main():
     config = load_config(args.config)
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else getattr(logging, config['log_level'].upper(), logging.INFO),
-        format='{asctime} {levelname} {message}',
+        format='{asctime} {levelname} {threadName} {message}',
         style='{',
     )
+    relay = IrcRelay(config)
+    start_thread('irc-events', relay.pump)
+    start_thread('irc', relay.run)
+    start_thread('grafana', GrafanaHook(config, relay).serve)
     with contextlib.suppress(KeyboardInterrupt):
-        Bot(config).run()
+        supervise('phorge', lambda: Bot(config).run())
 
 
 if __name__ == '__main__':
