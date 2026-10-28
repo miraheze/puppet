@@ -10,7 +10,10 @@ ircport=6697
 ircusessl=true
 ircusesasl=true
 ircproxy=<%= $http_proxy %>
+ircreaderserver=irc.libera.chat
 ircreaderport=6697
+ircreaderusessl=true
+ircreaderusesasl=true
 ircreaderproxy=<%= $http_proxy %>
 feedchannel=#miraheze-cvt-feed
 controlchannel=#miraheze-cvt
