@@ -10,6 +10,7 @@ ircport=6697
 ircusessl=true
 ircusesasl=true
 ircproxy=<%= $http_proxy %>
+ircreaderport=6697
 ircreaderproxy=<%= $http_proxy %>
 feedchannel=#miraheze-cvt-feed
 controlchannel=#miraheze-cvt
