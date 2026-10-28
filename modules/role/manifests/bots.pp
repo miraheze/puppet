@@ -2,9 +2,9 @@
 class role::bots {
     include base
     include bots::cvtbot
+    include bots::icingabot
     include bots::irclogbot
     include bots::salbot
-    include bots::taskbot
 
     users::user { 'pywikibot':
         ensure => present,
@@ -70,6 +70,17 @@ class role::bots {
         proto  => 'udp',
         port   => 5071,
         srange => "(${firewall_all_rules_str})",
+    }
+
+    $subquery_icinga = @("PQL")
+    resources { type = 'Class' and title = 'Role::Icinga2' }
+    | PQL
+    $firewall_icinga_rules_str = vmlib::generate_firewall_ip($subquery_icinga)
+
+    firewall::service { 'icingabot-grafana':
+        proto  => 'tcp',
+        port   => 5100,
+        srange => "(${firewall_icinga_rules_str})",
     }
 
     system::role { 'bots':
