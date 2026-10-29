@@ -72,15 +72,15 @@ class role::bots {
         srange => "(${firewall_all_rules_str})",
     }
 
-    $subquery_icinga = @("PQL")
+    $subquery_grafana = @("PQL")
     resources { type = 'Class' and title = 'Role::Grafana' }
     | PQL
-    $firewall_icinga_rules_str = vmlib::generate_firewall_ip($subquery_icinga)
+    $firewall_grafana_rules_str = vmlib::generate_firewall_ip($subquery_grafana)
 
     firewall::service { 'icingabot-grafana':
         proto  => 'tcp',
         port   => 5100,
-        srange => "(${firewall_icinga_rules_str})",
+        srange => "(${firewall_grafana_rules_str})",
     }
 
     system::role { 'bots':
