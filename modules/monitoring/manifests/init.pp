@@ -254,8 +254,6 @@ class monitoring (
         mode   => '0755',
     }
 
-    include monitoring::cleanup
-
     file { '/usr/lib/nagios/plugins/check_icinga_config':
         source  => 'puppet:///modules/monitoring/check_icinga_config',
         owner   => 'root',
