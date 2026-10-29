@@ -1,6 +1,6 @@
 class role::bastion (
-    Boolean $webproxy_gateway = false,
     Boolean $bots_udp_proxy = false,
+    Boolean $webproxy_gateway = false,
 ) {
     include base
     include squid
