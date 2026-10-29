@@ -74,27 +74,4 @@ class bots::icingabot {
     monitoring::nrpe { 'Icinga Bot IRC':
         command => '/usr/lib/nagios/plugins/check_file_age -w 300 -c 900 -f /var/lib/icingabot/irc_alive',
     }
-
-    # TODO: remove once puppet runs
-    systemd::service { 'taskbot':
-        ensure  => absent,
-        content => '',
-    }
-
-    file { '/etc/taskbot':
-        ensure  => absent,
-        recurse => true,
-        force   => true,
-        require => Systemd::Service['taskbot'],
-    }
-
-    monitoring::nrpe { 'Icinga Task Bot':
-        ensure  => absent,
-        command => '/bin/true',
-    }
-
-    monitoring::nrpe { 'Icinga Task Bot Sync':
-        ensure  => absent,
-        command => '/bin/true',
-    }
 }
