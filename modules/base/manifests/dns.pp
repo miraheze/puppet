@@ -11,7 +11,8 @@ class base::dns (
     Array[String]    $allow_from          = ['127.0.0.0/8', '10.0.0.0/8', '::1/128'],
     Integer          $listen_port         = 53,
     String           $monitor_address     = '127.0.0.1',
-    Array[String]    $forward_zone_names  = ['wtnet', '10.in-addr.arpa', 'wikitide.net'],
+    Array[String]    $internal_zone_names = ['wtnet', '10.in-addr.arpa'],
+    Array[String]    $forward_zone_names  = ['wikitide.net'],
     Boolean          $smtp_relay_override = true,
     String           $smtp_relay_bastion  = 'bastion.fsslc.wtnet',
     Optional[String] $smtp_relay_ip       = undef,
@@ -24,15 +25,31 @@ class base::dns (
         $threads = $facts['processors']['count']
     }
 
+    $internal_addresses = ['10.0.17.171']
+
+    $ifaces = $facts['networking']['interfaces']
+    $has_private_net = ($ifaces['ens19'] != undef or $ifaces['vmbr1'] != undef)
+
     if $forward_use_internal {
-        $forward_addresses = ['10.0.17.171']
+        $forward_addresses = $internal_addresses
     } else {
         $forward_addresses = ['2602:294:0:b23::111', '2604:2dc0:121::1153']
     }
 
-    $zone_forwards = $forward_zone_names.reduce({}) |$memo, $zone| {
+    $internal_zone_addresses = $has_private_net ? {
+        true    => $internal_addresses,
+        default => $forward_addresses,
+    }
+
+    $internal_zone_forwards = $internal_zone_names.reduce({}) |$memo, $zone| {
+        $memo + { $zone => $internal_zone_addresses }
+    }
+
+    $public_zone_forwards = $forward_zone_names.reduce({}) |$memo, $zone| {
         $memo + { $zone => $forward_addresses }
     }
+
+    $zone_forwards = $internal_zone_forwards + $public_zone_forwards
 
     $root_forward_addresses = $recursor_addresses.empty ? {
         true    => $forward_addresses,
