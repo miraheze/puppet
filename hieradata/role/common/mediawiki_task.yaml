@@ -4,6 +4,10 @@ users::groups:
 
 contactgroups: ['infra', 'mediawiki']
 
+base::dns::do_ipv4: true
+base::dns::do_ipv6: false
+base::dns::forward_use_internal: true
+
 haproxy::lb_agent::balancers:
   Role::Cache::Cache: 1
   Role::Jobrunner_haproxy: 3
