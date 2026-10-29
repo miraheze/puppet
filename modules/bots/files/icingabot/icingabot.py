@@ -50,6 +50,7 @@ STORM_TITLE = 'Many Icinga services are alerting'
 
 POLL_SECONDS = 0.5
 REGISTER_TIMEOUT = 120
+PAUSE_SECONDS = 5
 RESTART_MIN = 5
 RESTART_MAX = 300
 IRC_LIMIT = 400
@@ -63,11 +64,11 @@ REQUIRED = {
     'icinga': [
         'url', 'username', 'password', 'ca_file', 'queue', 'timeout', 'stream_timeout',
     ],
-    'phorge': ['url', 'api_token', 'timeout', 'retries', 'proxy'],
+    'phorge': ['url', 'api_token', 'timeout', 'retries', 'proxy', 'pause_file'],
     'irc': [
         'server', 'port', 'ssl', 'nick', 'username', 'password', 'sasl', 'realname', 'channels',
         'ping_interval', 'reconnect_min', 'reconnect_max', 'proxy', 'queue', 'queue_size',
-        'message_interval', 'notify_users', 'heartbeat_file', 'heartbeat_interval',
+        'message_interval', 'notify_users', 'heartbeat_file', 'heartbeat_interval', 'pause_file',
     ],
     'grafana': ['host', 'port', 'max_lines', 'max_body'],
     'priorities': ['WARNING', 'CRITICAL', 'UNKNOWN'],
@@ -127,7 +128,7 @@ def is_plain(value):
 
 def irc_problems(irc):
     problems = []
-    for key in ('server', 'queue', 'heartbeat_file'):
+    for key in ('server', 'queue', 'heartbeat_file', 'pause_file'):
         if not isinstance(irc[key], str) or not irc[key]:
             problems.append(f'irc.{key} must be a non-empty string')
     for key in ('nick', 'username'):
@@ -199,6 +200,8 @@ def invalid_values(config):
         for state, keyword in config['priorities'].items()
         if keyword not in PRIORITIES
     )
+    if not isinstance(config['phorge']['pause_file'], str) or not config['phorge']['pause_file']:
+        problems.append('phorge.pause_file must be a non-empty string')
     problems.extend(irc_problems(config['irc']))
     problems.extend(grafana_problems(config['grafana']))
     return problems
@@ -690,6 +693,7 @@ class Bot:
         self.last_reconcile = 0.0
         self.failures = 0
         self.adopted = False
+        self.idling = False
 
     def title(self, attrs, state):
         return f"{attrs.get('display_name') or attrs['name']} on {attrs['host_name']} is {state}"
@@ -1099,13 +1103,31 @@ class Bot:
         self.last_reconcile = time.monotonic()
         self.beat()
 
+    def paused(self):
+        return os.path.exists(self.config['phorge']['pause_file'])
+
+    def idle(self):
+        if not self.idling:
+            log.info('Phorge sync is paused')
+            self.idling = True
+        write_heartbeat(self.config['heartbeat_file'])
+        time.sleep(PAUSE_SECONDS)
+
     def run(self):
         delay = self.config['reconnect_min']
         while True:
+            if self.paused():
+                self.idle()
+                continue
+            if self.idling:
+                log.info('Phorge sync is resumed')
+                self.idling = False
             try:
                 self.prepare()
                 self.reconcile()
                 for event in self.icinga.events():
+                    if self.paused():
+                        break
                     delay = self.config['reconnect_min']
                     self.safe(self.on_event, event)
                     if time.monotonic() - self.last_reconcile > self.config['reconcile_interval']:
@@ -1179,6 +1201,7 @@ class IrcRelay:
         self.users = set(self.cfg['notify_users'])
         self.outbox = deque(maxlen=self.cfg['queue_size'])
         self.stream_seen = time.monotonic()
+        self.idling = False
 
     def wanted(self, event):
         if event.get('type') != 'Notification':
@@ -1196,7 +1219,22 @@ class IrcRelay:
         if text:
             self.push(text)
 
+    def paused(self):
+        return os.path.exists(self.cfg['pause_file'])
+
+    def idle(self):
+        if not self.idling:
+            log.info('IRC relay is paused')
+            self.idling = True
+        self.outbox.clear()
+        if self.healthy():
+            write_heartbeat(self.cfg['heartbeat_file'])
+        time.sleep(PAUSE_SECONDS)
+
     def push(self, text):
+        if self.paused():
+            log.debug('IRC relay is paused, dropping a message')
+            return
         if len(self.outbox) == self.outbox.maxlen:
             log.warning('The IRC outbox is full, dropping the oldest message')
         self.outbox.append(text)
@@ -1227,11 +1265,19 @@ class IrcRelay:
     def run(self):
         delay = self.cfg['reconnect_min']
         while True:
+            if self.paused():
+                self.idle()
+                continue
+            if self.idling:
+                log.info('IRC relay is resumed')
+                self.idling = False
             link = IrcLink(self)
             try:
                 link.run()
             except OSError as error:
                 log.warning(f'IRC connection problem: {error}')
+            if self.paused():
+                continue
             if link.joined:
                 delay = self.cfg['reconnect_min']
             log.info(f'Reconnecting to IRC in {delay}s')
@@ -1289,6 +1335,9 @@ class IrcLink:
         self.send(f'NICK {self.nick}')
         self.send(f"USER {self.username} 0 * :{cfg['realname']}")
         while True:
+            if self.relay.paused():
+                self.send('QUIT :Paused')
+                return
             self.fill()
             now = time.monotonic()
             if not self.joined:

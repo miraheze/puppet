@@ -14,7 +14,8 @@
 		"api_token": <%= stdlib::to_json($phorge_token) %>,
 		"timeout": 20,
 		"retries": 3,
-		"proxy": <%= stdlib::to_json($http_proxy) %>
+		"proxy": <%= stdlib::to_json($http_proxy) %>,
+		"pause_file": "/var/lib/icingabot/pause_phorge"
 	},
 	"irc": {
 		"server": "irc.libera.chat",
@@ -35,7 +36,8 @@
 		"message_interval": 1,
 		"notify_users": [ "icingaadmin" ],
 		"heartbeat_file": "/var/lib/icingabot/irc_alive",
-		"heartbeat_interval": 30
+		"heartbeat_interval": 30,
+		"pause_file": "/var/lib/icingabot/pause_irc"
 	},
 	"grafana": {
 		"host": "0.0.0.0",

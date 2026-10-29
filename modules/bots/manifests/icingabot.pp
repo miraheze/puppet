@@ -51,6 +51,14 @@ class bots::icingabot {
         notify  => Service['icingabot'],
     }
 
+    file { '/usr/local/bin/icingabot-ctl':
+        ensure => present,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+        source => 'puppet:///modules/bots/icingabot/icingabot_ctl.py',
+    }
+
     systemd::service { 'icingabot':
         ensure  => present,
         content => systemd_template('icingabot'),
