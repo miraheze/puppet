@@ -15,6 +15,7 @@ ircreaderport=6697
 ircreaderusessl=true
 ircreaderusesasl=true
 ircreaderproxy=<%= $http_proxy %>
+httpproxy=<%= $http_proxy %>
 feedchannel=#miraheze-cvt-feed
 controlchannel=#miraheze-cvt
 broadcastchannel=#miraheze-cvt-feed
