@@ -1,3 +1,7 @@
 mediawiki::is_canary: true
 mediawiki::use_staging: true
 mediawiki::jobqueue::runner::periodic_jobs: true
+
+base::dns::do_ipv4: true
+base::dns::do_ipv6: true
+base::dns::forward_use_internal: false
