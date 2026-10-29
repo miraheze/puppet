@@ -59,7 +59,6 @@ class bots::icingabot {
             File['/etc/icingabot/icingabot.py'],
             File['/etc/icingabot/icinga-ca.crt'],
             File['/etc/icingabot/config.json'],
-            Systemd::Service['taskbot'],
         ],
     }
 
