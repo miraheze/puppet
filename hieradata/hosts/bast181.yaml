@@ -1,3 +1,4 @@
+role::bastion::bots_udp_proxy: true
 role::bastion::webproxy_gateway: true
 
 nginx::use_graylog: false
