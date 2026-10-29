@@ -63,6 +63,7 @@ BASE_CONFIG = {
         'timeout': 5,
         'retries': 3,
         'proxy': None,
+        'pause_file': '/nonexistent/pause_phorge',
     },
     'irc': {
         'server': '127.0.0.1',
@@ -84,6 +85,7 @@ BASE_CONFIG = {
         'notify_users': ['icingaadmin'],
         'heartbeat_file': '/nonexistent/irc_alive',
         'heartbeat_interval': 0.05,
+        'pause_file': '/nonexistent/pause_irc',
     },
     'grafana': {
         'host': '127.0.0.1',
@@ -4420,3 +4422,60 @@ class TestDeployment:
         assert "'objects/query/Host'" in permissions
         assert "'objects/query/Service'" in permissions
         assert "'events/StateChange'" in permissions
+
+
+class TestPause:
+    @staticmethod
+    def paused_bot(tmp_path, answers):
+        bot = make_bot(tmp_path)
+        answers = iter(answers)
+        bot.paused = lambda: next(answers)
+        return bot
+
+    def test_a_pause_file_is_what_pauses(self, tmp_path):
+        pause = tmp_path / 'pause_phorge'
+        bot = make_bot(tmp_path)
+        bot.config['phorge']['pause_file'] = str(pause)
+        assert not bot.paused()
+        pause.touch()
+        assert bot.paused()
+
+    def test_nothing_is_synced_until_the_pause_ends(self, tmp_path, clock):
+        bot = self.paused_bot(tmp_path, [True, True, False])
+        bot.icinga.add(make_service())
+        bot.icinga.streams = [Stop()]
+        with pytest.raises(Stop):
+            bot.run()
+        assert clock.sleeps == [icingabot.PAUSE_SECONDS] * 2
+        assert bot.icinga.syncs == 1
+
+    @pytest.mark.usefixtures('clock')
+    def test_the_sync_heartbeat_keeps_going_while_paused(self, tmp_path):
+        bot = self.paused_bot(tmp_path, [True, False])
+        bot.icinga.streams = [Stop()]
+        with pytest.raises(Stop):
+            bot.run()
+        assert (tmp_path / 'last_sync').read_text().strip().isdigit()
+
+    @pytest.mark.usefixtures('clock')
+    def test_resuming_syncs_again_from_scratch(self, tmp_path, caplog):
+        bot = self.paused_bot(tmp_path, [True, False, False])
+        bot.icinga.add(make_service())
+        bot.icinga.streams = [Stop()]
+        with caplog.at_level(logging.INFO, logger='icingabot'), pytest.raises(Stop):
+            bot.run()
+        assert bot.icinga.syncs == 1
+        assert bot.phorge.calls
+        assert 'Phorge sync is paused' in caplog.text
+        assert 'Phorge sync is resumed' in caplog.text
+
+    @pytest.mark.usefixtures('clock')
+    def test_pausing_stops_event_handling_mid_stream(self, tmp_path):
+        bot = self.paused_bot(tmp_path, [False, False, True, False])
+        bot.icinga.add(make_service())
+        bot.icinga.streams = [[state_change(), state_change()], Stop()]
+        handled = []
+        bot.on_event = handled.append
+        with pytest.raises(Stop):
+            bot.run()
+        assert handled == [state_change()]
