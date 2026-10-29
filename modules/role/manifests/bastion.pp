@@ -66,12 +66,12 @@ class role::bastion (
         # Allow those that don't have private IPs at all
         $bots_proxy_clients = join(
             puppetdb::query_facts(['networking'], $bots_proxy_query).values
-                .filter |$facts| {
-                    $ifaces = $facts['networking']['interfaces']
+                .filter |$node_facts| {
+                    $ifaces = $node_facts['networking']['interfaces']
                     !$ifaces['vmbr1'] and !$ifaces['ens19']
                 }
-                .map |$facts| {
-                    $net = $facts['networking']
+                .map |$node_facts| {
+                    $net = $node_facts['networking']
                     if $net['interfaces']['ens18'] {
                         "${net['interfaces']['ens18']['ip']} ${net['interfaces']['ens18']['ip6']}"
                     } else {
