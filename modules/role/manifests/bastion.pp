@@ -1,4 +1,5 @@
 class role::bastion (
+    Boolean $bots_udp_proxy = false,
     Boolean $webproxy_gateway = false,
 ) {
     include base
@@ -55,6 +56,44 @@ class role::bastion (
         class { 'webproxy::gateway':
             srange => "(${webproxy_srange})",
             allow  => ['127.0.0.1'] + $webproxy_clients,
+        }
+    }
+
+    if $bots_udp_proxy {
+        $bots_proxy_query = @("PQL")
+            resources { type = 'Class' and title = 'Base' }
+            | PQL
+        # Allow those that don't have private IPs at all
+        $bots_proxy_clients = join(
+            puppetdb::query_facts(['networking'], $bots_proxy_query).values
+                .filter |$node_facts| {
+                    $ifaces = $node_facts['networking']['interfaces']
+                    !$ifaces['vmbr1'] and !$ifaces['ens19']
+                }
+                .map |$node_facts| {
+                    $net = $node_facts['networking']
+                    if $net['interfaces']['ens18'] {
+                        "${net['interfaces']['ens18']['ip']} ${net['interfaces']['ens18']['ip6']}"
+                    } else {
+                        "${net['ip']} ${net['ip6']}"
+                    }
+                }
+                .flatten.sort.unique,
+            ' '
+        )
+
+        systemd::service { 'bots-udp-proxy':
+            ensure  => present,
+            restart => true,
+            content => epp('role/bastion/bots-udp-proxy.service.epp'),
+        }
+
+        if $bots_proxy_clients != '' {
+            firewall::service { 'bastion-bots-udp':
+                proto  => 'udp',
+                port   => 5071,
+                srange => "(${bots_proxy_clients})",
+            }
         }
     }
 
