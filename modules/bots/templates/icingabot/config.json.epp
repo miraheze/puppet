@@ -1,0 +1,68 @@
+<%- | String $icinga_url, String $icinga_password, String $phorge_token, String $irc_password, Optional[String] $http_proxy = undef | -%>
+{
+	"icinga": {
+		"url": <%= stdlib::to_json($icinga_url) %>,
+		"username": "icingabot",
+		"password": <%= stdlib::to_json($icinga_password) %>,
+		"ca_file": "/etc/icingabot/icinga-ca.crt",
+		"queue": "icingabot",
+		"timeout": 30,
+		"stream_timeout": 60
+	},
+	"phorge": {
+		"url": "https://issue-tracker.miraheze.org",
+		"api_token": <%= stdlib::to_json($phorge_token) %>,
+		"timeout": 20,
+		"retries": 3,
+		"proxy": <%= stdlib::to_json($http_proxy) %>
+	},
+	"irc": {
+		"server": "irc.libera.chat",
+		"port": 6697,
+		"ssl": true,
+		"nick": "icinga-miraheze",
+		"username": "mirahezebots",
+		"password": <%= stdlib::to_json($irc_password) %>,
+		"sasl": true,
+		"realname": "Icinga to IRC bot",
+		"channels": [ "#miraheze-tech-ops" ],
+		"ping_interval": 180,
+		"reconnect_min": 5,
+		"reconnect_max": 300,
+		"proxy": <%= stdlib::to_json($http_proxy) %>,
+		"queue": "icingabot-irc",
+		"queue_size": 200,
+		"message_interval": 1,
+		"notify_users": [ "icingaadmin" ],
+		"heartbeat_file": "/var/lib/icingabot/irc_alive",
+		"heartbeat_interval": 30
+	},
+	"grafana": {
+		"host": "0.0.0.0",
+		"port": 5100,
+		"max_lines": 20,
+		"max_body": 1048576
+	},
+	"priorities": {
+		"WARNING": "medium",
+		"CRITICAL": "high",
+		"UNKNOWN": "medium"
+	},
+	"icingaweb_url": "https://monitoring.wikitide.net",
+	"skip_in_downtime": true,
+	"close_after_recovery_seconds": 21600,
+	"close_after_recovery_commented_seconds": 86400,
+	"close_status": "resolved",
+	"grace_minutes": 15,
+	"change_grace_minutes": 3,
+	"storm_limit": 5,
+	"storm_window_minutes": 10,
+	"reopen_hours": 24,
+	"reconcile_interval": 60,
+	"reconnect_min": 5,
+	"reconnect_max": 300,
+	"state_file": "/var/lib/icingabot/state.json",
+	"heartbeat_file": "/var/lib/icingabot/last_sync",
+	"dry_run": false,
+	"log_level": "INFO"
+}

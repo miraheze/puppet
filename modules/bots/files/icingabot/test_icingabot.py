@@ -18,8 +18,8 @@ from pathlib import Path
 
 import pytest
 
-import taskbot
-from taskbot import (
+import icingabot
+from icingabot import (
     Bot,
     Icinga,
     Phorge,
@@ -40,9 +40,9 @@ from taskbot import (
 
 MODULE = Path(__file__).resolve().parents[2]
 CA_FILE = Path(__file__).resolve().parent / 'icinga-ca.crt'
-TEMPLATE = MODULE / 'templates' / 'taskbot' / 'config.json.epp'
-SYSTEMD = MODULE / 'templates' / 'initscripts' / 'taskbot.systemd.epp'
-MANIFEST = MODULE / 'manifests' / 'taskbot.pp'
+TEMPLATE = MODULE / 'templates' / 'icingabot' / 'config.json.epp'
+SYSTEMD = MODULE / 'templates' / 'initscripts' / 'icingabot.systemd.epp'
+MANIFEST = MODULE / 'manifests' / 'icingabot.pp'
 MONITORING = MODULE.parent / 'monitoring' / 'manifests'
 
 ICINGA_CA_SHA256 = 'c83902a9260b8ad2cbd7c79b5946ad1adc770723f38e0313bf2d1c560555da57'
@@ -50,10 +50,10 @@ ICINGA_CA_SHA256 = 'c83902a9260b8ad2cbd7c79b5946ad1adc770723f38e0313bf2d1c560555
 BASE_CONFIG = {
     'icinga': {
         'url': 'http://127.0.0.1:5665',
-        'username': 'taskbot',
+        'username': 'icingabot',
         'password': 'secret',
         'ca_file': '',
-        'queue': 'taskbot',
+        'queue': 'icingabot',
         'timeout': 5,
         'stream_timeout': 5,
     },
@@ -63,6 +63,33 @@ BASE_CONFIG = {
         'timeout': 5,
         'retries': 3,
         'proxy': None,
+    },
+    'irc': {
+        'server': '127.0.0.1',
+        'port': 6697,
+        'ssl': False,
+        'nick': 'icinga-miraheze',
+        'username': 'mirahezebots',
+        'password': 'irc-secret',
+        'sasl': True,
+        'realname': 'Icinga to IRC bot',
+        'channels': ['#miraheze-tech-ops'],
+        'ping_interval': 180,
+        'reconnect_min': 1,
+        'reconnect_max': 4,
+        'proxy': None,
+        'queue': 'icingabot-irc',
+        'queue_size': 3,
+        'message_interval': 0,
+        'notify_users': ['icingaadmin'],
+        'heartbeat_file': '/nonexistent/irc_alive',
+        'heartbeat_interval': 0.05,
+    },
+    'grafana': {
+        'host': '127.0.0.1',
+        'port': 5100,
+        'max_lines': 3,
+        'max_body': 4096,
     },
     'priorities': {'WARNING': 'medium', 'CRITICAL': 'high', 'UNKNOWN': 'medium'},
     'icingaweb_url': 'https://icinga.example.org',
@@ -173,7 +200,7 @@ class FakePhorge:
             'title': title,
             'description': description,
             'status': status,
-            'priority': taskbot.PRIORITIES[priority],
+            'priority': icingabot.PRIORITIES[priority],
         }
         return task
 
@@ -207,7 +234,7 @@ class FakePhorge:
             if transaction['type'] == 'title':
                 info['title'] = transaction['value']
             elif transaction['type'] == 'priority':
-                info['priority'] = taskbot.PRIORITIES[transaction['value']]
+                info['priority'] = icingabot.PRIORITIES[transaction['value']]
             elif transaction['type'] == 'status':
                 info['status'] = transaction['value']
         return {'object': {'id': task}}
@@ -292,7 +319,7 @@ class Clock:
         return self.now
 
     def install(self, monkeypatch):
-        monkeypatch.setattr(taskbot, 'time', types.SimpleNamespace(
+        monkeypatch.setattr(icingabot, 'time', types.SimpleNamespace(
             sleep=self.sleeps.append,
             monotonic=self.monotonic,
             time=self.time,
@@ -439,7 +466,7 @@ class TestMissingKeys:
         assert missing_keys(config) == ['phorge']
 
     def test_lists_everything_that_is_missing(self):
-        assert missing_keys({}) == list(taskbot.REQUIRED)
+        assert missing_keys({}) == list(icingabot.REQUIRED)
 
     def test_null_values_count_as_present(self):
         config = copy.deepcopy(BASE_CONFIG)
@@ -499,7 +526,7 @@ class TestLoadConfig:
 
     def test_valid(self, tmp_path):
         config = load_config(self.write(tmp_path, BASE_CONFIG))
-        assert config['icinga']['queue'] == 'taskbot'
+        assert config['icinga']['queue'] == 'icingabot'
 
     def test_missing_keys_are_all_reported(self, tmp_path):
         config = copy.deepcopy(BASE_CONFIG)
@@ -683,7 +710,7 @@ class TestState:
     def test_an_unreadable_file_is_ignored_with_a_warning(self, tmp_path, caplog, text):
         path = tmp_path / 'state.json'
         path.write_text(text)
-        with caplog.at_level(logging.WARNING, logger='taskbot'):
+        with caplog.at_level(logging.WARNING, logger='icingabot'):
             state = State(str(path))
         assert state.services == {}
         assert 'Ignoring' in caplog.text
@@ -797,7 +824,7 @@ class TestPhorge:
             return phorge_reply({'data': [{'phid': 'PHID-PROJ-infra'}] if slug == 'infra' else []})
 
         phorge = self.make(serve(reply=respond))
-        with caplog.at_level(logging.WARNING, logger='taskbot'):
+        with caplog.at_level(logging.WARNING, logger='icingabot'):
             assert phorge.resolve(['nope', 'infra']) == ['PHID-PROJ-infra']
         assert 'Project nope was not found in Phorge' in caplog.text
 
@@ -862,7 +889,7 @@ class TestPhorge:
     def test_dry_run_never_calls_phorge(self, serve, caplog):
         server = serve()
         phorge = Phorge(dict(BASE_CONFIG['phorge'], url=server.url), dry_run=True)
-        with caplog.at_level(logging.INFO, logger='taskbot'):
+        with caplog.at_level(logging.INFO, logger='icingabot'):
             assert phorge.create('Title', 'Body', 'high', [], matches_nothing) == 0
             assert phorge.edit([{'type': 'comment', 'value': 'Hi'}], 5) == {'object': {'id': 5}}
         assert server.received == []
@@ -1177,8 +1204,8 @@ class TestIcinga:
 
     def test_basic_auth_header(self, serve):
         server = serve(reply=(200, b'{"results": []}'))
-        self.make(server, username='taskbot', password='p:w').query({})
-        assert server.received[0]['headers']['Authorization'] == 'Basic dGFza2JvdDpwOnc='
+        self.make(server, username='icingabot', password='p:w').query({})
+        assert server.received[0]['headers']['Authorization'] == 'Basic aWNpbmdhYm90OnA6dw=='
 
     def test_query_uses_the_get_override(self, serve):
         reply = {'results': [{'attrs': {'name': 'Disk'}, 'joins': {'host': {'state': 0.0}}}]}
@@ -1191,7 +1218,7 @@ class TestIcinga:
         assert request['headers']['Accept'] == 'application/json'
         assert json.loads(request['body']) == {
             'filter': 'service.state != 0',
-            'attrs': taskbot.ATTRS,
+            'attrs': icingabot.ATTRS,
             'joins': ['host.state', 'host.downtime_depth'],
         }
 
@@ -1210,7 +1237,7 @@ class TestIcinga:
     def test_missing_host_details_are_reported_once(self, serve, caplog):
         server = serve(reply=(200, json.dumps({'results': [{'attrs': {'name': 'Disk'}}]}).encode()))
         icinga = self.make(server)
-        with caplog.at_level(logging.WARNING, logger='taskbot'):
+        with caplog.at_level(logging.WARNING, logger='icingabot'):
             icinga.query({})
             icinga.query({})
         assert caplog.text.count('objects/query/Host') == 1
@@ -1218,13 +1245,13 @@ class TestIcinga:
     def test_no_warning_when_host_details_arrive(self, serve, caplog):
         reply = {'results': [{'attrs': {'name': 'Disk'}, 'joins': {'host': {'state': 0.0}}}]}
         server = serve(reply=(200, json.dumps(reply).encode()))
-        with caplog.at_level(logging.WARNING, logger='taskbot'):
+        with caplog.at_level(logging.WARNING, logger='icingabot'):
             self.make(server).query({})
         assert caplog.text == ''
 
     def test_no_warning_for_an_empty_result(self, serve, caplog):
         server = serve(reply=(200, b'{"results": []}'))
-        with caplog.at_level(logging.WARNING, logger='taskbot'):
+        with caplog.at_level(logging.WARNING, logger='icingabot'):
             self.make(server).query({})
         assert caplog.text == ''
 
@@ -1240,8 +1267,8 @@ class TestIcinga:
         body = json.loads(server.received[0]['body'])
         assert body['filter'] == 'service.host_name == wanted_host && service.name == wanted_service'
         assert body['filter_vars'] == {'wanted_host': 'mw1', 'wanted_service': 'mw1 Disk'}
-        assert body['attrs'] == taskbot.ATTRS
-        assert body['joins'] == taskbot.JOINS
+        assert body['attrs'] == icingabot.ATTRS
+        assert body['joins'] == icingabot.JOINS
 
     def test_the_filter_still_matches_once_icinga_adds_its_own_names_to_the_scope(self, serve):
         server = serve(reply=(200, b'{"results": []}'))
@@ -1285,7 +1312,7 @@ class TestIcinga:
         request = server.received[0]
         assert request['path'] == '/v1/events'
         assert 'X-HTTP-Method-Override' not in request['headers']
-        assert json.loads(request['body']) == {'queue': 'taskbot', 'types': ['StateChange']}
+        assert json.loads(request['body']) == {'queue': 'icingabot', 'types': ['StateChange']}
 
     def test_stream_closed_by_the_server_ends_quietly(self, serve):
         server = serve(handler=StreamHandler, lines=[])
@@ -1312,7 +1339,7 @@ class TestIcinga:
         dead_proxy_in_environment(monkeypatch)
         assert self.make(server).query({}) == []
 
-    @pytest.mark.parametrize(('ca_file', 'expected'), [('', None), ('/etc/taskbot/icinga-ca.crt', '/etc/taskbot/icinga-ca.crt')])
+    @pytest.mark.parametrize(('ca_file', 'expected'), [('', None), ('/etc/icingabot/icinga-ca.crt', '/etc/icingabot/icinga-ca.crt')])
     def test_https_verifies_with_the_configured_ca(self, monkeypatch, ca_file, expected):
         calls = []
         real = ssl.create_default_context
@@ -1321,13 +1348,13 @@ class TestIcinga:
             calls.append(kwargs)
             return real()
 
-        monkeypatch.setattr(taskbot.ssl, 'create_default_context', fake_context)
+        monkeypatch.setattr(icingabot.ssl, 'create_default_context', fake_context)
         Icinga(dict(BASE_CONFIG['icinga'], url='https://icinga.example.org:5665', ca_file=ca_file))
         assert calls == [{'cafile': expected}]
 
     def test_http_url_builds_no_context(self, monkeypatch):
         calls = []
-        monkeypatch.setattr(taskbot.ssl, 'create_default_context', lambda **kwargs: calls.append(kwargs))
+        monkeypatch.setattr(icingabot.ssl, 'create_default_context', lambda **kwargs: calls.append(kwargs))
         Icinga(BASE_CONFIG['icinga'])
         assert calls == []
 
@@ -1380,7 +1407,7 @@ def _strict_by_default(monkeypatch):
         context.verify_flags |= ssl.VERIFY_X509_PARTIAL_CHAIN | ssl.VERIFY_X509_STRICT
         return context
 
-    monkeypatch.setattr(taskbot.ssl, 'create_default_context', strict_context)
+    monkeypatch.setattr(icingabot.ssl, 'create_default_context', strict_context)
 
 
 @pytest.mark.usefixtures('_strict_by_default')
@@ -1836,7 +1863,7 @@ class TestGrace:
     @pytest.mark.usefixtures('clock')
     def test_the_reason_is_logged_at_debug(self, tmp_path, caplog):
         bot = make_bot(tmp_path, grace_minutes=15)
-        with caplog.at_level(logging.DEBUG, logger='taskbot'):
+        with caplog.at_level(logging.DEBUG, logger='icingabot'):
             bot.process(self.failing_for(7))
         assert 'mw1!mw1 Disk is CRITICAL but it has only been failing for 7 minutes, skipping' in caplog.text
 
@@ -1866,7 +1893,7 @@ class TestChangeGrace:
         bot.process(self.changed(1, 180))
         assert comments(bot.phorge)[0].startswith('Now **WARNING**.')
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is WARNING'
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['medium']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['medium']
         assert bot.state.get('mw1!mw1 Disk')['state'] == 'WARNING'
 
     def test_just_under_the_limit_it_still_waits(self, tmp_path):
@@ -1887,7 +1914,7 @@ class TestChangeGrace:
         bot.process(self.changed(2, 10))
         assert comments(bot.phorge) == []
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['high']
 
     def test_a_service_bouncing_between_statuses_never_updates_the_task(self, tmp_path):
         bot = self.alerting(tmp_path)
@@ -1902,7 +1929,7 @@ class TestChangeGrace:
         assert comments(bot.phorge) == []
         bot.process(self.changed(2, 180))
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['high']
 
     def test_the_initial_grace_does_not_apply_to_an_open_task(self, tmp_path):
         bot = self.alerting(tmp_path)
@@ -1952,7 +1979,7 @@ class TestChangeGrace:
 
     def test_a_status_without_an_open_alert_is_not_held_back_or_logged(self, tmp_path, caplog):
         bot = make_bot(tmp_path, grace_minutes=15, change_grace_minutes=3)
-        with caplog.at_level(logging.DEBUG, logger='taskbot'):
+        with caplog.at_level(logging.DEBUG, logger='icingabot'):
             bot.process(make_service(state=1, last_state_change=NOW - 10))
         assert 'only been' not in caplog.text
 
@@ -1978,7 +2005,7 @@ class TestChangeGrace:
 
     def test_the_reason_is_logged_at_debug(self, tmp_path, caplog):
         bot = self.alerting(tmp_path)
-        with caplog.at_level(logging.DEBUG, logger='taskbot'):
+        with caplog.at_level(logging.DEBUG, logger='icingabot'):
             bot.process(self.changed(1, 60))
         assert 'mw1!mw1 Disk is WARNING but it has only been WARNING for 1 minutes, skipping' in caplog.text
 
@@ -2029,7 +2056,7 @@ class TestDropToANonAlertState:
         bot.process(self.dropped())
         assert comments(bot.phorge) == [self.NOTE]
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is WARNING'
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['medium']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['medium']
         assert bot.state.get('mw1!mw1 Disk') == {'task': 1, 'active': False, 'state': 'WARNING', 'alert': 'WARNING'}
 
     def test_a_title_someone_edited_is_left_alone(self, tmp_path):
@@ -2037,14 +2064,14 @@ class TestDropToANonAlertState:
         bot.phorge.tasks[1]['title'] = 'Disk on mw1 is CRITICAL, Alice is on it'
         bot.process(self.dropped())
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL, Alice is on it'
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['medium']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['medium']
 
     @pytest.mark.parametrize('keyword', ['unbreak', 'lowest'])
     def test_a_priority_someone_set_is_left_alone(self, tmp_path, keyword):
         bot = self.alerting(tmp_path)
-        bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES[keyword]
+        bot.phorge.tasks[1]['priority'] = icingabot.PRIORITIES[keyword]
         bot.process(self.dropped())
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES[keyword]
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES[keyword]
 
     def test_it_waits_for_the_change_grace(self, tmp_path):
         bot = self.alerting(tmp_path)
@@ -2058,7 +2085,7 @@ class TestDropToANonAlertState:
         bot.process(self.dropped(seconds=60))
         bot.process(make_service(state=2, last_state_ok=NOW - 3600, last_state_change=NOW - 5))
         assert comments(bot.phorge) == []
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['high']
 
     def test_repeated_syncs_do_not_repeat_the_note(self, tmp_path):
         bot = self.alerting(tmp_path)
@@ -2107,7 +2134,7 @@ class TestDropToANonAlertState:
         bot.process(make_service(state=2, last_state_ok=NOW - 3600, last_state_change=NOW - 200))
         assert comments(bot.phorge)[-1].startswith('Alerting again, **CRITICAL**.')
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['high']
         assert bot.state.get('mw1!mw1 Disk')['active'] is True
 
     def test_going_back_to_critical_waits_for_the_change_grace(self, tmp_path):
@@ -2205,10 +2232,10 @@ class TestProblemAndClear:
         bot = make_bot(tmp_path)
         bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is WARNING'
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['medium']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['medium']
         bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['high']
 
     def test_a_title_someone_edited_is_left_alone(self, tmp_path):
         bot = make_bot(tmp_path)
@@ -2216,50 +2243,50 @@ class TestProblemAndClear:
         bot.phorge.tasks[1]['title'] = 'Disk on mw1 is WARNING, Alice is on it'
         bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is WARNING, Alice is on it'
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['high']
 
     def test_a_higher_priority_someone_set_is_never_lowered(self, tmp_path):
         bot = make_bot(tmp_path)
         bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
-        bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES['unbreak']
+        bot.phorge.tasks[1]['priority'] = icingabot.PRIORITIES['unbreak']
         bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['unbreak']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['unbreak']
 
     def test_dropping_from_critical_to_warning_fixes_the_title_and_lowers_the_priority(self, tmp_path):
         bot = make_bot(tmp_path)
         bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is WARNING'
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['medium']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['medium']
         assert comments(bot.phorge)[0].startswith('Now **WARNING**.')
 
     def test_the_priority_goes_back_up_when_it_returns_to_critical(self, tmp_path):
         bot = make_bot(tmp_path)
         for state in (2, 1, 2):
             bot.process(make_service(triggers=WARNING_CRITICAL, state=state))
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['high']
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
 
     def test_a_priority_someone_set_is_not_lowered_when_it_improves(self, tmp_path):
         bot = make_bot(tmp_path)
         bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
-        bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES['unbreak']
+        bot.phorge.tasks[1]['priority'] = icingabot.PRIORITIES['unbreak']
         bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['unbreak']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['unbreak']
 
     def test_a_lower_priority_someone_set_is_raised_again_when_it_gets_worse(self, tmp_path):
         bot = make_bot(tmp_path)
         bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
-        bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES['low']
+        bot.phorge.tasks[1]['priority'] = icingabot.PRIORITIES['low']
         bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['high']
 
     def test_a_priority_someone_lowered_is_left_alone_when_it_improves(self, tmp_path):
         bot = make_bot(tmp_path)
         bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
-        bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES['lowest']
+        bot.phorge.tasks[1]['priority'] = icingabot.PRIORITIES['lowest']
         bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['lowest']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['lowest']
 
     def test_nothing_is_sent_for_a_priority_that_is_already_right(self, tmp_path):
         bot = make_bot(tmp_path)
@@ -2271,7 +2298,7 @@ class TestProblemAndClear:
     def test_only_the_changes_are_sent(self, tmp_path):
         bot = make_bot(tmp_path)
         bot.process(make_service(triggers=WARNING_CRITICAL, state=1))
-        bot.phorge.tasks[1]['priority'] = taskbot.PRIORITIES['high']
+        bot.phorge.tasks[1]['priority'] = icingabot.PRIORITIES['high']
         bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert [transaction['type'] for transaction in bot.phorge.calls[-1][2]] == ['comment', 'title']
 
@@ -2312,7 +2339,7 @@ class TestProblemAndClear:
         bot = make_bot(tmp_path)
         bot.process(make_service())
         bot.process(make_service(state=state))
-        name = taskbot.STATES[state]
+        name = icingabot.STATES[state]
         assert comments(bot.phorge) == [f'Now **{name}**, which is not an alert state for this service.']
         assert bot.state.get('mw1!mw1 Disk')['active'] is False
 
@@ -2475,7 +2502,7 @@ class TestReopen:
         clock.now += 60
         bot.process(make_service(triggers=WARNING_CRITICAL, state=2))
         assert bot.phorge.tasks[1]['title'] == 'Disk on mw1 is CRITICAL'
-        assert bot.phorge.tasks[1]['priority'] == taskbot.PRIORITIES['high']
+        assert bot.phorge.tasks[1]['priority'] == icingabot.PRIORITIES['high']
         assert bot.phorge.tasks[1]['status'] == 'open'
 
     def test_the_close_status_is_what_counts(self, tmp_path, clock):
@@ -2516,7 +2543,7 @@ class TestStorm:
         bot = make_bot(tmp_path, storm_limit=2)
         self.many(bot, 5)
         created = bot.phorge.created()
-        assert [task['title'] for task in created] == ['Disk on mw1 is CRITICAL'] * 2 + [taskbot.STORM_TITLE]
+        assert [task['title'] for task in created] == ['Disk on mw1 is CRITICAL'] * 2 + [icingabot.STORM_TITLE]
         assert comments(bot.phorge) == [self.comment_for('svc3'), self.comment_for('svc4'), self.comment_for('svc5')]
         assert {call[1] for call in bot.phorge.calls if call[0] == 'edit'} == {3}
         assert bot.state.storm == 3
@@ -2556,7 +2583,7 @@ class TestStorm:
         self.many(bot, 2)
         clock.now += 9 * 60
         bot.process(make_service(name='later'))
-        assert bot.phorge.created()[-1]['title'] == taskbot.STORM_TITLE
+        assert bot.phorge.created()[-1]['title'] == icingabot.STORM_TITLE
 
     @pytest.mark.usefixtures('clock')
     def test_a_recovering_member_is_noted_on_the_summary(self, tmp_path):
@@ -2610,7 +2637,7 @@ class TestStorm:
         bot.process(make_service(name='svc2', triggers=WARNING_CRITICAL, state=1))
         bot.process(make_service(name='svc2', triggers=WARNING_CRITICAL, state=2))
         assert comments(bot.phorge)[-1] == '`mw1!svc2` is now **CRITICAL**.'
-        assert bot.phorge.tasks[2]['title'] == taskbot.STORM_TITLE
+        assert bot.phorge.tasks[2]['title'] == icingabot.STORM_TITLE
         assert bot.state.get('mw1!svc2')['state'] == 'CRITICAL'
 
     @pytest.mark.usefixtures('clock')
@@ -2636,7 +2663,7 @@ class TestStorm:
     def test_one_summary_is_reused_not_recreated(self, tmp_path):
         bot = make_bot(tmp_path, storm_limit=1)
         self.many(bot, 6)
-        assert [task['title'] for task in bot.phorge.created()].count(taskbot.STORM_TITLE) == 1
+        assert [task['title'] for task in bot.phorge.created()].count(icingabot.STORM_TITLE) == 1
 
     @pytest.mark.usefixtures('clock')
     def test_a_summary_someone_closed_is_replaced(self, tmp_path):
@@ -2644,7 +2671,7 @@ class TestStorm:
         self.many(bot, 2)
         bot.phorge.close(2, 'wontfix')
         bot.process(make_service(name='svc3'))
-        assert [task['title'] for task in bot.phorge.created()].count(taskbot.STORM_TITLE) == 2
+        assert [task['title'] for task in bot.phorge.created()].count(icingabot.STORM_TITLE) == 2
         assert bot.state.storm == 3
 
     @pytest.mark.usefixtures('clock')
@@ -2653,7 +2680,7 @@ class TestStorm:
         self.many(bot, 2)
         bot.state.set_storm(None)
         bot.process(make_service(name='svc3'))
-        assert [task['title'] for task in bot.phorge.created()].count(taskbot.STORM_TITLE) == 1
+        assert [task['title'] for task in bot.phorge.created()].count(icingabot.STORM_TITLE) == 1
         assert bot.state.storm == 2
 
     @pytest.mark.usefixtures('clock')
@@ -2663,7 +2690,7 @@ class TestStorm:
         second = make_bot(tmp_path, storm_limit=2)
         second.phorge = first.phorge
         second.process(make_service(name='svc4'))
-        assert [task['title'] for task in second.phorge.created()].count(taskbot.STORM_TITLE) == 1
+        assert [task['title'] for task in second.phorge.created()].count(icingabot.STORM_TITLE) == 1
         assert comments(second.phorge)[-1] == self.comment_for('svc4')
 
     @pytest.mark.usefixtures('clock')
@@ -2679,7 +2706,7 @@ class TestStorm:
         bot = make_bot(tmp_path, storm_limit=1, dry_run=True)
         bot.phorge = Phorge(BASE_CONFIG['phorge'], dry_run=True)
         bot.phorge.find = FakePhorge().find
-        with caplog.at_level(logging.INFO, logger='taskbot'):
+        with caplog.at_level(logging.INFO, logger='icingabot'):
             bot.process(make_service(name='svc1'))
             bot.process(make_service(name='svc2'))
         assert caplog.text.count('Dry run, would send') == 3
@@ -2755,7 +2782,7 @@ class TestAdoption:
 
     def test_the_storm_summary_is_taken_over(self, tmp_path):
         bot = make_bot(tmp_path)
-        bot.phorge.add_task(title=taskbot.STORM_TITLE, storm=True)
+        bot.phorge.add_task(title=icingabot.STORM_TITLE, storm=True)
         bot.prepare()
         assert bot.state.storm == 1
         assert bot.state.services == {}
@@ -2763,18 +2790,18 @@ class TestAdoption:
     def test_a_known_storm_summary_is_kept(self, tmp_path):
         bot = make_bot(tmp_path)
         bot.state.set_storm(9)
-        bot.phorge.add_task(title=taskbot.STORM_TITLE, storm=True)
+        bot.phorge.add_task(title=icingabot.STORM_TITLE, storm=True)
         bot.prepare()
         assert bot.state.storm == 9
 
     @pytest.mark.usefixtures('clock')
     def test_the_adopted_summary_is_used_for_the_next_storm(self, tmp_path):
         bot = make_bot(tmp_path, storm_limit=1)
-        bot.phorge.add_task(title=taskbot.STORM_TITLE, storm=True)
+        bot.phorge.add_task(title=icingabot.STORM_TITLE, storm=True)
         bot.prepare()
         bot.process(make_service(name='svc1'))
         bot.process(make_service(name='svc2'))
-        assert bot.phorge.created()[-1]['title'] != taskbot.STORM_TITLE
+        assert bot.phorge.created()[-1]['title'] != icingabot.STORM_TITLE
         assert comments(bot.phorge) == [TestStorm.comment_for('svc2')]
 
     def test_adoption_is_saved_to_disk(self, tmp_path):
@@ -2828,7 +2855,7 @@ class TestAdoption:
     def test_adoption_is_logged(self, tmp_path, caplog):
         bot = make_bot(tmp_path)
         bot.phorge.add_task()
-        with caplog.at_level(logging.INFO, logger='taskbot'):
+        with caplog.at_level(logging.INFO, logger='icingabot'):
             bot.prepare()
         assert 'Adopted T1 for mw1!mw1 Disk (CRITICAL)' in caplog.text
 
@@ -2909,7 +2936,7 @@ class TestHeartbeat:
         bot = make_bot(tmp_path)
         bot.icinga.add(make_service())
         bot.phorge.create_errors = [PhorgeError('down')]
-        with caplog.at_level(logging.WARNING, logger='taskbot'):
+        with caplog.at_level(logging.WARNING, logger='icingabot'):
             bot.reconcile()
         assert not self.beat_file(tmp_path).exists()
         assert '1 problems during the sync, not marking it healthy' in caplog.text
@@ -2935,7 +2962,7 @@ class TestHeartbeat:
     @pytest.mark.usefixtures('clock')
     def test_an_unwritable_path_is_logged_not_raised(self, tmp_path, caplog):
         bot = make_bot(tmp_path, heartbeat_file=str(tmp_path / 'missing' / 'last_sync'))
-        with caplog.at_level(logging.ERROR, logger='taskbot'):
+        with caplog.at_level(logging.ERROR, logger='icingabot'):
             bot.reconcile()
         assert 'Could not write the heartbeat file' in caplog.text
 
@@ -2952,7 +2979,7 @@ class TestSafe:
         def explode(_value):
             raise PhorgeError(f'boom {_value}')
 
-        with caplog.at_level(logging.ERROR, logger='taskbot'):
+        with caplog.at_level(logging.ERROR, logger='icingabot'):
             bot.safe(explode, 'now')
         assert 'Failed handling explode' in caplog.text
         assert 'boom now' in caplog.text
@@ -3063,7 +3090,7 @@ class TestReconcile:
         bot.icinga.add(make_service())
         bot.reconcile()
         bot.icinga.services.clear()
-        with caplog.at_level(logging.WARNING, logger='taskbot'):
+        with caplog.at_level(logging.WARNING, logger='icingabot'):
             bot.reconcile()
         assert 'mw1!mw1 Disk no longer exists in Icinga' in caplog.text
         assert bot.state.get('mw1!mw1 Disk') == {'task': 1, 'active': False, 'state': 'GONE', 'alert': 'CRITICAL'}
@@ -3080,7 +3107,7 @@ class TestReconcile:
         bot.icinga.add(make_service(name='a'))
         bot.icinga.add(make_service(name='b'))
         bot.phorge.create_errors = [PhorgeError('Phorge is down')]
-        with caplog.at_level(logging.ERROR, logger='taskbot'):
+        with caplog.at_level(logging.ERROR, logger='icingabot'):
             bot.reconcile()
         assert bot.state.get('mw1!a') is None
         assert bot.state.get('mw1!b')['active'] is True
@@ -3158,7 +3185,7 @@ class TestRun:
     def test_bad_data_from_icinga_is_a_connection_problem(self, tmp_path, clock, caplog):
         bot = make_bot(tmp_path)
         bot.icinga.streams = [ValueError('garbage'), Stop()]
-        with caplog.at_level(logging.ERROR, logger='taskbot'), pytest.raises(Stop):
+        with caplog.at_level(logging.ERROR, logger='icingabot'), pytest.raises(Stop):
             bot.run()
         assert 'Icinga connection problem: garbage' in caplog.text
         assert clock.sleeps == [5]
@@ -3259,7 +3286,7 @@ class TestRun:
         bot.phorge.read_errors = [PhorgeError('down')]
         bot.icinga.add(make_service())
         bot.icinga.streams = [Stop()]
-        with caplog.at_level(logging.ERROR, logger='taskbot'), pytest.raises(Stop):
+        with caplog.at_level(logging.ERROR, logger='icingabot'), pytest.raises(Stop):
             bot.run()
         assert 'Phorge connection problem: down' in caplog.text
         assert clock.sleeps == [5]
@@ -3702,7 +3729,7 @@ class TestRemovedServices:
 
     def test_the_removal_is_logged(self, tmp_path, caplog):
         bot = self.removed(tmp_path)
-        with caplog.at_level(logging.WARNING, logger='taskbot'):
+        with caplog.at_level(logging.WARNING, logger='icingabot'):
             bot.reconcile()
         assert 'mw1!mw1 Disk no longer exists in Icinga' in caplog.text
 
@@ -3856,7 +3883,7 @@ class PhorgeApp:
                 task['comments'].append(value)
                 task['history'].append('bot')
             elif kind == 'priority':
-                task['priority'] = taskbot.PRIORITIES[value]
+                task['priority'] = icingabot.PRIORITIES[value]
             elif kind in ('title', 'description', 'status'):
                 task[kind] = value
             index += 1
@@ -3894,7 +3921,7 @@ class TestEndToEnd:
         bot.prepare()
         bot.reconcile()
         task = app.tasks[1]
-        assert (task['title'], task['priority']) == ('Disk on mw1 is CRITICAL', taskbot.PRIORITIES['high'])
+        assert (task['title'], task['priority']) == ('Disk on mw1 is CRITICAL', icingabot.PRIORITIES['high'])
         assert task_key(as_task(task['description'])) == 'mw1!mw1 Disk'
         services['mw1!mw1 Disk'] = make_service(state=0)
         bot.on_event(state_change(state=0))
@@ -3974,7 +4001,7 @@ class TestEndToEnd:
         services['mw1!mw1 Disk'] = make_service(state=1, last_state_ok=NOW - 3600, last_state_change=NOW - 10)
         bot.reconcile()
         assert app.tasks[1]['title'] == 'Disk on mw1 is WARNING'
-        assert app.tasks[1]['priority'] == taskbot.PRIORITIES['medium']
+        assert app.tasks[1]['priority'] == icingabot.PRIORITIES['medium']
         assert 'not an alert state' in app.tasks[1]['comments'][-1]
         services['mw1!mw1 Disk'] = make_service(state=0)
         bot.reconcile()
@@ -4060,15 +4087,35 @@ class TestMain:
             def run(self):
                 ran.append('run')
 
-        monkeypatch.setattr(sys, 'argv', ['taskbot.py', *argv])
-        monkeypatch.setattr(taskbot.logging, 'basicConfig', lambda **kwargs: logging_calls.append(kwargs))
-        monkeypatch.setattr(taskbot, 'Bot', FakeBot)
+        class FakeRelay:
+            def __init__(self, config):
+                self.config = config
+
+            def pump(self):
+                return None
+
+            def run(self):
+                return None
+
+        class FakeHook:
+            def __init__(self, config, relay):
+                self.config = config
+                self.relay = relay
+
+            def serve(self):
+                return None
+
+        monkeypatch.setattr(sys, 'argv', ['icingabot.py', *argv])
+        monkeypatch.setattr(icingabot.logging, 'basicConfig', lambda **kwargs: logging_calls.append(kwargs))
+        monkeypatch.setattr(icingabot, 'Bot', FakeBot)
+        monkeypatch.setattr(icingabot, 'IrcRelay', FakeRelay)
+        monkeypatch.setattr(icingabot, 'GrafanaHook', FakeHook)
         return logging_calls, ran
 
     def test_short_config_flag(self, tmp_path, monkeypatch):
         path = self.write(tmp_path, dict(BASE_CONFIG, log_level='warning'))
         logging_calls, ran = self.patch(monkeypatch, ['-c', str(path)])
-        taskbot.main()
+        icingabot.main()
         assert ran[0]['log_level'] == 'warning'
         assert ran[1] == 'run'
         assert logging_calls[0]['level'] == logging.WARNING
@@ -4076,33 +4123,33 @@ class TestMain:
     def test_long_config_flag(self, tmp_path, monkeypatch):
         path = self.write(tmp_path, BASE_CONFIG)
         _, ran = self.patch(monkeypatch, ['--config', str(path)])
-        taskbot.main()
+        icingabot.main()
         assert ran[1] == 'run'
 
     def test_config_defaults_to_config_json_in_the_current_directory(self, tmp_path, monkeypatch):
         self.write(tmp_path, BASE_CONFIG)
         monkeypatch.chdir(tmp_path)
         _, ran = self.patch(monkeypatch, [])
-        taskbot.main()
-        assert ran[0]['icinga']['queue'] == 'taskbot'
+        icingabot.main()
+        assert ran[0]['icinga']['queue'] == 'icingabot'
 
     def test_no_default_config_means_exit(self, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)
         _, ran = self.patch(monkeypatch, [])
         with pytest.raises(SystemExit, match='Cannot load config.json'):
-            taskbot.main()
+            icingabot.main()
         assert ran == []
 
     def test_verbose_forces_debug(self, tmp_path, monkeypatch):
         path = self.write(tmp_path, dict(BASE_CONFIG, log_level='ERROR'))
         logging_calls, _ = self.patch(monkeypatch, ['-c', str(path), '-v'])
-        taskbot.main()
+        icingabot.main()
         assert logging_calls[0]['level'] == logging.DEBUG
 
     def test_long_verbose_flag(self, tmp_path, monkeypatch):
         path = self.write(tmp_path, BASE_CONFIG)
         logging_calls, _ = self.patch(monkeypatch, ['-c', str(path), '--verbose'])
-        taskbot.main()
+        icingabot.main()
         assert logging_calls[0]['level'] == logging.DEBUG
 
     @pytest.mark.parametrize(('level', 'expected'), [
@@ -4114,28 +4161,28 @@ class TestMain:
     def test_log_level_from_config(self, tmp_path, monkeypatch, level, expected):
         path = self.write(tmp_path, dict(BASE_CONFIG, log_level=level))
         logging_calls, _ = self.patch(monkeypatch, ['-c', str(path)])
-        taskbot.main()
+        icingabot.main()
         assert logging_calls[0]['level'] == expected
 
     def test_log_format_uses_braces(self, tmp_path, monkeypatch):
         path = self.write(tmp_path, BASE_CONFIG)
         logging_calls, _ = self.patch(monkeypatch, ['-c', str(path)])
-        taskbot.main()
+        icingabot.main()
         assert logging_calls[0]['style'] == '{'
-        assert logging_calls[0]['format'] == '{asctime} {levelname} {message}'
+        assert logging_calls[0]['format'] == '{asctime} {levelname} {threadName} {message}'
 
     @pytest.mark.parametrize('dry_run', [True, False])
     def test_dry_run_is_read_from_the_config(self, tmp_path, monkeypatch, dry_run):
         path = self.write(tmp_path, dict(BASE_CONFIG, dry_run=dry_run))
         _, ran = self.patch(monkeypatch, ['-c', str(path)])
-        taskbot.main()
+        icingabot.main()
         assert ran[0]['dry_run'] is dry_run
 
     def test_there_is_no_dry_run_flag(self, tmp_path, monkeypatch):
         path = self.write(tmp_path, BASE_CONFIG)
         _, ran = self.patch(monkeypatch, ['-c', str(path), '--dry-run'])
         with pytest.raises(SystemExit, match='2'):
-            taskbot.main()
+            icingabot.main()
         assert ran == []
 
     def test_incomplete_config_never_starts_the_bot(self, tmp_path, monkeypatch):
@@ -4144,7 +4191,7 @@ class TestMain:
         path = self.write(tmp_path, config)
         _, ran = self.patch(monkeypatch, ['-c', str(path)])
         with pytest.raises(SystemExit, match='Missing in config: phorge.api_token'):
-            taskbot.main()
+            icingabot.main()
         assert ran == []
 
     def test_ctrl_c_exits_quietly(self, tmp_path, monkeypatch):
@@ -4158,15 +4205,15 @@ class TestMain:
             def run(self):
                 raise KeyboardInterrupt
 
-        monkeypatch.setattr(taskbot, 'Bot', Interrupted)
+        monkeypatch.setattr(icingabot, 'Bot', Interrupted)
         with contextlib.suppress(SystemExit):
-            taskbot.main()
+            icingabot.main()
 
 
 class TestVerboseLogging:
     def test_skips_are_explained(self, tmp_path, caplog):
         bot = make_bot(tmp_path)
-        with caplog.at_level(logging.DEBUG, logger='taskbot'):
+        with caplog.at_level(logging.DEBUG, logger='icingabot'):
             bot.process(make_service(triggers=None))
             bot.process(make_service(state_type=0.0))
             bot.process(make_service(downtime_depth=1.0))
@@ -4182,13 +4229,13 @@ class TestVerboseLogging:
 
     def test_events_are_logged(self, tmp_path, caplog):
         bot = make_bot(tmp_path)
-        with caplog.at_level(logging.DEBUG, logger='taskbot'):
+        with caplog.at_level(logging.DEBUG, logger='icingabot'):
             bot.on_event(state_change())
         assert 'Event for mw1!mw1 Disk' in caplog.text
 
     def test_quiet_by_default(self, tmp_path, caplog):
         bot = make_bot(tmp_path)
-        with caplog.at_level(logging.INFO, logger='taskbot'):
+        with caplog.at_level(logging.INFO, logger='icingabot'):
             bot.process(make_service(triggers=None))
             bot.reconcile()
         assert caplog.text == ''
@@ -4197,7 +4244,7 @@ class TestVerboseLogging:
     def test_a_healthy_idle_bot_logs_nothing_at_info(self, tmp_path, caplog):
         bot = make_bot(tmp_path)
         bot.icinga.streams = [[], [], Stop()]
-        with caplog.at_level(logging.INFO, logger='taskbot'), pytest.raises(Stop):
+        with caplog.at_level(logging.INFO, logger='icingabot'), pytest.raises(Stop):
             bot.run()
         assert caplog.text == ''
 
@@ -4205,7 +4252,7 @@ class TestVerboseLogging:
     def test_the_token_is_never_logged(self, serve, caplog):
         server = serve(reply=Script((500, b'down')))
         phorge = Phorge(dict(BASE_CONFIG['phorge'], url=server.url, retries=2))
-        with caplog.at_level(logging.DEBUG, logger='taskbot'), pytest.raises(PhorgeError, match='request failed'):
+        with caplog.at_level(logging.DEBUG, logger='icingabot'), pytest.raises(PhorgeError, match='request failed'):
             phorge.call('conduit.ping')
         assert 'Calling conduit.ping, attempt 1 of 2' in caplog.text
         assert 'api-token' not in caplog.text
@@ -4221,6 +4268,7 @@ def rendered(**changes):
         'icinga_url': 'https://mon181.example.org:5665',
         'icinga_password': 'icinga-secret',
         'phorge_token': 'api-token',
+        'irc_password': 'irc-secret',
         'http_proxy': None,
     }
     values.update(changes)
@@ -4255,8 +4303,8 @@ class TestConfigTemplate:
 
     def test_has_no_key_the_bot_does_not_know(self):
         config = rendered()
-        assert set(config) <= set(taskbot.REQUIRED)
-        for section, keys in taskbot.REQUIRED.items():
+        assert set(config) <= set(icingabot.REQUIRED)
+        for section, keys in icingabot.REQUIRED.items():
             if keys:
                 assert set(config[section]) <= set(keys), section
 
@@ -4278,7 +4326,7 @@ class TestConfigTemplate:
     def test_the_puppet_type_offers_exactly_the_states_the_bot_can_alert_on(self):
         text = (MONITORING.parent / 'types' / 'phorgetrigger.pp').read_text()
         offered = set(re.findall(r"'([A-Z]+)'", text))
-        assert offered == {state for state in taskbot.STATES.values() if state != 'OK'}
+        assert offered == {state for state in icingabot.STATES.values() if state != 'OK'}
 
     def test_every_state_puppet_offers_has_a_priority(self):
         text = (MONITORING.parent / 'types' / 'phorgetrigger.pp').read_text()
@@ -4317,7 +4365,7 @@ class TestConfigTemplate:
     def test_the_bot_accepts_it_as_a_config_file(self, tmp_path):
         path = tmp_path / 'config.json'
         path.write_text(json.dumps(rendered()))
-        assert load_config(str(path))['icinga']['username'] == 'taskbot'
+        assert load_config(str(path))['icinga']['username'] == 'icingabot'
 
 
 class TestDeployment:
@@ -4339,15 +4387,15 @@ class TestDeployment:
 
     def test_the_service_user_can_read_the_config(self):
         manifest = MANIFEST.read_text()
-        config_block = manifest[manifest.index("'/etc/taskbot/config.json'"):]
+        config_block = manifest[manifest.index("'/etc/icingabot/config.json'"):]
         assert f"group   => '{unit_setting('User')}'" in config_block.split('}', 1)[0]
         assert "mode    => '0640'" in config_block.split('}', 1)[0]
 
     def test_the_process_check_matches_the_running_script(self):
         manifest = MANIFEST.read_text()
-        script = re.search(r'taskbot\.py', unit_setting('ExecStart'))
+        script = re.search(r'icingabot\.py', unit_setting('ExecStart'))
         assert script
-        assert '-a taskbot.py' in manifest
+        assert '-a icingabot.py' in manifest
 
     def test_the_heartbeat_file_lives_in_the_state_directory(self):
         heartbeat = rendered()['heartbeat_file']
@@ -4368,7 +4416,7 @@ class TestDeployment:
 
     def test_the_api_user_may_read_hosts_for_the_host_down_check(self):
         text = (MONITORING / 'init.pp').read_text()
-        permissions = re.search(r"apiuser \{ 'taskbot':.*?permissions => \[(.*?)\]", text, re.DOTALL).group(1)
+        permissions = re.search(r"apiuser \{ 'icingabot':.*?permissions => \[(.*?)\]", text, re.DOTALL).group(1)
         assert "'objects/query/Host'" in permissions
         assert "'objects/query/Service'" in permissions
         assert "'events/StateChange'" in permissions

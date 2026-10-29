@@ -17,9 +17,6 @@
 # [*ido_db_user_password*]
 #   Password for the Icinga IDO database user.
 #
-# [*mirahezebots_password*]
-#   Password used by the IRCEcho/MirahezeBots integration.
-#
 # [*icingaweb2_db_host*]
 #   Hostname of the Icinga Web 2 database server.
 #
@@ -60,15 +57,14 @@
 #   Optional IP address or hostname to bind the Icinga 2 API listener to.
 #   If undef, the default Icinga 2 behavior is used.
 #
-# [*taskbot_api_password*]
-#   Password for the read only API user used by the bots server task bot.
+# [*icingabot_api_password*]
+#   Password for the read only API user used by the bots server Icinga bot.
 #
 class role::icinga2 (
     String           $icinga2_db_host             = lookup('icinga_ido_db_host', {'default_value' => 'db193.fsslc.wtnet'}),
     String           $icinga2_db_name             = lookup('icinga_ido_db_name', {'default_value' => 'icinga'}),
     String           $icinga2_db_user             = lookup('icinga_ido_user_name', {'default_value' => 'icinga2'}),
     String           $ido_db_user_password        = lookup('passwords::icinga_ido'),
-    String           $mirahezebots_password       = lookup('passwords::irc::mirahezebots'),
     String           $icingaweb2_db_host          = lookup('icingaweb_db_host', {'default_value' => 'db193.fsslc.wtnet'}),
     String           $icingaweb2_db_name          = lookup('icingaweb_db_name', {'default_value' => 'icingaweb2'}),
     String           $icingaweb2_db_user          = lookup('icingaweb_user_name', {'default_value' => 'icingaweb2'}),
@@ -83,7 +79,7 @@ class role::icinga2 (
     String           $ldap_password               = lookup('passwords::ldap_password'),
     Optional[String] $icinga2_api_bind_host       = lookup('icinga2_api_bind_host', {'default_value' => undef}),
     String           $icingaweb2_api_password     = lookup('passwords::icingaweb2_api_password'),
-    String           $taskbot_api_password        = lookup('passwords::icinga2::taskbot'),
+    String           $icingabot_api_password      = lookup('passwords::icinga2::icingabot'),
 ) {
     # include prometheus::exporter::cloudflare
 
@@ -96,10 +92,9 @@ class role::icinga2 (
         icingadb_redis_port     => $icingadb_redis_port,
         icingadb_redis_password => $icingadb_redis_password,
         icinga2_api_bind_host   => $icinga2_api_bind_host,
-        mirahezebots_password   => $mirahezebots_password,
         ticket_salt             => $ticket_salt,
         icingaweb2_api_password => $icingaweb2_api_password,
-        taskbot_api_password    => $taskbot_api_password,
+        icingabot_api_password  => $icingabot_api_password,
     }
 
     class { 'icingaweb2':
