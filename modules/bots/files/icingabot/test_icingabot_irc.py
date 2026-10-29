@@ -869,6 +869,8 @@ class TestConfig:
         ('queue_size', 1.5),
         ('queue', ''),
         ('heartbeat_file', ''),
+        ('pause_file', ''),
+        ('pause_file', None),
         ('proxy', 'ftp://bastion.example.org'),
         ('proxy', 5),
     ])
@@ -1359,3 +1361,141 @@ class TestIcingaQueue:
     def test_an_explicit_queue_wins_and_the_config_one_is_the_default(self):
         assert icingabot.Icinga(dict(ICINGA_CONFIG, queue='from-config')).queue == 'from-config'
         assert icingabot.Icinga(dict(ICINGA_CONFIG, queue='from-config'), 'explicit').queue == 'explicit'
+
+
+def idle_relay(tmp_path, **changes):
+    changes.setdefault('heartbeat_file', str(tmp_path / 'irc_alive'))
+    return IrcRelay(relay_config(**changes))
+
+
+def stop_sleeping(*args):
+    raise Stop(args)
+
+
+class TestPause:
+    def test_a_pause_file_makes_the_relay_drop_messages(self, tmp_path):
+        relay = IrcRelay(relay_config(pause_file=str(tmp_path / 'pause_irc')))
+        relay.push('before')
+        (tmp_path / 'pause_irc').touch()
+        relay.push('during')
+        (tmp_path / 'pause_irc').unlink()
+        relay.push('after')
+        assert list(relay.outbox) == ['before', 'after']
+
+    def test_notifications_from_icinga_are_dropped_while_paused(self, tmp_path):
+        (tmp_path / 'pause_irc').touch()
+        relay = IrcRelay(relay_config(pause_file=str(tmp_path / 'pause_irc')))
+        relay.handle(notification())
+        assert not relay.outbox
+
+    def test_a_connected_link_says_goodbye_and_stops(self, irc_server, tmp_path):
+        server = irc_server()
+        pause = tmp_path / 'pause_irc'
+        running = Running(make_relay(server, tmp_path, pause_file=str(pause)))
+        assert server.wait_for(lambda lines: 'JOIN #miraheze-tech-ops' in lines)
+        pause.touch()
+        assert server.wait_for(lambda lines: 'QUIT :Paused' in lines)
+        assert running.wait() is None
+
+    def test_a_link_started_while_paused_quits_straight_away(self, irc_server, tmp_path):
+        server = irc_server()
+        pause = tmp_path / 'pause_irc'
+        pause.touch()
+        running = Running(make_relay(server, tmp_path, pause_file=str(pause)))
+        assert running.wait() is None
+        assert not any(line.startswith(('JOIN', 'PRIVMSG')) for line in server.lines)
+
+    def test_run_does_not_connect_while_paused(self, tmp_path, monkeypatch):
+        pause = tmp_path / 'pause_irc'
+        pause.touch()
+        relay = idle_relay(tmp_path, pause_file=str(pause))
+        relay.outbox.append('stale')
+        sleeps = []
+
+        def sleep(seconds):
+            sleeps.append(seconds)
+            if len(sleeps) == 3:
+                raise Stop
+
+        class Link:
+            def __init__(self, *args):
+                raise AssertionError(args)
+
+        monkeypatch.setattr(icingabot, 'IrcLink', Link)
+        monkeypatch.setattr(icingabot.time, 'sleep', sleep)
+        with pytest.raises(Stop):
+            relay.run()
+        assert sleeps == [icingabot.PAUSE_SECONDS] * 3
+        assert not relay.outbox
+
+    def test_the_heartbeat_keeps_going_while_paused(self, tmp_path, monkeypatch):
+        pause = tmp_path / 'pause_irc'
+        pause.touch()
+        relay = idle_relay(tmp_path, pause_file=str(pause))
+        monkeypatch.setattr(icingabot.time, 'sleep', stop_sleeping)
+        with pytest.raises(Stop):
+            relay.run()
+        assert (tmp_path / 'irc_alive').read_text().strip().isdigit()
+
+    def test_the_heartbeat_still_needs_a_healthy_icinga_stream(self, tmp_path, monkeypatch):
+        pause = tmp_path / 'pause_irc'
+        pause.touch()
+        relay = idle_relay(tmp_path, pause_file=str(pause))
+        relay.stream_seen = time.monotonic() - 3600
+        monkeypatch.setattr(icingabot.time, 'sleep', stop_sleeping)
+        with pytest.raises(Stop):
+            relay.run()
+        assert not (tmp_path / 'irc_alive').exists()
+
+    def test_run_reconnects_once_the_pause_file_is_gone(self, tmp_path, monkeypatch, caplog):
+        pause = tmp_path / 'pause_irc'
+        pause.touch()
+        relay = idle_relay(tmp_path, pause_file=str(pause))
+        connected = []
+
+        class Link:
+            joined = False
+
+            def __init__(self, relay):
+                connected.append(relay)
+
+            @staticmethod
+            def run():
+                raise Stop
+
+        def sleep(*args):
+            pause.unlink()
+            assert args == (icingabot.PAUSE_SECONDS,)
+
+        monkeypatch.setattr(icingabot, 'IrcLink', Link)
+        monkeypatch.setattr(icingabot.time, 'sleep', sleep)
+        with caplog.at_level('INFO', logger='icingabot'), pytest.raises(Stop):
+            relay.run()
+        assert connected == [relay]
+        assert 'IRC relay is paused' in caplog.text
+        assert 'IRC relay is resumed' in caplog.text
+
+    def test_pausing_a_live_link_skips_the_reconnect_delay(self, tmp_path, monkeypatch):
+        pause = tmp_path / 'pause_irc'
+        relay = idle_relay(tmp_path, pause_file=str(pause))
+        sleeps = []
+
+        class Link:
+            joined = True
+
+            def __init__(self, *args):
+                self.args = args
+
+            @staticmethod
+            def run():
+                pause.touch()
+
+        def sleep(seconds):
+            sleeps.append(seconds)
+            raise Stop
+
+        monkeypatch.setattr(icingabot, 'IrcLink', Link)
+        monkeypatch.setattr(icingabot.time, 'sleep', sleep)
+        with pytest.raises(Stop):
+            relay.run()
+        assert sleeps == [icingabot.PAUSE_SECONDS]
