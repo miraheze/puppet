@@ -28,6 +28,7 @@ STAGING_ROOT = '/srv/mediawiki-staging'
 DEPLOYED_ROOT = '/srv/mediawiki'
 COMPONENT_FETCH_BATCH_SIZE = 20
 COMPONENT_FETCH_WORKERS = 10
+PROXY_URL = 'http://bastion.fsslc.wtnet:8080'
 
 _ANSI_RE = re.compile(r'\x1b\[[0-9;]*m')
 
@@ -307,9 +308,12 @@ class CanaryChecker:
     def __init__(self):
         self._session = requests.Session()
 
-    def _request(self, proto: str, domain: str, port: int, headers: dict, verify: bool, use_cert: bool) -> requests.Response:
+    def _request(self, proto: str, domain: str, port: int, headers: dict, verify: bool, use_cert: bool,
+                 proxy: Optional[str] = None) -> requests.Response:
         url = f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json'
         kwargs = {'headers': headers, 'verify': verify}
+        if proxy:
+            kwargs['proxies'] = {'http': proxy, 'https': proxy}
         if use_cert:
             kwargs['cert'] = (
                 '/etc/ssl/localcerts/mwdeploy.crt',
@@ -319,7 +323,8 @@ class CanaryChecker:
 
     def check(self, nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None,
               domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False,
-              port: int = 443, use_cert: bool = True, exit_on_failure: bool = True) -> bool:
+              port: int = 443, use_cert: bool = True, exit_on_failure: bool = True,
+              proxy: Optional[str] = PROXY_URL) -> bool:
         if verify is False:
             os.environ['PYTHONWARNINGS'] = 'ignore:Unverified HTTPS request'
         if not Debug and not Host:
@@ -336,6 +341,7 @@ class CanaryChecker:
         else:
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
             os.environ['NO_PROXY'] = 'localhost'
+            proxy = None
             domain = 'localhost'
             headers['host'] = f'{Host}'
             location = f'{Host}@{domain}'
@@ -345,7 +351,7 @@ class CanaryChecker:
             return True
 
         proto = 'https://' if port == 443 else 'http://'
-        req = self._request(proto, domain, port, headers, verify, use_cert)
+        req = self._request(proto, domain, port, headers, verify, use_cert, proxy)
 
         up = (
             req.status_code == 200
