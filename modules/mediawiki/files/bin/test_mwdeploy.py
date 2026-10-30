@@ -456,7 +456,7 @@ class TestCanaryChecker(unittest.TestCase):
 
     def test_debug(self):
         if os.getenv('DEBUG_ACCESS_KEY'):
-            self.assertTrue(mwdeploy.CanaryChecker().check(nolog=True, Debug='mwtask181', use_cert=False))
+            self.assertTrue(mwdeploy.CanaryChecker().check(nolog=True, Debug='mwtask181', use_cert=False, proxy=None))
 
     def test_debug_fail(self):
         with pytest.raises(SystemExit) as excinfo:
