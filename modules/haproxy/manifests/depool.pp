@@ -30,7 +30,7 @@ class haproxy::depool (
 
     include haproxy::lb_ctl
 
-    $totp_secret = lookup('passwords::varnish::varnish_totp_secret')
+    $totp_secret = lookup('passwords::haproxy::totp_secret')
     systemd::service { 'haproxy-depool':
         ensure  => present,
         content => systemd_template('haproxy-depool', {
