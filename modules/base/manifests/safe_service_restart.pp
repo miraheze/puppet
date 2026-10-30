@@ -27,8 +27,7 @@ define base::safe_service_restart(
         $_facts['networking']['fqdn']
     }.flatten.sort.unique
 
-    $totp_secret = lookup('passwords::varnish::varnish_totp_secret')
-
+    $totp_secret = lookup('passwords::haproxy::totp_secret')
     file { "/usr/local/sbin/restart-${title}":
         ensure  => present,
         content => template('base/safe-restart.erb'),
