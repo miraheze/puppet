@@ -456,11 +456,11 @@ class TestCanaryChecker(unittest.TestCase):
 
     def test_debug(self):
         if os.getenv('DEBUG_ACCESS_KEY'):
-            self.assertTrue(mwdeploy.CanaryChecker().check(nolog=True, Debug='mwtask181', use_cert=False))
+            self.assertTrue(mwdeploy.CanaryChecker().check(nolog=True, Debug='mwtask181', use_cert=False, proxy=None))
 
     def test_debug_fail(self):
         with pytest.raises(SystemExit) as excinfo:
-            mwdeploy.CanaryChecker().check(nolog=True, Debug='mwtask181', domain='httpstatuses.maor.io/500', use_cert=False)
+            mwdeploy.CanaryChecker().check(nolog=True, Debug='mwtask181', domain='httpstatuses.maor.io/500', use_cert=False, proxy=None)
         assert excinfo.value.code == 3
 
     def test_debug_fail_force(self):
@@ -523,6 +523,37 @@ class TestCanaryChecker(unittest.TestCase):
         with patch.object(checker._session, 'get', return_value=fake_response) as mock_get:
             checker._request('https://', 'example.org', 443, {}, True, False)
         self.assertNotIn('cert', mock_get.call_args.kwargs)
+
+    def test_request_sends_through_proxy_when_given(self):
+        checker = mwdeploy.CanaryChecker()
+        fake_response = MagicMock(status_code=200)
+        with patch.object(checker._session, 'get', return_value=fake_response) as mock_get:
+            checker._request('https://', 'example.org', 443, {}, True, False, 'http://proxy.example:8080')
+        self.assertEqual(
+            mock_get.call_args.kwargs['proxies'],
+            {'http': 'http://proxy.example:8080', 'https': 'http://proxy.example:8080'},
+        )
+
+    def test_request_omits_proxies_when_no_proxy(self):
+        checker = mwdeploy.CanaryChecker()
+        fake_response = MagicMock(status_code=200)
+        with patch.object(checker._session, 'get', return_value=fake_response) as mock_get:
+            checker._request('https://', 'example.org', 443, {}, True, False)
+        self.assertNotIn('proxies', mock_get.call_args.kwargs)
+
+    def test_debug_check_uses_the_default_proxy(self):
+        checker = mwdeploy.CanaryChecker()
+        fake_response = MagicMock(status_code=200, text='mainpageisdomainroot', headers={'X-Served-By': 'mw151'})
+        with patch.object(checker._session, 'get', return_value=fake_response) as mock_get:
+            checker.check(nolog=True, Debug='mw151', domain='example.org', verify=False, use_cert=False)
+        self.assertEqual(mock_get.call_args.kwargs['proxies']['https'], mwdeploy.PROXY_URL)
+
+    def test_host_check_never_uses_a_proxy(self):
+        checker = mwdeploy.CanaryChecker()
+        fake_response = MagicMock(status_code=200, text='mainpageisdomainroot', headers={})
+        with patch.object(checker._session, 'get', return_value=fake_response) as mock_get:
+            checker.check(nolog=True, Host='meta.miraheze.org', verify=False, use_cert=False)
+        self.assertNotIn('proxies', mock_get.call_args.kwargs)
 
     def test_check_with_host_instead_of_debug_uses_the_local_proxy_path(self):
         checker = mwdeploy.CanaryChecker()
