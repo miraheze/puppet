@@ -56,7 +56,10 @@ class mediawiki::deploy {
         {
             ensure   => '3.5.1',
             provider => 'pip3',
-            install_options => [ '--break-system-packages' ],
+            install_options => [
+                '--break-system-packages',
+                { '--proxy' => 'http://bastion.fsslc.wtnet:8080' },
+            ],
             before   => File['/usr/local/bin/mwdeploy'],
             require  => Package['python3-pip'],
         },
