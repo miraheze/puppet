@@ -455,6 +455,11 @@ sub vcl_recv {
 		return (pass);
 	}
 
+    if (req.http.Host ~ "^(.*\.)?rhinosf1\.com") {
+		set req.backend_hint = test151;
+		return (pass);
+	}
+
 	# Only cache js files from Matomo
 	if (req.http.Host == "analytics.wikitide.net") {
 		set req.backend_hint = lb_matomo;
