@@ -15,7 +15,7 @@ listen lb_<%= $pool_name %>
     bind 127.0.0.1:<%= $pool['port'] %>
 
     option http-keep-alive
-    http-reuse always
+    http-reuse never
 
     timeout http-request <%= $timeout['http_request'] %>s
     timeout http-keep-alive <%= $timeout['keep_alive'] %>s
