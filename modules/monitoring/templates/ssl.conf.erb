@@ -1,5 +1,12 @@
+template Service "ssl-expire-via-proxy" {
+  vars.ssl_expire_proxy = "bastion.fsslc.wtnet"
+  vars.ssl_expire_port = "8080"
+  vars.ssl_expire_method = "CONNECT"
+}
+
 apply Service "wc.miraheze.org" {
   import "generic-service"
+  import "ssl-expire-via-proxy"
   check_command = "check_ssl_expire"
   notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
   vars.host = "miraheze.org"
@@ -10,6 +17,7 @@ apply Service "wc.miraheze.org" {
 
 apply Service "m.miraheze.org - LetsEncrypt" {
   import "generic-service"
+  import "ssl-expire-via-proxy"
   check_command = "check_ssl_expire"
   notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
   vars.host = "m.miraheze.org"
@@ -34,6 +42,7 @@ apply Service "<%= server %> SSL Check" {
 
 apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   import "generic-service"
+  import "ssl-expire-via-proxy"
   check_command = "check_ssl_expire"
   check_interval = 30m
   notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
