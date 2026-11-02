@@ -6,7 +6,9 @@
 # unit test is in test_rewrite.py. Tests are referenced by numbered comments.
 
 import re
+import urllib.error
 import urllib.parse
+import urllib.request
 
 from swift.common import swob
 from swift.common.utils import get_logger
@@ -36,6 +38,7 @@ class _WikiTideRewriteContext(WSGIContext):
         self.thumbhost = conf['thumbhost'].strip()
         self.user_agent = conf['user_agent'].strip()
         self.bind_port = conf['bind_port'].strip()
+        self.thumb_proxy = conf.get('thumb_proxy', '').strip()
 
     def handle404(self, reqorig, url, container, obj):
         """
@@ -46,7 +49,10 @@ class _WikiTideRewriteContext(WSGIContext):
         # go to the thumb media store for unknown files
         reqorig.host = self.thumbhost
         # upload doesn't like our User-agent.
-        proxy_handler = urllib.request.ProxyHandler({'http': self.thumbhost})
+        proxies = {}
+        if self.thumb_proxy:
+            proxies = {'http': self.thumb_proxy, 'https': self.thumb_proxy}
+        proxy_handler = urllib.request.ProxyHandler(proxies)
         redirect_handler = DumbRedirectHandler()
         opener = urllib.request.build_opener(redirect_handler, proxy_handler)
 
