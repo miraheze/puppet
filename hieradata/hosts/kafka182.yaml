@@ -1,5 +1,6 @@
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 base::dns::do_ipv4: true
+base::dns::do_ipv6: false
 base::dns::forward_use_internal: true
 
 zookeeper::id: '1'
