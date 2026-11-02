@@ -312,4 +312,5 @@ redis::heap: '5GB'
 redis::maxmemory_policy: volatile-lru
 
 base::dns::do_ipv4: true
+base::dns::do_ipv6: false
 base::dns::forward_use_internal: true
