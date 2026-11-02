@@ -16,9 +16,9 @@ role::cache::haproxy::lb_pools:
   mediawiki:
     port: 8150
     default: true
-  thumb:
-    port: 8151
-    url_regex: '^/w/thumb(_handler)?\.php'
+  # thumb:
+    # port: 8151
+    # url_regex: '^/w/thumb(_handler)?\.php'
   swift:
     port: 8152
     agent: false
