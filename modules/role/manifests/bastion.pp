@@ -1,5 +1,6 @@
 class role::bastion (
     Boolean $bots_udp_proxy = false,
+    Boolean $graylog_tcp_proxy = false,
     Boolean $webproxy_gateway = false,
 ) {
     include base
@@ -59,13 +60,13 @@ class role::bastion (
         }
     }
 
-    if $bots_udp_proxy {
-        $bots_proxy_query = @("PQL")
+    if $bots_udp_proxy or $graylog_tcp_proxy {
+        $public_proxy_query = @("PQL")
             resources { type = 'Class' and title = 'Base' }
             | PQL
         # Allow those that don't have private IPs at all
-        $bots_proxy_clients = join(
-            puppetdb::query_facts(['networking'], $bots_proxy_query).values
+        $public_proxy_clients = join(
+            puppetdb::query_facts(['networking'], $public_proxy_query).values
                 .filter |$node_facts| {
                     $ifaces = $node_facts['networking']['interfaces']
                     !$ifaces['vmbr1'] and !$ifaces['ens19']
@@ -81,18 +82,36 @@ class role::bastion (
                 .flatten.sort.unique,
             ' '
         )
+    }
 
+    if $bots_udp_proxy {
         systemd::service { 'bots-udp-proxy':
             ensure  => present,
             restart => true,
             content => epp('role/bastion/bots-udp-proxy.service.epp'),
         }
 
-        if $bots_proxy_clients != '' {
+        if $public_proxy_clients != '' {
             firewall::service { 'bastion-bots-udp':
                 proto  => 'udp',
                 port   => 5071,
-                srange => "(${bots_proxy_clients})",
+                srange => "(${public_proxy_clients})",
+            }
+        }
+    }
+
+    if $graylog_tcp_proxy {
+        systemd::service { 'graylog-tcp-proxy':
+            ensure  => present,
+            restart => true,
+            content => epp('role/bastion/graylog-tcp-proxy.service.epp'),
+        }
+
+        if $public_proxy_clients != '' {
+            firewall::service { 'bastion-graylog-tcp':
+                proto  => 'tcp',
+                port   => 12210,
+                srange => "(${public_proxy_clients})",
             }
         }
     }

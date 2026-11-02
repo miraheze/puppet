@@ -1,0 +1,15 @@
+[Unit]
+Description=TCP passthrough to graylog161 port 12210
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/socat TCP6-LISTEN:12210,fork,reuseaddr,keepalive,ipv6-v6only=0 TCP4:graylog161.fsslc.wtnet:12210,keepalive
+Restart=always
+RestartSec=2
+DynamicUser=yes
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+
+[Install]
+WantedBy=multi-user.target
