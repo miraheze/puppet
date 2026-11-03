@@ -3,6 +3,7 @@ class base::packages {
     stdlib::ensure_packages([
         'acct',
         'apt-transport-https',
+        'cloud-guest-utils',
         'coreutils',
         'debian-goodies',
         'dirmngr',
