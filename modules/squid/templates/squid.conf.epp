@@ -59,7 +59,7 @@ acl CONNECT method CONNECT
 
 # Puppet bootstrap
 acl puppet_port port 8140
-acl puppet_server dstdomain puppet181.wikitide.net
+acl puppet_server dstdomain puppet181.fsslc.wtnet
 
 # WikiTide
 acl wikitide src 2602:294:0:c8::/64

@@ -4,13 +4,13 @@ puppetserver: true
 puppetserver_java_opts: '-Xms4G -Xmx4G'
 puppetdb::jvm_opts: '-Xmx2G'
 puppetdb_enable: true
-puppetdb_hostname: puppet181.wikitide.net
+puppetdb_hostname: puppet181.fsslc.wtnet
 puppetdb::db_ssl: true
-puppetdb::db_rw_host: puppet181.wikitide.net
+puppetdb::db_rw_host: puppet181.fsslc.wtnet
 postgresql::ssl: true
 puppetdb::command_processing_threads: 16
-puppetserver_hostname: 'puppet181.wikitide.net'
-role::salt::minions::salt_master: 'puppet181.wikitide.net'
+puppetserver_hostname: 'puppet181.fsslc.wtnet'
+role::salt::minions::salt_master: 'puppet181.fsslc.wtnet'
 role::salt::minions::salt_master_key: true
 postgresql::master::locale: 'en_US.UTF-8'
 
