@@ -16,5 +16,9 @@ postgresql::master::locale: 'en_US.UTF-8'
 
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
+base::dns::do_ipv4: true
+base::dns::do_ipv6: false
+base::dns::forward_use_internal: true
+
 # No longer used
 ssl::web::ensure: 'absent'
