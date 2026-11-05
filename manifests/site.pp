@@ -107,7 +107,7 @@ node 'prometheus151.fsslc.wtnet' {
     include role::prometheus
 }
 
-node 'puppet181.wikitide.net' {
+node 'puppet181.fsslc.wtnet' {
     include base
     include role::postgresql
     include puppetdb::database
