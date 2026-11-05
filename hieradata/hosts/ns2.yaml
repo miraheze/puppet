@@ -2,6 +2,7 @@ base::bots_hostname: 'bast181.wikitide.net'
 base::ntp_servers:
   - 'time.cloudflare.com'
 base::syslog::syslog_host: [ 'bast181.wikitide.net:12210' ]
+base::puppet::http_proxy_host: 'bast181.wikitide.net'
 users::groups:
   - dns-admins
 dns: true
