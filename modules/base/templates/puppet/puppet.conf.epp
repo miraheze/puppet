@@ -1,10 +1,14 @@
-<%- | String $puppetserver_hostname | -%>
+<%- | String $puppetserver_hostname, Optional[String] $http_proxy_host = undef, Integer $http_proxy_port = 8080 | -%>
 [main]
 vardir = /opt/puppetlabs/server/data/puppetserver
 reports = store
 
 [agent]
 server = <%= $puppetserver_hostname %>
+<%- if $http_proxy_host { -%>
+http_proxy_host = <%= $http_proxy_host %>
+http_proxy_port = <%= $http_proxy_port %>
+<%- } -%>
 daemonize = false
 http_connect_timeout = 60
 http_read_timeout = 960
