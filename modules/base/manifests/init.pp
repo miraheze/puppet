@@ -2,7 +2,7 @@
 class base (
     String $bots_hostname = lookup('base::bots_hostname'),
     Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef}),
-    String $wget_no_proxy = lookup('base::wget_no_proxy', {'default_value' => 'localhost,127.0.0.1,::1,.wtnet,.wikitide.net'}),
+    String $wget_no_proxy = lookup('base::wget_no_proxy', {'default_value' => 'localhost,127.0.0.1,::1,.fsslc.wtnet'}),
 ) {
     include apt
     include base::packages
