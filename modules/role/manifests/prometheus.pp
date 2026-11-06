@@ -143,7 +143,8 @@ class role::prometheus {
     prometheus::class { 'nginx':
         dest   => '/etc/prometheus/targets/nginx.yaml',
         module => 'Prometheus::Exporter::Nginx',
-        port   => 9113
+        port   => 9113,
+        public => true,
     }
 
     $cache_haproxy_job = [
