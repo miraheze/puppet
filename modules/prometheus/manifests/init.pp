@@ -2,13 +2,19 @@
 class prometheus (
     Hash $global_extra = {},
     Array $scrape_extra = [],
-    Integer $port = 9100
+    Integer $port = 9100,
+    String $public_proxy_url = lookup('prometheus::public_proxy_url', {'default_value' => 'http://bastion.fsslc.wtnet:8080'}),
 ) {
 
     stdlib::ensure_packages('prometheus')
 
     file { '/etc/prometheus/targets':
         ensure => directory
+    }
+
+    file { '/etc/prometheus/targets/public':
+        ensure  => directory,
+        require => File['/etc/prometheus/targets'],
     }
 
     $global_default = {
@@ -38,7 +44,32 @@ class prometheus (
             ]
         }
     ]
-    $scrape_config = concat($scrape_default, $scrape_extra)
+    $base_jobs = concat($scrape_default, $scrape_extra)
+
+    # Hosts without a private IP are scraped through the proxy, so every
+    # job that reads target files gets a twin that reads the public ones.
+    $public_jobs = $base_jobs.filter |$job| { $job['file_sd_configs'] =~ Array }.map |$job| {
+        $relabel = $job['relabel_configs'] ? {
+            Array   => $job['relabel_configs'],
+            default => [],
+        }
+        $public_job = $job + {
+            'job_name'        => "${job['job_name']}_public",
+            'proxy_url'       => $public_proxy_url,
+            'relabel_configs' => $relabel + [{ 'target_label' => 'job', 'replacement' => $job['job_name'] }],
+            'file_sd_configs' => $job['file_sd_configs'].map |$sd| {
+                $sd_public = $sd + {
+                    'files' => $sd['files'].map |$file| {
+                        regsubst(regsubst($file, '^targets/', 'targets/public/'), '^/etc/prometheus/targets/', '/etc/prometheus/targets/public/')
+                    },
+                }
+                $sd_public
+            },
+        }
+        $public_job
+    }
+
+    $scrape_config = concat($base_jobs, $public_jobs)
 
     $common_config = {
         'global' => $global_config,
@@ -67,10 +98,21 @@ class prometheus (
               .unique()
               .sort()
 
+    $node_groups = vmlib::scrape_groups($servers, $port)
+    $node_internal_yaml = stdlib::to_yaml($node_groups['internal'])
+    $node_public_yaml = stdlib::to_yaml($node_groups['public'])
+
     file { '/etc/prometheus/targets/nodes.yaml':
         ensure  => present,
         mode    => '0444',
-        content => epp('prometheus/nodes.epp', { 'servers' => $servers, 'port' => $port })
+        content => "# File managed by puppet\n${node_internal_yaml}",
+    }
+
+    file { '/etc/prometheus/targets/public/nodes.yaml':
+        ensure  => present,
+        mode    => '0444',
+        content => "# File managed by puppet\n${node_public_yaml}",
+        require => File['/etc/prometheus/targets/public'],
     }
 
     systemd::service { 'prometheus':
