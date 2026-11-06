@@ -2,11 +2,19 @@ define monitoring::hosts (
     $ensure      = present,
     $contacts    = lookup('contactgroups', {'default_value' => [ 'infra' ]}),
 ) {
+    $public_ipv4 = $facts['networking']['interfaces']['ens18'] ? {
+        Hash    => $facts['networking']['interfaces']['ens18']['ip'],
+        default => $facts['networking']['ip'],
+    }
+
     if ( $facts['networking']['interfaces']['vmbr1'] ) {
         $address = $facts['networking']['interfaces']['vmbr1']['ip']
         $address6 = undef
     } elsif ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
         $address = $facts['networking']['interfaces']['ens19']['ip']
+        $address6 = undef
+    } elsif ( !$facts['networking']['interfaces']['ens19'] and $public_ipv4 =~ Stdlib::IP::Address::V4::Nosubnet ) {
+        $address = $public_ipv4
         $address6 = undef
     } elsif ( $facts['networking']['interfaces']['ens18'] ) {
         $address = undef
