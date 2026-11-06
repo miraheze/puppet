@@ -7,9 +7,23 @@ class base::monitoring {
         ensure => present,
     }
 
+    # Hosts without a private IP are checked through the bastion, so NRPE sees the bastion's address.
+    if $facts['networking']['interfaces']['vmbr1'] or $facts['networking']['interfaces']['ens19'] {
+        $bastion_hosts = []
+    } else {
+        $bastion_query = @("PQL")
+            resources { type = 'Class' and title = 'Role::Bastion' }
+            | PQL
+        $bastion_hosts = split(vmlib::generate_firewall_ip($bastion_query), ' ')
+            .filter |$ip| { $ip != '' and $ip !~ /^10\./ }
+            .sort.unique
+    }
+
+    $allowed_hosts = (['127.0.0.1', '2602:294:0:b12::110', '10.0.18.109'] + $bastion_hosts).join(',')
+
     file { '/etc/nagios/nrpe.cfg':
         ensure  => present,
-        source  => 'puppet:///modules/base/icinga/nrpe.cfg',
+        content => epp('base/icinga/nrpe.cfg.epp', { 'allowed_hosts' => $allowed_hosts }),
         require => Package['nagios-nrpe-server'],
         notify  => Service['nagios-nrpe-server'],
     }
