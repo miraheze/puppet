@@ -1,0 +1,13 @@
+<%- | String $gateway, Array[String] $ips | -%>
+[Unit]
+Description=Routes to public only hosts through the bastion
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/monitoring-public-hosts-routes <%= $gateway %> <%= $ips.join(' ') %>
+
+[Install]
+WantedBy=multi-user.target
