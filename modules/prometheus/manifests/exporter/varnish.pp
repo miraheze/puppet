@@ -12,7 +12,7 @@ class prometheus::exporter::varnish (
     $subquery = @("PQL")
     resources { type = 'Class' and title = 'Role::Prometheus' }
     | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
+    $firewall_rules_str = vmlib::generate_firewall_ip_public($subquery, $facts['networking'])
     firewall::service { 'prometheus varnish_exporter':
         proto      => 'tcp',
         port_range => [Integer($listen_port), Integer($listen_port)],
