@@ -60,6 +60,10 @@
 # [*icingabot_api_password*]
 #   Password for the read only API user used by the bots server Icinga bot.
 #
+# [*public_gateway*]
+#   Optional name of the bastion that forwards checks to hosts without a
+#   private IP. If undef, no routes to those hosts are added.
+#
 class role::icinga2 (
     String           $icinga2_db_host             = lookup('icinga_ido_db_host', {'default_value' => 'db193.fsslc.wtnet'}),
     String           $icinga2_db_name             = lookup('icinga_ido_db_name', {'default_value' => 'icinga'}),
@@ -80,6 +84,7 @@ class role::icinga2 (
     Optional[String] $icinga2_api_bind_host       = lookup('icinga2_api_bind_host', {'default_value' => undef}),
     String           $icingaweb2_api_password     = lookup('passwords::icingaweb2_api_password'),
     String           $icingabot_api_password      = lookup('passwords::icinga2::icingabot'),
+    Optional[String] $public_gateway              = lookup('role::icinga2::public_gateway', {'default_value' => undef}),
 ) {
     # include prometheus::exporter::cloudflare
 
@@ -141,6 +146,12 @@ class role::icinga2 (
             proto   => 'tcp',
             port    => 443,
             notrack => true,
+        }
+    }
+
+    if $public_gateway {
+        class { 'monitoring::public_hosts':
+            gateway => $public_gateway,
         }
     }
 
