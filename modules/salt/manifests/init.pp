@@ -1,4 +1,6 @@
-class salt {
+class salt (
+    String $ssh_proxy = lookup('salt::ssh_proxy', {'default_value' => 'bastion.fsslc.wtnet:8080'}),
+) {
     apt::source { 'salt_apt':
         location => 'https://packages.broadcom.com/artifactory/saltproject-deb',
         release  => 'stable',
@@ -35,8 +37,39 @@ class salt {
         }
     | PQL
     $host = puppetdb_query($pdb_query).map |$x| { $x['certname'] }
+    $node_facts = puppetdb::query_facts(['networking'], 'nodes { deactivated is null }')
+
+    $targets = $host.reduce({}) |$memo, $certname| {
+        $net = $node_facts[$certname] ? {
+            Hash    => $node_facts[$certname]['networking'],
+            default => {},
+        }
+        $ifaces = $net['interfaces'] ? {
+            Hash    => $net['interfaces'],
+            default => {},
+        }
+
+        if $ifaces['vmbr1'] or $ifaces['ens19'] {
+            if $certname =~ /\.fsslc\.wtnet$/ {
+                $address = $certname
+                $ssh_options = []
+            } else {
+                $address = "${net['hostname']}.fsslc.wtnet"
+                $ssh_options = ["HostKeyAlias=${certname}"]
+            }
+        } elsif $ifaces.empty {
+            $address = $certname
+            $ssh_options = []
+        } else {
+            $address = $certname
+            $ssh_options = ["ProxyCommand='nc -X connect -x ${ssh_proxy} %h %p'"]
+        }
+
+        $memo + { $certname => { 'host' => $address, 'ssh_options' => $ssh_options } }
+    }
+
     file { '/etc/salt/roster':
-        content => epp('salt/roster.epp', { 'host' => $host }),
+        content => epp('salt/roster.epp', { 'targets' => $targets }),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',

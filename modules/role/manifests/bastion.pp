@@ -2,6 +2,9 @@ class role::bastion (
     Boolean $bots_udp_proxy = false,
     Boolean $graylog_tcp_proxy = false,
     Boolean $webproxy_gateway = false,
+    Boolean $monitoring_gateway = false,
+    Array[Stdlib::Port] $monitoring_tcp_ports = [22, 53, 80, 443, 5666],
+    Array[Stdlib::Port] $monitoring_udp_ports = [53],
 ) {
     include base
     include squid
@@ -112,6 +115,47 @@ class role::bastion (
                 proto  => 'tcp',
                 port   => 12210,
                 srange => "(${public_proxy_clients})",
+            }
+        }
+    }
+
+    if $monitoring_gateway {
+        $monitoring_query = @("PQL")
+            resources { type = 'Class' and title = 'Role::Icinga2' }
+            | PQL
+        $monitoring_sources = split(vmlib::generate_firewall_ip($monitoring_query), ' ')
+            .filter |$ip| { $ip =~ /^10\./ }
+            .sort.unique
+        $monitoring_targets = vmlib::public_only_ipv4()
+
+        if !$monitoring_sources.empty and !$monitoring_targets.empty {
+            sysctl::parameters { 'bastion_ip_forward':
+                values => { 'net.ipv4.ip_forward' => 1 },
+            }
+
+            $monitoring_source_set = $monitoring_sources.join(', ')
+            $monitoring_target_set = $monitoring_targets.join(', ')
+            $monitoring_tcp_set = $monitoring_tcp_ports.join(', ')
+            $monitoring_udp_set = $monitoring_udp_ports.join(', ')
+
+            nftables::file { 'monitoring-gateway':
+                order   => 200,
+                content => @("RULES")
+                    table ip monitoring_gateway {
+                        chain forward {
+                            type filter hook forward priority 0; policy drop;
+                            ct state established,related accept
+                            ip saddr { ${monitoring_source_set} } ip daddr { ${monitoring_target_set} } tcp dport { ${monitoring_tcp_set} } ct state new accept
+                            ip saddr { ${monitoring_source_set} } ip daddr { ${monitoring_target_set} } udp dport { ${monitoring_udp_set} } ct state new accept
+                            ip saddr { ${monitoring_source_set} } ip daddr { ${monitoring_target_set} } icmp type echo-request accept
+                        }
+
+                        chain postrouting {
+                            type nat hook postrouting priority 100;
+                            ip saddr { ${monitoring_source_set} } ip daddr { ${monitoring_target_set} } masquerade
+                        }
+                    }
+                    | RULES
             }
         }
     }

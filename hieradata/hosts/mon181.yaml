@@ -3,6 +3,8 @@ icingaweb_db_host: 'db193.fsslc.wtnet'
 
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
+role::icinga2::public_gateway: 'bast181.fsslc.wtnet'
+
 base::dns::do_ipv4: true
 base::dns::do_ipv6: false
 base::dns::forward_use_internal: true
