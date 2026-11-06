@@ -46,9 +46,9 @@ class prometheus (
     ]
     $base_jobs = concat($scrape_default, $scrape_extra)
 
-    # Hosts without a private IP are scraped through the proxy, so every
-    # job that reads target files gets a twin that reads the public ones.
-    $public_jobs = $base_jobs.filter |$job| { $job['file_sd_configs'] =~ Array }.map |$job| {
+    # Only these jobs run on hosts without a private IP.
+    $public_job_names = ['node', 'nginx']
+    $public_jobs = $base_jobs.filter |$job| { $job['job_name'] in $public_job_names }.map |$job| {
         $relabel = $job['relabel_configs'] ? {
             Array   => $job['relabel_configs'],
             default => [],
