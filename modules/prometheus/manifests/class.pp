@@ -2,6 +2,7 @@ define prometheus::class (
     String $dest,
     String $module,
     Integer $port,
+    String $public_dest = regsubst($dest, '^(.*)/([^/]+)$', '\\1/public/\\2'),
 ) {
     $pdb_query = @("PQL")
         nodes[certname] {
@@ -15,9 +16,19 @@ define prometheus::class (
         .unique()
         .sort()
 
+    $groups = vmlib::scrape_groups($servers, $port)
+    $internal_yaml = stdlib::to_yaml($groups['internal'])
+    $public_yaml = stdlib::to_yaml($groups['public'])
+
     file { $dest:
         ensure  => present,
         mode    => '0444',
-        content => epp('prometheus/nodes.epp', { 'servers' => $servers, 'port' => $port })
+        content => "# File managed by puppet\n${internal_yaml}",
+    }
+
+    file { $public_dest:
+        ensure  => present,
+        mode    => '0444',
+        content => "# File managed by puppet\n${public_yaml}",
     }
 }
