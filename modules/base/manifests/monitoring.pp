@@ -19,7 +19,7 @@ class base::monitoring {
             .sort.unique
     }
 
-    $allowed_hosts = (['127.0.0.1', '2602:294:0:b12::110', '10.0.18.109'] + $bastion_hosts).join(',')
+    $allowed_hosts = (['127.0.0.1', '10.0.18.109'] + $bastion_hosts).join(',')
 
     file { '/etc/nagios/nrpe.cfg':
         ensure  => present,
