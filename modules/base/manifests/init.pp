@@ -2,6 +2,7 @@
 class base (
     String $bots_hostname = lookup('base::bots_hostname'),
     Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef}),
+    String $wget_no_proxy = lookup('base::wget_no_proxy', {'default_value' => 'localhost,127.0.0.1,::1,.wtnet,.wikitide.net'}),
 ) {
     include apt
     include base::packages
@@ -63,13 +64,24 @@ class base (
             content => epp('base/git/gitconfig.epp', { 'http_proxy' => $http_proxy }),
         }
 
-        $apt_proxy = regsubst($http_proxy, '/+$', '')
+        $proxy_url = regsubst($http_proxy, '/+$', '')
         apt::setting { 'conf-http-proxy':
             priority => '01',
-            content  => epp('base/apt/proxy.epp', { 'http_proxy' => $apt_proxy }),
+            content  => epp('base/apt/proxy.epp', { 'http_proxy' => $proxy_url }),
         }
 
         Apt::Setting['conf-http-proxy'] -> Apt::Source <| |>
+
+        file { '/etc/wgetrc':
+            ensure  => present,
+            owner   => 'root',
+            group   => 'root',
+            mode    => '0644',
+            content => epp('base/wget/wgetrc.epp', {
+                'http_proxy' => $proxy_url,
+                'no_proxy'   => $wget_no_proxy,
+            }),
+        }
     }
 
     class { 'apt::backports':
