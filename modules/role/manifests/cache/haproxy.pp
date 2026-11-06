@@ -251,7 +251,7 @@ class role::cache::haproxy(
     $subquery = @("PQL")
     resources { type = 'Class' and title = 'Prometheus' }
     | PQL
-    $firewall_str = vmlib::generate_firewall_ip($subquery)
+    $firewall_str = vmlib::generate_firewall_ip_public($subquery, $facts['networking'])
     firewall::service { "prometheus_${prometheus_port}":
         proto   => 'tcp',
         port    => $prometheus_port,
