@@ -1,4 +1,4 @@
-<%- | Array[String] $host | -%>
+<%- | Hash[String, Hash] $targets | -%>
 # Sample salt-ssh config file
 #web1:
 #  host: 192.168.42.1 # The IP addr or DNS hostname
@@ -8,10 +8,16 @@
 #web2:
 #  host: 192.168.42.2
 
-<%- $host.sort.each |$h| { -%>
+<%- $targets.keys.sort.each |$h| { -%>
 <%= $h %>:
-  host: <%= $h %>
+  host: <%= $targets[$h]['host'] %>
   user: salt-user
   priv: /home/salt-user/.ssh/id_ed25519
   sudo: True         # Whether to sudo to root, not enabled by default
+<%- unless $targets[$h]['ssh_options'].empty { -%>
+  ssh_options:
+<%- $targets[$h]['ssh_options'].each |$option| { -%>
+    - "<%= $option %>"
+<%- } -%>
+<%- } -%>
 <%- } -%>
