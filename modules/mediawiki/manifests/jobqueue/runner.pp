@@ -114,6 +114,12 @@ class mediawiki::jobqueue::runner (
                 source => 'puppet:///modules/mediawiki/bin/backupwikis',
             }
 
+            file { '/usr/local/bin/backupwikis.py':
+                ensure => present,
+                mode   => '0755',
+                source => 'puppet:///modules/mediawiki/bin/backupwikis.py',
+            }
+
             file { '/opt/backups':
                 ensure => directory,
                 owner  => 'www-data',
