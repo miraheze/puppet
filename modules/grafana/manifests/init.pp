@@ -2,6 +2,8 @@
 class grafana (
     String $mail_password = lookup('passwords::mail::noreply'),
     String $ldap_password = lookup('passwords::ldap_password'),
+    Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef}),
+    String $no_proxy = lookup('grafana::no_proxy', {'default_value' => 'localhost,127.0.0.1,::1,10.0.0.0/8,.fsslc.wtnet,ldap.wikitide.net'}),
 ) {
 
     include apt
@@ -46,6 +48,25 @@ class grafana (
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
+        notify  => Service['grafana-server'],
+        require => Package['grafana'],
+    }
+
+    $proxy_ensure = $http_proxy ? {
+        undef   => 'absent',
+        default => 'present',
+    }
+
+    systemd::dropin_file { 'proxy.conf':
+        ensure  => $proxy_ensure,
+        unit    => 'grafana-server.service',
+        content => join([
+            '[Service]',
+            "Environment=\"HTTP_PROXY=${http_proxy}\"",
+            "Environment=\"HTTPS_PROXY=${http_proxy}\"",
+            "Environment=\"NO_PROXY=${no_proxy}\"",
+            '',
+        ], "\n"),
         notify  => Service['grafana-server'],
         require => Package['grafana'],
     }
