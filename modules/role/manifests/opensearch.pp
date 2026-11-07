@@ -71,7 +71,7 @@ class role::opensearch (
         command => sprintf($plugin_sync, 'remove'),
         onlyif  => sprintf($plugin_sync, 'check'),
         path    => ['/usr/bin', '/bin'],
-        require => [Package['opensearch'], File['/usr/local/bin/opensearch-plugin-sync']],
+        require => File['/usr/local/bin/opensearch-plugin-sync'],
     }
 
     Exec['remove outdated opensearch plugins'] -> Opensearch::Plugin <| |>
