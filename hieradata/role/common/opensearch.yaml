@@ -1,4 +1,4 @@
 base::dns::do_ipv4: true
 base::dns::do_ipv6: false
 base::dns::forward_use_internal: true
-role::opensearch::version: '2.19.4'
+role::opensearch::version: '2.19.7'
