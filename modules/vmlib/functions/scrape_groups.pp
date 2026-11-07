@@ -56,13 +56,13 @@ function vmlib::scrape_groups (
     }
 
     $plain_groups = $plain.empty ? {
-        true    => [],
+        true    => $aliased.empty ? {
+            true    => [{ 'targets' => [] }],
+            default => [],
+        },
         default => [{ 'targets' => $plain }],
     }
-    $public_groups = $public.empty ? {
-        true    => [],
-        default => [{ 'targets' => $public }],
-    }
+    $public_groups = [{ 'targets' => $public }]
 
     $result = {
         'internal' => $plain_groups + $aliased,
