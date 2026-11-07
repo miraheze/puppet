@@ -3,7 +3,7 @@ class grafana (
     String $mail_password = lookup('passwords::mail::noreply'),
     String $ldap_password = lookup('passwords::ldap_password'),
     Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef}),
-    String $no_proxy = lookup('grafana::no_proxy', {'default_value' => 'localhost,127.0.0.1,::1,10.0.0.0/8,.fsslc.wtnet,ldap.wikitide.net'}),
+    String $no_proxy = lookup('grafana::no_proxy', {'default_value' => 'localhost,127.0.0.1,::1,10.0.0.0/8,.fsslc.wtnet,ldap.wikitide.net,opensearch.wikitide.net'}),
 ) {
 
     include apt
