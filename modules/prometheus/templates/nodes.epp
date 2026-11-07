@@ -1,6 +1,3 @@
-<%- | Array[String] $servers, Integer $port | -%>
-<%- $hosts = [{
-  'targets' => $servers.map |$s| { "${s}:${port}" }
-}] -%>
+<%- | Array $groups | -%>
 # File managed by puppet
-<%= stdlib::to_yaml($hosts) %>
+<%= stdlib::to_yaml($groups) %>
