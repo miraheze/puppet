@@ -99,19 +99,17 @@ class prometheus (
               .sort()
 
     $node_groups = vmlib::scrape_groups($servers, $port)
-    $node_internal_yaml = stdlib::to_yaml($node_groups['internal'])
-    $node_public_yaml = stdlib::to_yaml($node_groups['public'])
 
     file { '/etc/prometheus/targets/nodes.yaml':
         ensure  => present,
         mode    => '0444',
-        content => "# File managed by puppet\n${node_internal_yaml}",
+        content => epp('prometheus/nodes.epp', { 'groups' => $node_groups['internal'] }),
     }
 
     file { '/etc/prometheus/targets/public/nodes.yaml':
         ensure  => present,
         mode    => '0444',
-        content => "# File managed by puppet\n${node_public_yaml}",
+        content => epp('prometheus/nodes.epp', { 'groups' => $node_groups['public'] }),
         require => File['/etc/prometheus/targets/public'],
     }
 
