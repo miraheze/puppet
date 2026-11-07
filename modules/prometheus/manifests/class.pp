@@ -18,21 +18,18 @@ define prometheus::class (
         .sort()
 
     $groups = vmlib::scrape_groups($servers, $port)
-    $internal_yaml = stdlib::to_yaml($groups['internal'])
 
     file { $dest:
         ensure  => present,
         mode    => '0444',
-        content => "# File managed by puppet\n${internal_yaml}",
+        content => epp('prometheus/nodes.epp', { 'groups' => $groups['internal'] }),
     }
 
     if $public {
-        $public_yaml = stdlib::to_yaml($groups['public'])
-
         file { $public_dest:
             ensure  => present,
             mode    => '0444',
-            content => "# File managed by puppet\n${public_yaml}",
+            content => epp('prometheus/nodes.epp', { 'groups' => $groups['public'] }),
         }
     }
 }
