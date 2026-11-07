@@ -52,7 +52,7 @@
   <!-- <policy domain="resource" name="area" value="1GB" /> -->
   <!-- <policy domain="resource" name="disk" value="16EB" /> -->
   <!-- <policy domain="resource" name="file" value="768" /> -->
-  <!-- <policy domain="resource" name="thread" value="4" /> -->
+  <policy domain="resource" name="thread" value="1" />
   <!-- <policy domain="resource" name="throttle" value="0" /> -->
   <!-- <policy domain="resource" name="time" value="3600" /> -->
   <policy domain="coder" rights="none" pattern="EPHEMERAL" />

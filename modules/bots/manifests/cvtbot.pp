@@ -3,16 +3,8 @@ class bots::cvtbot {
     $install_path = '/srv/cvtbot'
     $dotnet_version = '10.0'
 
-    $password = lookup('passwords::irc::cvtbot')
-
+    $password   = lookup('passwords::irc::cvtbot')
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
-    if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01bots']) {
-        file { '/etc/apt/apt.conf.d/01bots':
-            ensure  => present,
-            content => epp('bots/aptproxy.epp', { 'http_proxy' => $http_proxy }),
-            before  => Package['packages-microsoft-prod'],
-        }
-    }
 
     if !defined(Package['packages-microsoft-prod']) {
         file { '/opt/packages-microsoft-prod.deb':
@@ -131,7 +123,10 @@ class bots::cvtbot {
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
-        content => epp('bots/cvtbot/CVTBot.ini.epp', { 'password' => $password }),
+        content => epp('bots/cvtbot/CVTBot.ini.epp', {
+            'password'   => $password,
+            'http_proxy' => $http_proxy,
+        }),
         require => Git::Clone['CVTBot'],
         notify  => Service['cvtbot'],
     }

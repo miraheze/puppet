@@ -1,17 +1,20 @@
 # class base::dns
 class base::dns (
-    Array[String] $query_local_address = [],
-    Boolean       $do_ipv4             = false,
-    Boolean       $do_ipv6             = false,
-    Boolean       $forward_use_internal,
-    Boolean       $recurse             = true,
-    Array[String] $recursor_addresses  = [],
-    Array[String] $resolvers           = [],
-    Array[String] $listen_addresses    = ['127.0.0.1', '::1'],
-    Array[String] $allow_from          = ['127.0.0.0/8', '10.0.0.0/8', '::1/128'],
-    Integer       $listen_port         = 53,
-    String        $monitor_address     = '127.0.0.1',
-    Array[String] $forward_zone_names  = ['wtnet', '10.in-addr.arpa', 'wikitide.net'],
+    Array[String]    $query_local_address = [],
+    Boolean          $do_ipv4             = false,
+    Boolean          $do_ipv6             = false,
+    Boolean          $forward_use_internal,
+    Boolean          $recurse             = true,
+    Array[String]    $recursor_addresses  = [],
+    Array[String]    $resolvers           = [],
+    Array[String]    $listen_addresses    = ['127.0.0.1', '::1'],
+    Array[String]    $allow_from          = ['127.0.0.0/8', '10.0.0.0/8', '::1/128'],
+    Integer          $listen_port         = 53,
+    String           $monitor_address     = '127.0.0.1',
+    Array[String]    $forward_zone_names  = ['wtnet', '10.in-addr.arpa', 'wikitide.net'],
+    Boolean          $smtp_relay_override = true,
+    String           $smtp_relay_bastion  = 'bastion.fsslc.wtnet',
+    Optional[String] $smtp_relay_ip       = undef,
 ) {
     stdlib::ensure_packages('pdns-recursor')
 
@@ -47,6 +50,27 @@ class base::dns (
         group   => 'pdns',
         notify  => Service['pdns-recursor'],
         content => template('base/dns/recursor.yml.erb'),
+    }
+
+    # Answers smtp-relay.gmail.com locally with the bastion address. Never set on the bastion itself.
+    if $smtp_relay_override {
+        $smtp_relay_address = $smtp_relay_ip ? {
+            undef   => ipresolve($smtp_relay_bastion, 4),
+            default => $smtp_relay_ip,
+        }
+
+        file { '/etc/powerdns/smtp-relay.gmail.com.zone':
+            mode    => '0444',
+            owner   => 'pdns',
+            group   => 'pdns',
+            notify  => Service['pdns-recursor'],
+            content => epp('base/dns/smtp-relay.zone.epp', { 'address' => $smtp_relay_address }),
+        }
+    } else {
+        file { '/etc/powerdns/smtp-relay.gmail.com.zone':
+            ensure => absent,
+            notify => Service['pdns-recursor'],
+        }
     }
 
     systemd::service { 'pdns-recursor':

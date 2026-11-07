@@ -3,7 +3,7 @@ class role::speedscope (
   String $bind_host = '127.0.0.1',
   Integer $port = 3000,
   String $image = 'ghcr.io/weirdgloop/speedscope-service',
-  String $version = 'main@sha256:c9b9177a6f1f6eb0b4da02226239d1752e328897c9dd6d7b969a10f9a368fdad',
+  String $version = 'main@sha256:3d02b4ec516754eabadf2291d2ac4093212dae7550fabb35fb670d96ab62bcf2',
 ) {
   ssl::wildcard { 'speedscope wildcard': }
 

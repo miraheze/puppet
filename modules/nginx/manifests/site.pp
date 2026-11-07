@@ -62,13 +62,7 @@ define nginx::site(
     }
 
     if !defined(Monitoring::Services['HTTPS']) {
-        if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
-            $address = $facts['networking']['interfaces']['ens19']['ip']
-        } elsif ( $facts['networking']['interfaces']['ens18'] ) {
-            $address = $facts['networking']['interfaces']['ens18']['ip6']
-        } else {
-            $address = $facts['networking']['ip6']
-        }
+        $address = vmlib::monitoring_address($facts['networking'])
         monitoring::services { 'HTTPS':
             ensure        => $monitor_service,
             check_command => 'check_curl',

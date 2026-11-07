@@ -8,77 +8,56 @@
 vcl 4.1;
 
 # Import some modules used
-import directors;
 import std;
 import vsthrottle;
 import xkey;
 
-# MediaWiki configuration
-probe mwhealth {
-	.request = "GET /check HTTP/1.1"
-		"Host: health.wikitide.net"
-		"User-Agent: Varnish healthcheck"
-		"Connection: close";
-	# Check each <%= @interval_check %>
+# Backend configuration
+probe lbhealth {
+	.url = "/__lb_status";
 	.interval = <%= @interval_check %>;
-	# <%= @interval_timeout %> should be our upper limit for responding to a fair light web request
 	.timeout = <%= @interval_timeout %>;
-	# At least 4 out of 5 checks must be successful
-	# to mark the backend as healthy
 	.window = 5;
-	.threshold = 4;
-	.initial = 4;
-	.expected_response = 204;
+	.threshold = 3;
+	.initial = 3;
+	.expected_response = 200;
 }
 
+<%- @lb_pools.each_pair do | pool_name, pool | -%>
+backend lb_<%= pool_name %> {
+	.host = "127.0.0.1";
+	.port = "<%= pool['port'] %>";
+	.probe = lbhealth;
+	.connect_timeout = 3s;
+	.first_byte_timeout = 65s;
+	.between_bytes_timeout = 31s;
+	.max_connections = 30000;
+}
+
+<%- end -%>
 <%- @backends.each_pair do | name, property | -%>
+<%- unless property['lb_pool'] -%>
 backend <%= name %> {
 	.host = "127.0.0.1";
 	.port = "<%= property['port'] %>";
-<%- if property['probe'] -%>
-	.probe = <%= property['probe'] %>;
-<%- end -%>
-        .connect_timeout = 3s;
-        .first_byte_timeout = 65s;
-        .between_bytes_timeout = 31s;
-        .max_connections = 5000;
+	.connect_timeout = 3s;
+	.first_byte_timeout = 65s;
+	.between_bytes_timeout = 31s;
+	.max_connections = 5000;
 }
 
+<%- end -%>
 <%- if property['xdebug'] -%>
 backend <%= name %>_test {
 	.host = "127.0.0.1";
 	.port = "<%= property['port'] %>";
-        .connect_timeout = 3s;
-        .first_byte_timeout = 65s;
-        .between_bytes_timeout = 31s;
-        .max_connections = 5000;
+	.connect_timeout = 3s;
+	.first_byte_timeout = 65s;
+	.between_bytes_timeout = 31s;
+	.max_connections = 5000;
 }
 <%- end -%>
 <%- end -%>
-
-# Initialize vcl
-sub vcl_init {
-	new mediawiki = directors.random();
-<%- @backends.each_pair do | name, property | -%>
-<%- if property['pool'] -%>
-	mediawiki.add_backend(<%= name %>, 100);
-<%- end -%>
-<%- end -%>
-
-	new swift = directors.random();
-<%- @backends.each_pair do | name, property | -%>
-<%- if property['swiftpool'] -%>
-	swift.add_backend(<%= name %>, 100);
-<%- end -%>
-<%- end -%>
-
-	new matomo = directors.random();
-<%- @backends.each_pair do | name, property | -%>
-<%- if property['matomopool'] -%>
-	matomo.add_backend(<%= name %>, 100);
-<%- end -%>
-<%- end -%>
-}
 
 acl local_host {
 	"127.0.0.1";
@@ -100,6 +79,9 @@ acl purge {
 	# Internal ips
 	"10.0.0.0/8";
 
+	# IPv4
+	"38.46.223.200/29";
+
 	# IPv6
 	"2602:294:0:c8::/64";
 	"2602:294:0:b13::/64";
@@ -113,6 +95,9 @@ acl purge {
 acl wikitide_nets {
 	# Internal ips
 	"10.0.0.0/8";
+
+	# IPv4
+	"38.46.223.200/29";
 
 	# IPv6
 	"2602:294:0:c8::/64";
@@ -273,7 +258,7 @@ sub mw_request {
 	# Assigning a backend
 	if (req.http.X-WikiTide-Debug-Access-Key == "<%= @debug_access_key %>" || std.ip(req.http.X-Real-IP, "0.0.0.0") ~ wikitide_nets) {
 <%- @backends.each_pair do | name, property | -%>
-<%- if not (property['pool'] or property['swiftpool'] or property['matomopool']) -%>
+<%- unless property['lb_pool'] -%>
 		if (req.http.X-WikiTide-Debug == "unused") {
 			set req.backend_hint = <%= name %>;
 		}
@@ -281,7 +266,7 @@ sub mw_request {
 <%- if property['xdebug'] && (name.start_with?('mw') || name.start_with?('test')) -%>
 		if (req.http.X-WikiTide-Debug == "<%= name %>") {
 			if (req.http.Host == "static.wikitide.net") {
-				set req.backend_hint = swift.backend();
+				set req.backend_hint = lb_swift;
 			} else {
 				set req.backend_hint = <%= name %>_test;
 			}
@@ -293,7 +278,18 @@ sub mw_request {
 		unset req.http.X-WikiTide-Debug;
 	}
 
-	set req.backend_hint = mediawiki.backend();
+<%- default_pool = @lb_pools.find { |_name, pool| pool['default'] }.first -%>
+	set req.backend_hint = lb_<%= default_pool %>;
+<%- @lb_pools.each_pair do | pool_name, pool | -%>
+<%- conditions = [] -%>
+<%- conditions << "req.url ~ \"#{pool['url_regex']}\"" if pool['url_regex'] -%>
+<%- conditions << "req.http.Host ~ \"#{pool['host_regex']}\"" if pool['host_regex'] -%>
+<%- unless pool['default'] || conditions.empty? -%>
+	if (<%= conditions.join(' && ') %>) {
+		set req.backend_hint = lb_<%= pool_name %>;
+	}
+<%- end -%>
+<%- end -%>
 
 	# Rewrite hostname to static.wikitide.net for caching
 	if (req.url ~ "^/static/") {
@@ -302,7 +298,7 @@ sub mw_request {
 
 	# Numerous static.wikitide.net specific code
 	if (req.http.Host == "static.wikitide.net") {
-		set req.backend_hint = swift.backend();
+		set req.backend_hint = lb_swift;
 
 		unset req.http.X-Range;
 
@@ -465,9 +461,14 @@ sub vcl_recv {
 		return (pass);
 	}
 
+    if (req.http.Host ~ "^(.*\.)?rhinosf1\.com") {
+		set req.backend_hint = test151;
+		return (pass);
+	}
+
 	# Only cache js files from Matomo
 	if (req.http.Host == "analytics.wikitide.net") {
-		set req.backend_hint = matomo.backend();
+		set req.backend_hint = lb_matomo;
 
 		# Yes, we only care about this file
 		if (req.url ~ "^/matomo.js") {

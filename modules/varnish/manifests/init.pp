@@ -4,38 +4,15 @@ class varnish (
     String $cache_file_size = '22G',
     Integer[1] $thread_pool_max = lookup('varnish::thread_pool_max'),
     Integer $transient_gb = lookup('varnish::transient_storage'),
-    Hash $backends = lookup('varnish::backends'),
-    Boolean $use_nginx = true,
+    Hash $backends,
+    Haproxy::Lbpools $lb_pools,
 ) {
-    if $use_nginx {
-        include varnish::nginx
-    }
     include prometheus::exporter::varnish
 
     stdlib::ensure_packages([
         'varnish',
         'varnish-modules',
-        'python3-flask',
-        'python3-pyotp',
-        'gunicorn'
     ])
-
-    file { '/opt/varnish-depool':
-        ensure => directory,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0700',
-    }
-
-    file { '/opt/varnish-depool/varnish-depool.py':
-        ensure  => present,
-        source  => 'puppet:///modules/varnish/varnish-depool.py',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0700',
-        notify  => Service['varnish-depool'],
-        require => File['/opt/varnish-depool']
-    }
 
     $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
     $reload_vcl_opts = "-f /etc/varnish/default.vcl -d ${vcl_reload_delay_s} -a"
@@ -70,8 +47,8 @@ class varnish (
     $csp = loadyaml("${module_path}/data/csp.yaml")
     $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
     $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
-    $interval_check = lookup('varnish::interval-check')
-    $interval_timeout = lookup('varnish::interval-timeout')
+    $interval_check = lookup('varnish::interval_check')
+    $interval_timeout = lookup('varnish::interval_timeout')
 
     $debug_access_key = lookup('passwords::varnish::debug_access_key')
 
@@ -117,13 +94,6 @@ class varnish (
         require => Service['varnish'],
     }
 
-    $varnish_totp_secret = lookup('passwords::varnish::varnish_totp_secret')
-    systemd::service { 'varnish-depool':
-        ensure  => present,
-        content => systemd_template('varnish-depool', { 'varnish_totp_secret' => $varnish_totp_secret }),
-        restart => true,
-    }
-
     service { 'varnishncsa':
         ensure  => 'stopped',
         require => Package['varnish'],
@@ -162,65 +132,13 @@ class varnish (
         mode   => '0755',
     }
 
-    file { '/usr/lib/nagios/plugins/check_nginx_errorrate':
-        ensure => present,
-        source => 'puppet:///modules/varnish/icinga/check_nginx_errorrate',
-        mode   => '0755',
-    }
-
     # This script needs root access to read /etc/varnish/secret
     sudo::user { 'nrpe_sudo_checkvarnishbackends':
         user       => 'nagios',
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_varnishbackends' ],
     }
 
-    # FIXME: Can't read access files without root
-    sudo::user { 'nrpe_sudo_checknginxerrorrate':
-        user       => 'nagios',
-        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_nginx_errorrate' ],
-    }
-
     monitoring::nrpe { 'Varnish Backends':
         command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_varnishbackends'
-    }
-
-    if $use_nginx {
-        monitoring::nrpe { 'HTTP 4xx/5xx ERROR Rate':
-            command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_nginx_errorrate'
-        }
-    }
-
-    $backends.each | $name, $property | {
-        monitoring::nrpe { "Nginx Backend for ${name}":
-            command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${property['port']}",
-        }
-    }
-
-    $subquery = @("PQL")
-    (resources { type = 'Class' and title = 'Role::Icinga2' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_task' })
-    | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    firewall::service { "${facts['networking']['fqdn']} varnish depool service port 5001":
-        proto  => 'tcp',
-        port   => 5001,
-        srange => "(${firewall_rules_str})",
-    }
-
-    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
-        $address = $facts['networking']['interfaces']['ens19']['ip']
-    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
-        $address = $facts['networking']['interfaces']['ens18']['ip6']
-    } else {
-        $address = $facts['networking']['ip6']
-    }
-
-    monitoring::services { 'varnish-depool service':
-        check_command => 'tcp',
-        vars          => {
-            tcp_address => $address,
-            tcp_port    => '5001',
-        },
     }
 }

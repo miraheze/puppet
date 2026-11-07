@@ -8,15 +8,6 @@ class speedscope (
   String $version,
 ) {
   $http_proxy = lookup('http_proxy', {'default_value' => undef})
-  if $http_proxy {
-    file { '/etc/apt/apt.conf.d/speedscope':
-      ensure  => present,
-      content => epp('speedscope/aptproxy.epp', {
-        'http_proxy' => $http_proxy,
-      }),
-    }
-  }
-
   file { '/srv/speedscope':
     ensure => directory,
   }

@@ -1,0 +1,5 @@
+<%- | String $address | -%>
+$TTL 300
+@ IN SOA localhost. hostmaster.wikitide.net. 1 3600 600 86400 300
+@ IN NS localhost.
+@ IN A <%= $address %>

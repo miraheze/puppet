@@ -1,5 +1,9 @@
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
+base::dns::do_ipv4: true
+base::dns::do_ipv6: false
+base::dns::forward_use_internal: true
+
 php::php_version: '8.4'
 php::fpm::fpm_workers_multiplier: 6.0
 php::fpm::fpm_min_child: 3

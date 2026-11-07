@@ -8,3 +8,12 @@ base::ntp_servers:
   - '3.debian.pool.ntp.org'
 base::dns::do_ipv4: true
 base::dns::do_ipv6: true
+base::dns::smtp_relay_override: false
+
+webproxy::gateway::upstreams:
+  commons:
+    host: commons.wikimedia.org
+    path: /w/api.php
+    required_args:
+      action: query
+    cache_size: 2g

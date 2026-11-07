@@ -77,6 +77,28 @@ class base::firewall (
         }
     }
 
+    # Drop private IPv4 and ULA IPv6 sources arriving on any interface with a public IPv4 address. Real private traffic never comes in that way, so it can only be spoofed.
+    $all_ifaces = $facts['networking']['interfaces'] ? {
+        Hash    => $facts['networking']['interfaces'],
+        default => {},
+    }
+
+    $public_ifaces = $all_ifaces.filter |$name, $data| {
+        $data['ip'] =~ String and $data['ip'] !~ /^(10\.|127\.|169\.254\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.)/
+    }.keys.sort
+
+    if !$public_ifaces.empty {
+        $public_iface_set = $public_ifaces.map |$name| { "\"${name}\"" }.join(', ')
+
+        nftables::file::input { 'drop-private-spoof':
+            order   => 2,
+            content => @("RULES"/L)
+                iifname { ${public_iface_set} } ip saddr { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 } counter drop
+                iifname { ${public_iface_set} } ip6 saddr fc00::/7 counter drop
+                | RULES
+        }
+    }
+
     # the base ruleset itself: default-drop on input, established/related,
     # loopback, multicast and icmp always allowed. deployed for both
     # backends unconditionally, same as everything else here, since it's
@@ -90,10 +112,22 @@ class base::firewall (
     resources { type = 'Class' and title = 'Role::Icinga2' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
+
+    # Hosts without a private IP are checked through the bastion, so NRPE arrives from its public address.
+    if $all_ifaces['vmbr1'] or $all_ifaces['ens19'] {
+        $nrpe_srange = $firewall_rules_str
+    } else {
+        $subquery_bastion = @("PQL")
+        resources { type = 'Class' and title = 'Role::Bastion' }
+        | PQL
+        $firewall_bastion_str = vmlib::generate_firewall_ip($subquery_bastion)
+        $nrpe_srange = "${firewall_rules_str} ${firewall_bastion_str}"
+    }
+
     firewall::service { 'nrpe':
         proto  => 'tcp',
         port   => 5666,
-        srange => "(${firewall_rules_str})",
+        srange => "(${nrpe_srange})",
     }
 
     $subquery_2 = @("PQL")

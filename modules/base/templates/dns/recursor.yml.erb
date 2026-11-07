@@ -52,6 +52,11 @@ recursor:
 <% end -%>
 <% end -%>
 <% end -%>
+<% if @smtp_relay_override -%>
+  auth_zones:
+  - zone: smtp-relay.gmail.com
+    file: /etc/powerdns/smtp-relay.gmail.com.zone
+<% end -%>
   hint_file: /usr/share/dns/root.hints
   security_poll_suffix: ''
   setgid: pdns

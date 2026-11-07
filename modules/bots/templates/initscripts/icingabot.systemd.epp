@@ -1,0 +1,20 @@
+[Unit]
+Description=Icinga to IRC and Phorge bot
+After=network.target
+
+[Service]
+Type=simple
+User=irc
+SyslogIdentifier=icingabot
+StateDirectory=icingabot
+ExecStartPre=-/bin/sh -c 'test -e /var/lib/icingabot/state.json || cp -p /var/lib/taskbot/state.json /var/lib/icingabot/state.json'
+ExecStart=/usr/bin/python3 /etc/icingabot/icingabot.py -c /etc/icingabot/config.json
+Restart=on-failure
+RestartSec=10s
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

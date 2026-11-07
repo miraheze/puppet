@@ -26,6 +26,9 @@ class role::cache::haproxy(
     Optional[Integer] $log_length = lookup('role::cache::haproxy::log_length', {'default_value'                                               => 8192}),
     Boolean $numa_networking = lookup('role::cache::haproxy::numa_networking', {'default_value'                                               => false}),
     Boolean $use_graylog = lookup('role::cache::haproxy::use_graylog', {'default_value'                                                       => false}),
+    Haproxy::Lbpools $lb_pools = lookup('role::cache::haproxy::lb_pools'),
+    Integer[1] $lb_timeout_queue = lookup('role::cache::haproxy::lb_timeout_queue', {'default_value' => 30}),
+    Stdlib::Port $lb_agent_port = lookup('haproxy::lb_agent::port', {'default_value' => 9590}),
 ) {
 
     $site_resource = Haproxy::Site['tls']
@@ -45,6 +48,12 @@ class role::cache::haproxy(
 
     # used on haproxy.cfg.erb
     $socket = '/run/haproxy/haproxy.sock'
+
+    # used on haproxy.cfg.erb and haproxy.service.erb
+    $server_state_file = '/var/lib/haproxy/server-state'
+
+    # used on tls_terminator.cfg.erb and by fail2ban
+    $f2b_acl_file = '/etc/haproxy/f2b_banned.lst'
 
     # We don't need to use all our certificates, only these three.
     $certificates = {
@@ -134,6 +143,34 @@ class role::cache::haproxy(
         content => template('role/cache/haproxy/tls_terminator.cfg.erb'),
     }
 
+    $default_pools = $lb_pools.filter |$pool_name, $pool| { $pool['default'] == true }
+    if $default_pools.length != 1 {
+        fail('role::cache::haproxy::lb_pools needs exactly one pool with default: true')
+    }
+
+    ['swift', 'matomo'].each |$required| {
+        if !($required in $lb_pools) {
+            fail("role::cache::haproxy::lb_pools needs a ${required} pool, the VCL refers to it")
+        }
+    }
+
+    $varnish_backends.each |$name, $property| {
+        if $property['lb_pool'] and !($property['lb_pool'] in $lb_pools) {
+            fail("${name} uses lb_pool ${property['lb_pool']} which is not in lb_pools")
+        }
+    }
+
+    haproxy::site { 'lb-pools':
+        ensure  => present,
+        content => epp('role/cache/haproxy/lb_pools.cfg.epp', {
+            'pools'         => $lb_pools,
+            'servers'       => $varnish_backends,
+            'timeout'       => $timeout,
+            'timeout_queue' => $lb_timeout_queue,
+            'agent_port'    => $lb_agent_port,
+        }),
+    }
+
     if ($facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18']) {
         $address = $facts['networking']['interfaces']['ens19']['ip']
     } elsif ($facts['networking']['interfaces']['ens18']) {
@@ -172,6 +209,18 @@ class role::cache::haproxy(
         }
     }
 
+    $lb_pools.each |$pool_name, $pool| {
+        monitoring::nrpe { "Haproxy balancer ${pool_name}":
+            command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${pool['port']}",
+        }
+    }
+
+    include haproxy::lb_monitoring
+
+    class { 'haproxy::depool':
+        state_file => $server_state_file,
+    }
+
     rsyslog::conf { 'haproxy@tls':
         priority => 20,
         content  => epp('role/cache/haproxy/haproxy.rsyslog.conf.epp'),
@@ -180,6 +229,23 @@ class role::cache::haproxy(
     logrotate::conf { 'haproxy':
         ensure => present,
         source => 'puppet:///modules/role/cache/haproxy/logrotate',
+    }
+
+    # HAProxy refuses to start if this file is missing. Contents are written
+    # by fail2ban, so puppet must never reset them.
+    file { $f2b_acl_file:
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        replace => false,
+        before  => Service['haproxy'],
+    }
+
+    class { 'fail2ban':
+        socket   => $socket,
+        acl_file => $f2b_acl_file,
+        require  => File[$f2b_acl_file],
     }
 
     $subquery = @("PQL")

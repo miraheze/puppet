@@ -1,8 +1,5 @@
 mariadb::config::innodb_buffer_pool_size: '18G'
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
-role::db::weekly_misc: ['reports']
-role::db::fortnightly_misc: ['icinga', 'icingaweb2']
-role::db::monthly_misc: []
 role::db::backup_sql: false
 role::db::enable_bin_logs: false
 mariadb::version: '11.8'
@@ -11,3 +8,6 @@ role::db::is_beta_db: false
 role::db::wait_timeout: 28800
 # https://matomo.org/faq/on-premise/how-to-configure-matomo-for-speed/#configure-your-database-server-for-speed
 mariadb::config::flush_log_at_trx_commit: '2'
+base::dns::do_ipv4: true
+base::dns::do_ipv6: false
+base::dns::forward_use_internal: true

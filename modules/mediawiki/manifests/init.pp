@@ -248,11 +248,15 @@ class mediawiki {
         mode   => '0775',
     }
     exec { 'create python venv':
-        command => '/usr/bin/python3 -m venv /srv/python/env && /srv/python/env/bin/pip3 install Miraheze-PyUtils',
-        require => [Package['python3'],File['/srv/python']],
-        cwd     => '/srv',
-        user    => 'www-data',
-        onlyif  => 'test ! -d /srv/python/env',
-        path    => '/bin:/usr/bin',
+        command     => '/usr/bin/python3 -m venv /srv/python/env && /srv/python/env/bin/pip3 install Miraheze-PyUtils',
+        require     => [Package['python3'], File['/srv/python']],
+        cwd         => '/srv',
+        user        => 'www-data',
+        onlyif      => 'test ! -d /srv/python/env',
+        path        => '/bin:/usr/bin',
+        environment => [
+            'HTTP_PROXY=http://bastion.fsslc.wtnet:8080',
+            'HTTPS_PROXY=http://bastion.fsslc.wtnet:8080',
+        ],
     }
 }

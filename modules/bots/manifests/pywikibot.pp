@@ -8,6 +8,7 @@ class bots::pywikibot {
     $consumer_secret = lookup('passwords::pywikibot::consumer_secret')
     $access_token    = lookup('passwords::pywikibot::access_token')
     $access_secret   = lookup('passwords::pywikibot::access_secret')
+    $http_proxy      = lookup('http_proxy', {'default_value' => undef})
 
     file { $install_path:
         ensure    => directory,
@@ -39,6 +40,7 @@ class bots::pywikibot {
         content => epp('bots/pywikibot/pywikibot.sh.epp', {
             'base_path'    => $base_path,
             'install_path' => $install_path,
+            'http_proxy'   => $http_proxy,
         }),
     }
 

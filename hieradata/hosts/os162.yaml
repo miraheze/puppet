@@ -1,5 +1,4 @@
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
-
 base::syslog::rsyslog_udp_localhost: true
 
 role::opensearch::enable_exporter: false
