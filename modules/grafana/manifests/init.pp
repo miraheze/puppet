@@ -57,9 +57,10 @@ class grafana (
         default => 'present',
     }
 
-    systemd::dropin_file { 'proxy.conf':
+    systemd::override { 'proxy':
         ensure  => $proxy_ensure,
-        unit    => 'grafana-server.service',
+        unit    => 'grafana-server',
+        restart => true,
         content => join([
             '[Service]',
             "Environment=\"HTTP_PROXY=${http_proxy}\"",
@@ -67,7 +68,6 @@ class grafana (
             "Environment=\"NO_PROXY=${no_proxy}\"",
             '',
         ], "\n"),
-        notify  => Service['grafana-server'],
         require => Package['grafana'],
     }
 
