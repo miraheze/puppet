@@ -92,11 +92,6 @@ node /^ns[12]\.wikitide\.net$/ {
     include role::dns
 }
 
-node /^dns(001|171)\.wikitide\.net$/ {
-    include base
-    include role::dns
-}
-
 node 'phorge171.fsslc.wtnet' {
     include base
     include role::phorge
