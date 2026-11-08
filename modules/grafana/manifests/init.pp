@@ -4,6 +4,7 @@ class grafana (
     String $ldap_password = lookup('passwords::ldap_password'),
     Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef}),
     String $no_proxy = lookup('grafana::no_proxy', {'default_value' => 'localhost,127.0.0.1,::1,10.0.0.0/8,.fsslc.wtnet,ldap.wikitide.net,opensearch.wikitide.net'}),
+    VMlib::Ensure $proxy_ensure = lookup('grafana::proxy_ensure', {'default_value' => absent}),
 ) {
 
     include apt
@@ -52,13 +53,11 @@ class grafana (
         require => Package['grafana'],
     }
 
-    $proxy_ensure = $http_proxy ? {
-        undef   => 'absent',
-        default => 'present',
-    }
-
     systemd::override { 'proxy':
-        ensure  => $proxy_ensure,
+        ensure  => $http_proxy ? {
+            undef   => 'absent',
+            default => $proxy_ensure,
+        },
         unit    => 'grafana-server',
         restart => true,
         content => join([
