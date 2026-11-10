@@ -43,9 +43,9 @@ mediawiki::monitoring::host: 'test.mirabeta.org'
 mediawiki::multiversion::versions:
   '1.46':
     branch: 'REL1_46'
-    default: true
   '1.47':
     branch: 'REL1_47'
+    default: true
 
 role::mediawiki::php::restarts::ensure: present
 role::mediawiki::php::restarts::opcache_limit: 200
