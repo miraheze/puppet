@@ -119,6 +119,12 @@ wiki_domain = ""
 # If projects are disabled, this is just a normal page name.
 wiki_page = "Tech:Server_admin_log"
 
+# One page per month, named <wiki_page>/YYYY-MM.
+wiki_monthly = True
+
+# Wikitext placed above the first entry of a new month page.
+wiki_page_intro = "{{Server admin log/nav}}"
+
 # Page to visit to view logs -- used by the bot's help message
 log_url = ""
 
