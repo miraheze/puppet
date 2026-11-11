@@ -1471,6 +1471,7 @@ def load_adminlog(monkeypatch):
             self.site = site
             self.name = name
             self.info = info
+            self.exists = True
             self.revision = 1
             self.last_rev_time = None
             self.edit_time = None
