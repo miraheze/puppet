@@ -11,6 +11,8 @@ mediawiki::multiversion::versions:
   '1.46':
     branch: 'REL1_46'
     default: true
+  '1.47':
+    branch: 'REL1_47'
 
 puppetserver_hostname: puppet181.fsslc.wtnet
 role::salt::minions::salt_master: 'puppet181.fsslc.wtnet'
