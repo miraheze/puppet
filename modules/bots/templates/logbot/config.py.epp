@@ -79,6 +79,7 @@ author_map = {
     "@pskyechology": "Skye",
     "@posix_memalign": "PetraMagna",
     "@jenny_on_wiki": "Jenny on Wiki",
+    "@suzuneu": "Waki285",
 }
 
 # Map irc nick to title of the user (how the bot addresses the user)
