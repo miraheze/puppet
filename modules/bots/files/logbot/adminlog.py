@@ -22,7 +22,7 @@ SITE_MAX_AGE = 3600
 MAX_ATTEMPTS = 3
 RETRY_DELAYS = (2, 5)
 RETRY_BUDGET = 40
-RETRIABLE_API_CODES = {'badtoken', 'ratelimited', 'readonly', 'maxlag'}
+RETRIABLE_API_CODES = {'badtoken', 'ratelimited', 'readonly', 'maxlag', 'articleexists'}
 _sites = {}
 
 
@@ -97,6 +97,14 @@ def page_url(site, info, page):
     return url
 
 
+def revision_text(rev):
+    content = rev.get('slots', {}).get('main', rev)
+    for key in ('*', 'content'):
+        if key in content:
+            return content[key] or ''
+    return ''
+
+
 def fetch_page(site, pagename, section=None):
     query = {}
     if site.require(1, 32, raise_error=False):
@@ -112,7 +120,7 @@ def fetch_page(site, pagename, section=None):
     text = ''
     if revisions:
         rev = revisions[0]
-        text = rev['slots']['main']['*'] if 'slots' in rev else rev['*']
+        text = revision_text(rev)
         page.last_rev_time = parse_timestamp(rev['timestamp'])
     page.edit_time = time.gmtime()
     return page, info, text
@@ -129,6 +137,22 @@ def make_entry(now, message, author, text):
     logline = '* <span id="%s">%02d:%02d %s: %s</span>' % (
         entry_id, now.hour, now.minute, author, message)
     return entry_id, logline
+
+
+def month_pagename(config, base, now):
+    if getattr(config, 'wiki_monthly', False):
+        return "%s/%s" % (base, now.strftime("%Y-%m"))
+    return base
+
+
+def new_page_lines(config, header, now, logline):
+    lines = []
+    intro = getattr(config, 'wiki_page_intro', '')
+    if intro:
+        lines.extend([intro, ""])
+    lines.append(now.strftime("{0} %Y-%m-%d {0}".format(header)))
+    lines.append(logline)
+    return lines
 
 
 def header_date_of(line, header):
@@ -153,6 +177,7 @@ def write_entry(config, message, project, author, now, state):
         pagename = config.wiki_page % project
     else:
         pagename = config.wiki_page
+    pagename = month_pagename(config, pagename, now)
 
     summary = "%s (%s)" % (message, author)
     bot = getattr(config, 'wiki_bot', True)
@@ -183,20 +208,25 @@ def write_entry(config, message, project, author, now, state):
         return page_url(site, info, page) + "#" + previous
     lines = text.split('\n')
     entry_id, logline = make_entry(now, message, author, text)
+    exists = page.exists
 
-    position = 0
-    header_date = None
-    for line in lines:
-        position += 1
-        if line.startswith(header):
-            header_date = header_date_of(line, header)
-            break
-    if header_date != today:
-        lines.insert(position - 1, "")
-        lines.insert(position - 1, logline)
-        lines.insert(position - 1, now.strftime("{0} %Y-%m-%d {0}".format(header)))
+    if not exists:
+        lines = new_page_lines(config, header, now, logline)
+        page.edit_time = None
     else:
-        lines.insert(position, logline)
+        position = 0
+        header_date = None
+        for line in lines:
+            position += 1
+            if line.startswith(header):
+                header_date = header_date_of(line, header)
+                break
+        if header_date != today:
+            lines.insert(position - 1, "")
+            lines.insert(position - 1, logline)
+            lines.insert(position - 1, now.strftime("{0} %Y-%m-%d {0}".format(header)))
+        else:
+            lines.insert(position, logline)
     if config.wiki_category:
         if not re.search(r'\[\[Category:' + config.wiki_category + r'\]\]',
                          text):
@@ -204,7 +234,10 @@ def write_entry(config, message, project, author, now, state):
                          + config.wiki_category + ']]</noinclude>')
 
     state['entry_id'] = entry_id
-    page.save('\n'.join(lines), summary, bot=bot)
+    if exists:
+        page.save('\n'.join(lines), summary, bot=bot)
+    else:
+        page.edit('\n'.join(lines), summary, bot=bot, createonly='1')
 
     micro_update = ("%s: %s" % (author, message))[:140]
 

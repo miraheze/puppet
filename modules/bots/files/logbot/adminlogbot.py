@@ -446,7 +446,9 @@ class logbot(ircbot.SingleServerIRCBot):
                     self.connection.privmsg(
                         event.target,
                         "An exception was raised while trying to log "
-                        "your message, {author}".format(author=author)
+                        "your message, {author} ({reason})".format(
+                            author=author,
+                            reason=getattr(e, 'code', None) or type(e).__name__)
                     )
                 except Exception:
                     pass
