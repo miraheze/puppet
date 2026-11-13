@@ -55,7 +55,7 @@ class grafana (
 
     systemd::override { 'proxy':
         ensure  => $http_proxy ? {
-            undef   => 'absent',
+            undef   => absent,
             default => $proxy_ensure,
         },
         unit    => 'grafana-server',
