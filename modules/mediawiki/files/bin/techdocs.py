@@ -131,9 +131,6 @@ def convert_wikitext_to_markdown(wikitext):
     def process_html_tags(node):
         """Convert specific HTML tags to Markdown."""
         global footnote_counter
-        global footnotes
-        global content_to_footnote_map
-        global name_to_footnote_map
 
         tag_name = node.tag
         content = convert_wikitext_to_markdown(node.contents.strip())
