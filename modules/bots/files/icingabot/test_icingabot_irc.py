@@ -268,7 +268,7 @@ def _quick_polling(monkeypatch):
     monkeypatch.setattr(icingabot, 'POLL_SECONDS', 0.05)
 
 
-@pytest.fixture()
+@pytest.fixture
 def irc_server():
     servers = []
 
@@ -1055,7 +1055,7 @@ def free_port():
         return sock.getsockname()[1]
 
 
-@pytest.fixture()
+@pytest.fixture
 def listening():
     hooks = []
 

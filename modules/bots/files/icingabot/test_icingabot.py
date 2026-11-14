@@ -331,7 +331,7 @@ class Clock:
         return self
 
 
-@pytest.fixture()
+@pytest.fixture
 def clock(monkeypatch):
     return Clock().install(monkeypatch)
 
@@ -377,7 +377,7 @@ class StreamHandler(http.server.BaseHTTPRequestHandler):
         self.server.log_lines.append(args)
 
 
-@pytest.fixture()
+@pytest.fixture
 def serve():
     servers = []
 
@@ -1400,7 +1400,7 @@ def icinga_pki(tmp_path_factory):
     return types.SimpleNamespace(ca=str(ca_cert), other_ca=str(directory / 'Other CA.crt'), cert=str(cert), key=str(key))
 
 
-@pytest.fixture()
+@pytest.fixture
 def _strict_by_default(monkeypatch):
     real = ssl.create_default_context
 

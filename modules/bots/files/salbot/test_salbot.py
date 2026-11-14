@@ -634,7 +634,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
         self.server.log_lines.append(args)
 
 
-@pytest.fixture()
+@pytest.fixture
 def web():
     server = http.server.HTTPServer(('127.0.0.1', 0), WebHandler)
     server.received = []
@@ -645,7 +645,7 @@ def web():
     server.server_close()
 
 
-@pytest.fixture()
+@pytest.fixture
 def proxy_of():
     proxies = []
 
@@ -1050,7 +1050,7 @@ class SleepLog(list):
         self.append(delay)
 
 
-@pytest.fixture()
+@pytest.fixture
 def sleeps(monkeypatch):
     monkeypatch.setattr(salbot.asyncio, 'sleep', SleepLog())
     return salbot.asyncio.sleep
