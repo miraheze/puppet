@@ -9,7 +9,7 @@
 #
 # @author Richard Pijnenburg <richard.pijnenburg@elasticsearch.com>
 # @author Tyler Langlois <tyler.langlois@elastic.co>
-# @author Gavin Williams <gavin.williams@elastic.co>
+# @author Gavin Williams <gavin.williams@elastic.co>
 #
 class opensearch::config {
   #### Configuration
