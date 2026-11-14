@@ -28,8 +28,8 @@ jobs:
       with:
         ruby-version: '3.2'
 
-    - name: Install Puppet
-      run: gem install puppet --no-document
+    - name: Install OpenVox
+      run: gem install openvox --no-document
 
     - name: Validate EPP Templates
       run: |
