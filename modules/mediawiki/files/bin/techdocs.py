@@ -85,8 +85,8 @@ def fetch_page_content(title):
 
 
 footnote_counter = 0
-content_to_footnote_map = {}
-name_to_footnote_map = {}
+content_to_footnote_map: dict[str, str] = {}
+name_to_footnote_map: dict[str, str] = {}
 
 footnotes: dict[str, str] = {}
 
