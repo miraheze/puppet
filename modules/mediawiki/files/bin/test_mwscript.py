@@ -37,7 +37,7 @@ def _reset_state():
     Console.enabled = original
 
 
-@pytest.fixture()
+@pytest.fixture
 def shell():
     calls = []
 
@@ -447,7 +447,7 @@ def make_runner(generate: Optional[str] = None, long: bool = False, nolog: bool 
     return ScriptRunner(CommandInfo(command='do it', generate=generate, long=long, nolog=nolog, confirm=confirm))
 
 
-@pytest.fixture()
+@pytest.fixture
 def executor():
     with patch.object(ShellExecutor, 'run', return_value=0) as run, patch.object(ShellExecutor, 'run_quiet', return_value=completed()) as quiet:
         yield run, quiet
