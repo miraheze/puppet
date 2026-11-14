@@ -53,11 +53,12 @@
 				"/^modules/role/manifests/graylog\\.pp$/"
 			],
 			"matchStrings": [
-				"package_version\\s*=>\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)-1'"
+				"graylog::repository':[^}]*?version\\s*=>\\s*'(?<repoVersion>\\d+\\.\\d+)',[^}]*?\\}\\s*->\\s*class\\s*\\{\\s*'graylog::server':\\s*package_version\\s*=>\\s*'(?<currentValue>[^']+)'"
 			],
-			"depNameTemplate": "Graylog2/graylog2-server",
-			"datasourceTemplate": "github-tags",
-			"versioningTemplate": "semver"
+			"depNameTemplate": "graylog-server",
+			"datasourceTemplate": "deb",
+			"registryUrlTemplate": "https://downloads.graylog.org/repo/debian?suite=stable&components={{{repoVersion}}}&binaryArch=amd64",
+			"versioningTemplate": "deb"
 		},
 		{
 			"customType": "regex",
@@ -182,7 +183,8 @@
 		},
 		{
 			"matchDepNames": [
-				"Graylog2/graylog2-server"
+				"Graylog2/graylog2-server",
+				"graylog-server"
 			],
 			"groupName": "graylog"
 		},
@@ -193,7 +195,8 @@
 				"miraheze/TSPortal",
 				"opensearch-project/OpenSearch",
 				"mattermost/mattermost",
-				"Graylog2/graylog2-server"
+				"Graylog2/graylog2-server",
+				"graylog-server"
 			],
 			"automerge": false,
 			"labels": [
