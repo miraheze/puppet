@@ -32,7 +32,7 @@ BOT_TERMS = {
 # All patterns translated directly from MediaWiki:Global_title_blacklist.
 # The blacklist is case-insensitive by default; all patterns use re.IGNORECASE.
 # re.search() is used (equivalent to the blacklist's leading/trailing .*).
-_BLACKLIST_PATTERNS = [
+_BLOCKLIST_PATTERNS = [
     # IPv4 address
     (re.compile(
         r"^([1-9]?\d|1\d\d|2([0-4]\d|5[0-5]))\."
