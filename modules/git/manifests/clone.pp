@@ -100,14 +100,17 @@ define git::clone(
                 }
             }
 
-            if !empty($branch) {
+            if !empty($branch) or !empty($revision) {
+                # Only unshallow when the repository is still shallow, because
+                # git errors out when asked to unshallow a complete repository.
+                $fetch_command = "if [ \"$(${git} rev-parse --is-shallow-repository)\" = true ]; then ${git} fetch --all --tags --unshallow; else ${git} fetch --all --tags; fi"
                 $checkout_command = $revision ? {
                     ''      => "${git} checkout ${branch}",
-                    default => "${git} fetch --all --tags --unshallow && ${git} checkout ${revision}",
+                    default => "${fetch_command} && ${git} checkout ${revision}",
                 }
                 $is_current_revision = $revision ? {
                     ''      => "${git} rev-parse --abbrev-ref HEAD | grep ${branch}",
-                    default => "${git} rev-parse HEAD | grep ${revision}",
+                    default => "${git} rev-parse HEAD | grep -q ^${revision}",
                 }
                 if $ensure == 'latest' {
                     exec { "git_checkout_${title}":
