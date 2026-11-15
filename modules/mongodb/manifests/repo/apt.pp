@@ -43,8 +43,8 @@ class mongodb::repo::apt (
     release  => $mongodb::repo::release,
     repos    => $mongodb::repo::repos,
     key      => {
-      name   => 'mongodb-server-8.0.gpg',
-      source => 'puppet:///modules/mongodb/apt/mongodb-server-8.0.gpg',
+      name   => "mongodb-server-${version}.gpg",
+      source => "puppet:///modules/mongodb/apt/mongodb-server-${version}.gpg",
     },
     comment  => $comment,
   }
