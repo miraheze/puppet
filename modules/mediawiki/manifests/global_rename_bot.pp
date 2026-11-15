@@ -42,16 +42,20 @@ class mediawiki::global_rename_bot {
         }
     }
 
-    package { ['python3-requests', 'python3-bs4']:
-        ensure => present,
-    }
+    stdlib::ensure_packages(['python3-requests', 'python3-bs4'])
 
-    cron { 'global_rename_bot':
-        ensure  => present,
-        command => "cd ${bot_dir} && python3 global_rename_bot.py",
-        user    => $user,
-        minute  => '*/5',
-        require => [
+    systemd::timer::job { 'global_rename_bot':
+        ensure          => present,
+        description     => 'Run the global rename bot',
+        command         => "/usr/bin/python3 ${bot_dir}/global_rename_bot.py",
+        working_directory => $bot_dir,
+        user            => $user,
+        interval        => {
+            'start'    => 'OnCalendar',
+            'interval' => '*-*-* *:0/5:00',
+        },
+        logfile_basename => 'global_rename_bot',
+        require          => [
             File["${bot_dir}/global_rename_bot.py"],
             File["${bot_dir}/policy_checker.py"],
             File["${bot_dir}/config.json"],
