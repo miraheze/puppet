@@ -45,17 +45,17 @@ class mediawiki::global_rename_bot {
     stdlib::ensure_packages(['python3-requests', 'python3-bs4'])
 
     systemd::timer::job { 'global_rename_bot':
-        ensure          => present,
-        description     => 'Run the global rename bot',
-        command         => "/usr/bin/python3 ${bot_dir}/global_rename_bot.py",
+        ensure            => present,
+        description       => 'Run the global rename bot',
+        command           => "/usr/bin/python3 ${bot_dir}/global_rename_bot.py",
         working_directory => $bot_dir,
-        user            => $user,
-        interval        => {
+        user              => $user,
+        interval          => {
             'start'    => 'OnCalendar',
             'interval' => '*-*-* *:0/5:00',
         },
-        logfile_basename => 'global_rename_bot',
-        require          => [
+        logfile_basename  => 'global_rename_bot',
+        require           => [
             File["${bot_dir}/global_rename_bot.py"],
             File["${bot_dir}/policy_checker.py"],
             File["${bot_dir}/config.json"],
