@@ -143,7 +143,8 @@ class role::prometheus {
     prometheus::class { 'nginx':
         dest   => '/etc/prometheus/targets/nginx.yaml',
         module => 'Prometheus::Exporter::Nginx',
-        port   => 9113
+        port   => 9113,
+        public => true,
     }
 
     $cache_haproxy_job = [
@@ -323,11 +324,6 @@ class role::prometheus {
             'action' => 'labeldrop',
             'regex'  => 'path',
           },
-          # Can remove once on MediaWiki 1.46
-          {
-            'action' => 'labeldrop',
-            'regex'  => 'wiki',
-          },
         ],
       },
     ]
@@ -384,7 +380,7 @@ class role::prometheus {
 
     prometheus::class{ 'php_mediawiki':
         dest   => '/etc/prometheus/targets/php_mediawiki.yaml',
-        module => 'MediaWiki::Monitoring',
+        module => 'Mediawiki::Monitoring',
         port   => 9181,
     }
 
@@ -407,9 +403,9 @@ class role::prometheus {
     | PQL
     $firewall_grafana = vmlib::generate_firewall_ip($subquery)
 
-    ferm::service { 'prometheus':
+    firewall::service { 'prometheus':
         proto  => 'tcp',
-        port   => '9090',
+        port   => 9090,
         srange => "(${firewall_grafana})",
     }
 

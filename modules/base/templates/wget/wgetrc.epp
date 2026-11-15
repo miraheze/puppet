@@ -1,0 +1,6 @@
+<%- | String $http_proxy, String $no_proxy | -%>
+# Managed by puppet
+use_proxy = on
+http_proxy = <%= $http_proxy %>
+https_proxy = <%= $http_proxy %>
+no_proxy = <%= $no_proxy %>

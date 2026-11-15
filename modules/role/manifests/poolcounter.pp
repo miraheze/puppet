@@ -16,9 +16,9 @@ class role::poolcounter {
         | PQL
         $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     }
-    ferm::service { 'poolcounter':
+    firewall::service { 'poolcounter':
         proto   => 'tcp',
-        port    => '7531',
+        port    => 7531,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }

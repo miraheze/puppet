@@ -92,7 +92,17 @@ class memcached(
 
     systemd::service { 'memcached':
         ensure  => present,
-        content => systemd_template('memcached'),
+        content => systemd_template('memcached', {
+            'listen'        => $listen,
+            'port'          => $port,
+            'size'          => $size,
+            'growth_factor' => $growth_factor,
+            'extra_options' => $extra_options,
+            'enable_tls'    => $enable_tls,
+            'ssl_cert'      => $ssl_cert,
+            'ssl_key'       => $ssl_key,
+            'min_slab_size' => $min_slab_size,
+        }),
     }
 
     sysctl::parameters { 'high memcached performance':

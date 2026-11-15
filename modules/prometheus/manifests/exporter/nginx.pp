@@ -20,10 +20,10 @@ class prometheus::exporter::nginx {
     $subquery = @("PQL")
     resources { type = 'Class' and title = 'Prometheus' }
     | PQL
-    $firewall_rules = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'prometheus nginx':
+    $firewall_rules = vmlib::generate_firewall_ip_public($subquery, $facts['networking'])
+    firewall::service { 'prometheus nginx':
         proto  => 'tcp',
-        port   => '9113',
+        port   => 9113,
         srange => "(${firewall_rules})",
     }
 }

@@ -1,9 +1,11 @@
 import os
 import requests
 from git import Repo
-from datetime import datetime
+from datetime import datetime, UTC
 import mwparserfromhell
 import re
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 MEDIAWIKI_API_URL = 'https://meta.miraheze.org/w/api.php'
 GITHUB_REPO_URL = 'git@github.com:miraheze/statichelp.git'
@@ -14,6 +16,8 @@ USER_AGENT = 'TechNamespaceBot/1.0 (https://github.com/miraheze/statichelp/tree/
 
 SSH_PRIVATE_KEY_PATH = '/var/lib/nagios/id_ed25519'
 HTTP_PROXY = 'bastion.fsslc.wtnet:8080'
+PROXIES = {'http': f'http://{HTTP_PROXY}', 'https': f'http://{HTTP_PROXY}'}
+REQUEST_TIMEOUT = 30
 
 GIT_USER_EMAIL = 'noreply@wikitide.org'
 GIT_USER_NAME = 'WikiTideBot'
@@ -26,12 +30,24 @@ EXCLUDED_CATEGORIES = {
 }
 
 
+def build_session():
+    session = requests.Session()
+    retry = Retry(
+        total=5,
+        backoff_factor=1,
+        status_forcelist=(429, 500, 502, 503, 504),
+        allowed_methods=('GET',),
+    )
+    session.mount('https://', HTTPAdapter(max_retries=retry))
+    session.headers.update({'User-Agent': USER_AGENT})
+    return session
+
+
+SESSION = build_session()
+
+
 def fetch_tech_pages():
     """Fetch pages in the Tech namespace."""
-    session = requests.Session()
-    headers = {
-        'User-Agent': USER_AGENT,
-    }
     params = {
         'action': 'query',
         'format': 'json',
@@ -44,7 +60,7 @@ def fetch_tech_pages():
         'cllimit': 'max',
     }
     pages = []
-    response = session.get(url=MEDIAWIKI_API_URL, params=params, headers=headers)
+    response = SESSION.get(url=MEDIAWIKI_API_URL, params=params, proxies=PROXIES, timeout=REQUEST_TIMEOUT)
     response.raise_for_status()
     data = response.json()
     pages_gen = data.get('query', {}).get('pages', {})
@@ -57,24 +73,20 @@ def fetch_tech_pages():
 
 
 def fetch_page_content(title):
-    session = requests.Session()
-    headers = {
-        'User-Agent': USER_AGENT,
-    }
     params = {
         'action': 'parse',
         'format': 'json',
         'page': title,
         'prop': 'wikitext',
     }
-    response = session.get(url=MEDIAWIKI_API_URL, params=params, headers=headers)
+    response = SESSION.get(url=MEDIAWIKI_API_URL, params=params, proxies=PROXIES, timeout=REQUEST_TIMEOUT)
     response.raise_for_status()
     return response.json()['parse']['wikitext']['*']
 
 
 footnote_counter = 0
-content_to_footnote_map = {}
-name_to_footnote_map = {}
+content_to_footnote_map: dict[str, str] = {}
+name_to_footnote_map: dict[str, str] = {}
 
 footnotes: dict[str, str] = {}
 
@@ -119,9 +131,6 @@ def convert_wikitext_to_markdown(wikitext):
     def process_html_tags(node):
         """Convert specific HTML tags to Markdown."""
         global footnote_counter
-        global footnotes
-        global content_to_footnote_map
-        global name_to_footnote_map
 
         tag_name = node.tag
         content = convert_wikitext_to_markdown(node.contents.strip())
@@ -545,7 +554,9 @@ def write_content_to_file(title, content):
     filename = title.replace(' ', '_').replace('/', '-') + '.md'
     filepath = os.path.join(sub_dir_path, filename)
     url = f"https://meta.miraheze.org/wiki/{title.replace(' ', '_')}"
-    header = f'---\ntitle: {title}\n---\n\n'
+
+    frontmatter_title = f'"{title}"' if ': ' in title else title
+    header = f'---\ntitle: {frontmatter_title}\n---\n\n'
     footer = f'\n\n----\n**[Go to Source &rarr;]({url})**'
 
     with open(filepath, 'w', encoding='utf-8') as file:
@@ -573,7 +584,7 @@ def commit_and_push_changes():
     if not has_index_changes:
         print('No changes detected – skipping commit and push.')
         return
-    utctime = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+    utctime = datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S')
     commit_message = f'Bot: Auto-update Tech namespace pages {utctime}'
     repo.index.commit(commit_message)
     origin = repo.remote(name='origin')

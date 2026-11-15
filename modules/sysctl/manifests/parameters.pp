@@ -36,7 +36,7 @@ define sysctl::parameters(
 ) {
     sysctl::conffile { $title:
         ensure   => $ensure,
-        content  => template('sysctl/sysctl.conf.erb'),
+        content  => epp('sysctl/sysctl.conf.epp', { 'values' => $values }),
         priority => $priority,
     }
 }

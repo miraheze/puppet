@@ -151,6 +151,20 @@ class opensearch::package {
     }
   }
 
+  if $opensearch::version =~ String and versioncmp($opensearch::version, '3.0.0') >= 0 {
+    $agent_lines = '21-:-javaagent:agent/opensearch-agent.jar\\n21-:--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED'
+    exec { 'opensearch_migrate_jvm_options':
+      command => "sed -i 's#^.*java.security.manager.*\$#${agent_lines}#' ${opensearch::configdir}/jvm.options",
+      onlyif  => "grep -qs 'java.security.manager' ${opensearch::configdir}/jvm.options",
+      before  => Package['opensearch'],
+    }
+
+    file { '/run/opensearch':
+      ensure => 'directory',
+      before => Package['opensearch'],
+    }
+  }
+
   if ($opensearch::package_provider == 'package') {
     package { 'opensearch':
       ensure => $package_ensure,

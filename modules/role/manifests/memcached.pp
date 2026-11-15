@@ -57,7 +57,7 @@ class role::memcached (
         | PQL
         $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     }
-    ferm::service { 'memcached':
+    firewall::service { 'memcached':
         proto  => 'tcp',
         port   => $port,
         srange => "(${firewall_rules_str})",

@@ -57,6 +57,8 @@
 #             /var/lib/icinga2/certs on Linux and C:/ProgramData/icinga2/var/lib/icinga2/certs on Windows.
 #             Please note that Puppet 7 uses an intermediate CA by default and Icinga cannot handle
 #             its CA certificate, see [Icinga Issue](https://github.com/Icinga/icinga2/pull/8859).
+#             If $ssl_cacert is set, it overwrites the configured puppet CA which is usefull if you
+#             have eg. multiple different puppet CA which should authorize on one icinga server.
 #   - icinga2: Uses the icinga2 CLI to generate a Certificate Request and Key to obtain a signed
 #              Certificate from 'ca_host' using the icinga2 ticket mechanism.
 #              In case the 'ticket_salt' has been configured the ticket_id will be generated
@@ -75,7 +77,11 @@
 #
 # @param ssl_cacert
 #   The CA root certificate in a base64 encoded string to store in cert directory. This parameter
-#   requires pki to be set to 'none'.
+#   requires pki to be set to 'none', or 'puppet' (to add multiple puppet CA's)
+#
+# @param ssl_puppet_cacert
+#   if set, this overwrites the source of the puppet ca to take. This parameter
+#   requires pki to be set to 'puppet'.
 #
 # @param ssl_crl
 #   Optional location of the certificate revocation list.
@@ -149,34 +155,43 @@
 # @param environment
 #  Used as suffix in TLS SNI extension name; default from constant ApiEnvironment, which is empty.
 #
+# @param http_response_headers
+#  Additional headers to add to HTTP responses.
+#
+# @param enforce_filter_expression_permission
+#  Enforce the filter-expression permission.
+#
 class icinga2::feature::api (
-  Enum['absent', 'present']                                $ensure                           = present,
-  Enum['ca', 'icinga2', 'none', 'puppet']                  $pki                              = 'icinga2',
-  Optional[Stdlib::Absolutepath]                           $ssl_crl                          = undef,
-  Optional[Boolean]                                        $accept_config                    = undef,
-  Optional[Boolean]                                        $accept_commands                  = undef,
-  Optional[Integer[0]]                                     $max_anonymous_clients            = undef,
-  Optional[Stdlib::Host]                                   $ca_host                          = undef,
-  Stdlib::Port                                             $ca_port                          = 5665,
-  Icinga::Secret                                           $ticket_salt                      = 'TicketSalt',
-  Optional[Icinga::Secret]                                 $ticket_id                        = undef,
-  Hash[String[1], Hash]                                    $endpoints                        = { 'NodeName' => {} },
-  Hash[String[1], Hash]                                    $zones                            = { 'ZoneName' => { endpoints => ['NodeName'] } },
-  Optional[Icinga::Secret]                                 $ssl_key                          = undef,
-  Optional[String[1]]                                      $ssl_cert                         = undef,
-  Optional[String[1]]                                      $ssl_cacert                       = undef,
-  Optional[Enum['TLSv1', 'TLSv1.1', 'TLSv1.2', 'TLSv1.3']] $ssl_protocolmin                  = undef,
-  Optional[Icinga2::Interval]                              $ssl_handshake_timeout            = undef,
-  Optional[Icinga2::Interval]                              $connect_timeout                  = undef,
-  Optional[String[1]]                                      $ssl_cipher_list                  = undef,
-  Optional[Stdlib::Host]                                   $bind_host                        = undef,
-  Optional[Stdlib::Port]                                   $bind_port                        = undef,
-  Optional[Array[Enum['GET', 'POST', 'PUT', 'DELETE']]]    $access_control_allow_methods     = undef,
-  Optional[Array[String[1]]]                               $access_control_allow_origin      = undef,
-  Optional[Boolean]                                        $access_control_allow_credentials = undef,
-  Optional[String[1]]                                      $access_control_allow_headers     = undef,
-  Optional[Icinga2::Fingerprint]                           $fingerprint                      = undef,
-  Optional[String[1]]                                      $environment                      = undef,
+  Enum['absent', 'present']                                $ensure                               = present,
+  Enum['ca', 'icinga2', 'none', 'puppet']                  $pki                                  = 'icinga2',
+  Optional[Stdlib::Absolutepath]                           $ssl_crl                              = undef,
+  Optional[Boolean]                                        $accept_config                        = undef,
+  Optional[Boolean]                                        $accept_commands                      = undef,
+  Optional[Integer[0]]                                     $max_anonymous_clients                = undef,
+  Optional[Stdlib::Host]                                   $ca_host                              = undef,
+  Stdlib::Port                                             $ca_port                              = 5665,
+  Icinga::Secret                                           $ticket_salt                          = 'TicketSalt',
+  Optional[Icinga::Secret]                                 $ticket_id                            = undef,
+  Hash[String[1], Hash]                                    $endpoints                            = { 'NodeName' => {} },
+  Hash[String[1], Hash]                                    $zones                                = { 'ZoneName' => { endpoints => ['NodeName'] } }, # lint:ignore:140chars
+  Optional[Icinga::Secret]                                 $ssl_key                              = undef,
+  Optional[String[1]]                                      $ssl_cert                             = undef,
+  Optional[String[1]]                                      $ssl_cacert                           = undef,
+  Optional[Stdlib::Absolutepath]                           $ssl_puppet_cacert                    = undef,
+  Optional[Enum['TLSv1', 'TLSv1.1', 'TLSv1.2', 'TLSv1.3']] $ssl_protocolmin                      = undef,
+  Optional[Icinga2::Interval]                              $ssl_handshake_timeout                = undef,
+  Optional[Icinga2::Interval]                              $connect_timeout                      = undef,
+  Optional[String[1]]                                      $ssl_cipher_list                      = undef,
+  Optional[Stdlib::Host]                                   $bind_host                            = undef,
+  Optional[Stdlib::Port]                                   $bind_port                            = undef,
+  Optional[Array[Enum['GET', 'POST', 'PUT', 'DELETE']]]    $access_control_allow_methods         = undef,
+  Optional[Array[String[1]]]                               $access_control_allow_origin          = undef,
+  Optional[Boolean]                                        $access_control_allow_credentials     = undef,
+  Optional[String[1]]                                      $access_control_allow_headers         = undef,
+  Optional[Icinga2::Fingerprint]                           $fingerprint                          = undef,
+  Optional[String[1]]                                      $environment                          = undef,
+  Optional[Hash]                                           $http_response_headers                = undef,
+  Optional[Boolean]                                        $enforce_filter_expression_permission = undef,
 ) {
   if ! defined(Class['icinga2']) {
     fail('You must include the icinga2 base class before using any icinga2 feature class!')
@@ -234,10 +249,18 @@ class icinga2::feature::api (
         tag    => 'icinga2::config::file',
       }
 
-      file { $_ssl_cacert_path:
-        ensure => file,
-        source => $facts['icinga2_puppet_localcacert'],
-        tag    => 'icinga2::config::file',
+      if $ssl_cacert {
+        file { $_ssl_cacert_path:
+          ensure  => file,
+          content => icinga::newline($ssl_cacert),
+          tag     => 'icinga2::config::file',
+        }
+      } else {
+        file { $_ssl_cacert_path:
+          ensure => file,
+          source => pick($ssl_puppet_cacert, $facts['icinga2_puppet_localcacert']),
+          tag    => 'icinga2::config::file',
+        }
       }
     } # puppet
 
@@ -337,22 +360,24 @@ class icinga2::feature::api (
 
   # compose attributes
   $attrs = {
-    'crl_path'                         => $ssl_crl,
-    'accept_commands'                  => $accept_commands,
-    'accept_config'                    => $accept_config,
-    'max_anonymous_clients'            => $max_anonymous_clients,
-    'ticket_salt'                      => $_ticket_salt,
-    'tls_protocolmin'                  => $ssl_protocolmin,
-    'tls_handshake_timeout'            => $ssl_handshake_timeout,
-    'connect_timeout'                  => $connect_timeout,
-    'cipher_list'                      => $ssl_cipher_list,
-    'bind_host'                        => $bind_host,
-    'bind_port'                        => $bind_port,
-    'access_control_allow_origin'      => $access_control_allow_origin,
-    'access_control_allow_credentials' => $access_control_allow_credentials,
-    'access_control_allow_headers'     => $access_control_allow_headers,
-    'access_control_allow_methods'     => $access_control_allow_methods,
-    'environment'                      => $environment,
+    'crl_path'                             => $ssl_crl,
+    'accept_commands'                      => $accept_commands,
+    'accept_config'                        => $accept_config,
+    'max_anonymous_clients'                => $max_anonymous_clients,
+    'ticket_salt'                          => $_ticket_salt,
+    'tls_protocolmin'                      => $ssl_protocolmin,
+    'tls_handshake_timeout'                => $ssl_handshake_timeout,
+    'connect_timeout'                      => $connect_timeout,
+    'cipher_list'                          => $ssl_cipher_list,
+    'bind_host'                            => $bind_host,
+    'bind_port'                            => $bind_port,
+    'access_control_allow_origin'          => $access_control_allow_origin,
+    'access_control_allow_credentials'     => $access_control_allow_credentials,
+    'access_control_allow_headers'         => $access_control_allow_headers,
+    'access_control_allow_methods'         => $access_control_allow_methods,
+    'environment'                          => $environment,
+    'http_response_headers'                => $http_response_headers,
+    'enforce_filter_expression_permission' => $enforce_filter_expression_permission,
   }
 
   # create endpoints and zones
@@ -360,18 +385,12 @@ class icinga2::feature::api (
   create_resources('icinga2::object::zone', $zones)
 
   if $manage_selinux and $bind_port {
-    # if port is free
-    exec { "Add port ${bind_port} for icinga2_port_t":
-      command => ['/usr/sbin/semanage', 'port', '-a', '-t', 'icinga2_port_t', '-p', 'tcp', $bind_port],
-      unless  => "/usr/sbin/semanage port -l | grep -qw '\\s${bind_port}'",
-      before  => Icinga2::Object['icinga2::object::ApiListener::api'],
-    }
-
-    # if port is also used by another app
-    exec { "Add available port ${bind_port} also for icinga2_port_t":
-      command => ['/usr/sbin/semanage', 'port', '-m', '-t', 'icinga2_port_t', '-p', 'tcp', $bind_port],
-      onlyif  => "/usr/sbin/semanage port -l | grep -wv '^icinga2_port_t' | grep -wq '\s${bind_port}'",
-      before  => Icinga2::Object['icinga2::object::ApiListener::api'],
+    selinux::port { "icinga2-api-tcp-${bind_port}":
+      ensure   => 'present',
+      seltype  => 'icinga2_port_t',
+      protocol => 'tcp',
+      port     => $bind_port,
+      before   => Icinga2::Object['icinga2::object::ApiListener::api'],
     }
   }
 

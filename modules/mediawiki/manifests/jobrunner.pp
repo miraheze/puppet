@@ -19,7 +19,7 @@ class mediawiki::jobrunner {
     # Declare the proxies explicitly with retry=0
     httpd::conf { 'fcgi_proxies':
         ensure  => present,
-        content => template('mediawiki/fcgi_proxies.conf.erb')
+        content => epp('mediawiki/fcgi_proxies.conf.epp', { 'php_fpm_sock' => $php_fpm_sock })
     }
 
     class { 'httpd':
@@ -84,13 +84,13 @@ class mediawiki::jobrunner {
     resources { type = 'Class' and title = 'Role::Icinga2' })
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'jobrunner-9005':
+    firewall::service { 'jobrunner-9005':
         proto   => 'tcp',
         port    => $port,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }
-    ferm::service { 'jobrunner-9006':
+    firewall::service { 'jobrunner-9006':
         proto   => 'tcp',
         port    => $local_only_port,
         srange  => "(${firewall_rules_str})",

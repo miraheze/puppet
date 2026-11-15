@@ -69,7 +69,7 @@ class postgresql::master(
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
-        content => template('postgresql/master.conf.erb'),
+        content => epp('postgresql/master.conf.epp', { 'max_wal_senders' => $max_wal_senders, 'wal_keep_segments' => $wal_keep_segments, '_pgversion' => $_pgversion }),
         require => Package["postgresql-${_pgversion}"],
     }
 

@@ -37,6 +37,31 @@ class mediawiki {
         require            => Package['libjpeg-dev'],
     }
 
+    file { '/usr/share/GeoIP':
+        ensure => directory,
+    }
+
+    file { '/usr/share/GeoIP/GeoLite2-Country.mmdb':
+        ensure  => present,
+        source  => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
+        mode    => '0444',
+        require => File['/usr/share/GeoIP']
+    }
+
+    file { '/usr/share/GeoIP/GeoLite2-City.mmdb':
+        ensure  => present,
+        source  => 'puppet:///private/geoip/GeoLite2-City.mmdb',
+        mode    => '0444',
+        require => File['/usr/share/GeoIP']
+    }
+
+    file { '/usr/share/GeoIP/GeoLite2-ASN.mmdb':
+        ensure  => present,
+        source  => 'puppet:///private/geoip/GeoLite2-ASN.mmdb',
+        mode    => '0444',
+        require => File['/usr/share/GeoIP']
+    }
+
     file { '/etc/polkit-1/rules.d/90-mediawiki-shellbox.rules':
         ensure => present,
         source => 'puppet:///modules/mediawiki/polkit/90-mediawiki-shellbox.rules',
@@ -52,12 +77,6 @@ class mediawiki {
         owner  => 'www-data',
         group  => 'www-data',
         mode   => '0755',
-    }
-
-    file { '/srv/mediawiki/robots.php':
-        ensure  => 'present',
-        source  => 'puppet:///modules/mediawiki/robots.php',
-        require => File['/srv/mediawiki'],
     }
 
     file { '/srv/mediawiki/favicon.php':
@@ -110,9 +129,10 @@ class mediawiki {
     $google_translate_apikey_meta = lookup('passwords::mediawiki::google_translate_apikey_meta')
     $mediamoderation_apikey       = lookup('passwords::mediawiki::mediamoderation_apikey')
     $openai_apikey                = lookup('mediawiki::openai_apikey')
-    $openai_assistantid           = lookup('mediawiki::openai_assistantid')
+    $openai_instructions          = lookup('mediawiki::openai_instructions')
     $turnstile_sitekey            = lookup('mediawiki::turnstile_sitekey')
     $turnstile_secretkey          = lookup('mediawiki::turnstile_secretkey')
+    $speedscope_log_token         = lookup('speedscope::log_token')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
@@ -150,7 +170,7 @@ class mediawiki {
         source => 'puppet:///modules/mediawiki/bin/mwscript.py',
     }
 
-    $cookbooks = ['disable-puppet', 'enable-puppet', 'cycle-puppet', 'check-read-only', 'cleanup-old-mediawiki']
+    $cookbooks = ['check-read-only', 'cleanup-old-mediawiki']
     $cookbooks.each |$cookbook| {
         file {"/usr/local/bin/${cookbook}":
             ensure => 'present',
@@ -159,7 +179,7 @@ class mediawiki {
         }
     }
 
-    $shells = ['sql', 'mweval', 'shell', 'sugit']
+    $shells = ['sql', 'mweval', 'shell', 'sugit', 'suwd']
     $shells.each |$shell| {
         file {"/usr/local/bin/${shell}":
             ensure => 'present',
@@ -192,7 +212,7 @@ class mediawiki {
 
     file { '/etc/swift-env.sh':
         ensure  => 'present',
-        content => template('mediawiki/swift-env.sh.erb'),
+        content => epp('mediawiki/swift-env.sh.epp', { 'swift_password' => $swift_password }),
         mode    => '0755',
     }
 
@@ -228,11 +248,15 @@ class mediawiki {
         mode   => '0775',
     }
     exec { 'create python venv':
-        command => '/usr/bin/python3 -m venv /srv/python/env && /srv/python/env/bin/pip3 install Miraheze-PyUtils',
-        require => [Package['python3'],File['/srv/python']],
-        cwd     => '/srv',
-        user    => 'www-data',
-        onlyif  => 'test ! -d /srv/python/env',
-        path    => '/bin:/usr/bin',
+        command     => '/usr/bin/python3 -m venv /srv/python/env && /srv/python/env/bin/pip3 install Miraheze-PyUtils',
+        require     => [Package['python3'], File['/srv/python']],
+        cwd         => '/srv',
+        user        => 'www-data',
+        onlyif      => 'test ! -d /srv/python/env',
+        path        => '/bin:/usr/bin',
+        environment => [
+            'HTTP_PROXY=http://bastion.fsslc.wtnet:8080',
+            'HTTPS_PROXY=http://bastion.fsslc.wtnet:8080',
+        ],
     }
 }

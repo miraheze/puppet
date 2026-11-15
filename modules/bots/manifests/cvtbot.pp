@@ -1,0 +1,148 @@
+# class: bots::cvtbot
+class bots::cvtbot {
+    $install_path = '/srv/cvtbot'
+    $dotnet_version = '10.0'
+
+    $password   = lookup('passwords::irc::cvtbot')
+    $http_proxy = lookup('http_proxy', {'default_value' => undef})
+
+    if !defined(Package['packages-microsoft-prod']) {
+        file { '/opt/packages-microsoft-prod.deb':
+            ensure => present,
+            source => 'puppet:///modules/bots/packages-microsoft-prod.deb',
+        }
+
+        package { 'packages-microsoft-prod':
+            ensure   => installed,
+            provider => dpkg,
+            source   => '/opt/packages-microsoft-prod.deb',
+            require  => File['/opt/packages-microsoft-prod.deb'],
+        }
+    }
+
+    if !defined(Package["dotnet-sdk-${dotnet_version}"]) {
+        package { "dotnet-sdk-${dotnet_version}":
+            ensure  => installed,
+            require => Package['packages-microsoft-prod'],
+        }
+    }
+
+    file { $install_path:
+        ensure    => directory,
+        owner     => 'irc',
+        group     => 'irc',
+        mode      => '0644',
+        recurse   => true,
+        max_files => 5000,
+    }
+
+    git::clone { 'CVTBot':
+        ensure    => present,
+        origin    => 'https://github.com/miraheze/CVTBot',
+        directory => $install_path,
+        owner     => 'irc',
+        group     => 'irc',
+        mode      => '0644',
+        require   => File[$install_path],
+    }
+
+    file { [
+        "${install_path}/src/CVTBot/.nuget",
+        "${install_path}/src/CVTBot/.nuget/NuGet"
+    ]:
+        ensure  => directory,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        require => Git::Clone['CVTBot'],
+    }
+
+    file { "${install_path}/src/CVTBot/.nuget/NuGet/NuGet.Config":
+        ensure  => present,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        source  => 'puppet:///modules/bots/NuGet.Config',
+        before  => Exec['CVTBot-build'],
+        require => [
+            File["${install_path}/src/CVTBot/.nuget"],
+            File["${install_path}/src/CVTBot/.nuget/NuGet"],
+        ],
+    }
+
+    exec { 'CVTBot-build':
+        command     => 'dotnet build --configuration Release',
+        creates     => "${install_path}/src/CVTBot/bin",
+        unless      => "test -d ${install_path}/src/CVTBot/bin/Release/net${dotnet_version}",
+        cwd         => "${install_path}/src/CVTBot",
+        path        => '/usr/bin',
+        environment => [
+            "HOME=${install_path}/src/CVTBot",
+            'HTTP_PROXY=http://bastion.fsslc.wtnet:8080',
+        ],
+        user        => 'irc',
+        require     => Git::Clone['CVTBot'],
+    }
+
+    file { [
+        "${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget",
+        "${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget/NuGet"
+    ]:
+        ensure  => directory,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        require => Exec['CVTBot-build'],
+    }
+
+    file { "${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget/NuGet/NuGet.Config":
+        ensure  => present,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        source  => 'puppet:///modules/bots/NuGet.Config',
+        require => [
+            File["${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget"],
+            File["${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget/NuGet"],
+        ],
+    }
+
+    file { "${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/CVTBot":
+        ensure  => present,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0744',
+        require => File["${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget/NuGet/NuGet.Config"],
+    }
+
+    file { [
+        "${install_path}/src/CVTBot.ini",
+        "${install_path}/src/CVTBot-sample.ini"
+    ]:
+        ensure  => present,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        content => epp('bots/cvtbot/CVTBot.ini.epp', {
+            'password'   => $password,
+            'http_proxy' => $http_proxy,
+        }),
+        require => Git::Clone['CVTBot'],
+        notify  => Service['cvtbot'],
+    }
+
+    systemd::service { 'cvtbot':
+        ensure  => present,
+        content => systemd_template('cvtbot', { 'install_path' => $install_path, 'dotnet_version' => $dotnet_version }),
+        restart => true,
+        require => [
+            Exec['CVTBot-build'],
+            File["${install_path}/src/CVTBot.ini"],
+            Package["dotnet-sdk-${dotnet_version}"],
+        ],
+    }
+
+    monitoring::nrpe { 'CVT Bot':
+        command => '/usr/lib/nagios/plugins/check_procs -a cvtbot -c 2:2',
+    }
+}

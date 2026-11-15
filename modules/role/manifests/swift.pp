@@ -45,16 +45,16 @@ class role::swift (
             statsd_prefix => 'swift.containers.mw-media',
         }
 
-        ferm::service { 'http':
+        firewall::service { 'http':
             proto   => 'tcp',
-            port    => '80',
+            port    => 80,
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
 
-        ferm::service { 'https':
+        firewall::service { 'https':
             proto   => 'tcp',
-            port    => '443',
+            port    => 443,
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
@@ -62,9 +62,9 @@ class role::swift (
         if lookup('swift_enable_memcache', {'default_value' => false}) {
             include role::memcached
 
-            ferm::service { 'swift_memcache_11211':
+            firewall::service { 'swift_memcache_11211':
                 proto   => 'tcp',
-                port    => '11211',
+                port    => 11211,
                 srange  => "(${firewall_rules_str})",
                 notrack => true,
             }
@@ -75,23 +75,23 @@ class role::swift (
     if $ac {
         include ::swift::ac
 
-        ferm::service { 'swift_account_6002':
+        firewall::service { 'swift_account_6002':
             proto   => 'tcp',
-            port    => '6002',
+            port    => 6002,
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
 
-        ferm::service { 'swift_container_6001':
+        firewall::service { 'swift_container_6001':
             proto   => 'tcp',
-            port    => '6001',
+            port    => 6001,
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
 
-        ferm::service { 'swift-rsync':
+        firewall::service { 'swift-rsync':
             proto   => 'tcp',
-            port    => '873',
+            port    => 873,
             notrack => true,
             srange  => "(${firewall_rules_str})",
         }
@@ -110,16 +110,16 @@ class role::swift (
             statsd_metric_prefix => "swift.${facts['networking']['hostname']}",
         }
 
-        ferm::service { 'swift_object_6000':
+        firewall::service { 'swift_object_6000':
             proto   => 'tcp',
-            port    => '6000',
+            port    => 6000,
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
 
-        ferm::service { 'swift-rsync':
+        firewall::service { 'swift-rsync':
             proto   => 'tcp',
-            port    => '873',
+            port    => 873,
             notrack => true,
             srange  => "(${firewall_rules_str})",
         }

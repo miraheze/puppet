@@ -1,0 +1,2 @@
+chrony::leapseclist: ~
+chrony::leapsectz: right/UTC

@@ -1,0 +1,3 @@
+<%- | String $redis_password | -%>
+# REDIS PASSWORD
+EXPORTER_REDIS_PASSWORD = '<%= $redis_password %>'

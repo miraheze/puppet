@@ -101,11 +101,14 @@ class Puppet::Provider::OpensearchPlugin < Puppet::Provider
   # Install this plugin on the host.
   def create
     commands = []
-    commands += proxy_args(@resource[:proxy]) if @resource[:proxy]
     commands << 'install'
     commands << '--batch'
     commands += install_args
     debug("Commands: #{commands.inspect}")
+
+    if @resource[:proxy]
+      @resource[:java_opts] = (@resource[:java_opts] || []) + proxy_args(@resource[:proxy])
+    end
 
     retry_count = 3
     retry_times = 0

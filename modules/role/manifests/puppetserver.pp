@@ -1,29 +1,29 @@
 # = Class: role::puppetserver
 #
-# Sets up a centralised puppetserver.
+# Sets up a centralized openvox server.
 #
 # = Parameters
 #
 # [*puppetdb_hostname*]
-#   The hostname for puppetdb server.
+#   The hostname for openvoxdb server.
 #
 # [*puppetdb_enable*]
-#   A boolean on whether to enable puppetdb for the centralised puppetserver.
+#   A boolean on whether to enable openvoxdb for the centralized openvox server.
 #
-# [*puppet_major_version*]
-#   A integer for the version of puppetserver you want installed.
+# [*openvox_major_version*]
+#   A integer for the version of openvox-server you want installed.
 #
 # [*puppetserver_hostname*]
-#   The hostname for the centralised puppetserver.
+#   The hostname for the centralized openvox server.
 #
 # [*puppetserver_java_opts*]
-#   Options for java (which runs the puppetserver)
+#   Options for java (which runs the openvox server)
 #
 class role::puppetserver (
-    String  $puppetdb_hostname      = lookup('puppetdb_hostname'),
-    Boolean $puppetdb_enable        = lookup('puppetdb_enable', {'default_value' => false}),
-    Integer $puppet_major_version   = lookup('puppet_major_version', {'default_value' => 8}),
-    String  $puppetserver_hostname  = lookup('puppetserver_hostname'),
+    String  $puppetdb_hostname         = lookup('puppetdb_hostname'),
+    Boolean $puppetdb_enable           = lookup('puppetdb_enable', {'default_value' => false}),
+    Integer $openvox_major_version     = lookup('openvox_major_version'),
+    String  $puppetserver_hostname     = lookup('puppetserver_hostname'),
     String  $puppetserver_java_options = lookup('puppetserver_java_opts', {'default_value' => '-Xms300m -Xmx300m'}),
 ) {
 
@@ -31,7 +31,7 @@ class role::puppetserver (
     class { '::puppetserver':
         puppetdb_hostname      => $puppetdb_hostname,
         puppetdb_enable        => $puppetdb_enable,
-        puppet_major_version   => $puppet_major_version,
+        openvox_major_version  => $openvox_major_version,
         puppetserver_hostname  => $puppetserver_hostname ,
         puppetserver_java_opts => $puppetserver_java_opts,
     }

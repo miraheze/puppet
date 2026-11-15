@@ -7,14 +7,14 @@
 #
 # [*systemd_content*]
 #   Content used to create the systemd::service. If not provided a default template
-#   located on haproxy/haproxy.service.erb is used
+#   located on haproxy/haproxy.service.epp is used
 #
 # [*config_content*]
 #   Content used to populate /etc/haproxy/haproxy.cfg. If not provided a default template
-#   located on haproxy/haproxy.cfg.erb is used
+#   located on haproxy/haproxy.cfg.epp is used
 
 class haproxy(
-    $template                         = 'haproxy/haproxy.cfg.erb',
+    $template                         = 'haproxy/haproxy.cfg.epp',
     $socket                           = '/run/haproxy/haproxy.sock',
     $pid                              = '/run/haproxy/haproxy.pid',
     Boolean $systemd_override         = false,
@@ -46,7 +46,7 @@ class haproxy(
     }
 
     $haproxy_config_content = $config_content? {
-        undef   => template($template),
+        undef   => epp($template, { 'socket' => $socket }),
         default => $config_content,
     }
 
@@ -64,12 +64,12 @@ class haproxy(
         mode    => '0644',
         owner   => 'root',
         group   => 'root',
-        content => template('haproxy/haproxy.default.erb'),
+        content => epp('haproxy/haproxy.default.epp'),
         notify  => Service['haproxy'],
     }
 
     $systemd_service_content = $systemd_content? {
-        undef   => template('haproxy/haproxy.service.erb'),
+        undef   => epp('haproxy/haproxy.service.epp', { 'pid' => $pid }),
         default => $systemd_content,
     }
 

@@ -1,9 +1,11 @@
 class role::jobrunner_haproxy (
-    Hash $backends = lookup('jobrunner_haproxy::backends')
+    Hash $servers = lookup('jobrunner_haproxy::servers'),
+    Integer $agent_port = lookup('haproxy::lb_agent::port', {'default_value' => 9590}),
+    String $timeout_queue = lookup('jobrunner_haproxy::timeout_queue', {'default_value' => '600s'}),
 ) {
 
-    class { '::haproxy':
-        config_content => template('role/jobrunner_haproxy/haproxy.cfg.erb'),
+    class { 'haproxy':
+        config_content => epp('role/jobrunner_haproxy/haproxy.cfg.epp'),
     }
 
     haproxy::site { 'lb':
@@ -11,9 +13,12 @@ class role::jobrunner_haproxy (
         content => template('role/jobrunner_haproxy/lb.cfg.erb'),
     }
 
+    include haproxy::lb_ctl
+    include haproxy::lb_monitoring
+
     rsyslog::conf { 'haproxy':
         priority => 20,
-        content  => template('role/jobrunner_haproxy/haproxy.rsyslog.conf.erb'),
+        content  => epp('role/jobrunner_haproxy/haproxy.rsyslog.conf.epp'),
     }
 
     ['9007', '9008', '9009'].each |String $port| {

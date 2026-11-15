@@ -96,9 +96,9 @@ class role::kafka (
     resources { type = 'Class' and title = 'Role::Eventgate' })
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'kafka':
+    firewall::service { 'kafka':
         proto   => 'tcp',
-        port    => '9092',
+        port    => 9092,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }

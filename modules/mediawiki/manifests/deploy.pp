@@ -30,7 +30,7 @@ class mediawiki::deploy {
         }
 
         file { '/var/www/.ssh/known_hosts':
-            content => template('mediawiki/mw-user-known-hosts.erb'),
+            content => epp('mediawiki/mw-user-known-hosts.epp'),
             owner   => 'www-data',
             group   => 'www-data',
             mode    => '0644',
@@ -56,7 +56,10 @@ class mediawiki::deploy {
         {
             ensure   => '3.5.1',
             provider => 'pip3',
-            install_options => [ '--break-system-packages' ],
+            install_options => [
+                '--break-system-packages',
+                { '--proxy' => 'http://bastion.fsslc.wtnet:8080' },
+            ],
             before   => File['/usr/local/bin/mwdeploy'],
             require  => Package['python3-pip'],
         },
@@ -101,6 +104,7 @@ class mediawiki::deploy {
         group   => 'www-data',
         mode    => '0755',
         source  => 'puppet:///mediawiki-repos/patches/public',
+        purge   => true,
         recurse => true,
         require => File['/srv/mediawiki-staging/patches'],
     }
@@ -111,6 +115,7 @@ class mediawiki::deploy {
         group   => 'www-data',
         mode    => '0755',
         source  => 'puppet:///mediawiki-repos/patches/private/patches',
+        purge   => true,
         recurse => true,
         require => File['/srv/mediawiki-staging/patches'],
     }

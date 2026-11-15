@@ -91,10 +91,10 @@ class prometheus::exporter::node (
     $subquery = @("PQL")
     resources { type = 'Class' and title = 'Prometheus' }
     | PQL
-    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'prometheus node-exporter':
+    $firewall_rules_str = vmlib::generate_firewall_ip_public($subquery, $facts['networking'])
+    firewall::service { 'prometheus node-exporter':
         proto  => 'tcp',
-        port   => '9100',
+        port   => 9100,
         srange => "(${firewall_rules_str})",
     }
 }

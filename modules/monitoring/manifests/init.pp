@@ -1,17 +1,20 @@
+# class: monitoring
 class monitoring (
-    String $db_host,
-    String $db_name                         = 'icinga',
-    String $db_user                         = 'icinga2',
-    String $db_password                     = undef,
-    String $mirahezebots_password           = undef,
-    String $ticket_salt                     = '',
-    Optional[String] $icinga2_api_bind_host = undef,
+    String           $icingadb_db_host,
+    String           $icingadb_db_name        = 'icingadb',
+    String           $icingadb_db_user        = 'icinga2',
+    String           $icingadb_db_password,
+    String           $icingadb_redis_host     = 'localhost',
+    Stdlib::Port     $icingadb_redis_port     = 6379,
+    String           $icingadb_redis_password,
+    String           $ticket_salt             = '',
+    Optional[String] $icinga2_api_bind_host   = undef,
+    String           $icingaweb2_api_password,
+    String           $icingabot_api_password,
 ) {
     stdlib::ensure_packages([
         'nagios-nrpe-plugin',
         'python3-dnspython',
-        'python3-filelock',
-        'python3-flask',
         'python3-tldextract',
     ])
 
@@ -20,14 +23,6 @@ class monitoring (
         name      => 'nagios',
         system    => true,
         allowdupe => false,
-    }
-
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
-    if $http_proxy and !defined(File['/etc/apt/apt.conf.d/02mariadb']) {
-        file { '/etc/apt/apt.conf.d/02mariadb':
-            ensure  => present,
-            content => template('mariadb/aptproxy.erb'),
-        }
     }
 
     $version = lookup('mariadb::version', {'default_value' => '11.8'})
@@ -64,11 +59,38 @@ class monitoring (
         },
     )
 
+    class { 'prometheus::exporter::redis':
+        redis_password => $icingadb_redis_password,
+    }
+
+    $redis_heap = lookup('redis::heap', {'default_value' => '500mb'})
+    class { 'redis':
+        persist   => false,
+        password  => $icingadb_redis_password,
+        maxmemory => $redis_heap,
+    }
+
+    class { 'icingadb':
+        db_host        => $icingadb_db_host,
+        db_name        => $icingadb_db_name,
+        db_username    => $icingadb_db_user,
+        db_password    => $icingadb_db_password,
+        redis_host     => $icingadb_redis_host,
+        redis_port     => $icingadb_redis_port,
+        redis_password => $icingadb_redis_password,
+        import_schema  => false,
+        require        => Class['redis'],
+    }
+
     class { 'icinga2':
         manage_repos => true,
         constants    => {
             'TicketSalt' => Sensitive($ticket_salt),
         }
+    }
+
+    class { 'icinga2::query_objects':
+        destination => lookup('icinga2_host', {'default_value' => 'mon181.fsslc.wtnet'}),
     }
 
     class { 'icinga2::feature::api':
@@ -78,21 +100,35 @@ class monitoring (
     }
 
     include icinga2::feature::command
-
     include icinga2::feature::notification
-
     include icinga2::feature::perfdata
 
-    class { 'icinga2::feature::idomysql':
-        host          => $db_host,
-        user          => $db_user,
-        password      => $db_password,
-        database      => $db_name,
-        import_schema => false,
+    class { 'icinga2::feature::icingadb':
+        host     => $icingadb_redis_host,
+        port     => $icingadb_redis_port,
+        password => $icingadb_redis_password,
     }
 
     class { 'icinga2::feature::gelf':
         host => 'logging.wikitide.net',
+    }
+
+    icinga2::object::apiuser { 'icingaweb2':
+        ensure      => present,
+        password    => $icingaweb2_api_password,
+        permissions => ['status/query', 'actions/*', 'objects/modify/*', 'objects/query/*'],
+        target      => '/etc/icinga2/conf.d/api-users.conf',
+        require     => Package['icinga2'],
+        notify      => Service['icinga2'],
+    }
+
+    icinga2::object::apiuser { 'icingabot':
+        ensure      => present,
+        password    => $icingabot_api_password,
+        permissions => ['events/Notification', 'events/StateChange', 'objects/query/Host', 'objects/query/Service'],
+        target      => '/etc/icinga2/conf.d/api-users.conf',
+        require     => Package['icinga2'],
+        notify      => Service['icinga2'],
     }
 
     file { '/etc/icinga2/conf.d/commands.conf':
@@ -185,24 +221,6 @@ class monitoring (
         notify  => Service['icinga2'],
     }
 
-    file { '/etc/icinga2/scripts/irc-host-notification.sh':
-        source  => 'puppet:///modules/monitoring/scripts/irc-host-notification.sh',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        require => Package['icinga2'],
-        notify  => Service['icinga2'],
-    }
-
-    file { '/etc/icinga2/scripts/irc-service-notification.sh':
-        source  => 'puppet:///modules/monitoring/scripts/irc-service-notification.sh',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        require => Package['icinga2'],
-        notify  => Service['icinga2'],
-    }
-
     $ssl = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
     $redirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
     $sslcerts = $ssl + $redirects
@@ -219,7 +237,7 @@ class monitoring (
         .sort()
 
     file { '/etc/icinga2/conf.d/ssl.conf':
-        ensure  => 'present',
+        ensure  => present,
         content => template('monitoring/ssl.conf.erb'),
         owner   => 'root',
         group   => 'root',
@@ -229,16 +247,11 @@ class monitoring (
     }
 
     file { '/etc/icinga2/scripts/ssl-renew.sh':
-        ensure => 'present',
+        ensure => present,
         source => 'puppet:///modules/monitoring/scripts/ssl-renew.sh',
         owner  => 'root',
         group  => 'root',
         mode   => '0755',
-    }
-
-    # includes a irc bot to relay messages from icinga to irc
-    class { 'monitoring::ircecho':
-        mirahezebots_password => $mirahezebots_password,
     }
 
     file { '/usr/lib/nagios/plugins/check_icinga_config':
@@ -261,23 +274,9 @@ class monitoring (
         require => Package['nagios-nrpe-plugin'],
     }
 
-    # Setup webhook for grafana to call
-    file { '/usr/local/bin/grafana-webhook.py':
-        ensure => present,
-        source => 'puppet:///modules/monitoring/grafana-webhook.py',
-        mode   => '0755',
-        notify => Service['grafana-webhook'],
-    }
-
-    systemd::service { 'grafana-webhook':
-        ensure  => present,
-        content => systemd_template('grafana-webhook'),
-        restart => true,
-    }
-
     # Icinga monitoring
     monitoring::nrpe { 'Check correctness of the icinga configuration':
-        command => '/usr/lib/nagios/plugins/check_icinga_config'
+        command => '/usr/lib/nagios/plugins/check_icinga_config',
     }
 
     systemd::timer::job { 'remove_icinga2_perfdata':
@@ -290,7 +289,4 @@ class monitoring (
         },
         user        => 'root',
     }
-
-    Icinga2::Object::Host <<||>> ~> Service['icinga2']
-    Icinga2::Object::Service <<||>> ~> Service['icinga2']
 }

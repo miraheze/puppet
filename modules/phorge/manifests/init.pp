@@ -39,7 +39,7 @@ class phorge (
         'zip',
     ]
 
-    $php_version = lookup('php::php_version', {'default_value' => '8.4'})
+    $php_version = lookup('php::php_version')
 
     # Install the runtime
     class { 'php':
@@ -162,7 +162,9 @@ class phorge (
     $module_path = get_module_path($module_name)
     $phorge_yaml = loadyaml("${module_path}/data/config.yaml")
     $phorge_private = {
-        'mysql.pass' => lookup('passwords::db::phorge'),
+        'mysql.pass'            => lookup('passwords::db::phorge'),
+        'github.webhook-secret' => lookup('passwords::phorge::github_webhook_secret', {'default_value' => ''}),
+        'github.api-token'      => lookup('passwords::phorge::github_api_token', {'default_value' => ''}),
     }
 
     $phorge_setting = {

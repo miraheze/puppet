@@ -1,8 +1,10 @@
 # class base::puppet
 class base::puppet (
-    Integer[1,59] $interval              = lookup('base::puppet::interval', {'default_value' => 30}),
-    Integer       $puppet_major_version  = lookup('puppet_major_version', {'default_value' => 8}),
-    String        $puppetserver_hostname = lookup('puppetserver_hostname'),
+    Integer[1,59]    $interval              = lookup('base::puppet::interval', {'default_value' => 30}),
+    Integer          $openvox_major_version = lookup('openvox_major_version'),
+    String           $puppetserver_hostname = lookup('puppetserver_hostname'),
+    Optional[String] $http_proxy_host       = lookup('base::puppet::http_proxy_host', {'default_value' => undef}),
+    Integer          $http_proxy_port       = lookup('base::puppet::http_proxy_port', {'default_value' => 8080}),
 ) {
     file { '/etc/apt/trusted.gpg.d/openvox-keyring.gpg':
         ensure => present,
@@ -11,7 +13,7 @@ class base::puppet (
 
     apt::source { 'openvox':
         location => 'https://apt.voxpupuli.org',
-        repos    => "openvox${puppet_major_version}",
+        repos    => "openvox${openvox_major_version}",
         release  => "debian${facts['os']['release']['major']}",
         require  => File['/etc/apt/trusted.gpg.d/openvox-keyring.gpg'],
         notify   => Exec['apt_update_openvox'],
@@ -60,7 +62,7 @@ class base::puppet (
         mode    => '0555',
         owner   => 'root',
         group   => 'root',
-        content => template('base/puppet/puppet-run.erb'),
+        content => epp('base/puppet/puppet-run.epp'),
         require => File['/var/log/puppet'],
     }
 
@@ -88,7 +90,11 @@ class base::puppet (
     if !lookup('puppetserver') {
         file { '/etc/puppetlabs/puppet/puppet.conf':
             ensure  => present,
-            content => template('base/puppet/puppet.conf.erb'),
+            content => epp('base/puppet/puppet.conf.epp', {
+                'puppetserver_hostname' => $puppetserver_hostname,
+                'http_proxy_host'       => $http_proxy_host,
+                'http_proxy_port'       => $http_proxy_port,
+            }),
             mode    => '0444',
             require => Package['openvox-agent'],
         }

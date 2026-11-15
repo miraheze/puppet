@@ -5,11 +5,16 @@ class role::opensearch (
     $os_manager_hosts = lookup('role::opensearch::manager_hosts', {'default_value' => undef}),
     $use_tls = lookup('role::opensearch::use_tls', {'default_value' => false}),
     $enable_exporter = lookup('role::opensearch::enable_exporter', {'default_value' => true}),
+    Boolean $sudachi_dictionary = lookup('role::opensearch::sudachi_dictionary', {'default_value' => false}),
+    Pattern[/\A\d+\.\d+\.\d+\z/] $os_version = lookup('role::opensearch::version'),
 ) {
+    include base
     include java
 
+    $os_major_version = split($os_version, /\./)[0]
+
     class { 'opensearch::repo':
-        version => '2.x',
+        version => "${os_major_version}.x",
     }
 
     if $use_tls {
@@ -43,13 +48,65 @@ class role::opensearch (
             'node.roles'                            => $os_roles,
             'network.host'                          => '0.0.0.0',
         } + $tls_config,
-        version                       => '2.19.4',
+        version                       => $os_version,
         manage_repo                   => true,
         jvm_options                   => [ '-Xms4g', '-Xmx4g' ],
         templates                     => {
             'graylog-internal' => {
                 'source' => 'puppet:///modules/role/opensearch/index_template.json'
             }
+        }
+    }
+
+    file { '/usr/local/bin/opensearch-plugin-sync':
+        ensure => file,
+        mode   => '0755',
+        source => 'puppet:///modules/role/opensearch/opensearch-plugin-sync.sh',
+    }
+
+    $plugin_names = join(keys($opensearch::plugins), ' ')
+    $plugin_sync = "/usr/local/bin/opensearch-plugin-sync %s ${opensearch::real_plugindir} ${os_version} ${plugin_names}"
+
+    exec { 'remove outdated opensearch plugins':
+        command => sprintf($plugin_sync, 'remove'),
+        onlyif  => sprintf($plugin_sync, 'check'),
+        path    => ['/usr/bin', '/bin'],
+        require => File['/usr/local/bin/opensearch-plugin-sync'],
+    }
+
+    Exec['remove outdated opensearch plugins'] -> Opensearch::Plugin <| |>
+
+    if $sudachi_dictionary {
+        $http_proxy = lookup('http_proxy', {'default_value' => undef})
+        $sudachi_dict_env = $http_proxy ? {
+            undef   => [],
+            default => ["http_proxy=${http_proxy}", "https_proxy=${http_proxy}"],
+        }
+
+        stdlib::ensure_packages('unzip')
+
+        file { '/etc/opensearch/sudachi':
+            ensure  => directory,
+            owner   => 'opensearch',
+            group   => 'opensearch',
+            mode    => '0755',
+            require => File['/etc/opensearch'],
+        }
+
+        exec { 'download sudachi dictionary':
+            command     => '/bin/bash -c \'set -euo pipefail; /usr/bin/curl -sSL -o /tmp/sudachi-dict.zip "https://d2ej7fkh96fzlu.cloudfront.net/sudachidict/sudachi-dictionary-latest-core.zip"; /usr/bin/unzip -p /tmp/sudachi-dict.zip "*/system_core.dic" > /tmp/system_core.dic.tmp; /bin/mv /tmp/system_core.dic.tmp /etc/opensearch/sudachi/system_core.dic; /bin/rm -f /tmp/sudachi-dict.zip\'',
+            creates     => '/etc/opensearch/sudachi/system_core.dic',
+            environment => $sudachi_dict_env,
+            timeout     => 900,
+            require     => [Package['unzip'], File['/etc/opensearch/sudachi']],
+        }
+
+        file { '/etc/opensearch/sudachi/system_core.dic':
+            ensure  => file,
+            owner   => 'opensearch',
+            group   => 'opensearch',
+            mode    => '0644',
+            require => Exec['download sudachi dictionary'],
         }
     }
 
@@ -177,6 +234,16 @@ class role::opensearch (
             content => template('role/opensearch/nginx.conf.erb'),
             monitor => false,
         }
+        monitoring::services { 'HTTPS':
+            check_command => 'check_curl',
+            vars          => {
+                address          => $facts['networking']['interfaces']['ens19']['ip'],
+                http_vhost       => 'opensearch.wikitide.net',
+                http_ssl         => true,
+                http_ignore_body => true,
+                http_expect      => 'HTTP/1.1 200',
+            },
+        }
 
         ssl::wildcard { 'opensearch wildcard': }
 
@@ -189,9 +256,9 @@ class role::opensearch (
         resources { type = 'Class' and title = 'Role::Opensearch' })
         | PQL
         $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-        ferm::service { 'opensearch ssl':
+        firewall::service { 'opensearch ssl':
             proto  => 'tcp',
-            port   => '443',
+            port   => 443,
             srange => "(${firewall_rules_str})",
         }
     }
@@ -204,15 +271,15 @@ class role::opensearch (
     resources { type = 'Class' and title = 'Role::Opensearch' }
     | PQL
     $firewall_os_nodes = vmlib::generate_firewall_ip($subquery_2)
-    ferm::service { 'opensearch data nodes to manager':
+    firewall::service { 'opensearch data nodes to manager':
         proto  => 'tcp',
-        port   => '9200',
+        port   => 9200,
         srange => "(${firewall_os_nodes})",
     }
 
-    ferm::service { 'opensearch manager access data nodes 9300 port':
+    firewall::service { 'opensearch manager access data nodes 9300 port':
         proto  => 'tcp',
-        port   => '9300',
+        port   => 9300,
         srange => "(${firewall_os_nodes})",
     }
 

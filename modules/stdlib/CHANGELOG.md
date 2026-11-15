@@ -5,6 +5,103 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.0.2](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v10.0.2) - 2026-08-06
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v10.0.1...v10.0.2)
+
+### Fixed
+
+- fix(stdlib::manage) parser fails `$type` resources [#1477](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1477) ([jcpunk](https://github.com/jcpunk))
+
+## [v10.0.1](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v10.0.1) - 2026-06-30
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v9.7.0...v10.0.1)
+
+### Changed
+
+- (CAT-2395) Puppetcore upgrade - drop support for Puppet 7 [#1457](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1457) ([LukasAud](https://github.com/LukasAud))
+
+### Added
+
+- Support `Sensitive` values in more functions [#1463](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1463) ([alexjfisher](https://github.com/alexjfisher))
+- (CAT-2152) Add support for  CentOS 9 [#1442](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1442) ([skyamgarp](https://github.com/skyamgarp))
+- stdlib::manage: Also permit templates for concat::fragment [#1434](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1434) ([jcpunk](https://github.com/jcpunk))
+
+### Fixed
+
+- Fix `has_ip_address` and `has_ip_network` functions [#1448](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1448) ([alexjfisher](https://github.com/alexjfisher))
+
+### Other
+
+- Update link to Puppet modules contributing documentation [#1468](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1468) ([jst-cyr](https://github.com/jst-cyr))
+- Support sensitive values in `to_json_pretty` [#1418](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1418) ([alexjfisher](https://github.com/alexjfisher))
+
+## [v9.7.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v9.7.0) - 2024-12-17
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v9.6.0...v9.7.0)
+
+### Added
+
+- (CAT-2119) Add Ubuntu 24.04 support [#1440](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1440) ([shubhamshinde360](https://github.com/shubhamshinde360))
+- (CAT-2101) Add support for Debian-12 [#1439](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1439) ([skyamgarp](https://github.com/skyamgarp))
+- Support for Amazon linux 2 and 2023 [#1427](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1427) ([h0tw1r3](https://github.com/h0tw1r3))
+
+### Fixed
+
+- (CAT-2180) Upgrade rexml to address CVE-2024-49761 [#1443](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1443) ([amitkarsale](https://github.com/amitkarsale))
+
+## [v9.6.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v9.6.0) - 2024-04-03
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v9.5.0...v9.6.0)
+
+### Added
+
+- Allow usage of file templates with stdlib::manage [#1422](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1422) ([tuxmea](https://github.com/tuxmea))
+
+## [v9.5.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v9.5.0) - 2024-03-11
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v9.4.1...v9.5.0)
+
+### Added
+
+- Add function stdlib::sort_by [#1384](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1384) ([XMol](https://github.com/XMol))
+
+### Fixed
+
+- (#1389) - pw_hash with bcrypt not working on puppet master [#1410](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1410) ([TuningYourCode](https://github.com/TuningYourCode))
+
+### Other
+
+- Deprecate `time` function [#1417](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1417) ([alexjfisher](https://github.com/alexjfisher))
+
+## [v9.4.1](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v9.4.1) - 2023-11-09
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v9.4.0...v9.4.1)
+
+### Fixed
+
+- Correct casing of Stdlib::IP::Address [#1406](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1406) ([ekohl](https://github.com/ekohl))
+
+## [v9.4.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v9.4.0) - 2023-09-29
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v9.3.0...v9.4.0)
+
+### Added
+
+- Modernise `fqdn_rotate` function [#1341](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1341) ([alexjfisher](https://github.com/alexjfisher))
+
+## [v9.3.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v9.3.0) - 2023-08-01
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v9.2.0...v9.3.0)
+
+### Added
+
+- Add stdlib::has_function [#1386](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1386) ([seanmil](https://github.com/seanmil))
+
+### Fixed
+
+- Re-add block support to deprecated top-level merge [#1385](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1385) ([seanmil](https://github.com/seanmil))
+
 ## [v9.2.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v9.2.0) - 2023-06-27
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v9.1.0...v9.2.0)
@@ -29,18 +126,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 
 - (CONT-1035) Alter logic of pw_hash [#1370](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1370) ([david22swan](https://github.com/david22swan))
+- Fix `fqdn_rand_string` regression [#1367](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1367) ([alexjfisher](https://github.com/alexjfisher))
 - (CONT-1023) - Enhancing deferrable_epp to support nested hash [#1359](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1359) ([Ramesh7](https://github.com/Ramesh7))
 
 ## [v9.0.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v9.0.0) - 2023-05-30
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v8.6.0...v9.0.0)
 
-### Added
-
-- Namespace Puppet 4.x functions [#1356](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1356) ([smortex](https://github.com/smortex))
-- Add a function to update / regenerate deprecated shims [#1349](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1349) ([smortex](https://github.com/smortex))
-
 ### Changed
+
 - Deprecate the `validate_legacy()` function [#1353](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1353) ([smortex](https://github.com/smortex))
 - Remove deprecated functions [#1352](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1352) ([smortex](https://github.com/smortex))
 - Rewrite validate_email_address() as a Puppet 4.x function [#1350](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1350) ([smortex](https://github.com/smortex))
@@ -74,6 +168,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Remove deprecated Private function [#1310](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1310) ([MartyEwings](https://github.com/MartyEwings))
 - Remove deprecated type and type3x functions [#1309](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1309) ([MartyEwings](https://github.com/MartyEwings))
 - (CONT-801) Puppet 8 support / Drop Puppet 6 support [#1307](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1307) ([LukasAud](https://github.com/LukasAud))
+
+### Added
+
+- Namespace Puppet 4.x functions [#1356](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1356) ([smortex](https://github.com/smortex))
+- Add a function to update / regenerate deprecated shims [#1349](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1349) ([smortex](https://github.com/smortex))
 
 ### Fixed
 
@@ -193,18 +292,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v7.1.0...v8.0.0)
 
+### Changed
+
+- Flip installed and present in Function ensure_packages [#1196](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1196) ([cocker-cc](https://github.com/cocker-cc))
+
 ### Added
 
 - New function to_python() / to_ruby() [#1200](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1200) ([smortex](https://github.com/smortex))
 - pdksync - (IAC-1709) - Add Support for Debian 11 [#1199](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1199) ([david22swan](https://github.com/david22swan))
 - Stdlib::Http::Method: Add new type for http methods [#1192](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1192) ([b4ldr](https://github.com/b4ldr))
 
-### Changed
-- Flip installed and present in Function ensure_packages [#1196](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1196) ([cocker-cc](https://github.com/cocker-cc))
-
 ### Fixed
 
-- (MODULES-11099) Make merge parameter data types actually backwards compatible [#1191](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1191) ([SimonPe](https://github.com/SimonPe))
+- (MODULES-11099) Make merge parameter data types actually backwards compatible [#1191](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1191) ([LadyNamedLaura](https://github.com/LadyNamedLaura))
 
 ## [v7.1.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v7.1.0) - 2021-05-17
 
@@ -226,12 +326,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v6.6.0...v7.0.0)
 
+### Changed
+
+- pdksync - Remove Puppet 5 from testing and bump minimal version to 6.0.0 [#1164](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1164) ([carabasdaniel](https://github.com/carabasdaniel))
+
 ### Added
 
 - Stdlib::Email type [#1160](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1160) ([b4ldr](https://github.com/b4ldr))
-
-### Changed
-- pdksync - Remove Puppet 5 from testing and bump minimal version to 6.0.0 [#1164](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1164) ([carabasdaniel](https://github.com/carabasdaniel))
 
 ### Fixed
 
@@ -334,13 +435,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/5.2.0...v6.0.0)
 
+### Changed
+
+- pdksync - (MODULES-8444) - Raise lower Puppet bound [#1011](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1011) ([david22swan](https://github.com/david22swan))
+
 ### Added
 
 - (MODULES-8760) Add iterative feature to merge() function [#1008](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1008) ([hlindberg](https://github.com/hlindberg))
 - Add a stdlib::ip_in_range() function [#1003](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1003) ([iglov](https://github.com/iglov))
-
-### Changed
-- pdksync - (MODULES-8444) - Raise lower Puppet bound [#1011](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1011) ([david22swan](https://github.com/david22swan))
 
 ## [5.2.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/5.2.0) - 2019-01-18
 
@@ -349,7 +451,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Added
 
 - (MODULES-8404) - Relax `Stdlib::Filesource` type [#981](https://github.com/puppetlabs/puppetlabs-stdlib/pull/981) ([alexjfisher](https://github.com/alexjfisher))
-- Creates new type Stdlib::IP::Address::V6::CIDR [#980](https://github.com/puppetlabs/puppetlabs-stdlib/pull/980) ([timhughes](https://github.com/timhughes))
 - (MODULES-8137) - Addition of support for SLES 15 [#978](https://github.com/puppetlabs/puppetlabs-stdlib/pull/978) ([david22swan](https://github.com/david22swan))
 - (MODULES-8322) Consider IPs with /0 as valid [#975](https://github.com/puppetlabs/puppetlabs-stdlib/pull/975) ([simondeziel](https://github.com/simondeziel))
 - Add a function to compare the OS version [#972](https://github.com/puppetlabs/puppetlabs-stdlib/pull/972) ([ekohl](https://github.com/ekohl))
@@ -426,7 +527,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 
 - (MODULES-6216) - Fix type3x function in stdlib [#861](https://github.com/puppetlabs/puppetlabs-stdlib/pull/861) ([pmcmaw](https://github.com/pmcmaw))
-- MODULES-6106: Fix broken `.sync.yml` [#854](https://github.com/puppetlabs/puppetlabs-stdlib/pull/854) ([](https://github.com/))
 
 ## [4.23.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/4.23.0) - 2017-11-24
 
@@ -639,7 +739,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Undo changing delete() to delete regex matches [#599](https://github.com/puppetlabs/puppetlabs-stdlib/pull/599) ([hunner](https://github.com/hunner))
 - (MODULES-3271) Ensure that is_email_address works on unsupported rubies [#598](https://github.com/puppetlabs/puppetlabs-stdlib/pull/598) ([DavidS](https://github.com/DavidS))
 - (MODULES-3246) Fix concat with Hash arguments. [#590](https://github.com/puppetlabs/puppetlabs-stdlib/pull/590) ([alext](https://github.com/alext))
-- [MODULES-2370] file_line.rb: Fix `line` attribute validation [#585](https://github.com/puppetlabs/puppetlabs-stdlib/pull/585) ([](https://github.com/))
 - (maint) Fixes fqdn_rand_string tests [#578](https://github.com/puppetlabs/puppetlabs-stdlib/pull/578) ([bmjen](https://github.com/bmjen))
 - Fix reference to validate_bool in function [#568](https://github.com/puppetlabs/puppetlabs-stdlib/pull/568) ([mattbostock](https://github.com/mattbostock))
 
@@ -699,7 +798,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Add a new function "try_get_value" [#513](https://github.com/puppetlabs/puppetlabs-stdlib/pull/513) ([dmitryilyin](https://github.com/dmitryilyin))
 - (MODULES-2456) Modify union to accept more than two arrays [#507](https://github.com/puppetlabs/puppetlabs-stdlib/pull/507) ([Jetroid](https://github.com/Jetroid))
 - (MODULES-2410) Add new functions dos2unix and unix2dos [#505](https://github.com/puppetlabs/puppetlabs-stdlib/pull/505) ([gibbsoft](https://github.com/gibbsoft))
-- [MODULES-2370] allow `match` parameter to influence `ensure => absent` behavior. [#499](https://github.com/puppetlabs/puppetlabs-stdlib/pull/499) ([](https://github.com/))
 
 ### Fixed
 

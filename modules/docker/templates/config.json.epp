@@ -1,0 +1,9 @@
+<%- | String $http_proxy | -%>
+{
+ "proxies": {
+   "default": {
+     "httpProxy": "<%= $http_proxy %>",
+     "httpsProxy": "<%= $http_proxy %>"
+   }
+ }
+}

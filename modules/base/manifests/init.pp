@@ -2,6 +2,7 @@
 class base (
     String $bots_hostname = lookup('base::bots_hostname'),
     Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef}),
+    String $wget_no_proxy = lookup('base::wget_no_proxy', {'default_value' => 'localhost,127.0.0.1,::1,.fsslc.wtnet'}),
 ) {
     include apt
     include base::packages
@@ -18,10 +19,14 @@ class base (
     include users
 
     if lookup('dns') {
-        stdlib::ensure_packages(
-            'pdns-recursor',
-            { ensure => absent }
-        )
+        if lookup('base::dns::enable_on_authoritative', { 'default_value' => false }) {
+            include base::dns
+        } else {
+            stdlib::ensure_packages(
+                'pdns-recursor',
+                { ensure => absent }
+            )
+        }
     } else {
         include base::dns
     }
@@ -34,7 +39,7 @@ class base (
 
     file { '/usr/local/bin/logsalmsg':
         ensure  => present,
-        content => template('base/logsalmsg.erb'),
+        content => epp('base/logsalmsg.epp', { 'bots_hostname' => $bots_hostname }),
         mode    => '0555',
     }
 
@@ -44,10 +49,38 @@ class base (
         mode   => '0555',
     }
 
+    $cookbooks = ['cycle-puppet', 'disable-puppet', 'enable-puppet']
+    $cookbooks.each |$cookbook| {
+        file {"/usr/local/bin/${cookbook}":
+            ensure => 'present',
+            mode   => '0755',
+            source => "puppet:///modules/base/cookbooks/${cookbook}.py",
+        }
+    }
+
     if $http_proxy {
         file { '/etc/gitconfig':
             ensure  => present,
-            content => template('base/git/gitconfig.erb'),
+            content => epp('base/git/gitconfig.epp', { 'http_proxy' => $http_proxy }),
+        }
+
+        $proxy_url = regsubst($http_proxy, '/+$', '')
+        apt::setting { 'conf-http-proxy':
+            priority => '01',
+            content  => epp('base/apt/proxy.epp', { 'http_proxy' => $proxy_url }),
+        }
+
+        Apt::Setting['conf-http-proxy'] -> Apt::Source <| |>
+
+        file { '/etc/wgetrc':
+            ensure  => present,
+            owner   => 'root',
+            group   => 'root',
+            mode    => '0644',
+            content => epp('base/wget/wgetrc.epp', {
+                'http_proxy' => $proxy_url,
+                'no_proxy'   => $wget_no_proxy,
+            }),
         }
     }
 
@@ -69,19 +102,15 @@ class base (
         },
     }
 
-    $ntp_server = lookup('base::ntp_server')
+    $ntp_servers = lookup('base::ntp_servers')
 
-    class { 'ntp':
-        servers   => [ $ntp_server ],
-        config    => '/etc/ntpsec/ntp.conf',
-        driftfile => '/var/lib/ntpsec/ntp.drift',
-        restrict  => [
-            'default kod limited nomodify noquery',
-            '-6 default kod limited nomodify noquery',
-            '127.0.0.1',
-            '-6 ::1',
-            '10.0.0.0 mask 255.0.0.0 nomodify notrap',
-        ],
+    stdlib::ensure_packages('ntpsec', { ensure => purged })
+
+    class { 'chrony':
+        servers    => $ntp_servers,
+        config     => '/etc/chrony/chrony.conf',
+        driftfile  => '/var/lib/chrony/chrony.drift',
+        queryhosts => ['10.0.0.0/8'],
     }
 
     # Used by salt-user

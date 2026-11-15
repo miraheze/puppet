@@ -1,0 +1,5 @@
+[Service]
+ExecStart=
+ExecStart=/usr/sbin/nft -f /etc/nftables/main.nft
+ExecReload=
+ExecReload=/usr/sbin/nft -f /etc/nftables/main.nft

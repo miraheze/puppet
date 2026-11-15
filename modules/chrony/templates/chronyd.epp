@@ -1,0 +1,3 @@
+# This file is managed by Puppet.  Do not edit!
+# Command-line options for chronyd
+OPTIONS="<%= $chrony::options %>"

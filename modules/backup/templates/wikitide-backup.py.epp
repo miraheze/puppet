@@ -1,0 +1,1165 @@
+<%- | Boolean $use_http_proxy | -%>
+<%- $cpu_third = $facts['processors']['count'] / 3
+$compress_threads = if $cpu_third > 1 { $cpu_third } else { 1 }
+-%>
+#!/usr/bin/python3 -u
+#
+# Backup script for WikiTide
+# Created by John Lewis 2022
+#
+# Uses OVHcloud Object Storage through the AWS S3 API.
+#
+
+import argparse
+import json
+import os
+import subprocess
+import tarfile
+import time
+
+from datetime import datetime
+
+
+# ============================================================================
+# Configuration
+# ============================================================================
+
+S3_BUCKET = 'wikitide-backup'
+
+AWS_CONFIG_FILE = '/etc/wikitide-backup/aws-config'
+AWS_CREDENTIALS_FILE = '/etc/wikitide-backup/aws-credentials'
+AWS_PROFILE = 'default'
+
+# S3 storage class.
+#
+# NOTE: aws s3 cp does not accept/use S3_STORAGE_CLASS.
+# OVH Object Storage uses STANDARD storage by default, so
+# uploads made with aws s3 cp are stored as STANDARD.
+#
+# This is kept here for documentation/reference if we later
+# switch to an S3 API operation that supports an explicit
+# storage-class parameter.
+S3_STORAGE_CLASS = 'STANDARD'
+
+# HTTP/HTTPS proxy used by the AWS CLI.
+S3_PROXY = 'http://bastion.fsslc.wtnet:8080'
+
+# https://docs.ovhcloud.com/en/guides/storage-and-backup/object-storage/s3-bucket-lifecycle
+LIFECYCLE_FILE = '/etc/wikitide-backup/lifecycle.json'
+
+# ============================================================================
+# Argument parsing
+# ============================================================================
+
+parser = argparse.ArgumentParser(
+    description=(
+        'Provides backup, download, find and lifecycle '
+        'management functionality for WikiTide backups '
+        'using OVH Object Storage.'
+    )
+)
+
+parser.add_argument(
+    'action',
+    choices=[
+        'backup',
+        'download',
+        'find',
+        'set-lifecycle',
+        'list-lifecycle',
+    ],
+    help='Action to perform',
+)
+
+parser.add_argument(
+    'type',
+    choices=[
+        'private',
+        'sslkeys',
+        'phorge_db',
+        'phorge_images',
+        'sql',
+        'mediawiki-xml',
+        'swift-account-container',
+        'grafana',
+        'mattermost-data',
+        'mattermost-db',
+        'puppetdb',
+    ],
+    nargs='?',
+    help='Type of backup to handle',
+)
+
+parser.add_argument(
+    '--date',
+    dest='date',
+    help='Date for backup to download',
+    metavar='YYYY-MM-DD',
+)
+
+parser.add_argument(
+    '--database',
+    dest='database',
+    help='Specific database to download or backup',
+)
+
+parser.add_argument(
+    '--prefix',
+    dest='prefix',
+    help=(
+        'S3 object prefix to find or download. '
+        'For find, lists all matching objects. '
+        'For download, downloads all objects under the prefix.'
+    ),
+)
+
+args = parser.parse_args()
+
+
+# ============================================================================
+# AWS environment
+# ============================================================================
+
+def aws_environment():
+    """
+    Environment used for all AWS CLI operations.
+    """
+
+    env = os.environ.copy()
+
+    env['AWS_CONFIG_FILE'] = AWS_CONFIG_FILE
+    env['AWS_SHARED_CREDENTIALS_FILE'] = AWS_CREDENTIALS_FILE
+    env['AWS_PROFILE'] = AWS_PROFILE
+
+    <% if $use_http_proxy { %>
+    env['HTTP_PROXY'] = S3_PROXY
+    env['HTTPS_PROXY'] = S3_PROXY
+    <% } %>
+
+    return env
+
+
+# ============================================================================
+# AWS S3 API command
+# ============================================================================
+
+def aws_s3api_command(*arguments):
+    """
+    Build an aws s3api command.
+    """
+
+    command = [
+        '/usr/bin/aws',
+        's3api',
+    ]
+
+    if AWS_PROFILE:
+        command.extend([
+            '--profile',
+            AWS_PROFILE,
+        ])
+
+    command.extend(arguments)
+
+    return command
+
+
+# ============================================================================
+# S3 upload
+# ============================================================================
+
+def s3_upload(
+    local_file: str,
+    object_name: str,
+):
+    print(
+        f"Uploading '{local_file}' as "
+        f"'{object_name}' using "
+        f"{S3_STORAGE_CLASS} storage..."
+    )
+
+    command = [
+        '/usr/bin/aws',
+        's3',
+        'cp',
+        local_file,
+        f"s3://{S3_BUCKET}/{object_name}",
+        '--profile',
+        AWS_PROFILE,
+    ]
+
+    result = subprocess.run(
+        command,
+        env=aws_environment(),
+        preexec_fn=os.setsid,
+    )
+
+    if result.returncode == 0:
+        return
+
+    print(
+        'WARNING: aws s3 cp returned an error. '
+        'Checking whether the object was actually uploaded...'
+    )
+
+    try:
+        metadata = s3_head(object_name)
+        local_size = os.path.getsize(local_file)
+        remote_size = metadata['ContentLength']
+
+        if remote_size == local_size:
+            print(
+                f"Upload completed successfully despite "
+                f"the AWS CLI error "
+                f"({remote_size} bytes uploaded)."
+            )
+            return
+
+        print(
+            f"WARNING: object exists but size differs: "
+            f"local={local_size}, remote={remote_size}"
+        )
+
+    except subprocess.CalledProcessError:
+        pass
+
+    raise subprocess.CalledProcessError(
+        result.returncode,
+        command,
+    )
+
+
+# ============================================================================
+# S3 download
+# ============================================================================
+
+def s3_download(
+    object_name: str = None,
+    local_file: str = None,
+    prefix: str = None,
+    destination: str = None,
+):
+    """
+    Download an object or all objects below an S3 prefix.
+
+    When prefix is specified, aws s3 cp --recursive is used.
+    """
+
+    if prefix is not None:
+        if destination is None:
+            destination = '.'
+
+        print(
+            f"Downloading all objects matching "
+            f"prefix '{prefix}' to '{destination}'..."
+        )
+
+        subprocess.check_call(
+            [
+                '/usr/bin/aws',
+                's3',
+                'cp',
+                f's3://{S3_BUCKET}/',
+                destination,
+                '--recursive',
+                '--exclude',
+                '*',
+                '--include',
+                f'{prefix}*',
+                '--profile',
+                AWS_PROFILE,
+            ],
+            env=aws_environment(),
+            preexec_fn=os.setsid,
+        )
+        return
+
+    if object_name is None:
+        raise ValueError(
+            'Either object_name or prefix is required'
+        )
+
+    if local_file is None:
+        local_file = os.path.basename(object_name)
+
+    print(
+        f"Downloading '{object_name}' "
+        f"to '{local_file}'..."
+    )
+
+    subprocess.check_call(
+        [
+            '/usr/bin/aws',
+            's3',
+            'cp',
+            f"s3://{S3_BUCKET}/{object_name}",
+            local_file,
+            '--profile',
+            AWS_PROFILE,
+        ],
+        env=aws_environment(),
+        preexec_fn=os.setsid,
+    )
+
+
+# ============================================================================
+# S3 HEAD
+# ============================================================================
+
+def s3_head(
+    object_name: str,
+):
+    """
+    Retrieve object metadata.
+    """
+
+    result = subprocess.check_output(
+        aws_s3api_command(
+            'head-object',
+            '--bucket',
+            S3_BUCKET,
+            '--key',
+            object_name,
+            '--output',
+            'json',
+        ),
+        env=aws_environment(),
+        text=True,
+        preexec_fn=os.setsid,
+    )
+
+    return json.loads(result)
+
+
+# ============================================================================
+# S3 list
+# ============================================================================
+
+def s3_list(
+    prefix: str = "",
+):
+    """
+    List all objects below a prefix.
+
+    list-objects-v2 is paginated, so continue until
+    all pages have been retrieved.
+    """
+
+    objects = []
+    continuation_token = None
+
+    while True:
+
+        command = aws_s3api_command(
+            'list-objects-v2',
+            '--bucket',
+            S3_BUCKET,
+            '--output',
+            'json',
+        )
+
+        if prefix:
+            command.extend([
+                '--prefix',
+                prefix,
+            ])
+
+        if continuation_token:
+            command.extend([
+                '--continuation-token',
+                continuation_token,
+            ])
+
+        result = subprocess.check_output(
+            command,
+            env=aws_environment(),
+            text=True,
+            preexec_fn=os.setsid,
+        )
+
+        data = json.loads(result)
+
+        objects.extend(
+            item['Key']
+            for item in data.get(
+                'Contents',
+                [],
+            )
+        )
+
+        if not data.get(
+            "IsTruncated",
+            False,
+        ):
+            break
+
+        continuation_token = data.get(
+            'NextContinuationToken'
+        )
+
+        if not continuation_token:
+            break
+
+    return objects
+
+
+# ============================================================================
+# Lifecycle configuration
+# ============================================================================
+
+def set_lifecycle():
+    print(f"Loading lifecycle policy from '{LIFECYCLE_FILE}'...")
+
+    with open(LIFECYCLE_FILE, "r") as f:
+        lifecycle = json.load(f)
+
+    subprocess.check_call(
+        aws_s3api_command(
+            'put-bucket-lifecycle-configuration',
+            '--bucket',
+            S3_BUCKET,
+            '--lifecycle-configuration',
+            f"file://{LIFECYCLE_FILE}",
+        ),
+        env=aws_environment(),
+        preexec_fn=os.setsid,
+    )
+
+    print('Lifecycle policy updated successfully.')
+
+
+def list_lifecycle():
+    """
+    Display the lifecycle configuration currently
+    configured on the bucket.
+    """
+
+    print(
+        f"Lifecycle configuration for "
+        f"bucket '{S3_BUCKET}':"
+    )
+    print()
+
+    result = subprocess.check_output(
+        aws_s3api_command(
+            'get-bucket-lifecycle-configuration',
+            '--bucket',
+            S3_BUCKET,
+            '--output',
+            'json',
+        ),
+        env=aws_environment(),
+        text=True,
+        preexec_fn=os.setsid,
+    )
+
+    configuration = json.loads(result)
+
+    print(
+        json.dumps(
+            configuration,
+            indent=2,
+        )
+    )
+
+
+# ============================================================================
+# Tar helper
+# ============================================================================
+
+def create_tar(
+    source: str,
+    filename: str,
+    arcname: str,
+):
+    """
+    Create a gzip-compressed tar archive.
+    """
+
+    with tarfile.open(filename, 'w:gz') as tar:
+        tar.add(
+            source,
+            arcname=arcname,
+        )
+
+
+# ============================================================================
+# Private
+# ============================================================================
+
+def backup_private(dt: str):
+
+    outputFileName = '/srv/backups/private.tar.gz'
+
+    try:
+        create_tar(
+            '/etc/puppetlabs/puppet/private',
+            outputFileName,
+            'private',
+        )
+
+        s3_upload(
+            outputFileName,
+            f"private/{dt}.tar.gz",
+        )
+    finally:
+        if os.path.exists(outputFileName):
+            os.remove(outputFileName)
+
+
+# ============================================================================
+# SSL keys
+# ============================================================================
+
+def backup_sslkeys(dt: str):
+
+    outputFileName = '/srv/backups/sslkeys.tar.gz'
+
+    try:
+        create_tar(
+            '/etc/puppetlabs/puppet/ssl-keys',
+            outputFileName,
+            'sslkeys',
+        )
+
+        s3_upload(
+            outputFileName,
+            f"sslkeys/{dt}.tar.gz",
+        )
+    finally:
+        if os.path.exists(outputFileName):
+            os.remove(outputFileName)
+
+
+# ============================================================================
+# Swift account/container
+# ============================================================================
+
+def backup_swift_account_container(dt: str):
+
+    outputFileName = '/srv/backups/swift_account_container.tar.gz'
+
+    try:
+        create_tar(
+            '/srv/node',
+            outputFileName,
+            'swift_account_container',
+        )
+
+        s3_upload(
+            outputFileName,
+            f"swift-account-container/{dt}.tar.gz"
+        )
+    finally:
+        if os.path.exists(outputFileName):
+            os.remove(outputFileName)
+
+
+# ============================================================================
+# Phorge database
+# ============================================================================
+
+def backup_phorge_db(dt: str):
+
+    outputFileName = '/srv/backups/phorge.sql.gz'
+
+    try:
+        subprocess.check_call(
+            f"/srv/phorge/phorge/bin/storage dump --compress --output {outputFileName}",
+            shell=True,
+            preexec_fn=os.setsid,
+        )
+
+        s3_upload(
+            outputFileName,
+            f"phorge/{dt}_db.sql.gz",
+        )
+    finally:
+        if os.path.exists(outputFileName):
+            os.remove(outputFileName)
+
+
+# ============================================================================
+# Phorge images
+# ============================================================================
+
+def backup_phorge_images(dt: str):
+
+    outputFileName = '/srv/backups/phorge_images.tar.gz'
+
+    try:
+        create_tar(
+            '/srv/phorge/images',
+            outputFileName,
+            'phorge',
+        )
+
+        s3_upload(
+            outputFileName,
+            f"phorge/{dt}_images.tar.gz",
+        )
+    finally:
+        if os.path.exists(outputFileName):
+            os.remove(outputFileName)
+
+
+# ============================================================================
+# MariaDB
+# ============================================================================
+
+def backup_sql(
+    dt: str,
+    database: str,
+):
+
+    if database is None:
+        dbs = [
+            name
+            for name in sorted(
+                os.listdir('/srv/mariadb')
+            )
+            if (
+                os.path.isdir(
+                    f"/srv/mariadb/{name}"
+                )
+                and name.endswith('wiki')
+            )
+        ]
+    else:
+        dbs = [database]
+
+    os.makedirs(
+        '/srv/backups/dbs',
+        exist_ok=True,
+    )
+
+    for db in dbs:
+
+        print(f"Backing up database '{db}'...")
+
+        outputFileName = f"/srv/backups/dbs/{db}.sql.gz"
+
+        try:
+            subprocess.check_call(
+                (
+                    '/usr/bin/ionice -c2 -n7 '
+                    '/usr/bin/mariadb-dump '
+                    '--quick '
+                    '--skip-lock-tables '
+                    '--single-transaction '
+                    '-c '
+                    f"--ignore-table={db}.objectcache "
+                    f"--ignore-table={db}.querycache "
+                    f"--ignore-table={db}.querycachetwo "
+                    f"--ignore-table={db}.recentchanges "
+                    f"--ignore-table={db}.searchindex "
+                    f"{db} "
+                    '| /usr/bin/nice '
+                    '/usr/bin/pigz '
+                    '-p '
+                    '<%= $compress_threads %> '
+                    f"> {outputFileName}"
+                ),
+                shell=True,
+                preexec_fn=os.setsid,
+            )
+
+            s3_upload(
+                outputFileName,
+                f"sql/{db}/{dt}.sql.gz",
+            )
+        finally:
+            if os.path.exists(outputFileName):
+                os.remove(outputFileName)
+
+
+# ============================================================================
+# Mattermost data
+# ============================================================================
+
+def backup_mattermost_data(dt: str):
+
+    outputFileName = '/srv/backups/mattermost-data.tar.gz'
+
+    try:
+        create_tar(
+            '/var/mattermost',
+            outputFileName,
+            'mattermost',
+        )
+
+        s3_upload(
+            outputFileName,
+            f"mattermost-data/{dt}.tar.gz",
+        )
+    finally:
+        if os.path.exists(outputFileName):
+            os.remove(outputFileName)
+
+
+# ============================================================================
+# Mattermost database
+# ============================================================================
+
+def backup_mattermost_db(dt: str):
+
+    outputFileName = '/srv/backups/mattermost-db.sql.gz'
+
+    try:
+        subprocess.check_call(
+            (
+                '/usr/bin/sudo -u postgres '
+                '/usr/bin/pg_dump mattermost '
+                '| /usr/bin/gzip -9 '
+                f"> {outputFileName}"
+            ),
+            shell=True,
+            preexec_fn=os.setsid,
+        )
+
+        s3_upload(
+            outputFileName,
+            f"mattermost-db/{dt}.sql.gz",
+        )
+    finally:
+        if os.path.exists(outputFileName):
+            os.remove(outputFileName)
+
+
+# ============================================================================
+# PuppetDB
+# ============================================================================
+
+def backup_puppetdb(dt: str):
+
+    outputFileName = '/srv/backups/puppetdb.sql.gz'
+
+    try:
+        subprocess.check_call(
+            (
+                '/usr/bin/sudo -u postgres '
+                '/usr/bin/pg_dump puppetdb '
+                '| /usr/bin/gzip -9 '
+                f"> {outputFileName}"
+            ),
+            shell=True,
+            preexec_fn=os.setsid,
+        )
+
+        s3_upload(
+            outputFileName,
+            f"puppetdb/{dt}.sql.gz",
+        )
+    finally:
+        if os.path.exists(outputFileName):
+            os.remove(outputFileName)
+
+
+# ============================================================================
+# Grafana
+# ============================================================================
+
+def backup_grafana_db(dt: str):
+
+    backup_db = '/var/lib/grafana/grafana_backup.db'
+
+    outputFileName = '/srv/backups/grafana.tar.gz'
+
+    try:
+        subprocess.check_call(
+            f'/usr/bin/sqlite3 /var/lib/grafana/grafana.db ".backup \'/var/lib/grafana/grafana_backup.db\'"',
+            shell=True,
+            preexec_fn=os.setsid,
+        )
+
+        create_tar(
+            backup_db,
+            outputFileName,
+            'grafana_backup.db',
+        )
+
+        s3_upload(
+            outputFileName,
+            f"sql/grafana/{dt}.tar.gz",
+        )
+    finally:
+        if os.path.exists(outputFileName):
+            os.remove(outputFileName)
+
+        if os.path.exists(backup_db):
+            os.remove(backup_db)
+
+
+# ============================================================================
+# MediaWiki XML
+# ============================================================================
+
+def backup_mediawiki_xml(
+    dt: str,
+    database: str,
+):
+
+    def get_php_keys(file_path):
+
+        try:
+            command = (
+                "/usr/bin/php -r '"
+                f'$list = include "{file_path}"; '
+                'if (is_array($list["databases"] ?? false)) { '
+                'echo implode(PHP_EOL, '
+                'array_keys($list["databases"])); '
+                '} else { '
+                'echo "Invalid format"; '
+                "}'"
+            )
+
+            output = subprocess.check_output(
+                command,
+                shell=True,
+                text=True,
+                preexec_fn=os.setsid,
+            )
+
+            return output.strip().splitlines()
+
+        except subprocess.CalledProcessError as e:
+            print(
+                f"Error executing PHP: {e}"
+            )
+
+            return []
+
+    if database is None:
+        if os.path.exists(
+            '/srv/mediawiki/cache/databases.php'
+        ):
+
+            dbs = get_php_keys(
+                '/srv/mediawiki/cache/databases.php'
+            )
+        else:
+            with open(
+                '/srv/mediawiki/cache/databases.json',
+                encoding="utf-8",
+            ) as file:
+
+                dbs = (
+                    json.load(file)
+                    ["combi"]
+                    .keys()
+                )
+    else:
+        dbs = [database]
+
+    for db in dbs:
+        version = subprocess.check_output(
+            [
+                '/usr/local/bin/getMWVersion',
+                db,
+            ],
+            text=True,
+        ).strip()
+
+        runner = (
+            f"/srv/mediawiki/{version}/"
+            'maintenance/run.php'
+        )
+
+        output = f"/srv/backups/{db}.xml.gz"
+
+        try:
+            subprocess.check_call(
+                (
+                    f"/usr/bin/php {runner} "
+                    f"/srv/mediawiki/{version}/"
+                    'maintenance/dumpBackup.php '
+                    '--logs '
+                    '--uploads '
+                    '--full '
+                    f'--output="gzip:{output}" '
+                    f"--wiki {db}"
+                ),
+                shell=True,
+                preexec_fn=os.setsid,
+            )
+
+            s3_upload(
+                output,
+                f"mediawiki-xml/{db}/{dt}.xml.gz"
+            )
+        except subprocess.CalledProcessError as e:
+            print(
+                f"WARNING: encountered "
+                f"CalledProcessError backing up "
+                f"{db}, returned code "
+                f"{e.returncode}"
+            )
+        finally:
+            if os.path.exists(output):
+                os.remove(output)
+
+
+# ============================================================================
+# Backup dispatcher
+# ============================================================================
+
+def backup(
+    source: str,
+    database: str,
+):
+    dt = datetime.now().strftime(
+        "%Y-%m-%d"
+    )
+
+    start = time.time()
+
+    print(
+        f"Starting backup of '{source}' "
+        f"for date {dt}..."
+    )
+
+    if source == 'private':
+        backup_private(dt)
+    elif source == 'sslkeys':
+        backup_sslkeys(dt)
+    elif source == 'swift-account-container':
+        backup_swift_account_container(dt)
+    elif source == 'phorge_db':
+        backup_phorge_db(dt)
+    elif source == 'phorge_images':
+        backup_phorge_images(dt)
+    elif source == 'sql':
+        backup_sql(
+            dt,
+            database,
+        )
+    elif source == 'grafana':
+        backup_grafana_db(dt)
+    elif source == 'mediawiki-xml':
+        backup_mediawiki_xml(
+            dt,
+            database,
+        )
+    elif source == 'mattermost-data':
+        backup_mattermost_data(dt)
+    elif source == 'mattermost-db':
+        backup_mattermost_db(dt)
+    elif source == 'puppetdb':
+        backup_puppetdb(dt)
+    else:
+        raise ValueError(
+            f"Unsupported backup type: {source}"
+        )
+
+    print(
+        f"Completed! This took "
+        f"{time.time() - start:.2f}s"
+    )
+
+
+# ============================================================================
+# Backup object name
+# ============================================================================
+
+def get_backup_object(
+    source: str,
+    dt: str,
+    database: str,
+):
+
+    if source in {
+        'private',
+        'sslkeys',
+        'swift-account-container',
+        'mattermost-data',
+    }:
+        return (
+            f"{source}/{dt}.tar.gz"
+        )
+
+    if source == 'mediawiki-xml':
+        if database is None:
+            raise ValueError(
+                '--database is required for '
+                'mediawiki-xml downloads'
+            )
+
+        return (
+            f"mediawiki-xml/{database}/{dt}.xml.gz"
+        )
+
+    if source == 'grafana':
+        return (
+            f"sql/grafana/{dt}.tar.gz"
+        )
+
+    if source == "sql":
+        if database is None:
+            raise ValueError(
+                '--database is required for '
+                'sql downloads'
+            )
+
+        return (
+            f"sql/{database}/{dt}.sql.gz"
+        )
+
+    if source in {
+        'mattermost-db',
+        'puppetdb',
+    }:
+        return (
+            f"{source}/{dt}.sql.gz"
+        )
+
+    if source == 'phorge_db':
+        return (
+            f"phorge/{dt}_db.sql.gz"
+        )
+
+    if source == 'phorge_images':
+        return (
+            f"phorge/{dt}_images.tar.gz"
+        )
+
+    if source == 'test':
+        return (
+            f"test/{dt}.iso"
+        )
+
+    raise ValueError(
+        f"Unsupported backup type: {source}"
+    )
+
+
+# ============================================================================
+# Download
+# ============================================================================
+
+def download(
+    source: str,
+    dt: str,
+    database: str,
+    prefix: str = None,
+):
+
+    start = time.time()
+
+    if prefix is not None:
+        print(
+            f"Downloading backups under "
+            f"prefix '{prefix}'..."
+        )
+
+        s3_download(
+            prefix=prefix,
+        )
+    else:
+        print(
+            f"Downloading backup of '{source}' "
+            f"for date {dt}..."
+        )
+
+        object_name = get_backup_object(
+            source,
+            dt,
+            database,
+        )
+
+        s3_download(
+            object_name=object_name,
+        )
+
+    print(
+        f"Completed! This took "
+        f"{time.time() - start:.2f}s"
+    )
+
+
+# ============================================================================
+# Find backups
+# ============================================================================
+
+def find_backups(
+    source: str,
+    database: str,
+    prefix: str = None,
+):
+
+    if prefix is None:
+        if source is None:
+            raise ValueError(
+                'Either --prefix or type is required'
+            )
+
+        if database:
+            prefix = f"{source}/{database}"
+        else:
+            prefix = f"{source}/"
+
+    backups = s3_list(
+        prefix
+    )
+
+    for backup_item in backups:
+        print(backup_item)
+
+
+# ============================================================================
+# Main
+# ============================================================================
+
+if __name__ == "__main__":
+
+    if args.action == 'set-lifecycle':
+        set_lifecycle()
+    elif args.action == 'list-lifecycle':
+        list_lifecycle()
+    elif args.action == 'backup':
+        if not args.type:
+            parser.error(
+                'backup requires a backup type'
+            )
+
+        backup(
+            args.type,
+            args.database,
+        )
+    elif args.action == 'download':
+        if args.prefix:
+            download(
+                args.type,
+                args.date,
+                args.database,
+                args.prefix,
+            )
+        else:
+            if not args.type:
+                parser.error(
+                    'download requires either a backup type '
+                    'or --prefix'
+                )
+
+            if not args.date:
+                parser.error(
+                    '--date is required when '
+                    'downloading a file'
+                )
+
+            download(
+                args.type,
+                args.date,
+                args.database,
+            )
+    elif args.action == 'find':
+        if not args.type and not args.prefix:
+            parser.error(
+                'find requires either a backup type '
+                'or --prefix'
+            )
+
+        find_backups(
+            args.type,
+            args.database,
+            args.prefix,
+        )

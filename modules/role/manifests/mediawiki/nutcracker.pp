@@ -47,17 +47,15 @@ class role::mediawiki::nutcracker (
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Nutcracker'
     }
 
-    ferm::rule { 'skip_nutcracker_conntrack_out':
+    nftables::rules { 'skip_nutcracker_conntrack_out':
         desc  => 'Skip outgoing connection tracking for Nutcracker',
-        table => 'raw',
-        chain => 'OUTPUT',
-        rule  => 'proto tcp sport 11212 NOTRACK;',
+        chain => 'output',
+        rules => ['tcp sport 11212 notrack'],
     }
 
-    ferm::rule { 'skip_nutcracker_conntrack_in':
+    nftables::rules { 'skip_nutcracker_conntrack_in':
         desc  => 'Skip incoming connection tracking for Nutcracker',
-        table => 'raw',
-        chain => 'PREROUTING',
-        rule  => 'proto tcp dport 11212 NOTRACK;',
+        chain => 'prerouting',
+        rules => ['tcp dport 11212 notrack'],
     }
 }

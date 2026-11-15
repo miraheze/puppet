@@ -1,0 +1,7 @@
+[Administrators]
+groups = "sre-infrastructure,sre-management"
+permissions = "*"
+
+[sre-mediawiki]
+groups = "sre-mediawiki"
+permissions = "module/doc, module/icingadb, icingadb/command/acknowledge-problem, icingadb/command/comment/*, icingadb/command/downtime/*, icingadb/command/remove-acknowledgement"

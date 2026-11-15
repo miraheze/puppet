@@ -1,0 +1,17 @@
+#!/bin/bash
+# This plugin tests whether nftables has been started on a host by querying
+# the policy for the base table's input chain
+
+if ! command -v nft > /dev/null 2>&1; then
+    echo "WARNING nft not installed"
+    exit 1
+fi
+
+input_policy=$(nft list chain inet base input 2> /dev/null | sed -nr 's/.*hook input.*policy (\w+);.*/\1/p')
+if [ "$input_policy" = "drop" ]; then
+    echo "OK nftables input default policy is set"
+    exit 0
+else
+    echo "ERROR nftables input drop default policy not set, nftables might not have been started correctly"
+    exit 2
+fi

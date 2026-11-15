@@ -13,7 +13,7 @@ class prometheus::exporter::blackbox {
         mode    => '0444',
         owner   => 'root',
         group   => 'root',
-        content => template('prometheus/blackbox_exporter.yml.erb'),
+        content => epp('prometheus/blackbox_exporter.yml.epp'),
         notify  => Service['prometheus-blackbox-exporter'],
     }
 

@@ -1,0 +1,3 @@
+<%- | Array $groups | -%>
+# File managed by puppet
+<%= stdlib::to_yaml($groups) %>

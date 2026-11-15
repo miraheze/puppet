@@ -6,7 +6,7 @@
 #
 # [*use_puppetdb*] Enables or disable openvoxdb support.
 #
-# [*puppet_major_version*] Specify the openvox-server version you want to support / install.
+# [*openvox_major_version*] Specify the openvox-server version you want to support / install.
 #
 # [*puppetserver_hostname*] Hostname of the openvox server.
 #
@@ -15,7 +15,7 @@
 class puppetserver(
     String  $puppetdb_hostname,
     Boolean $puppetdb_enable,
-    Integer $puppet_major_version,
+    Integer $openvox_major_version,
     String  $puppetserver_hostname,
     String  $puppetserver_java_opts,
 ) {
@@ -32,7 +32,7 @@ class puppetserver(
 
     file { '/etc/default/puppetserver':
         ensure  => present,
-        content => template('puppetserver/puppetserver.erb'),
+        content => epp('puppetserver/puppetserver.epp', { 'puppetserver_java_opts' => $puppetserver_java_opts }),
         require => Package['openvox-server'],
         notify  => Service['puppetserver'],
     }
@@ -60,7 +60,7 @@ class puppetserver(
 
     file { '/etc/puppetlabs/puppet/puppet.conf':
         ensure  => present,
-        content => template('puppetserver/puppet.conf.erb'),
+        content => epp('puppetserver/puppet.conf.epp', { 'puppetserver_hostname' => $puppetserver_hostname, 'puppetdb_enable' => $puppetdb_enable }),
         require => Package['openvox-agent'],
         notify  => Service['puppetserver'],
     }
@@ -208,9 +208,10 @@ class puppetserver(
         require  => Package['openvox-server'],
     }
 
-    ferm::service { 'puppetserver':
-        proto => 'tcp',
-        port  => '8140',
+    firewall::service { 'puppetserver':
+        proto  => 'tcp',
+        port   => 8140,
+        srange => '10.0.0.0/8',
     }
 
     systemd::timer::job { 'git_pull_puppet':
@@ -309,6 +310,9 @@ class puppetserver(
             start    => 'OnCalendar',
             interval => '*-*-* *:00,30',
         },
+        logfile_basedir         => '/var/log',
+        logfile_name            => 'listdomains.log',
+        syslog_identifier       => 'listdomains',
         user                    => 'root',
         send_mail               => true,
         send_mail_only_on_error => true,

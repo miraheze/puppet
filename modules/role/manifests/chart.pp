@@ -18,9 +18,9 @@ class role::chart {
         | PQL
     }
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'chart':
+    firewall::service { 'chart':
         proto   => 'tcp',
-        port    => '6284',
+        port    => 6284,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }

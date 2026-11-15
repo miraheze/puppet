@@ -1,0 +1,204 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": [
+		"config:recommended"
+	],
+	"labels": [
+		"dependencies"
+	],
+	"prConcurrentLimit": 10,
+	"prHourlyLimit": 0,
+	"enabledManagers": [
+		"github-actions",
+		"pip_requirements",
+		"custom.regex"
+	],
+	"ignorePaths": [
+		"modules/*/.github/**",
+		"modules/*/.gitlab-ci.yml",
+		"modules/*/Gemfile",
+		"modules/*/Gemfile.lock"
+	],
+	"vulnerabilityAlerts": {
+		"enabled": true,
+		"labels": [
+			"security"
+		],
+		"schedule": [
+			"at any time"
+		],
+		"groupName": "{{#if (equals manager 'pip_requirements')}}python test tooling{{else if (equals manager 'github-actions')}}github actions{{else}}{{{depNameSanitized}}}-vulnerability{{/if}}"
+	},
+	"pip_requirements": {
+		"managerFilePatterns": [
+			"/^\\.github/pythonchecks\\.txt$/"
+		]
+	},
+	"customManagers": [
+		{
+			"customType": "regex",
+			"managerFilePatterns": [
+				"/^modules/matomo/manifests/init\\.pp$/"
+			],
+			"matchStrings": [
+				"origin\\s*=>\\s*'https://github\\.com/(?<depName>matomo-org/matomo)',\\s*\\n\\s*branch\\s*=>\\s*'(?<currentValue>[^']+)'"
+			],
+			"datasourceTemplate": "github-releases",
+			"versioningTemplate": "semver"
+		},
+		{
+			"customType": "regex",
+			"managerFilePatterns": [
+				"/^modules/role/manifests/graylog\\.pp$/"
+			],
+			"matchStrings": [
+				"version\\s*=>\\s*(?<replaceString>'(?<repoMajor>\\d+)\\.\\d+',\\s*\\n\\s*\\}\\s*\\n\\s*->\\s*class\\s*\\{\\s*'graylog::server':\\s*\\n\\s*package_version\\s*=>\\s*'(?<currentValue>[^']+)')"
+			],
+			"depNameTemplate": "graylog-server",
+			"datasourceTemplate": "deb",
+			"versioningTemplate": "deb",
+			"registryUrlTemplate": "https://downloads.graylog.org/repo/debian?suite=stable&components={{{repoMajor}}}.0,{{{repoMajor}}}.1,{{{repoMajor}}}.2,{{{repoMajor}}}.3,{{{repoMajor}}}.4,{{{repoMajor}}}.5,{{{repoMajor}}}.6,{{{repoMajor}}}.7,{{{repoMajor}}}.8,{{{repoMajor}}}.9{{#with (lookup (toObject '0' '1' '1' '2' '2' '3' '3' '4' '4' '5' '5' '6' '6' '7' '7' '8' '8' '9' '9' '10' '10' '11' '11' '12' '12' '13' '13' '14' '14' '15' '15' '16' '16' '17' '17' '18' '18' '19' '19' '20' '20' '21' '21' '22' '22' '23' '23' '24' '24' '25' '25' '26' '26' '27' '27' '28' '28' '29' '29' '30' '30' '31' '31' '32' '32' '33' '33' '34' '34' '35' '35' '36' '36' '37' '37' '38' '38' '39' '39' '40' '40' '41' '41' '42' '42' '43' '43' '44' '44' '45' '45' '46' '46' '47' '47' '48' '48' '49' '49' '50' '50' '51' '51' '52' '52' '53' '53' '54' '54' '55' '55' '56' '56' '57' '57' '58' '58' '59' '59' '60' '60' '61' '61' '62' '62' '63' '63' '64' '64' '65' '65' '66' '66' '67' '67' '68' '68' '69' '69' '70' '70' '71' '71' '72' '72' '73' '73' '74' '74' '75' '75' '76' '76' '77' '77' '78' '78' '79' '79' '80' '80' '81' '81' '82' '82' '83' '83' '84' '84' '85' '85' '86' '86' '87' '87' '88' '88' '89' '89' '90' '90' '91' '91' '92' '92' '93' '93' '94' '94' '95' '95' '96' '96' '97' '97' '98' '98' '99' '99' '100') repoMajor) as |nextMajor|}},{{{nextMajor}}}.0,{{{nextMajor}}}.1,{{{nextMajor}}}.2,{{{nextMajor}}}.3,{{{nextMajor}}}.4,{{{nextMajor}}}.5,{{{nextMajor}}}.6,{{{nextMajor}}}.7,{{{nextMajor}}}.8,{{{nextMajor}}}.9{{/with}}&binaryArch=amd64",
+			"autoReplaceStringTemplate": "version => '{{{replace '\\.\\d+-\\d+$' '' newValue}}}',\n    }\n    -> class { 'graylog::server':\n        package_version        => '{{{newValue}}}'"
+		},
+		{
+			"customType": "regex",
+			"managerFilePatterns": [
+				"/^modules/reports/manifests/init\\.pp$/"
+			],
+			"matchStrings": [
+				"origin\\s*=>\\s*'https://github\\.com/(?<depName>miraheze/TSPortal)',\\s*\\n\\s*branch\\s*=>\\s*'(?<currentValue>v\\d+(?:\\.\\d+)*)'"
+			],
+			"datasourceTemplate": "github-tags",
+			"versioningTemplate": "loose"
+		},
+		{
+			"customType": "regex",
+			"managerFilePatterns": [
+				"/^modules/salt/manifests/init\\.pp$/"
+			],
+			"matchStrings": [
+				"packages\\s*=>\\s*'salt-\\*',\\s*\\n\\s*version\\s*=>\\s*'(?<currentValue>\\d+)\\.\\*'"
+			],
+			"depNameTemplate": "saltstack/salt",
+			"datasourceTemplate": "github-releases",
+			"extractVersionTemplate": "^v(?<version>\\d+)\\.\\d+$",
+			"versioningTemplate": "loose"
+		},
+		{
+			"customType": "regex",
+			"managerFilePatterns": [
+				"/^hieradata/.+\\.ya?ml$/",
+				"/^modules/graylog/manifests/allinone\\.pp$/"
+			],
+			"matchStrings": [
+				"role::opensearch::version:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'",
+				"\\$opensearch_version\\s*=\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
+			],
+			"depNameTemplate": "opensearch-project/OpenSearch",
+			"datasourceTemplate": "github-releases",
+			"versioningTemplate": "semver"
+		},
+		{
+			"customType": "regex",
+			"managerFilePatterns": [
+				"/^modules/role/manifests/mattermost\\.pp$/"
+			],
+			"matchStrings": [
+				"class\\s*\\{\\s*'mattermost':[^}]*?version\\s*=>\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
+			],
+			"depNameTemplate": "mattermost/mattermost",
+			"datasourceTemplate": "github-releases",
+			"extractVersionTemplate": "^v(?<version>.+)$",
+			"versioningTemplate": "semver"
+		},
+		{
+			"customType": "regex",
+			"managerFilePatterns": [
+				"/^modules/.+\\.pp$/"
+			],
+			"matchStrings": [
+				"'(?<depName>[A-Za-z0-9_.-]+)',\\s*\\{\\s*ensure\\s*=>\\s*'(?<currentValue>\\d[^']*)',\\s*provider\\s*=>\\s*'pip3?'"
+			],
+			"datasourceTemplate": "pypi"
+		},
+		{
+			"customType": "regex",
+			"managerFilePatterns": [
+				"/^hieradata/.+\\.ya?ml$/",
+				"/^(modules|manifests)/.+\\.(pp|epp|erb|ya?ml)$/"
+			],
+			"matchStrings": [
+				"#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+extractVersion=(?<extractVersion>\\S+))?\\s*\\n[^\\n]*?(?::|=>|=)\\s*['\"]?(?<currentValue>[^\\s'\",]+)"
+			]
+		}
+	],
+	"packageRules": [
+		{
+			"matchManagers": [
+				"github-actions"
+			],
+			"groupName": "github actions",
+			"separateMajorMinor": false
+		},
+		{
+			"matchManagers": [
+				"pip_requirements"
+			],
+			"groupName": "python test tooling",
+			"separateMajorMinor": false
+		},
+		{
+			"matchDepNames": [
+				"opensearch-project/OpenSearch"
+			],
+			"groupName": "opensearch",
+			"matchFileNames": [
+				"hieradata/role/common/opensearch.yaml"
+			],
+			"allowedVersions": "<3"
+		},
+		{
+			"matchDepNames": [
+				"opensearch-project/OpenSearch"
+			],
+			"matchFileNames": [
+				"hieradata/hosts/**",
+				"modules/graylog/**"
+			],
+			"groupName": "opensearch"
+		},
+		{
+			"matchDepNames": [
+				"graylog-server"
+			],
+			"groupName": "graylog",
+			"separateMajorMinor": false,
+			"allowedVersions": "/^\\d+\\.\\d+\\.\\d+-\\d+$/"
+		},
+		{
+			"matchDepNames": [
+				"saltstack/salt",
+				"matomo-org/matomo",
+				"miraheze/TSPortal",
+				"opensearch-project/OpenSearch",
+				"mattermost/mattermost",
+				"graylog-server"
+			],
+			"automerge": false,
+			"labels": [
+				"dependencies",
+				"server-software"
+			]
+		},
+		{
+			"matchDepNames": [
+				"opensearch-project/OpenSearch"
+			],
+			"matchFileNames": [
+				"modules/graylog/**"
+			],
+			"separateMajorMinor": false
+		}
+	],
+	"osvVulnerabilityAlerts": true
+}

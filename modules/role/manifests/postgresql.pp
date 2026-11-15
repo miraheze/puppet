@@ -10,9 +10,9 @@ class role::postgresql {
     resources { type = 'Class' and title = 'Role::Puppetserver' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'postgresql':
+    firewall::service { 'postgresql':
         proto   => 'tcp',
-        port    => '5432',
+        port    => 5432,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }

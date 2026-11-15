@@ -1,7 +1,7 @@
 # === Class role::mediawiki_task
 class role::mediawiki_task (
     Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false}),
-    Boolean $use_mcrouter = lookup('role::mediawiki::use_mcrouter', {'default_value' => false})
+    Boolean $use_mcrouter = lookup('role::mediawiki::use_mcrouter', {'default_value' => false}),
 ) {
     include base
     include role::mathoid
@@ -12,6 +12,7 @@ class role::mediawiki_task (
         include role::mediawiki::nutcracker
     }
     include mediawiki
+    include haproxy::lb_agent
     include role::mediawiki::php::restarts
 
     if $strict_firewall {
@@ -28,29 +29,29 @@ class role::mediawiki_task (
         | PQL
         $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
-        ferm::service { 'http':
+        firewall::service { 'http':
             proto   => 'tcp',
-            port    => '80',
+            port    => 80,
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
 
-        ferm::service { 'https':
+        firewall::service { 'https':
             proto   => 'tcp',
-            port    => '443',
+            port    => 443,
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
     } else {
-        ferm::service { 'http':
+        firewall::service { 'http':
             proto   => 'tcp',
-            port    => '80',
+            port    => 80,
             notrack => true,
         }
 
-        ferm::service { 'https':
+        firewall::service { 'https':
             proto   => 'tcp',
-            port    => '443',
+            port    => 443,
             notrack => true,
         }
     }

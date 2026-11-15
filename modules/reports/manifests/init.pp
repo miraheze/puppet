@@ -5,7 +5,7 @@ class reports {
     git::clone { 'TSPortal':
         directory => '/srv/TSPortal',
         origin    => 'https://github.com/miraheze/TSPortal',
-        branch    => 'v36',
+        branch    => 'v38',
         owner     => 'www-data',
         group     => 'www-data',
     }
@@ -55,7 +55,7 @@ class reports {
         'upload_max_filesize' => '100M',
     }
 
-    $php_version = lookup('php::php_version', {'default_value' => '8.4'})
+    $php_version = lookup('php::php_version')
 
     # Install the runtime
     class { '::php':
@@ -160,7 +160,7 @@ class reports {
 
     file { '/srv/TSPortal/.env':
         ensure  => present,
-        content => template('reports/.env.erb'),
+        content => epp('reports/.env.epp', { 'app_key' => $app_key, 'password' => $password, 'reports_mediawiki_identifier' => $reports_mediawiki_identifier, 'reports_mediawiki_secret' => $reports_mediawiki_secret, 'reports_mattermost_webhook' => $reports_mattermost_webhook, 'reports_write_key' => $reports_write_key }),
         owner   => 'www-data',
         group   => 'www-data',
         require => Git::Clone['TSPortal'],

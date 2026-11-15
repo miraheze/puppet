@@ -1,13 +1,21 @@
 class icingaweb2 (
-    String $db_host              = 'db182.fsslc.wtnet',
-    String $db_name              = 'icingaweb2',
-    String $db_user_name         = 'icingaweb2',
-    String $db_user_password     = undef,
-    String $ido_db_host          = 'db182.fsslc.wtnet',
-    String $ido_db_name          = 'icinga',
-    String $ido_db_user_name     = 'icinga2',
-    String $ido_db_user_password = undef,
-    String $ldap_password        = undef,
+    String $db_host                   = 'db193.fsslc.wtnet',
+    String $db_name                   = 'icingaweb2',
+    String $db_user_name              = 'icingaweb2',
+    String $db_user_password          = undef,
+    String $ido_db_host               = 'db193.fsslc.wtnet',
+    String $ido_db_name               = 'icinga',
+    String $ido_db_user_name          = 'icinga2',
+    String $ido_db_user_password,
+    String $icingadb_db_host          = 'db193.fsslc.wtnet',
+    String $icingadb_db_name          = 'icingadb',
+    String $icingadb_db_user          = 'icinga2',
+    String $icingadb_db_user_password,
+    String $icingadb_redis_host      = 'localhost',
+    Stdlib::Port $icingadb_redis_port = '6379',
+    String $icingadb_redis_password,
+    String $ldap_password,
+    String $icingaweb2_api_password,
 ) {
 
     if ! defined(Class['::icinga2']) {
@@ -51,7 +59,7 @@ class icingaweb2 (
         'ldap',
     ]
 
-    $php_version = lookup('php::php_version', {'default_value' => '8.4'})
+    $php_version = lookup('php::php_version')
 
     # Install the runtime
     class { '::php':
@@ -121,7 +129,7 @@ class icingaweb2 (
         }
     }
 
-    package { [ 'icingaweb2', 'icingacli' ]:
+    package { [ 'icingaweb2', 'icingacli', 'icingadb-web' ]:
         ensure  => present,
         require => Apt::Source['icinga-stable-release'],
     }
@@ -136,7 +144,7 @@ class icingaweb2 (
 
     file { '/etc/icingaweb2/authentication.ini':
         ensure  => present,
-        content => template('icingaweb2/authentication.ini.erb'),
+        content => epp('icingaweb2/authentication.ini.epp'),
         owner   => 'www-data',
         group   => 'icingaweb2',
         require => File['/etc/icingaweb2'],
@@ -152,7 +160,7 @@ class icingaweb2 (
 
     file { '/etc/icingaweb2/groups.ini':
         ensure  => present,
-        content => template('icingaweb2/groups.ini.erb'),
+        content => epp('icingaweb2/groups.ini.epp'),
         owner   => 'www-data',
         group   => 'icingaweb2',
         require => File['/etc/icingaweb2'],
@@ -168,7 +176,7 @@ class icingaweb2 (
 
     file { '/etc/icingaweb2/roles.ini':
         ensure  => present,
-        content => template('icingaweb2/roles.ini.erb'),
+        content => epp('icingaweb2/roles.ini.epp'),
         owner   => 'www-data',
         group   => 'icingaweb2',
     }
@@ -189,9 +197,9 @@ class icingaweb2 (
         require => File['/etc/icingaweb2/enabledModules'],
     }
 
-    file { '/etc/icingaweb2/enabledModules/monitoring':
+    file { '/etc/icingaweb2/enabledModules/icingadb':
         ensure  => 'link',
-        target  => '/usr/share/icingaweb2/modules/monitoring',
+        target  => '/usr/share/icingaweb2/modules/icingadb',
         owner   => 'www-data',
         group   => 'icingaweb2',
         require => File['/etc/icingaweb2/enabledModules'],
@@ -221,7 +229,7 @@ class icingaweb2 (
         require => File['/etc/icingaweb2'],
     }
 
-    file { '/etc/icingaweb2/modules/monitoring':
+    file { '/etc/icingaweb2/modules/icingadb':
         ensure  => 'directory',
         owner   => 'www-data',
         group   => 'icingaweb2',
@@ -229,20 +237,28 @@ class icingaweb2 (
         require => File['/etc/icingaweb2/modules'],
     }
 
-    file { '/etc/icingaweb2/modules/monitoring/backends.ini':
+    file { '/etc/icingaweb2/modules/icingadb/config.ini':
         ensure  => present,
-        content => template('icingaweb2/backends.ini.erb'),
+        content => epp('icingaweb2/config.ini.epp'),
         owner   => 'www-data',
         group   => 'icingaweb2',
-        require => File['/etc/icingaweb2/modules/monitoring'],
+        require => File['/etc/icingaweb2/modules/icingadb'],
     }
 
-    file { '/etc/icingaweb2/modules/monitoring/commandtransports.ini':
+    file { '/etc/icingaweb2/modules/icingadb/commandtransports.ini':
         ensure  => present,
-        content => template('icingaweb2/commandtransports.ini.erb'),
+        content => epp('icingaweb2/commandtransports.ini.epp', { 'icingaweb2_api_password' => $icingaweb2_api_password }),
         owner   => 'www-data',
         group   => 'icingaweb2',
-        require => File['/etc/icingaweb2/modules/monitoring'],
+        require => File['/etc/icingaweb2/modules/icingadb'],
+    }
+
+    file { '/etc/icingaweb2/modules/icingadb/redis.ini':
+        ensure  => present,
+        content => epp('icingaweb2/redis.ini.epp', { 'icingadb_redis_host' => $icingadb_redis_host, 'icingadb_redis_port' => $icingadb_redis_port, 'icingadb_redis_password' => $icingadb_redis_password }),
+        owner   => 'www-data',
+        group   => 'icingaweb2',
+        require => File['/etc/icingaweb2/modules/icingadb'],
     }
 
     nginx::site { 'icinga2':

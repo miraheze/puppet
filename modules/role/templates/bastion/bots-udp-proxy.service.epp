@@ -1,0 +1,15 @@
+[Unit]
+Description=UDP forward to bots171 port 5071
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/socat -T 30 UDP6-RECVFROM:5071,fork,reuseaddr,ipv6-v6only=0 UDP4-SENDTO:bots171.fsslc.wtnet:5071
+Restart=always
+RestartSec=2
+DynamicUser=yes
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+
+[Install]
+WantedBy=multi-user.target

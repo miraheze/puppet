@@ -13,7 +13,7 @@ class graylog::allinone (
   if 'version' in $opensearch {
     $opensearch_version = $opensearch['version']
   } else {
-    $opensearch_version = '2.15.0'
+    $opensearch_version = '3.9.0'
   }
 
   class { 'opensearch':

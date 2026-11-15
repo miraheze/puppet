@@ -13,7 +13,7 @@ class mediawiki::monitoring {
 
     nginx::site { 'php-admin':
         ensure  => present,
-        content => template('mediawiki/php-admin.conf.erb'),
+        content => epp('mediawiki/php-admin.conf.epp'),
     }
 
     ## Admin script
@@ -30,9 +30,9 @@ class mediawiki::monitoring {
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
-    ferm::service { 'php http port 9181':
+    firewall::service { 'php http port 9181':
         proto  => 'tcp',
-        port   => '9181',
+        port   => 9181,
         srange => "(${firewall_rules_str})",
     }
 

@@ -1,0 +1,5 @@
+---
+chrony::leapsectz: right/UTC
+chrony::ntsdumpdir: /var/lib/chrony
+chrony::makestep_seconds: 1.0
+chrony::options: '-F 2'

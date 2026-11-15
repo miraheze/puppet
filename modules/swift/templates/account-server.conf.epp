@@ -1,0 +1,36 @@
+[DEFAULT]
+bind_ip = ::
+bind_port = 6002
+workers = 8
+# bind_timeout = 30
+# backlog = 4096
+user = swift
+swift_dir = /etc/swift
+devices = /srv/node
+mount_check = false
+fallocate_reserve = 1%
+
+log_statsd_host = localhost
+log_statsd_port = 9125
+log_statsd_metric_prefix = swift.<%= $facts['networking']['hostname'] %>
+log_statsd_sample_rate_factor = 1
+
+[pipeline:main]
+pipeline = recon account-server
+
+[app:account-server]
+use = egg:swift#account
+
+[filter:recon]
+use = egg:swift#recon
+
+[account-replicator]
+concurrency = 3
+# default is 7 days
+# 6 hours in seconds
+reclaim_age = 21600
+
+[account-auditor]
+concurrency = 1
+
+[account-reaper]

@@ -1,4 +1,0 @@
-<%- @certificates.each do |key,value| -%>
-/etc/ssl/private/<%= key -%>.crt [alpn <%= @alpn.join(",") -%> curves <%= @ecdhe_curves.join(":") -%>] <%= value -%>
-
-<%- end -%>

@@ -2,6 +2,9 @@
 class grafana (
     String $mail_password = lookup('passwords::mail::noreply'),
     String $ldap_password = lookup('passwords::ldap_password'),
+    Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef}),
+    String $no_proxy = lookup('grafana::no_proxy', {'default_value' => 'localhost,127.0.0.1,::1,10.0.0.0/8,.fsslc.wtnet,ldap.wikitide.net,opensearch.wikitide.net'}),
+    VMlib::Ensure $proxy_ensure = lookup('grafana::proxy_ensure', {'default_value' => absent}),
 ) {
 
     include apt
@@ -33,7 +36,7 @@ class grafana (
     }
 
     file { '/etc/grafana/grafana.ini':
-        content => template('grafana/grafana.ini.erb'),
+        content => epp('grafana/grafana.ini.epp'),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
@@ -42,11 +45,28 @@ class grafana (
     }
 
     file { '/etc/grafana/ldap.toml':
-        content => template('grafana/ldap.toml.erb'),
+        content => epp('grafana/ldap.toml.epp', { 'ldap_password' => $ldap_password }),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
         notify  => Service['grafana-server'],
+        require => Package['grafana'],
+    }
+
+    systemd::override { 'proxy':
+        ensure  => $http_proxy ? {
+            undef   => absent,
+            default => $proxy_ensure,
+        },
+        unit    => 'grafana-server',
+        restart => true,
+        content => join([
+            '[Service]',
+            "Environment=\"HTTP_PROXY=${http_proxy}\"",
+            "Environment=\"HTTPS_PROXY=${http_proxy}\"",
+            "Environment=\"NO_PROXY=${no_proxy}\"",
+            '',
+        ], "\n"),
         require => Package['grafana'],
     }
 

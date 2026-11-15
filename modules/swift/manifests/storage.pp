@@ -60,7 +60,7 @@ class swift::storage (
             group => 'swift',
             mode  => '0440';
         '/etc/swift/object-server.conf':
-            content => template('swift/object-server.conf.erb');
+            content => epp('swift/object-server.conf.epp', { 'object_server_default_workers' => $object_server_default_workers });
         '/srv/node':
             ensure  => directory,
             require => Package['swift'],

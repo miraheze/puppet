@@ -4,7 +4,7 @@
 # Renders a Prometheus JMX Exporter config file, declares
 # a prometheus::jmx_exporter_instance so that the prometheus server
 # will be configured to pull from this exporter instance,
-# and installs ferm rules to allow it to do so.
+# and installs firewall rules to allow it to do so.
 # The hostname:port combination, derived from the define's parameters, will
 # be used as Prometheus target (so metrics will be associated to it). This trick
 # should allow the configuration of multiple Prometheus targets on the same
@@ -115,7 +115,7 @@ define prometheus::exporter::jmx_exporter (
     resources { type = 'Class' and title = 'Role::Prometheus' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { "prometheus ${port} jmx_exporter":
+    firewall::service { "prometheus ${port} jmx_exporter":
         proto  => 'tcp',
         port   => $port,
         srange => "(${firewall_rules_str})",

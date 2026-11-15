@@ -56,7 +56,7 @@ class base::syslog (
 
                 rsyslog::conf { 'rsyslog_udp_localhost':
                         ensure   => $ensure_enabled,
-                        content  => template('base/rsyslog/rsyslog_udp_localhost.conf.erb'),
+                        content  => epp('base/rsyslog/rsyslog_udp_localhost.conf.epp'),
                         priority => 50,
                 }
 

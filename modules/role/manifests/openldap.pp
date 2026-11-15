@@ -157,7 +157,7 @@ class role::openldap (
     stdlib::ensure_packages('ldapvi')
 
     file { '/etc/ldapvi.conf':
-        content => template('role/openldap/ldapvi.conf.erb'),
+        content => epp('role/openldap/ldapvi.conf.epp', { 'ldap_host' => $ldap_host, 'ldapvi_password' => $ldapvi_password }),
         mode    => '0440',
         owner   => 'root',
         group   => 'root',
@@ -188,9 +188,9 @@ class role::openldap (
     resources { type = 'Class' and title = 'Role::Openldap' })
     | PQL
     $firewall_rules = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'ldaps':
+    firewall::service { 'ldaps':
         proto  => 'tcp',
-        port   => '636',
+        port   => 636,
         srange => "(${firewall_rules})",
     }
 
@@ -198,9 +198,9 @@ class role::openldap (
     resources { type = 'Class' and title = 'Role::Icinga2' }
     | PQL
     $firewall_rules_icinga = vmlib::generate_firewall_ip($subquery_2)
-    ferm::service { 'ldap':
+    firewall::service { 'ldap':
         proto  => 'tcp',
-        port   => '389',
+        port   => 389,
         srange => "(${firewall_rules_icinga})",
     }
 

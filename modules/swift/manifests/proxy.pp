@@ -20,7 +20,7 @@ class swift::proxy (
         owner     => 'swift',
         group     => 'swift',
         mode      => '0440',
-        content   => template('swift/dispersion.conf.erb'),
+        content   => epp('swift/dispersion.conf.epp', { 'accounts' => $accounts, 'accounts_keys' => $accounts_keys }),
         require   => Package['swift'],
         show_diff => false,
     }

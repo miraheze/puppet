@@ -1,0 +1,48 @@
+[server]
+domain = grafana.wikitide.net
+root_url = %(protocol)s://%(domain)s/
+enable_gzip = true
+
+[users]
+# user signup / registration
+allow_sign_up = false
+default_theme = light
+auto_assign_org_role = Viewer
+auto_assign_org = true
+
+[analytics]
+reporting_enabled = false
+check_for_updates = false
+
+# Disable this due to https://issue-tracker.miraheze.org/T15057
+# [auth.anonymous]
+# enable anonymous access
+# enabled = true
+# org_name = WikiTide
+# org_role = Viewer
+
+[auth.ldap]
+enabled = true
+config_file = /etc/grafana/ldap.toml
+allow_sign_up = true
+
+[smtp]
+enabled=true
+host = smtp-relay.gmail.com:465
+from_address = noreply@wikitide.org
+
+[database]
+type = sqlite3
+path = grafana.db
+
+[security]
+disable_gravatar = true
+cookie_secure = true
+strict_transport_security = true
+
+[snapshots]
+# Don't allow publishing to raintank.io.
+external_enabled = false
+
+[feature_toggles]
+enable = ngalert

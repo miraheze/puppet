@@ -9,19 +9,19 @@ class role::ssl {
     | PQL
     $firewall_srange = vmlib::generate_firewall_ip($subquery)
 
-    if !defined(Ferm::Service['http']) {
-        ferm::service { 'http':
+    if !defined(Firewall::Service['http']) {
+        firewall::service { 'http':
             proto   => 'tcp',
-            port    => '80',
+            port    => 80,
             srange  => "(${firewall_srange})",
             notrack => true,
         }
     }
 
-    if !defined(Ferm::Service['https']) {
-        ferm::service { 'https':
+    if !defined(Firewall::Service['https']) {
+        firewall::service { 'https':
             proto   => 'tcp',
-            port    => '443',
+            port    => 443,
             srange  => "(${firewall_srange})",
             notrack => true,
         }

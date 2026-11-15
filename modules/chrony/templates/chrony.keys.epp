@@ -1,0 +1,11 @@
+<% |
+  String[1] $chrony_password,
+  NotUndef $commandkey,
+  Array[String[1]] $keys,
+| -%>
+<% if $chrony_password != 'unset' { -%>
+<%= $commandkey %> <%= $chrony_password %>
+<% } -%>
+<% $keys.each |$line| { -%>
+<%= $line %>
+<% } -%>

@@ -65,7 +65,7 @@ define prometheus::exporter::burrow_exporter(
 
     systemd::service { $service_name:
         ensure  => present,
-        content => systemd_template('prometheus-burrow-exporter@'),
+        content => systemd_template('prometheus-burrow-exporter@', { 'service_name' => $service_name }),
         restart => true,
         require => Package['prometheus-burrow-exporter'],
     }

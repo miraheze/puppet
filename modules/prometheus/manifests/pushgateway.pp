@@ -18,13 +18,13 @@ class prometheus::pushgateway (
 
     httpd::site { 'pushgateway':
         priority => 30, # Earlier than main prometheus* vhost wildcard matching
-        content  => template('prometheus/pushgateway-apache.erb'),
+        content  => epp('prometheus/pushgateway-apache.epp', { 'vhost' => $vhost, 'listen_port' => $listen_port }),
     }
 
     systemd::service { 'prometheus-pushgateway':
         ensure         => $ensure,
         restart        => true,
-        content        => systemd_template('prometheus-pushgateway'),
+        content        => systemd_template('prometheus-pushgateway', { 'listen_port' => $listen_port }),
         service_params => {
             hasrestart => true,
         },

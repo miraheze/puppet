@@ -1,11 +1,20 @@
 #!/bin/bash
+set -e
 
-wget 'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=<%= @geoip_key %>&suffix=tar.gz' -O geoip.tar.gz
+DEST="/root/private/files/geoip"
 
-tar zxvf geoip.tar.gz
+for edition in GeoLite2-Country GeoLite2-City GeoLite2-ASN; do
+    wget "https://download.maxmind.com/app/geoip_download?edition_id=${edition}&license_key=<%= @geoip_key %>&suffix=tar.gz" \
+        -O "${edition}.tar.gz"
 
-mv GeoLite2-Country_*/GeoLite2-Country.mmdb /root/private/files/geoip/GeoLite2-Country.mmdb
+    tar zxvf "${edition}.tar.gz"
 
-git -C /root/private add . && git -C /root/private commit -m "GeoIPUpdate" && git -C /root/private push
+    mv "${edition}"_*/"${edition}.mmdb" "${DEST}/${edition}.mmdb"
 
-rm -rf GeoLite2-Country_20* && rm geoip.tar.gz
+    rm -rf "${edition}"_20*
+    rm "${edition}.tar.gz"
+done
+
+git -C /root/private add files/geoip/
+git -C /root/private commit -m "GeoIPUpdate"
+git -C /root/private push

@@ -35,7 +35,7 @@ define httpd::env (
     httpd::conf { $title:
         ensure    => $ensure,
         conf_type => 'env',
-        content   => template('httpd/env.conf.erb'),
+        content   => epp('httpd/env.conf.epp', { 'vars' => $vars }),
         priority  => $priority,
     }
 }

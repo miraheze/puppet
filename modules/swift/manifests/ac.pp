@@ -30,16 +30,16 @@ class swift::ac {
             group => 'swift',
             mode  => '0440';
         '/etc/swift/account-server.conf':
-            content => template('swift/account-server.conf.erb');
+            content => epp('swift/account-server.conf.epp');
         '/etc/swift/container-server.conf':
-            content => template('swift/container-server.conf.erb');
+            content => epp('swift/container-server.conf.epp');
         '/etc/swift/container-reconciler.conf':
-            content => template('swift/container-reconciler.conf.erb');
+            content => epp('swift/container-reconciler.conf.epp');
         # The uwsgi configurations are similar to what Debian ships but logging to syslog
         '/etc/swift/swift-account-server-uwsgi.ini':
-            content => template('swift/swift-account-server-uwsgi.ini.erb');
+            content => epp('swift/swift-account-server-uwsgi.ini.epp');
         '/etc/swift/swift-container-server-uwsgi.ini':
-            content => template('swift/swift-container-server-uwsgi.ini.erb');
+            content => epp('swift/swift-container-server-uwsgi.ini.epp');
         '/srv/node':
             ensure  => directory,
             require => Package['swift'],

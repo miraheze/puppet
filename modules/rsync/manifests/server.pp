@@ -36,7 +36,7 @@ class rsync::server(
         mode    => '0444',
         owner   => 'root',
         group   => 'root',
-        content => template('rsync/rsync.default.erb'),
+        content => epp('rsync/rsync.default.epp', { 'rsync_conf' => $rsync_conf, 'rsync_opts' => $rsync_opts }),
     }
 
     if $wrap_with_stunnel {
@@ -46,7 +46,7 @@ class rsync::server(
             mode    => '0444',
             owner   => 'root',
             group   => 'root',
-            content => template('rsync/stunnel.conf.erb'),
+            content => epp('rsync/stunnel.conf.epp', { 'rsync_conf' => $rsync_conf }),
         }
         file_line { 'enable_stunnel':
             ensure   => present,

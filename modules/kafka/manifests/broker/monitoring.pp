@@ -11,7 +11,7 @@ class kafka::broker::monitoring {
 
     # Declare a prometheus jmx_exporter instance.
     # This will render the config file, declare the jmx_exporter_instance,
-    # and configure ferm.
+    # and configure firewall.
     prometheus::exporter::jmx_exporter { "kafka_broker_${facts['networking']['hostname']}":
         hostname    => $facts['networking']['hostname'],
         port        => $prometheus_jmx_exporter_port,

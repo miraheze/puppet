@@ -1,5 +1,7 @@
 # A class to handle GENERIC server mail.
-class base::mail {
+class base::mail (
+    String $relayhost = lookup('base::mail::relayhost', {'default_value' => 'smtp-relay.gmail.com'}),
+) {
     package { 'postfix':
         ensure => present,
     }

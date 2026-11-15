@@ -9,6 +9,7 @@ class role::db (
     Boolean $backup_sql = lookup('role::db::backup_sql', {'default_value' => true}),
     Boolean $enable_ssl = lookup('role::db::enable_ssl', {'default_value' => true}),
     Boolean $is_beta_db = lookup('role::db::is_beta_db', {'default_value' => false}),
+    Integer $wait_timeout = lookup('role::db::wait_timeout', {'default_value' => 3600}),
 ) {
     include mariadb::packages
     include prometheus::exporter::mariadb
@@ -46,31 +47,32 @@ class role::db (
         enable_bin_logs => $enable_bin_logs,
         enable_ssl      => $enable_ssl,
         enable_slow_log => $enable_slow_log,
+        wait_timeout    => $wait_timeout,
     }
 
     file { '/etc/mysql/wikitide/mediawiki-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/mediawiki-grants.sql.erb'),
+        content => epp('mariadb/grants/mediawiki-grants.sql.epp', { 'mediawiki_password' => $mediawiki_password, 'bucketuser_password' => $bucketuser_password, 'wikiadmin_password' => $wikiadmin_password }),
     }
 
     file { '/etc/mysql/wikitide/matomo-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/matomo-grants.sql.erb'),
+        content => epp('mariadb/grants/matomo-grants.sql.epp', { 'matomo_password' => $matomo_password }),
     }
 
     file { '/etc/mysql/wikitide/phorge-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/phorge-grants.sql.erb'),
+        content => epp('mariadb/grants/phorge-grants.sql.epp', { 'phorge_password' => $phorge_password }),
     }
 
     file { '/etc/mysql/wikitide/icinga2-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/icinga2-grants.sql.erb'),
+        content => epp('mariadb/grants/icinga2-grants.sql.epp', { 'ido_db_user_password' => $ido_db_user_password, 'icingaweb2_db_user_password' => $icingaweb2_db_user_password }),
     }
 
     file { '/etc/mysql/wikitide/reports-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/reports-grants.sql.erb'),
+        content => epp('mariadb/grants/reports-grants.sql.epp', { 'reports_password' => $reports_password }),
     }
 
     if ($is_beta_db) {
@@ -96,9 +98,9 @@ class role::db (
         | PQL
     }
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'mariadb':
+    firewall::service { 'mariadb':
         proto   => 'tcp',
-        port    => '3306',
+        port    => 3306,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }

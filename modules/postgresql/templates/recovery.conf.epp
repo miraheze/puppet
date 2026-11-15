@@ -1,0 +1,5 @@
+<%- | String $master_server, String $replication_pass, Boolean $use_ssl | -%>
+# -*- text -*-
+# File managed by puppet, do not edit by hand
+standby_mode = on
+primary_conninfo = 'host=<%= $master_server %> user=replication password=<%= $replication_pass %><%- if $use_ssl { %> sslmode=require<%- } %>'

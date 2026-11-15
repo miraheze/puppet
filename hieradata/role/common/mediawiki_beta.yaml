@@ -5,9 +5,9 @@ users::groups:
 
 contactgroups: ['infra', 'mediawiki']
 
-# base::dns::do_ipv4: true
-# base::dns::do_ipv6: false
-# base::dns::forward_use_internal: true
+base::dns::do_ipv4: true
+base::dns::do_ipv6: false
+base::dns::forward_use_internal: true
 
 jobrunner: true
 jobrunner::intensive: true
@@ -37,17 +37,15 @@ mediawiki::php::fpm_config:
   upload_max_filesize: '250M'
   max_execution_time: 210
 
-mediawiki::php::enable_request_profiling: true
-
 mediawiki::use_staging: true
 mediawiki::monitoring::host: 'test.mirabeta.org'
 
 mediawiki::multiversion::versions:
-  '1.45':
-    branch: 'REL1_45'
-    default: true
   '1.46':
     branch: 'REL1_46'
+  '1.47':
+    branch: 'REL1_47'
+    default: true
 
 role::mediawiki::php::restarts::ensure: present
 role::mediawiki::php::restarts::opcache_limit: 200

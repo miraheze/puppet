@@ -10,6 +10,7 @@
 
 * [`icinga2`](#icinga2): This module installs and configures Icinga 2.
 * [`icinga2::feature::api`](#icinga2--feature--api): Configures the Icinga 2 feature api.
+* [`icinga2::feature::app`](#icinga2--feature--app): Configures the Icinga 2 feature app.
 * [`icinga2::feature::checker`](#icinga2--feature--checker): Configures the Icinga 2 feature checker.
 * [`icinga2::feature::command`](#icinga2--feature--command): Configures the Icinga 2 feature command.
 * [`icinga2::feature::compatlog`](#icinga2--feature--compatlog): Configures the Icinga 2 feature compatlog.
@@ -18,14 +19,14 @@
 * [`icinga2::feature::gelf`](#icinga2--feature--gelf): Configures the Icinga 2 feature gelf.
 * [`icinga2::feature::graphite`](#icinga2--feature--graphite): Configures the Icinga 2 feature graphite.
 * [`icinga2::feature::icingadb`](#icinga2--feature--icingadb): Configures the Icinga 2 feature icingadb.
-* [`icinga2::feature::idomysql`](#icinga2--feature--idomysql): Installs and configures the Icinga 2 feature ido-mysql.
-* [`icinga2::feature::idopgsql`](#icinga2--feature--idopgsql): Installs and configures the Icinga 2 feature ido-pgsql.
 * [`icinga2::feature::influxdb`](#icinga2--feature--influxdb): Configures the Icinga 2 feature influxdb.
 * [`icinga2::feature::influxdb2`](#icinga2--feature--influxdb2): Configures the Icinga 2 feature influxdb2.
+* [`icinga2::feature::journald`](#icinga2--feature--journald): Configures the Icinga 2 feature journald.
 * [`icinga2::feature::livestatus`](#icinga2--feature--livestatus): Configures the Icinga 2 feature livestatus.
 * [`icinga2::feature::mainlog`](#icinga2--feature--mainlog): Configures the Icinga 2 feature mainlog.
 * [`icinga2::feature::notification`](#icinga2--feature--notification): Configures the Icinga 2 feature notification.
 * [`icinga2::feature::opentsdb`](#icinga2--feature--opentsdb): Configures the Icinga 2 feature opentsdb.
+* [`icinga2::feature::otlpmetrics`](#icinga2--feature--otlpmetrics): Configures the Icinga 2 feature otlp-metrics.
 * [`icinga2::feature::perfdata`](#icinga2--feature--perfdata): Configures the Icinga 2 feature perfdata.
 * [`icinga2::feature::statusdata`](#icinga2--feature--statusdata): Configures the Icinga 2 feature statusdata.
 * [`icinga2::feature::syslog`](#icinga2--feature--syslog): Configures the Icinga 2 feature syslog.
@@ -85,7 +86,6 @@ For more information, see lib/puppet_x/icinga2/utils.rb.
 * [`Icinga2::BasicAuth`](#Icinga2--BasicAuth): A strict type for basic authentication
 * [`Icinga2::CustomAttributes`](#Icinga2--CustomAttributes): A type for the structure of custom attributes
 * [`Icinga2::Fingerprint`](#Icinga2--Fingerprint): Type for certificate fingerprints SHA1: 160 bit (20 byte) digest SHA256: 256 bit (32 byte) digest
-* [`Icinga2::IdoCleanup`](#Icinga2--IdoCleanup): A type for the structure of settings to cleanup IDO databases
 * [`Icinga2::Interval`](#Icinga2--Interval): A strict type for intervals
 * [`Icinga2::LogFacility`](#Icinga2--LogFacility): A strict type of syslog facilities
 
@@ -95,7 +95,7 @@ For more information, see lib/puppet_x/icinga2/utils.rb.
 
 This module installs and configures Icinga 2.
 
-* **Note** Setting manage_packages to false means that all package aren't handeld by the module included the IDO packages.
+* **Note** Setting manage_packages to false means that all package aren't handeld by the module.
 
 #### Examples
 
@@ -268,6 +268,8 @@ Data type: `Array[String[1]]`
 
 List of features to activate. Defaults to [checker, mainlog, notification].
 
+Default value: `['checker', 'mainlog', 'notification']`
+
 ##### <a name="-icinga2--purge_features"></a>`purge_features`
 
 Data type: `Boolean`
@@ -289,6 +291,8 @@ Default value: `{}`
 Data type: `Array[String[1]]`
 
 A list of the ITL plugins to load. Defaults to [ 'plugins', 'plugins-contrib', 'windows-plugins', 'nscp' ].
+
+Default value: `['plugins', 'plugins-contrib', 'windows-plugins', 'nscp']`
 
 ##### <a name="-icinga2--confd"></a>`confd`
 
@@ -378,6 +382,7 @@ The following parameters are available in the `icinga2::feature::api` class:
 * [`ssl_key`](#-icinga2--feature--api--ssl_key)
 * [`ssl_cert`](#-icinga2--feature--api--ssl_cert)
 * [`ssl_cacert`](#-icinga2--feature--api--ssl_cacert)
+* [`ssl_puppet_cacert`](#-icinga2--feature--api--ssl_puppet_cacert)
 * [`ssl_crl`](#-icinga2--feature--api--ssl_crl)
 * [`accept_config`](#-icinga2--feature--api--accept_config)
 * [`accept_commands`](#-icinga2--feature--api--accept_commands)
@@ -400,6 +405,8 @@ The following parameters are available in the `icinga2::feature::api` class:
 * [`access_control_allow_headers`](#-icinga2--feature--api--access_control_allow_headers)
 * [`access_control_allow_methods`](#-icinga2--feature--api--access_control_allow_methods)
 * [`environment`](#-icinga2--feature--api--environment)
+* [`http_response_headers`](#-icinga2--feature--api--http_response_headers)
+* [`enforce_filter_expression_permission`](#-icinga2--feature--api--enforce_filter_expression_permission)
 
 ##### <a name="-icinga2--feature--api--ensure"></a>`ensure`
 
@@ -418,6 +425,8 @@ Provides multiple sources for the certificate, key and ca.
           /var/lib/icinga2/certs on Linux and C:/ProgramData/icinga2/var/lib/icinga2/certs on Windows.
           Please note that Puppet 7 uses an intermediate CA by default and Icinga cannot handle
           its CA certificate, see [Icinga Issue](https://github.com/Icinga/icinga2/pull/8859).
+          If $ssl_cacert is set, it overwrites the configured puppet CA which is usefull if you
+          have eg. multiple different puppet CA which should authorize on one icinga server.
 - icinga2: Uses the icinga2 CLI to generate a Certificate Request and Key to obtain a signed
            Certificate from 'ca_host' using the icinga2 ticket mechanism.
            In case the 'ticket_salt' has been configured the ticket_id will be generated
@@ -451,7 +460,16 @@ Default value: `undef`
 Data type: `Optional[String[1]]`
 
 The CA root certificate in a base64 encoded string to store in cert directory. This parameter
-requires pki to be set to 'none'.
+requires pki to be set to 'none', or 'puppet' (to add multiple puppet CA's)
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--api--ssl_puppet_cacert"></a>`ssl_puppet_cacert`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+if set, this overwrites the source of the puppet ca to take. This parameter
+requires pki to be set to 'puppet'.
 
 Default value: `undef`
 
@@ -637,6 +655,113 @@ Used as suffix in TLS SNI extension name; default from constant ApiEnvironment, 
 
 Default value: `undef`
 
+##### <a name="-icinga2--feature--api--http_response_headers"></a>`http_response_headers`
+
+Data type: `Optional[Hash]`
+
+Additional headers to add to HTTP responses.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--api--enforce_filter_expression_permission"></a>`enforce_filter_expression_permission`
+
+Data type: `Optional[Boolean]`
+
+Enforce the filter-expression permission.
+
+Default value: `undef`
+
+### <a name="icinga2--feature--app"></a>`icinga2::feature::app`
+
+Configures the Icinga 2 feature app.
+
+#### Parameters
+
+The following parameters are available in the `icinga2::feature::app` class:
+
+* [`ensure`](#-icinga2--feature--app--ensure)
+* [`enable_notifications`](#-icinga2--feature--app--enable_notifications)
+* [`enable_event_handlers`](#-icinga2--feature--app--enable_event_handlers)
+* [`enable_flapping`](#-icinga2--feature--app--enable_flapping)
+* [`enable_host_checks`](#-icinga2--feature--app--enable_host_checks)
+* [`enable_service_checks`](#-icinga2--feature--app--enable_service_checks)
+* [`enable_perfdata`](#-icinga2--feature--app--enable_perfdata)
+* [`vars`](#-icinga2--feature--app--vars)
+* [`environment`](#-icinga2--feature--app--environment)
+
+##### <a name="-icinga2--feature--app--ensure"></a>`ensure`
+
+Data type: `Enum['absent', 'present']`
+
+Set to present enables the feature syslog, absent disables it.
+
+Default value: `present`
+
+##### <a name="-icinga2--feature--app--enable_notifications"></a>`enable_notifications`
+
+Data type: `Optional[Boolean]`
+
+Whether notifications are globally enabled.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--app--enable_event_handlers"></a>`enable_event_handlers`
+
+Data type: `Optional[Boolean]`
+
+Whether event handlers are globally enabled.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--app--enable_flapping"></a>`enable_flapping`
+
+Data type: `Optional[Boolean]`
+
+Whether flap detection is globally enabled.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--app--enable_host_checks"></a>`enable_host_checks`
+
+Data type: `Optional[Boolean]`
+
+Whether active host checks are globally enabled.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--app--enable_service_checks"></a>`enable_service_checks`
+
+Data type: `Optional[Boolean]`
+
+Whether active service checks are globally enabled.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--app--enable_perfdata"></a>`enable_perfdata`
+
+Data type: `Optional[Boolean]`
+
+Whether performance data processing is globally enabled.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--app--vars"></a>`vars`
+
+Data type: `Optional[Hash]`
+
+A dictionary containing custom variables that are available globally.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--app--environment"></a>`environment`
+
+Data type: `Optional[String[1]]`
+
+Specify the Icinga environment. This overrides the Environment constant specified
+in the configuration or on the CLI with `--define`.
+
+Default value: `undef`
+
 ### <a name="icinga2--feature--checker"></a>`icinga2::feature::checker`
 
 Configures the Icinga 2 feature checker.
@@ -781,6 +906,8 @@ The following parameters are available in the `icinga2::feature::elasticsearch` 
 * [`enable_send_perfdata`](#-icinga2--feature--elasticsearch--enable_send_perfdata)
 * [`flush_interval`](#-icinga2--feature--elasticsearch--flush_interval)
 * [`flush_threshold`](#-icinga2--feature--elasticsearch--flush_threshold)
+* [`host_tags_template`](#-icinga2--feature--elasticsearch--host_tags_template)
+* [`service_tags_template`](#-icinga2--feature--elasticsearch--service_tags_template)
 * [`enable_ha`](#-icinga2--feature--elasticsearch--enable_ha)
 
 ##### <a name="-icinga2--feature--elasticsearch--ensure"></a>`ensure`
@@ -916,6 +1043,22 @@ Default value: `undef`
 Data type: `Optional[Integer[0]]`
 
 How many data points to buffer before forcing a transfer to Elasticsearch.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--elasticsearch--host_tags_template"></a>`host_tags_template`
+
+Data type: `Optional[Hash]`
+
+Allows to apply additional tags to the Elasticsearch host entries.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--elasticsearch--service_tags_template"></a>`service_tags_template`
+
+Data type: `Optional[Hash]`
+
+Allows to apply additional tags to the Elasticsearch service entries.
 
 Default value: `undef`
 
@@ -1169,7 +1312,9 @@ The following parameters are available in the `icinga2::feature::icingadb` class
 * [`port`](#-icinga2--feature--icingadb--port)
 * [`socket_path`](#-icinga2--feature--icingadb--socket_path)
 * [`connect_timeout`](#-icinga2--feature--icingadb--connect_timeout)
+* [`username`](#-icinga2--feature--icingadb--username)
 * [`password`](#-icinga2--feature--icingadb--password)
+* [`db_index`](#-icinga2--feature--icingadb--db_index)
 * [`env_id`](#-icinga2--feature--icingadb--env_id)
 * [`enable_tls`](#-icinga2--feature--icingadb--enable_tls)
 * [`tls_key_file`](#-icinga2--feature--icingadb--tls_key_file)
@@ -1224,11 +1369,28 @@ Timeout for establishing new connections.
 
 Default value: `undef`
 
+##### <a name="-icinga2--feature--icingadb--username"></a>`username`
+
+Data type: `Optional[String[1]]`
+
+Redis auth username. Only possible if Redis ACLs are used.
+Requires password to be set as well.
+
+Default value: `undef`
+
 ##### <a name="-icinga2--feature--icingadb--password"></a>`password`
 
 Data type: `Optional[Icinga::Secret]`
 
 IcingaDB Redis password. The password parameter isn't parsed anymore.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--icingadb--db_index"></a>`db_index`
+
+Data type: `Optional[Integer]`
+
+Redis logical database by its number.
 
 Default value: `undef`
 
@@ -1341,481 +1503,6 @@ Data type: `Optional[Boolean]`
 Whether not to verify the peer.
 
 Default value: `undef`
-
-### <a name="icinga2--feature--idomysql"></a>`icinga2::feature::idomysql`
-
-Installs and configures the Icinga 2 feature ido-mysql.
-
-#### Examples
-
-##### The ido-mysql featue requires an existing database and a user with permissions. This example uses the [puppetlabs/mysql](https://forge.puppet.com/puppetlabs/mysql) module.
-
-```puppet
-include mysql::server
-
-mysql::db { 'icinga2':
-  user     => 'icinga2',
-  password => 'supersecret',
-  host     => 'localhost',
-  grant    => ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'DROP', 'CREATE VIEW', 'CREATE', 'INDEX', 'EXECUTE', 'ALTER'],
-}
-
-class{ 'icinga2::feature::idomysql':
-  user          => "icinga2",
-  password      => "supersecret",
-  database      => "icinga2",
-  import_schema => true,
-  require       => Mysql::Db['icinga2']
-}
-```
-
-#### Parameters
-
-The following parameters are available in the `icinga2::feature::idomysql` class:
-
-* [`ensure`](#-icinga2--feature--idomysql--ensure)
-* [`host`](#-icinga2--feature--idomysql--host)
-* [`port`](#-icinga2--feature--idomysql--port)
-* [`socket_path`](#-icinga2--feature--idomysql--socket_path)
-* [`user`](#-icinga2--feature--idomysql--user)
-* [`password`](#-icinga2--feature--idomysql--password)
-* [`database`](#-icinga2--feature--idomysql--database)
-* [`enable_ssl`](#-icinga2--feature--idomysql--enable_ssl)
-* [`ssl_key_path`](#-icinga2--feature--idomysql--ssl_key_path)
-* [`ssl_cert_path`](#-icinga2--feature--idomysql--ssl_cert_path)
-* [`ssl_cacert_path`](#-icinga2--feature--idomysql--ssl_cacert_path)
-* [`ssl_key`](#-icinga2--feature--idomysql--ssl_key)
-* [`ssl_cert`](#-icinga2--feature--idomysql--ssl_cert)
-* [`ssl_cacert`](#-icinga2--feature--idomysql--ssl_cacert)
-* [`ssl_capath`](#-icinga2--feature--idomysql--ssl_capath)
-* [`ssl_cipher`](#-icinga2--feature--idomysql--ssl_cipher)
-* [`table_prefix`](#-icinga2--feature--idomysql--table_prefix)
-* [`instance_name`](#-icinga2--feature--idomysql--instance_name)
-* [`instance_description`](#-icinga2--feature--idomysql--instance_description)
-* [`enable_ha`](#-icinga2--feature--idomysql--enable_ha)
-* [`failover_timeout`](#-icinga2--feature--idomysql--failover_timeout)
-* [`cleanup`](#-icinga2--feature--idomysql--cleanup)
-* [`categories`](#-icinga2--feature--idomysql--categories)
-* [`import_schema`](#-icinga2--feature--idomysql--import_schema)
-
-##### <a name="-icinga2--feature--idomysql--ensure"></a>`ensure`
-
-Data type: `Enum['absent', 'present']`
-
-Set to present enables the feature ido-mysql, absent disables it.
-
-Default value: `present`
-
-##### <a name="-icinga2--feature--idomysql--host"></a>`host`
-
-Data type: `Stdlib::Host`
-
-MySQL database host address.
-
-Default value: `'localhost'`
-
-##### <a name="-icinga2--feature--idomysql--port"></a>`port`
-
-Data type: `Optional[Stdlib::Port]`
-
-MySQL database port.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--socket_path"></a>`socket_path`
-
-Data type: `Optional[Stdlib::Absolutepath]`
-
-MySQL socket path.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--user"></a>`user`
-
-Data type: `String[1]`
-
-MySQL database user with read/write permission to the icinga database.
-
-Default value: `'icinga'`
-
-##### <a name="-icinga2--feature--idomysql--password"></a>`password`
-
-Data type: `Optional[Icinga::Secret]`
-
-MySQL database user's password. The password parameter isn't parsed anymore.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--database"></a>`database`
-
-Data type: `String[1]`
-
-MySQL database name.
-
-Default value: `'icinga'`
-
-##### <a name="-icinga2--feature--idomysql--enable_ssl"></a>`enable_ssl`
-
-Data type: `Boolean`
-
-Either enable or disable SSL/TLS. Other SSL parameters are only affected if this is set to 'true'.
-
-Default value: `false`
-
-##### <a name="-icinga2--feature--idomysql--ssl_key_path"></a>`ssl_key_path`
-
-Data type: `Optional[Stdlib::Absolutepath]`
-
-Location of the client private key. Only valid if ssl is enabled.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--ssl_cert_path"></a>`ssl_cert_path`
-
-Data type: `Optional[Stdlib::Absolutepath]`
-
-Location of the client certificate. Only valid if ssl is enabled.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--ssl_cacert_path"></a>`ssl_cacert_path`
-
-Data type: `Optional[Stdlib::Absolutepath]`
-
-Location of the CA certificate. Only valid if ssl is enabled.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--ssl_key"></a>`ssl_key`
-
-Data type: `Optional[Icinga::Secret]`
-
-The client private key in PEM Format. Only valid if ssl is enabled.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--ssl_cert"></a>`ssl_cert`
-
-Data type: `Optional[String[1]]`
-
-The client certificate in PEM format. Only valid if ssl is enabled.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--ssl_cacert"></a>`ssl_cacert`
-
-Data type: `Optional[String[1]]`
-
-The CA root certificate in PEM format. Only valid if ssl is enabled.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--ssl_capath"></a>`ssl_capath`
-
-Data type: `Optional[Stdlib::Absolutepath]`
-
-MySQL SSL trusted SSL CA certificates in PEM format directory path. Only valid if ssl is enabled.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--ssl_cipher"></a>`ssl_cipher`
-
-Data type: `Optional[String[1]]`
-
-MySQL SSL list of allowed ciphers. Only valid if ssl is enabled.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--table_prefix"></a>`table_prefix`
-
-Data type: `Optional[String[1]]`
-
-MySQL database table prefix.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--instance_name"></a>`instance_name`
-
-Data type: `Optional[String[1]]`
-
-Unique identifier for the local Icinga 2 instance.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--instance_description"></a>`instance_description`
-
-Data type: `Optional[String[1]]`
-
-Description for the Icinga 2 instance.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--enable_ha"></a>`enable_ha`
-
-Data type: `Optional[Boolean]`
-
-Enable the high availability functionality. Only valid in a cluster setup.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--failover_timeout"></a>`failover_timeout`
-
-Data type: `Optional[Icinga2::Interval]`
-
-Set the failover timeout in a HA cluster. Must not be lower than 60s.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--cleanup"></a>`cleanup`
-
-Data type: `Optional[Icinga2::IdoCleanup]`
-
-Hash with items for historical table cleanup.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--categories"></a>`categories`
-
-Data type: `Optional[Array]`
-
-Array of information types that should be written to the database.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idomysql--import_schema"></a>`import_schema`
-
-Data type: `Variant[Boolean, Enum['mariadb', 'mysql']]`
-
-Whether to import the MySQL schema or not. New options `mariadb` and `mysql`,
-both means true. With mariadb its cli options are used for the import,
-whereas with mysql its different options.
-
-Default value: `false`
-
-### <a name="icinga2--feature--idopgsql"></a>`icinga2::feature::idopgsql`
-
-Installs and configures the Icinga 2 feature ido-pgsql.
-
-#### Examples
-
-##### The ido-pgsql featue requires an existing database and a user with permissions. This example uses the [puppetlab/postgresql](https://forge.puppet.com/puppetlabs/postgresql) module.
-
-```puppet
-include icinga2
-include postgresql::server
-
-postgresql::server::db { 'icinga2':
-  user     => 'icinga2',
-  password => postgresql::postgresql_password('icinga2', 'supersecret'),
-}
-
-class{ 'icinga2::feature::idopgsql':
-  user          => 'icinga2',
-  password      => 'supersecret',
-  database      => 'icinga2',
-  import_schema => true,
-  require       => Postgresql::Server::Db['icinga2']
-}
-```
-
-#### Parameters
-
-The following parameters are available in the `icinga2::feature::idopgsql` class:
-
-* [`ensure`](#-icinga2--feature--idopgsql--ensure)
-* [`host`](#-icinga2--feature--idopgsql--host)
-* [`port`](#-icinga2--feature--idopgsql--port)
-* [`user`](#-icinga2--feature--idopgsql--user)
-* [`password`](#-icinga2--feature--idopgsql--password)
-* [`database`](#-icinga2--feature--idopgsql--database)
-* [`ssl_mode`](#-icinga2--feature--idopgsql--ssl_mode)
-* [`ssl_key_path`](#-icinga2--feature--idopgsql--ssl_key_path)
-* [`ssl_cert_path`](#-icinga2--feature--idopgsql--ssl_cert_path)
-* [`ssl_cacert_path`](#-icinga2--feature--idopgsql--ssl_cacert_path)
-* [`ssl_key`](#-icinga2--feature--idopgsql--ssl_key)
-* [`ssl_cert`](#-icinga2--feature--idopgsql--ssl_cert)
-* [`ssl_cacert`](#-icinga2--feature--idopgsql--ssl_cacert)
-* [`table_prefix`](#-icinga2--feature--idopgsql--table_prefix)
-* [`instance_name`](#-icinga2--feature--idopgsql--instance_name)
-* [`instance_description`](#-icinga2--feature--idopgsql--instance_description)
-* [`enable_ha`](#-icinga2--feature--idopgsql--enable_ha)
-* [`failover_timeout`](#-icinga2--feature--idopgsql--failover_timeout)
-* [`cleanup`](#-icinga2--feature--idopgsql--cleanup)
-* [`categories`](#-icinga2--feature--idopgsql--categories)
-* [`import_schema`](#-icinga2--feature--idopgsql--import_schema)
-
-##### <a name="-icinga2--feature--idopgsql--ensure"></a>`ensure`
-
-Data type: `Enum['absent', 'present']`
-
-Set to present enables the feature ido-pgsql, absent disables it.
-
-Default value: `present`
-
-##### <a name="-icinga2--feature--idopgsql--host"></a>`host`
-
-Data type: `Stdlib::Host`
-
-PostgreSQL database host address.
-
-Default value: `'localhost'`
-
-##### <a name="-icinga2--feature--idopgsql--port"></a>`port`
-
-Data type: `Optional[Stdlib::Port]`
-
-PostgreSQL database port.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--user"></a>`user`
-
-Data type: `String[1]`
-
-PostgreSQL database user with read/write permission to the icinga database.
-
-Default value: `'icinga'`
-
-##### <a name="-icinga2--feature--idopgsql--password"></a>`password`
-
-Data type: `Optional[Icinga::Secret]`
-
-PostgreSQL database user's password. The password parameter isn't parsed anymore.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--database"></a>`database`
-
-Data type: `String[1]`
-
-PostgreSQL database name.
-
-Default value: `'icinga'`
-
-##### <a name="-icinga2--feature--idopgsql--ssl_mode"></a>`ssl_mode`
-
-Data type:
-
-```puppet
-Optional[Enum['disable', 'allow', 'prefer',
-  'verify-full', 'verify-ca', 'require']]
-```
-
-Enable SSL connection mode.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--ssl_key_path"></a>`ssl_key_path`
-
-Data type: `Optional[Stdlib::Absolutepath]`
-
-Location of the private key. Only valid if ssl_mode is set unequal to `disabled`.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--ssl_cert_path"></a>`ssl_cert_path`
-
-Data type: `Optional[Stdlib::Absolutepath]`
-
-Location of the certificate. Only valid if ssl_mode is set unequal to `disabled`.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--ssl_cacert_path"></a>`ssl_cacert_path`
-
-Data type: `Optional[Stdlib::Absolutepath]`
-
-Location of the CA certificate. Only valid if ssl_mode is set unequal to `disabled`.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--ssl_key"></a>`ssl_key`
-
-Data type: `Optional[Icinga::Secret]`
-
-The client private key in PEM format. Only valid if ssl_mode is set unequal to `disabled`.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--ssl_cert"></a>`ssl_cert`
-
-Data type: `Optional[String[1]]`
-
-The client certificate in PEM format. Only valid if ssl_mode is set unequal to `disabled`.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--ssl_cacert"></a>`ssl_cacert`
-
-Data type: `Optional[String[1]]`
-
-The CA root certificate in PEM format. Only valid if ssl_mode is set unequal to `disabled`.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--table_prefix"></a>`table_prefix`
-
-Data type: `Optional[String[1]]`
-
-PostgreSQL database table prefix.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--instance_name"></a>`instance_name`
-
-Data type: `Optional[String[1]]`
-
-Unique identifier for the local Icinga 2 instance.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--instance_description"></a>`instance_description`
-
-Data type: `Optional[String[1]]`
-
-Description of the Icinga 2 instance.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--enable_ha"></a>`enable_ha`
-
-Data type: `Optional[Boolean]`
-
-Enable the high availability functionality. Only valid in a cluster setup.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--failover_timeout"></a>`failover_timeout`
-
-Data type: `Optional[Icinga2::Interval]`
-
-Set the failover timeout in a HA cluster. Must not be lower than 60s.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--cleanup"></a>`cleanup`
-
-Data type: `Optional[Icinga2::IdoCleanup]`
-
-Hash with items for historical table cleanup.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--categories"></a>`categories`
-
-Data type: `Optional[Array]`
-
-Array of information types that should be written to the database.
-
-Default value: `undef`
-
-##### <a name="-icinga2--feature--idopgsql--import_schema"></a>`import_schema`
-
-Data type: `Boolean`
-
-Whether to import the PostgreSQL schema or not.
-
-Default value: `false`
 
 ### <a name="icinga2--feature--influxdb"></a>`icinga2::feature::influxdb`
 
@@ -2278,6 +1965,52 @@ Enable the high availability functionality. Only valid in a cluster setup.
 
 Default value: `undef`
 
+### <a name="icinga2--feature--journald"></a>`icinga2::feature::journald`
+
+Configures the Icinga 2 feature journald.
+
+#### Parameters
+
+The following parameters are available in the `icinga2::feature::journald` class:
+
+* [`ensure`](#-icinga2--feature--journald--ensure)
+* [`severity`](#-icinga2--feature--journald--severity)
+* [`facility`](#-icinga2--feature--journald--facility)
+* [`identifier`](#-icinga2--feature--journald--identifier)
+
+##### <a name="-icinga2--feature--journald--ensure"></a>`ensure`
+
+Data type: `Enum['absent', 'present']`
+
+Set to present enables the feature journald, absent disables it.
+
+Default value: `present`
+
+##### <a name="-icinga2--feature--journald--severity"></a>`severity`
+
+Data type: `Icinga::LogLevel`
+
+You can choose the log severity between information, notice, warning or debug.
+
+Default value: `'warning'`
+
+##### <a name="-icinga2--feature--journald--facility"></a>`facility`
+
+Data type: `Optional[Icinga2::LogFacility]`
+
+Defines the facility to use for journald entries. This can be a facility constant
+like FacilityDaemon.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--journald--identifier"></a>`identifier`
+
+Data type: `Optional[String[1]]`
+
+Defines the syslog compatible identifier to use for journal entries.
+
+Default value: `undef`
+
 ### <a name="icinga2--feature--livestatus"></a>`icinga2::feature::livestatus`
 
 Configures the Icinga 2 feature livestatus.
@@ -2416,6 +2149,9 @@ The following parameters are available in the `icinga2::feature::opentsdb` class
 * [`host`](#-icinga2--feature--opentsdb--host)
 * [`port`](#-icinga2--feature--opentsdb--port)
 * [`enable_ha`](#-icinga2--feature--opentsdb--enable_ha)
+* [`enable_generic_metrics`](#-icinga2--feature--opentsdb--enable_generic_metrics)
+* [`host_template`](#-icinga2--feature--opentsdb--host_template)
+* [`service_template`](#-icinga2--feature--opentsdb--service_template)
 
 ##### <a name="-icinga2--feature--opentsdb--ensure"></a>`ensure`
 
@@ -2446,6 +2182,230 @@ Default value: `undef`
 Data type: `Optional[Boolean]`
 
 Enable the high availability functionality. Only valid in a cluster setup.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--opentsdb--enable_generic_metrics"></a>`enable_generic_metrics`
+
+Data type: `Optional[Boolean]`
+
+Re-use metric names to store different perfdata values for a particular check.
+Use tags to distinguish perfdata instead of metric name.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--opentsdb--host_template"></a>`host_template`
+
+Data type: `Optional[Hash]`
+
+Specify additional tags to be included with host metrics.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--opentsdb--service_template"></a>`service_template`
+
+Data type: `Optional[Hash]`
+
+Specify additional tags to be included with service metrics.
+
+Default value: `undef`
+
+### <a name="icinga2--feature--otlpmetrics"></a>`icinga2::feature::otlpmetrics`
+
+Configures the Icinga 2 feature otlp-metrics.
+
+#### Parameters
+
+The following parameters are available in the `icinga2::feature::otlpmetrics` class:
+
+* [`ensure`](#-icinga2--feature--otlpmetrics--ensure)
+* [`host`](#-icinga2--feature--otlpmetrics--host)
+* [`port`](#-icinga2--feature--otlpmetrics--port)
+* [`metrics_endpoint`](#-icinga2--feature--otlpmetrics--metrics_endpoint)
+* [`service_namespace`](#-icinga2--feature--otlpmetrics--service_namespace)
+* [`basic_auth`](#-icinga2--feature--otlpmetrics--basic_auth)
+* [`host_resource_attributes`](#-icinga2--feature--otlpmetrics--host_resource_attributes)
+* [`service_resource_attributes`](#-icinga2--feature--otlpmetrics--service_resource_attributes)
+* [`flush_interval`](#-icinga2--feature--otlpmetrics--flush_interval)
+* [`flush_threshold`](#-icinga2--feature--otlpmetrics--flush_threshold)
+* [`enable_ha`](#-icinga2--feature--otlpmetrics--enable_ha)
+* [`enable_send_thresholds`](#-icinga2--feature--otlpmetrics--enable_send_thresholds)
+* [`disconnect_timeout`](#-icinga2--feature--otlpmetrics--disconnect_timeout)
+* [`enable_ssl`](#-icinga2--feature--otlpmetrics--enable_ssl)
+* [`ssl_noverify`](#-icinga2--feature--otlpmetrics--ssl_noverify)
+* [`ssl_key_path`](#-icinga2--feature--otlpmetrics--ssl_key_path)
+* [`ssl_cert_path`](#-icinga2--feature--otlpmetrics--ssl_cert_path)
+* [`ssl_cacert_path`](#-icinga2--feature--otlpmetrics--ssl_cacert_path)
+* [`ssl_key`](#-icinga2--feature--otlpmetrics--ssl_key)
+* [`ssl_cert`](#-icinga2--feature--otlpmetrics--ssl_cert)
+* [`ssl_cacert`](#-icinga2--feature--otlpmetrics--ssl_cacert)
+
+##### <a name="-icinga2--feature--otlpmetrics--ensure"></a>`ensure`
+
+Data type: `Enum['absent', 'present']`
+
+Set to present enables the feature perfdata, absent disables it.
+
+Default value: `present`
+
+##### <a name="-icinga2--feature--otlpmetrics--host"></a>`host`
+
+Data type: `Optional[Stdlib::Host]`
+
+OTLP backend host address.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--port"></a>`port`
+
+Data type: `Optional[Stdlib::Port]`
+
+OTLP backend HTTP port.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--metrics_endpoint"></a>`metrics_endpoint`
+
+Data type: `Optional[String[1]]`
+
+OTLP metrics endpoint path.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--service_namespace"></a>`service_namespace`
+
+Data type: `Optional[String[1]]`
+
+The namespace to associate with emitted metrics used
+in the `service.namespace` OTel resource attribute.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--basic_auth"></a>`basic_auth`
+
+Data type: `Optional[Icinga2::BasicAuth]`
+
+Username and password for HTTP basic authentication.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--host_resource_attributes"></a>`host_resource_attributes`
+
+Data type: `Optional[Hash]`
+
+Additional resource attributes to be included with host metrics.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--service_resource_attributes"></a>`service_resource_attributes`
+
+Data type: `Optional[Hash]`
+
+Additional resource attributes to be included with service metrics.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--flush_interval"></a>`flush_interval`
+
+Data type: `Optional[Icinga2::Interval]`
+
+How long to buffer data points before transferring to the OTLP backend.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--flush_threshold"></a>`flush_threshold`
+
+Data type: `Optional[Integer[1]]`
+
+How many bytes to buffer before forcing a transfer to the OTLP backend.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--enable_ha"></a>`enable_ha`
+
+Data type: `Optional[Boolean]`
+
+Enable the high availability functionality. Only valid in a cluster setup.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--enable_send_thresholds"></a>`enable_send_thresholds`
+
+Data type: `Optional[Boolean]`
+
+Whether to stream warning, critical, minimum & maximum as separate metrics to the OTLP backend.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--disconnect_timeout"></a>`disconnect_timeout`
+
+Data type: `Optional[Icinga2::Interval]`
+
+Timeout to wait for any outstanding data to be flushed to the OTLP backend before disconnecting.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--enable_ssl"></a>`enable_ssl`
+
+Data type: `Optional[Boolean]`
+
+Either enable or disable SSL. Other SSL parameters are only affected if this is set to 'true'.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--ssl_noverify"></a>`ssl_noverify`
+
+Data type: `Optional[Boolean]`
+
+Disable TLS peer verification. Only valid if ssl is enabled.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--ssl_key_path"></a>`ssl_key_path`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+Location of the client private key. Only valid if ssl is enabled.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--ssl_cert_path"></a>`ssl_cert_path`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+Location of the client certificate. Only valid if ssl is enabled.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--ssl_cacert_path"></a>`ssl_cacert_path`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+Location of the CA certificate. Only valid if ssl is enabled.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--ssl_key"></a>`ssl_key`
+
+Data type: `Optional[Icinga::Secret]`
+
+The client private key in PEM format. Only valid if ssl is enabled.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--ssl_cert"></a>`ssl_cert`
+
+Data type: `Optional[String[1]]`
+
+The client certificate in PEM format. Only valid if ssl is enabled.
+
+Default value: `undef`
+
+##### <a name="-icinga2--feature--otlpmetrics--ssl_cacert"></a>`ssl_cacert`
+
+Data type: `Optional[String[1]]`
+
+The CA root certificate in PEM format. Only valid if ssl is enabled.
 
 Default value: `undef`
 
@@ -2771,6 +2731,7 @@ icinga2::config::fragment { 'load-function':
 The following parameters are available in the `icinga2::config::fragment` defined type:
 
 * [`content`](#-icinga2--config--fragment--content)
+* [`ensure`](#-icinga2--config--fragment--ensure)
 * [`target`](#-icinga2--config--fragment--target)
 * [`code_name`](#-icinga2--config--fragment--code_name)
 * [`order`](#-icinga2--config--fragment--order)
@@ -2780,6 +2741,14 @@ The following parameters are available in the `icinga2::config::fragment` define
 Data type: `String`
 
 Content to insert in file specified in target.
+
+##### <a name="-icinga2--config--fragment--ensure"></a>`ensure`
+
+Data type: `Enum['present', 'absent']`
+
+Set to present enables the fragment, absent disables it.
+
+Default value: `present`
 
 ##### <a name="-icinga2--config--fragment--target"></a>`target`
 
@@ -3538,6 +3507,7 @@ The following parameters are available in the `icinga2::object::host` defined ty
 * [`enable_event_handler`](#-icinga2--object--host--enable_event_handler)
 * [`enable_flapping`](#-icinga2--object--host--enable_flapping)
 * [`enable_perfdata`](#-icinga2--object--host--enable_perfdata)
+* [`flapping_ignore_states`](#-icinga2--object--host--flapping_ignore_states)
 * [`event_command`](#-icinga2--object--host--event_command)
 * [`flapping_threshold_low`](#-icinga2--object--host--flapping_threshold_low)
 * [`flapping_threshold_high`](#-icinga2--object--host--flapping_threshold_high)
@@ -3713,6 +3683,14 @@ Default value: `undef`
 Data type: `Optional[Boolean]`
 
 Whether performance data processing is enabled.
+
+Default value: `undef`
+
+##### <a name="-icinga2--object--host--flapping_ignore_states"></a>`flapping_ignore_states`
+
+Data type: `Optional[Array[String[1]]]`
+
+A list of states that should be ignored during flapping calculation.
 
 Default value: `undef`
 
@@ -4437,6 +4415,7 @@ The following parameters are available in the `icinga2::object::scheduleddowntim
 * [`fixed`](#-icinga2--object--scheduleddowntime--fixed)
 * [`duration`](#-icinga2--object--scheduleddowntime--duration)
 * [`ranges`](#-icinga2--object--scheduleddowntime--ranges)
+* [`child_options`](#-icinga2--object--scheduleddowntime--child_options)
 * [`apply`](#-icinga2--object--scheduleddowntime--apply)
 * [`prefix`](#-icinga2--object--scheduleddowntime--prefix)
 * [`apply_target`](#-icinga2--object--scheduleddowntime--apply_target)
@@ -4515,6 +4494,22 @@ Default value: `undef`
 Data type: `Optional[Hash]`
 
 A dictionary containing information which days and durations apply to this timeperiod.
+
+Default value: `undef`
+
+##### <a name="-icinga2--object--scheduleddowntime--child_options"></a>`child_options`
+
+Data type:
+
+```puppet
+Optional[Enum[
+    'DowntimeNoChildren',
+    'DowntimeTriggeredChildren',
+    'DowntimeNonTriggeredChildren'
+  ]]
+```
+
+Schedule child downtimes.
 
 Default value: `undef`
 
@@ -5551,12 +5546,12 @@ This function returns a string to connect databases
 with or without TLS information.
 
 #### `icinga2::db::connect(Struct[{
-      type     => Enum['pgsql','mysql','mariadb'],
-      host     => Stdlib::Host,
-      port     => Optional[Stdlib::Port],
-      database => String,
-      username => String,
-      password => Optional[Variant[String, Sensitive[String]]],
+    type     => Enum['pgsql','mysql','mariadb'],
+    host     => Stdlib::Host,
+    port     => Optional[Stdlib::Port],
+    database => String,
+    username => String,
+    password => Optional[Variant[String, Sensitive[String]]],
   }] $db, Hash[String, Any] $tls, Optional[Boolean] $use_tls = undef, Optional[Enum['verify-full', 'verify-ca']] $ssl_mode = undef)`
 
 The icinga2::db::connect function.
@@ -5569,12 +5564,12 @@ Data type:
 
 ```puppet
 Struct[{
-      type     => Enum['pgsql','mysql','mariadb'],
-      host     => Stdlib::Host,
-      port     => Optional[Stdlib::Port],
-      database => String,
-      username => String,
-      password => Optional[Variant[String, Sensitive[String]]],
+    type     => Enum['pgsql','mysql','mariadb'],
+    host     => Stdlib::Host,
+    port     => Optional[Stdlib::Port],
+    database => String,
+    username => String,
+    password => Optional[Variant[String, Sensitive[String]]],
   }]
 ```
 
@@ -5705,8 +5700,8 @@ Alias of
 
 ```puppet
 Struct[{
-    'username' => String[1],
-    'password' => Variant[String[1], Sensitive[String[1]]],
+  'username' => String[1],
+  'password' => Variant[String[1], Sensitive[String[1]]],
 }]
 ```
 
@@ -5723,32 +5718,6 @@ SHA1: 160 bit (20 byte) digest
 SHA256: 256 bit (32 byte) digest
 
 Alias of `Pattern[/^([0-9a-fA-F]{2}\:){19}(([0-9a-fA-F]{2}\:){12})?[0-9a-fA-F]{2}$/]`
-
-### <a name="Icinga2--IdoCleanup"></a>`Icinga2::IdoCleanup`
-
-A type for the structure of settings to cleanup IDO databases
-
-Alias of
-
-```puppet
-Hash[Enum[
-    'acknowledgements_age',
-    'commenthistory_age',
-    'contactnotifications_age',
-    'contactnotificationmethods_age',
-    'downtimehistory_age',
-    'eventhandlers_age',
-    'externalcommands_age',
-    'flappinghistory_age',
-    'hostchecks_age',
-    'logentries_age',
-    'notifications_age',
-    'processevents_age',
-    'statehistory_age',
-    'servicechecks_age',
-    'systemcommands_age',
-  ], String[1]]
-```
 
 ### <a name="Icinga2--Interval"></a>`Icinga2::Interval`
 

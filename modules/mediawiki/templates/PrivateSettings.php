@@ -32,7 +32,8 @@ $wgMediaModerationPhotoDNASubscriptionKey = '<%= @mediamoderation_apikey %>';
 $wgCreateWikiOpenAIConfig = [
 	'dryrun' => false,
 	'apikey' => '<%= @openai_apikey %>',
-	'assistantid' => '<%= @openai_assistantid %>',
+	'model' => 'gpt-5.6-luna',
+	'instructions' => '<%= @openai_instructions.gsub('\\', '\\\\\\\\').gsub("'", "\\\\'") %>',
 ];
 
 // RequestCustomDomain settings
@@ -60,3 +61,6 @@ $wgMirahezeReportsWriteKey = '<%= @reports_write_key %>';
 
 // Google Translate API key for Meta
 $wmgTranslateGoogleTranslateMetaKey = '<%= @google_translate_apikey_meta %>';
+
+// Speedscope logging token
+$wgSpeedscopeToken = '<%= @speedscope_log_token %>';

@@ -14,16 +14,16 @@ class role::reports {
     $ip = vmlib::generate_firewall_ip($subquery)
     $firewall_srange = "${cf_ip} ${ip}"
 
-    ferm::service { 'http':
+    firewall::service { 'http':
         proto   => 'tcp',
-        port    => '80',
+        port    => 80,
         srange  => "(${firewall_srange})",
         notrack => true,
     }
 
-    ferm::service { 'https':
+    firewall::service { 'https':
         proto   => 'tcp',
-        port    => '443',
+        port    => 443,
         srange  => "(${firewall_srange})",
         notrack => true,
     }

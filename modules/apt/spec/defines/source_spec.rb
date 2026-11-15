@@ -109,7 +109,7 @@ describe 'apt::source' do
 
       it {
         expect(subject).to contain_apt__key("Add key: #{id} from Apt::Source my_source").that_comes_before('Apt::Setting[list-my_source]').with(ensure: 'present',
-                                                                                                                                                id:)
+                                                                                                                                                id: id)
       }
     end
 
@@ -147,7 +147,7 @@ describe 'apt::source' do
 
       it {
         expect(subject).to contain_apt__key("Add key: #{id} from Apt::Source my_source").that_comes_before('Apt::Setting[list-my_source]').with(ensure: 'refreshed',
-                                                                                                                                                id:,
+                                                                                                                                                id: id,
                                                                                                                                                 server: 'pgp.mit.edu',
                                                                                                                                                 content: 'GPG key content',
                                                                                                                                                 source: 'http://apt.puppetlabs.com/pubkey.gpg',
@@ -436,6 +436,68 @@ describe 'apt::source' do
   end
 
   describe 'deb822 sources' do
+    context 'suite contains a slash but does not end with slash (should require Components)' do
+      let :params do
+        super().merge(
+          {
+            location: ['http://repo.mongodb.org/apt/debian'],
+            release: ['bookworm/mongodb-org/6.0'],
+            repos: ['main'],
+            keyring: '/etc/apt/keyrings/mongodb.gpg',
+          },
+        )
+      end
+
+      it { is_expected.to contain_apt__setting("sources-#{title}").with_content(%r{Suites: bookworm/mongodb-org/6.0}) }
+      it { is_expected.to contain_apt__setting("sources-#{title}").with_content(%r{Components: main}) }
+    end
+
+    context 'suite ends with slash (should omit Components)' do
+      let :params do
+        super().merge(
+          {
+            location: ['https://pkg.jenkins.io/debian-stable'],
+            release: ['binary/'],
+            repos: [],
+            keyring: '/etc/apt/keyrings/jenkins-keyring.asc',
+          },
+        )
+      end
+
+      it { is_expected.to contain_apt__setting("sources-#{title}").with_content(%r{Suites: binary/}) }
+      it { is_expected.to contain_apt__setting("sources-#{title}").without_content(%r{Components:}) }
+    end
+
+    context 'multiple suites, all end with slash (should omit Components)' do
+      let :params do
+        super().merge(
+          {
+            location: ['https://example.com/debian'],
+            release: ['foo/', 'bar/'],
+            repos: ['main'],
+            keyring: '/etc/apt/keyrings/example.gpg',
+          },
+        )
+      end
+
+      it { is_expected.to contain_apt__setting("sources-#{title}").with_content(%r{Suites: foo/ bar/}) }
+      it { is_expected.to contain_apt__setting("sources-#{title}").without_content(%r{Components:}) }
+    end
+
+    context 'multiple suites, not all end with slash (should raise error)' do
+      let :params do
+        super().merge(
+          {
+            location: ['https://example.com/debian'],
+            release: ['foo/', 'bar'],
+            repos: ['main'],
+            keyring: '/etc/apt/keyrings/example.gpg',
+          },
+        )
+      end
+
+      it { is_expected.to compile.and_raise_error(%r{Mixing path-style suites}) }
+    end
     let :params do
       {
         source_format: 'sources',
@@ -453,31 +515,51 @@ describe 'apt::source' do
       end
 
       it { is_expected.to contain_apt__setting("sources-#{title}").with_notify_update(true) }
+      it { is_expected.to contain_apt__setting("sources-#{title}").with_content(<<~SOURCE) }
+        # This file is managed by Puppet. DO NOT EDIT.
+        # my_source
+        Enabled: yes
+        Types: deb
+        URIs: http://debian.mirror.iweb.ca/debian/
+        Suites: stretch
+        Components: main contrib non-free
+      SOURCE
     end
 
     context 'complex deb822 source' do
       let :params do
         super().merge(
           {
+            enabled: false,
             types: ['deb', 'deb-src'],
             location: ['http://fr.debian.org/debian', 'http://de.debian.org/debian'],
             release: ['stable', 'stable-updates', 'stable-backports'],
             repos: ['main', 'contrib', 'non-free'],
             architecture: ['amd64', 'i386'],
             allow_unsigned: true,
-            notify_update: false
+            allow_insecure: true,
+            notify_update: false,
+            check_valid_until: false,
+            keyring: '/foo'
           },
         )
       end
 
       it { is_expected.to contain_apt__setting("sources-#{title}").with_notify_update(false) }
-      it { is_expected.to contain_apt__setting("sources-#{title}").with_content(%r{Enabled: yes}) }
-      it { is_expected.to contain_apt__setting("sources-#{title}").with_content(%r{Types: deb deb-src}) }
-      it { is_expected.to contain_apt__setting("sources-#{title}").with_content(%r{URIs: http://fr.debian.org/debian http://de.debian.org/debian}) }
-      it { is_expected.to contain_apt__setting("sources-#{title}").with_content(%r{Suites: stable stable-updates stable-backports}) }
-      it { is_expected.to contain_apt__setting("sources-#{title}").with_content(%r{Components: main contrib non-free}) }
-      it { is_expected.to contain_apt__setting("sources-#{title}").with_content(%r{Architectures: amd64 i386}) }
-      it { is_expected.to contain_apt__setting("sources-#{title}").with_content(%r{Trusted: yes}) }
+      it { is_expected.to contain_apt__setting("sources-#{title}").with_content(<<~SOURCE) }
+        # This file is managed by Puppet. DO NOT EDIT.
+        # my_source
+        Enabled: no
+        Types: deb deb-src
+        URIs: http://fr.debian.org/debian http://de.debian.org/debian
+        Suites: stable stable-updates stable-backports
+        Components: main contrib non-free
+        Architectures: amd64 i386
+        Allow-Insecure: yes
+        Trusted: yes
+        Check-Valid-Until: no
+        Signed-By: /foo
+      SOURCE
     end
 
     context 'path based deb822 source' do
@@ -515,6 +597,37 @@ describe 'apt::source' do
       end
 
       it { is_expected.to contain_apt__setting("sources-#{title}").with_notify_update(true) }
+    end
+
+    context 'absent deb822 source' do
+      let :params do
+        super().merge(
+          {
+            ensure: 'absent',
+          },
+        )
+      end
+
+      it { is_expected.to contain_apt__setting("sources-#{title}").with_ensure('absent') }
+    end
+
+    context 'absent complex deb822 source' do
+      let :params do
+        super().merge(
+          {
+            ensure: 'absent',
+            types: ['deb', 'deb-src'],
+            location: ['http://fr.debian.org/debian', 'http://de.debian.org/debian'],
+            release: ['stable', 'stable-updates', 'stable-backports'],
+            repos: ['main', 'contrib', 'non-free'],
+            architecture: ['amd64', 'i386'],
+            allow_unsigned: true,
+            notify_update: false
+          },
+        )
+      end
+
+      it { is_expected.to contain_apt__setting("sources-#{title}").with_ensure('absent') }
     end
   end
 end

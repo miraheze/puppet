@@ -41,8 +41,7 @@ string, or key from a hash.
 from an array or key from a hash.
 * [`delete_undef_values`](#delete_undef_values): Returns a copy of input hash or array with all undefs deleted.
 * [`delete_values`](#delete_values): Deletes all instances of a given value from a hash.
-* [`deprecation`](#deprecation): Function to print deprecation warnings, Logs a warning once for a given key.  The uniqueness key - can appear once. The msg is the message te
-* [`deprecation`](#deprecation): Function to print deprecation warnings (this is the 3.X version of it).
+* [`deprecation`](#deprecation): Function to print deprecation warnings, Logs a warning once for a given key.
 * [`difference`](#difference): This function returns the difference between two arrays.
 * [`dirname`](#dirname): Returns the dirname of a path.
 * [`dos2unix`](#dos2unix): Returns the Unix version of the given string.
@@ -54,8 +53,7 @@ resource.
 resource.
 * [`fact`](#fact): Digs into the facts hash using dot-notation
 * [`fqdn_rand_string`](#fqdn_rand_string): DEPRECATED.  Use the namespaced function [`stdlib::fqdn_rand_string`](#stdlibfqdn_rand_string) instead.
-* [`fqdn_rotate`](#fqdn_rotate): Rotates an array or string a random number of times, combining the `$fqdn` fact
-and an optional seed for repeatable randomness.
+* [`fqdn_rotate`](#fqdn_rotate): DEPRECATED.  Use the namespaced function [`stdlib::fqdn_rotate`](#stdlibfqdn_rotate) instead.
 * [`fqdn_uuid`](#fqdn_uuid): Returns a [RFC 4122](https://tools.ietf.org/html/rfc4122) valid version 5 UUID based
 on an FQDN string under the DNS namespace
 * [`get_module_path`](#get_module_path): Returns the absolute path of the specified module for the current
@@ -64,10 +62,9 @@ environment.
 * [`glob`](#glob): Uses same patterns as Dir#glob.
 * [`grep`](#grep): This function searches through an array and returns any elements that match
 the provided regular expression.
-* [`has_interface_with`](#has_interface_with): Returns boolean based on kind and value.
 * [`has_interface_with`](#has_interface_with): DEPRECATED.  Use the namespaced function [`stdlib::has_interface_with`](#stdlibhas_interface_with) instead.
-* [`has_ip_address`](#has_ip_address): Returns true if the client has the requested IP address on some interface.
-* [`has_ip_network`](#has_ip_network): Returns true if the client has an IP address within the requested network.
+* [`has_ip_address`](#has_ip_address): DEPRECATED.  Use the namespaced function [`stdlib::has_ip_address`](#stdlibhas_ip_address) instead.
+* [`has_ip_network`](#has_ip_network): DEPRECATED.  Use the namespaced function [`stdlib::has_ip_network`](#stdlibhas_ip_network) instead.
 * [`intersection`](#intersection): This function returns an array of the intersection of two.
 * [`is_a`](#is_a): Boolean check to determine whether a variable is of a given data type.
 This is equivalent to the `=~` type checks.
@@ -79,9 +76,8 @@ in the corresponding native data type.
 * [`loadyaml`](#loadyaml): Load a YAML file containing an array, string, or hash, and return the data
 in the corresponding native data type.
 * [`member`](#member): This function determines if a variable is a member of an array.
-* [`merge`](#merge): Merges two or more hashes together and returns the resulting hash.
 * [`merge`](#merge): DEPRECATED.  Use the namespaced function [`stdlib::merge`](#stdlibmerge) instead.
-* [`nested_values`](#nested_values): This function will return list of Hash values, the return value will be Array NOTE : This function is expecting only Hash and return value wi
+* [`merge`](#merge): Merges two or more hashes together and returns the resulting hash.
 * [`num2bool`](#num2bool): This function converts a number or a string representation of a number into a
 true boolean.
 * [`os_version_gte`](#os_version_gte): DEPRECATED.  Use the namespaced function [`stdlib::os_version_gte`](#stdlibos_version_gte) instead.
@@ -126,20 +122,29 @@ the provided regular expression.
 last Period).
 * [`stdlib::fqdn_rand_string`](#stdlib--fqdn_rand_string): Generates a random alphanumeric string. Combining the `$fqdn` fact and an
 optional seed for repeatable randomness.
+* [`stdlib::fqdn_rotate`](#stdlib--fqdn_rotate): Rotates an array or string a random number of times, combining the `fqdn` fact and an optional seed for repeatable randomness.
+* [`stdlib::has_function`](#stdlib--has_function): Returns whether the Puppet runtime has access to a given function.
 * [`stdlib::has_interface_with`](#stdlib--has_interface_with): Returns boolean based on network interfaces present and their attribute values.
+* [`stdlib::has_ip_address`](#stdlib--has_ip_address): Returns true if the client has the requested IPv4 address on some interface.
+* [`stdlib::has_ip_network`](#stdlib--has_ip_network): Returns true if the client has the requested IPv4 network on some interface.
 * [`stdlib::ip_in_range`](#stdlib--ip_in_range): Returns true if the ipaddress is within the given CIDRs
 * [`stdlib::merge`](#stdlib--merge): Merges two or more hashes together or hashes resulting from iteration, and returns
 the resulting hash.
+* [`stdlib::nested_values`](#stdlib--nested_values): Get list of nested values from given hash
+This function will return list of nested Hash values and returns list of values in form of Array
 * [`stdlib::os_version_gte`](#stdlib--os_version_gte): Checks if the OS version is at least a certain version.
 * [`stdlib::parsehocon`](#stdlib--parsehocon): This function accepts HOCON as a string and converts it into the correct
 Puppet structure
 * [`stdlib::powershell_escape`](#stdlib--powershell_escape): Escapes a string so that it can be safely used in a PowerShell command line.
+* [`stdlib::rewrap_sensitive_data`](#stdlib--rewrap_sensitive_data): Unwraps any sensitives in data and returns a sensitive
 * [`stdlib::seeded_rand`](#stdlib--seeded_rand): Generates a random whole number greater than or equal to 0 and less than max, using the value of seed for repeatable randomness.
 * [`stdlib::seeded_rand_string`](#stdlib--seeded_rand_string): Generates a consistent random string of specific length based on provided seed.
 * [`stdlib::sha256`](#stdlib--sha256): Run a SHA256 calculation against a given value.
 * [`stdlib::shell_escape`](#stdlib--shell_escape): Escapes a string so that it can be safely used in a Bourne shell command line.
+* [`stdlib::sort_by`](#stdlib--sort_by): Sort an Array, Hash or String by mapping values through a given block.
 * [`stdlib::start_with`](#stdlib--start_with): Returns true if str starts with one of the prefixes given. Each of the prefixes should be a String.
 * [`stdlib::str2resource`](#stdlib--str2resource): This converts a string to a puppet resource.
+* [`stdlib::time`](#stdlib--time): This function is deprecated. It implements the functionality of the original non-namespaced stdlib `time` function.
 * [`stdlib::to_json`](#stdlib--to_json): Convert a data structure and output to JSON
 * [`stdlib::to_json_pretty`](#stdlib--to_json_pretty): Convert data structure and output to pretty JSON
 * [`stdlib::to_python`](#stdlib--to_python): Convert an object into a String containing its Python representation
@@ -159,7 +164,7 @@ OS X versions >= 10.7).
 * [`suffix`](#suffix): This function applies a suffix to all elements in an array, or to the keys
 in a hash.
 * [`swapcase`](#swapcase): This function will swap the existing case of a string.
-* [`time`](#time): This function will return the current time since epoch as an integer.
+* [`time`](#time): DEPRECATED.  Use the native Puppet fuctionality instead of this function. eg `Integer(Timestamp().strftime('%s'))`
 * [`to_bytes`](#to_bytes): Converts the argument into bytes, for example 4 kB becomes 4096.
 * [`to_json`](#to_json): DEPRECATED.  Use the namespaced function [`stdlib::to_json`](#stdlibto_json) instead.
 * [`to_json_pretty`](#to_json_pretty): DEPRECATED.  Use the namespaced function [`stdlib::to_json_pretty`](#stdlibto_json_pretty) instead.
@@ -263,20 +268,33 @@ and `subscribe`.
 
 ```puppet
 class { 'stdlib::manage':
-    'create_resources' => {
-      'file' => {
-        '/etc/motd.d/hello' => {
-          'content' => 'I say Hi',
-          'notify' => 'Service[sshd]',
+  'create_resources'      => {
+    'file'                => {
+      '/etc/motd.d/hello' => {
+        'content'         => 'I say Hi',
+        'notify'          => 'Service[sshd]',
+      },
+      '/etc/motd'         => {
+        'ensure'          => 'file',
+        'epp'             => {
+          'template'      => 'profile/motd.epp',
         }
       },
-      'package' => {
-        'example' => {
-          'ensure' => 'installed',
-          'subscribe' => ['Service[sshd]', 'Exec[something]'],
+      '/etc/information'  => {
+        'ensure'          => 'file',
+        'erb'             => {
+          'template'      => 'profile/informaiton.erb',
         }
       }
+    },
+    'package'             => {
+      'example'           => {
+        'ensure'          => 'installed',
+        'subscribe'       => ['Service[sshd]', 'Exec[something]'],
+      }
     }
+  }
+}
 ```
 
 ##### 
@@ -287,6 +305,15 @@ stdlib::manage::create_resources:
     '/etc/motd.d/hello':
       content: I say Hi
       notify: 'Service[sshd]'
+    '/etc/motd':
+      ensure: 'file'
+      epp:
+        template: 'profile/motd.epp'
+        context: {}
+    '/etc/information':
+      ensure: 'file'
+      erb:
+        template: 'profile/information.erb'
   package:
     example:
       ensure: installed
@@ -306,7 +333,8 @@ The following parameters are available in the `stdlib::manage` class:
 Data type: `Hash[String, Hash]`
 
 A hash of resources to create
-NOTE: functions, such as `template` or `epp`, are not evaluated.
+NOTE: functions, such as `template` or `epp`, are not directly evaluated
+      but processed as Puppet code based on epp and erb hash keys.
 
 Default value: `{}`
 
@@ -1452,51 +1480,31 @@ Type: Ruby 4.x API
 
 Function to print deprecation warnings, Logs a warning once for a given key.
 
-The uniqueness key - can appear once.
-The msg is the message text including any positional information that is formatted by the
-user/caller of the method.
-It is affected by the puppet setting 'strict', which can be set to :error
-(outputs as an error message), :off (no message / error is displayed) and :warning
-(default, outputs a warning)  *Type*: String, String.
+#### `deprecation(String $key, String $message, Optional[Boolean] $use_strict_setting)`
 
-#### `deprecation(String $key, String $message)`
+The deprecation function.
 
-Function to print deprecation warnings, Logs a warning once for a given key.
-
-The uniqueness key - can appear once.
-The msg is the message text including any positional information that is formatted by the
-user/caller of the method.
-It is affected by the puppet setting 'strict', which can be set to :error
-(outputs as an error message), :off (no message / error is displayed) and :warning
-(default, outputs a warning)  *Type*: String, String.
-
-Returns: `Any` deprecated warnings
+Returns: `Any`
 
 ##### `key`
 
 Data type: `String`
 
-
+The uniqueness key.  This function logs once for any given key.
 
 ##### `message`
 
 Data type: `String`
 
+Is the message text including any positional information that is formatted by the user/caller of the function.
 
+##### `use_strict_setting`
 
-### <a name="deprecation"></a>`deprecation`
+Data type: `Optional[Boolean]`
 
-Type: Ruby 3.x API
-
-The uniqueness key - can appear once. The msg is the message text including any positional
-information that is formatted by the user/caller of the method.).
-
-#### `deprecation()`
-
-The uniqueness key - can appear once. The msg is the message text including any positional
-information that is formatted by the user/caller of the method.).
-
-Returns: `String` return deprecation warnings
+When `true`, (the default), the function is affected by the puppet setting 'strict', which can be set to :error
+(outputs as an error message), :off (no message / error is displayed) and :warning
+(default, outputs a warning).
 
 ### <a name="difference"></a>`difference`
 
@@ -1800,36 +1808,21 @@ Data type: `Any`
 
 ### <a name="fqdn_rotate"></a>`fqdn_rotate`
 
-Type: Ruby 3.x API
+Type: Ruby 4.x API
 
-Rotates an array or string a random number of times, combining the `$fqdn` fact
-and an optional seed for repeatable randomness.
+DEPRECATED.  Use the namespaced function [`stdlib::fqdn_rotate`](#stdlibfqdn_rotate) instead.
 
-#### Examples
-
-##### Example Usage:
-
-```puppet
-fqdn_rotate(['a', 'b', 'c', 'd'])
-fqdn_rotate('abcd')
-fqdn_rotate([1, 2, 3], 'custom seed')
-```
-
-#### `fqdn_rotate()`
+#### `fqdn_rotate(Any *$args)`
 
 The fqdn_rotate function.
 
-Returns: `Any` rotated array or string
+Returns: `Any`
 
-##### Examples
+##### `*args`
 
-###### Example Usage:
+Data type: `Any`
 
-```puppet
-fqdn_rotate(['a', 'b', 'c', 'd'])
-fqdn_rotate('abcd')
-fqdn_rotate([1, 2, 3], 'custom seed')
-```
+
 
 ### <a name="fqdn_uuid"></a>`fqdn_uuid`
 
@@ -2045,48 +2038,6 @@ grep(['aaa','bbb','ccc','aaaddd'], 'aaa') # Returns ['aaa','aaaddd']
 
 ### <a name="has_interface_with"></a>`has_interface_with`
 
-Type: Ruby 3.x API
-
-Valid kinds are `macaddress`, `netmask`, `ipaddress` and `network`.
-
-#### Examples
-
-##### **Usage**
-
-```puppet
-has_interface_with("macaddress", "x:x:x:x:x:x") # Returns `false`
-has_interface_with("ipaddress", "127.0.0.1") # Returns `true`
-```
-
-##### If no "kind" is given, then the presence of the interface is checked:
-
-```puppet
-has_interface_with("lo") # Returns `true`
-```
-
-#### `has_interface_with()`
-
-Valid kinds are `macaddress`, `netmask`, `ipaddress` and `network`.
-
-Returns: `Any` boolean values `true` or `false`
-
-##### Examples
-
-###### **Usage**
-
-```puppet
-has_interface_with("macaddress", "x:x:x:x:x:x") # Returns `false`
-has_interface_with("ipaddress", "127.0.0.1") # Returns `true`
-```
-
-###### If no "kind" is given, then the presence of the interface is checked:
-
-```puppet
-has_interface_with("lo") # Returns `true`
-```
-
-### <a name="has_interface_with"></a>`has_interface_with`
-
 Type: Ruby 4.x API
 
 DEPRECATED.  Use the namespaced function [`stdlib::has_interface_with`](#stdlibhas_interface_with) instead.
@@ -2105,31 +2056,39 @@ Data type: `Any`
 
 ### <a name="has_ip_address"></a>`has_ip_address`
 
-Type: Ruby 3.x API
+Type: Ruby 4.x API
 
-This function iterates through the 'interfaces' fact and checks the
-'ipaddress_IFACE' facts, performing a simple string comparison.
+DEPRECATED.  Use the namespaced function [`stdlib::has_ip_address`](#stdlibhas_ip_address) instead.
 
-#### `has_ip_address()`
+#### `has_ip_address(Any *$args)`
 
-This function iterates through the 'interfaces' fact and checks the
-'ipaddress_IFACE' facts, performing a simple string comparison.
+The has_ip_address function.
 
-Returns: `Boolean` `true` or `false`
+Returns: `Any`
+
+##### `*args`
+
+Data type: `Any`
+
+
 
 ### <a name="has_ip_network"></a>`has_ip_network`
 
-Type: Ruby 3.x API
+Type: Ruby 4.x API
 
-This function iterates through the 'interfaces' fact and checks the
-'network_IFACE' facts, performing a simple string comparision.
+DEPRECATED.  Use the namespaced function [`stdlib::has_ip_network`](#stdlibhas_ip_network) instead.
 
-#### `has_ip_network()`
+#### `has_ip_network(Any *$args)`
 
-This function iterates through the 'interfaces' fact and checks the
-'network_IFACE' facts, performing a simple string comparision.
+The has_ip_network function.
 
-Returns: `Any` Boolean value, `true` if the client has an IP address within the requested network.
+Returns: `Any`
+
+##### `*args`
+
+Data type: `Any`
+
+
 
 ### <a name="intersection"></a>`intersection`
 
@@ -2445,6 +2404,30 @@ member(['a', 'b', 'c'], ['d', 'b']) # Returns: false
 
 ### <a name="merge"></a>`merge`
 
+Type: Ruby 4.x API
+
+DEPRECATED.  Use the namespaced function [`stdlib::merge`](#stdlibmerge) instead.
+
+#### `merge(Any *$args, Optional[Variant[Callable[2,2], Callable[3,3]]] &$block)`
+
+The merge function.
+
+Returns: `Any`
+
+##### `*args`
+
+Data type: `Any`
+
+
+
+##### `&block`
+
+Data type: `Optional[Variant[Callable[2,2], Callable[3,3]]]`
+
+
+
+### <a name="merge"></a>`merge`
+
 Type: Ruby 3.x API
 
 When there is a duplicate key, the key in the rightmost hash will "win."
@@ -2480,76 +2463,6 @@ $hash1 = {'one' => 1, 'two', => 2}
 $hash2 = {'two' => 'dos', 'three', => 'tres'}
 $merged_hash = merge($hash1, $hash2) # $merged_hash =  {'one' => 1, 'two' => 'dos', 'three' => 'tres'}
 ```
-
-### <a name="merge"></a>`merge`
-
-Type: Ruby 4.x API
-
-DEPRECATED.  Use the namespaced function [`stdlib::merge`](#stdlibmerge) instead.
-
-#### `merge(Any *$args)`
-
-The merge function.
-
-Returns: `Any`
-
-##### `*args`
-
-Data type: `Any`
-
-
-
-### <a name="nested_values"></a>`nested_values`
-
-Type: Ruby 4.x API
-
-This function will return list of Hash values, the return value will be Array
-NOTE : This function is expecting only Hash and return value will be Array
-
-$hash = {
-  "key1" => "value1",
-  "key2" => { "key2.1" => "value2.1"}
-}
-$hash.nested_values
-
-Output : ["value1", "value2.1"]
-
-#### Examples
-
-##### :
-
-```puppet
-
-```
-
-#### `nested_values(Hash $options)`
-
-This function will return list of Hash values, the return value will be Array
-NOTE : This function is expecting only Hash and return value will be Array
-
-$hash = {
-  "key1" => "value1",
-  "key2" => { "key2.1" => "value2.1"}
-}
-$hash.nested_values
-
-Output : ["value1", "value2.1"]
-
-Returns: `Array`
-
-##### Examples
-
-###### :
-
-```puppet
-
-```
-
-##### `options`
-
-Data type: `Hash`
-
-
 
 ### <a name="num2bool"></a>`num2bool`
 
@@ -3427,10 +3340,10 @@ Optionally, you can specify a character set for the function (defaults to alphan
 ```puppet
 stdlib::fqdn_rand_string(10)
 stdlib::fqdn_rand_string(10, 'ABCDEF!@$%^')
-stdlib::fqdn_rand_string(10, '', 'custom seed')
+stdlib::fqdn_rand_string(10, undef, 'custom seed')
 ```
 
-#### `stdlib::fqdn_rand_string(Integer[1] $length, Optional[String] $charset, Optional[Any] *$seed)`
+#### `stdlib::fqdn_rand_string(Integer[1] $length, Optional[Optional[String]] $charset, Optional[Any] *$seed)`
 
 Optionally, you can specify a character set for the function (defaults to alphanumeric).
 
@@ -3443,7 +3356,7 @@ Returns: `String`
 ```puppet
 stdlib::fqdn_rand_string(10)
 stdlib::fqdn_rand_string(10, 'ABCDEF!@$%^')
-stdlib::fqdn_rand_string(10, '', 'custom seed')
+stdlib::fqdn_rand_string(10, undef, 'custom seed')
 ```
 
 ##### `length`
@@ -3454,7 +3367,7 @@ The length of the resulting string.
 
 ##### `charset`
 
-Data type: `Optional[String]`
+Data type: `Optional[Optional[String]]`
 
 The character set to use.
 
@@ -3463,6 +3376,114 @@ The character set to use.
 Data type: `Optional[Any]`
 
 The seed for repeatable randomness.
+
+### <a name="stdlib--fqdn_rotate"></a>`stdlib::fqdn_rotate`
+
+Type: Ruby 4.x API
+
+Rotates an array or string a random number of times, combining the `fqdn` fact and an optional seed for repeatable randomness.
+
+#### `stdlib::fqdn_rotate(String $input, Optional[Variant[Integer,String]] *$seeds)`
+
+The stdlib::fqdn_rotate function.
+
+Returns: `String` Returns the rotated String
+
+##### Examples
+
+###### Rotating a String
+
+```puppet
+stdlib::fqdn_rotate('abcd')
+```
+
+###### Using a custom seed
+
+```puppet
+stdlib::fqdn_rotate('abcd', 'custom seed')
+```
+
+##### `input`
+
+Data type: `String`
+
+The String you want rotated a random number of times
+
+##### `*seeds`
+
+Data type: `Optional[Variant[Integer,String]]`
+
+One of more values to use as a custom seed. These will be combined with the host's FQDN
+
+#### `stdlib::fqdn_rotate(Array $input, Optional[Variant[Integer,String]] *$seeds)`
+
+The stdlib::fqdn_rotate function.
+
+Returns: `Array` Returns the rotated Array
+
+##### Examples
+
+###### Rotating an Array
+
+```puppet
+stdlib::fqdn_rotate(['a', 'b', 'c', 'd'])
+```
+
+###### Using custom seeds
+
+```puppet
+stdlib::fqdn_rotate([1, 2, 3], 'custom', 'seed', 1)
+```
+
+##### `input`
+
+Data type: `Array`
+
+The Array you want rotated a random number of times
+
+##### `*seeds`
+
+Data type: `Optional[Variant[Integer,String]]`
+
+One of more values to use as a custom seed. These will be combined with the host's FQDN
+
+### <a name="stdlib--has_function"></a>`stdlib::has_function`
+
+Type: Ruby 4.x API
+
+Determines whether the Puppet runtime has access to a function by the
+name provided.
+
+#### Examples
+
+##### Using stdlib::has_function()
+
+```puppet
+stdlib::has_function('stdlib::has_function') # true
+stdlib::has_function('not_a_function') # false
+```
+
+#### `stdlib::has_function(String[1] $function_name)`
+
+Determines whether the Puppet runtime has access to a function by the
+name provided.
+
+Returns: `Boolean`
+
+##### Examples
+
+###### Using stdlib::has_function()
+
+```puppet
+stdlib::has_function('stdlib::has_function') # true
+stdlib::has_function('not_a_function') # false
+```
+
+##### `function_name`
+
+Data type: `String[1]`
+
+
 
 ### <a name="stdlib--has_interface_with"></a>`stdlib::has_interface_with`
 
@@ -3521,6 +3542,42 @@ A supported interface attribute
 Data type: `String[1]`
 
 The value of the attribute
+
+### <a name="stdlib--has_ip_address"></a>`stdlib::has_ip_address`
+
+Type: Puppet Language
+
+Returns true if the client has the requested IPv4 address on some interface.
+
+#### `stdlib::has_ip_address(Stdlib::IP::Address::V4::Nosubnet $ip_address)`
+
+The stdlib::has_ip_address function.
+
+Returns: `Boolean` Returns `true` if the requested IP address exists on any interface.
+
+##### `ip_address`
+
+Data type: `Stdlib::IP::Address::V4::Nosubnet`
+
+The IPv4 address you want to check the existence of
+
+### <a name="stdlib--has_ip_network"></a>`stdlib::has_ip_network`
+
+Type: Puppet Language
+
+Returns true if the client has the requested IPv4 network on some interface.
+
+#### `stdlib::has_ip_network(Stdlib::IP::Address::V4::Nosubnet $ip_network)`
+
+The stdlib::has_ip_network function.
+
+Returns: `Boolean` Returns `true` if the requested IP network exists on any interface.
+
+##### `ip_network`
+
+Data type: `Stdlib::IP::Address::V4::Nosubnet`
+
+The IPv4 network you want to check the existence of
 
 ### <a name="stdlib--ip_in_range"></a>`stdlib::ip_in_range`
 
@@ -3656,6 +3713,53 @@ Data type: `Callable[2,2]`
 
 A block placed on the repeatable param `args`
 
+### <a name="stdlib--nested_values"></a>`stdlib::nested_values`
+
+Type: Ruby 4.x API
+
+Get list of nested values from given hash
+This function will return list of nested Hash values and returns list of values in form of Array
+
+#### Examples
+
+##### Example Usage:
+
+```puppet
+$hash = {
+  "key1" => "value1",
+  "key2" => { "key2.1" => "value2.1"},
+  "key3" => "value3"
+}
+$data = $hash.stdlib::nested_values
+#Output : ["value1", "value2.1", "value3"]
+```
+
+#### `stdlib::nested_values(Hash $hash)`
+
+The stdlib::nested_values function.
+
+Returns: `Array` All the values found in the input hash included those deeply nested.
+
+##### Examples
+
+###### Example Usage:
+
+```puppet
+$hash = {
+  "key1" => "value1",
+  "key2" => { "key2.1" => "value2.1"},
+  "key3" => "value3"
+}
+$data = $hash.stdlib::nested_values
+#Output : ["value1", "value2.1", "value3"]
+```
+
+##### `hash`
+
+Data type: `Hash`
+
+A (nested) hash
+
 ### <a name="stdlib--os_version_gte"></a>`stdlib::os_version_gte`
 
 Type: Ruby 4.x API
@@ -3760,6 +3864,50 @@ Returns: `Any` An escaped string that can be safely used in a PowerShell command
 Data type: `Any`
 
 The string to escape
+
+### <a name="stdlib--rewrap_sensitive_data"></a>`stdlib::rewrap_sensitive_data`
+
+Type: Ruby 4.x API
+
+It's not uncommon to have Sensitive strings as values within a hash or array.
+Before passing the data to a type property or another function, it's useful
+to be able to `unwrap` these values first. This function does this. If
+sensitive data was included in the data, the whole result is then rewrapped
+as Sensitive.
+
+Optionally, this function can be passed a block. When a block is given, it will
+be run with the unwrapped data, but before the final rewrapping.  This is useful
+to provide transparent rewrapping to other functions in stdlib especially.
+
+This is analogous to the way `epp` transparently handles sensitive parameters.
+
+#### `stdlib::rewrap_sensitive_data(Any $data, Optional[Callable[Any]] &$block)`
+
+It's not uncommon to have Sensitive strings as values within a hash or array.
+Before passing the data to a type property or another function, it's useful
+to be able to `unwrap` these values first. This function does this. If
+sensitive data was included in the data, the whole result is then rewrapped
+as Sensitive.
+
+Optionally, this function can be passed a block. When a block is given, it will
+be run with the unwrapped data, but before the final rewrapping.  This is useful
+to provide transparent rewrapping to other functions in stdlib especially.
+
+This is analogous to the way `epp` transparently handles sensitive parameters.
+
+Returns: `Any` Returns the rewrapped data
+
+##### `data`
+
+Data type: `Any`
+
+The data
+
+##### `&block`
+
+Data type: `Optional[Callable[Any]]`
+
+A lambda that will be run after the data has been unwrapped, but before it is rewrapped, (if it contained sensitives)
 
 ### <a name="stdlib--seeded_rand"></a>`stdlib::seeded_rand`
 
@@ -3927,6 +4075,75 @@ Data type: `Any`
 
 The string to escape
 
+### <a name="stdlib--sort_by"></a>`stdlib::sort_by`
+
+Type: Ruby 4.x API
+
+Sort an Array, Hash or String by mapping values through a given block.
+
+#### Examples
+
+##### Sort local devices according to their used space.
+
+```puppet
+$facts['mountpoints'].stdlib::sort_by |$m| { $m.dig(1, 'used_bytes') }
+```
+
+#### `stdlib::sort_by(Array $ary, Callable[1,1] &$block)`
+
+The stdlib::sort_by function.
+
+Returns: `Array` Returns an ordered copy of ary.
+
+##### `ary`
+
+Data type: `Array`
+
+The Array to sort.
+
+##### `&block`
+
+Data type: `Callable[1,1]`
+
+The block for transforming elements of ary.
+
+#### `stdlib::sort_by(String $str, Callable[1,1] &$block)`
+
+The stdlib::sort_by function.
+
+Returns: `String` Returns an ordered copy of str.
+
+##### `str`
+
+Data type: `String`
+
+The String to sort.
+
+##### `&block`
+
+Data type: `Callable[1,1]`
+
+The block for transforming elements of str.
+
+#### `stdlib::sort_by(Hash $hsh, Variant[Callable[1,1], Callable[2,2]] &$block)`
+
+The stdlib::sort_by function.
+
+Returns: `Hash` Returns an ordered copy of hsh.
+
+##### `hsh`
+
+Data type: `Hash`
+
+The Hash to sort.
+
+##### `&block`
+
+Data type: `Variant[Callable[1,1], Callable[2,2]]`
+
+The block for transforming elements of hsh.
+The block may have arity of one or two.
+
 ### <a name="stdlib--start_with"></a>`stdlib::start_with`
 
 Type: Ruby 4.x API
@@ -4020,6 +4237,24 @@ stdlib::str2resource('File[/foo]') => File[/foo]
 Data type: `String`
 
 The string to lookup as a resource
+
+### <a name="stdlib--time"></a>`stdlib::time`
+
+Type: Puppet Language
+
+It is provided for compatability, but users should use the native time related functions directly.
+
+#### `stdlib::time(Optional[String] $_timezone = undef)`
+
+It is provided for compatability, but users should use the native time related functions directly.
+
+Returns: `Integer`
+
+##### `_timezone`
+
+Data type: `Optional[String]`
+
+This parameter doesn't do anything, but exists for compatability reasons
 
 ### <a name="stdlib--to_json"></a>`stdlib::to_json`
 
@@ -4298,7 +4533,7 @@ file { '/tmp/config.toml':
 
 The stdlib::to_toml function.
 
-Returns: `String` Converted data as TOML string
+Returns: `Variant[String, Sensitive[String]]` Converted data as TOML string
 
 ##### Examples
 
@@ -4786,43 +5021,21 @@ Would result in: "AbCd"
 
 ### <a name="time"></a>`time`
 
-Type: Ruby 3.x API
+Type: Ruby 4.x API
 
-> *Note:* that since Puppet 4.8.0 the Puppet language has the data types Timestamp (a point in time) and
-Timespan (a duration). The following example is equivalent to calling time() without
-any arguments:
+DEPRECATED.  Use the native Puppet fuctionality instead of this function. eg `Integer(Timestamp().strftime('%s'))`
 
-```Timestamp()```
+#### `time(Any *$args)`
 
-#### Examples
+The time function.
 
-##### **Usage**
+Returns: `Any`
 
-```puppet
+##### `*args`
 
-time()
-Will return something like: 1311972653
-```
+Data type: `Any`
 
-#### `time()`
 
-> *Note:* that since Puppet 4.8.0 the Puppet language has the data types Timestamp (a point in time) and
-Timespan (a duration). The following example is equivalent to calling time() without
-any arguments:
-
-```Timestamp()```
-
-Returns: `Any` the current time since epoch as an integer.
-
-##### Examples
-
-###### **Usage**
-
-```puppet
-
-time()
-Will return something like: 1311972653
-```
 
 ### <a name="to_bytes"></a>`to_bytes`
 
@@ -5529,7 +5742,7 @@ Alias of `Pattern[/(?i:\Ahttps?:\/\/.*\z)/]`
 
 Validate a host (FQDN or IP address)
 
-Alias of `Variant[Stdlib::Fqdn, Stdlib::Ip::Address]`
+Alias of `Variant[Stdlib::Fqdn, Stdlib::IP::Address]`
 
 ### <a name="Stdlib--Http--Method"></a>`Stdlib::Http::Method`
 
@@ -5552,6 +5765,8 @@ Alias of `Integer[100, 599]`
 ### <a name="Stdlib--HttpStatus"></a>`Stdlib::HttpStatus`
 
 Validate a HTTP status code
+
+* **DEPRECATED** Use Stdlib::Http::Status
 
 * **See also**
   * Stdlib::Http::Status

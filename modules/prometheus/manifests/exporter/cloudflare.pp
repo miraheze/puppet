@@ -20,9 +20,9 @@ class prometheus::exporter::cloudflare {
     resources { type = 'Class' and title = 'Role::Prometheus' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'prometheus cloudflare exporter':
+    firewall::service { 'prometheus cloudflare exporter':
         proto  => 'tcp',
-        port   => '9119',
+        port   => 9119,
         srange => "(${firewall_rules_str})",
     }
 }

@@ -13,7 +13,7 @@ class prometheus::exporter::openldap {
         mode    => '0440',
         owner   => 'prometheus',
         group   => 'prometheus',
-        content => template('prometheus/openldap.conf.erb'),
+        content => epp('prometheus/openldap.conf.epp', { 'monitor_pass' => $monitor_pass }),
         notify  => Service['prometheus-openldap-exporter'],
         require => File['/usr/local/bin/prometheus-openldap-exporter'],
     }
@@ -32,9 +32,9 @@ class prometheus::exporter::openldap {
     resources { type = 'Class' and title = 'Role::Prometheus' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'prometheus openldap_exporter':
+    firewall::service { 'prometheus openldap_exporter':
         proto  => 'tcp',
-        port   => '9142',
+        port   => 9142,
         srange => "(${firewall_rules_str})",
     }
 }
