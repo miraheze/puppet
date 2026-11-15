@@ -114,6 +114,34 @@
 		{
 			"customType": "regex",
 			"managerFilePatterns": [
+				"/^hieradata/hosts/.+\\.ya?ml$/"
+			],
+			"matchStrings": [
+				"mongodb_repo_version:\\s*'\\d+\\.\\d+'\\s*\\n\\s*mongodb_version:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
+			],
+			"depNameTemplate": "mongodb/mongo",
+			"datasourceTemplate": "github-tags",
+			"extractVersionTemplate": "^r(?<version>\\d+\\.\\d+\\.\\d+)$",
+			"versioningTemplate": "semver",
+			"autoReplaceStringTemplate": "mongodb_repo_version: '{{{replace '\\.\\d+$' '' newValue}}}'\nmongodb_version: '{{{newValue}}}'"
+		},
+		{
+			"customType": "regex",
+			"managerFilePatterns": [
+				"/^modules/role/manifests/graylog\\.pp$/"
+			],
+			"matchStrings": [
+				"repo_version\\s*=>\\s*lookup\\('mongodb_repo_version',\\s*\\{'default_value'\\s*=>\\s*'\\d+\\.\\d+'\\}\\),\\s*\\n\\s*version\\s*=>\\s*lookup\\('mongodb_version',\\s*\\{'default_value'\\s*=>\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'\\}\\)"
+			],
+			"depNameTemplate": "mongodb/mongo",
+			"datasourceTemplate": "github-tags",
+			"extractVersionTemplate": "^r(?<version>\\d+\\.\\d+\\.\\d+)$",
+			"versioningTemplate": "semver",
+			"autoReplaceStringTemplate": "repo_version        => lookup('mongodb_repo_version', {'default_value' => '{{{replace '\\.\\d+$' '' newValue}}}'}),\n        version             => lookup('mongodb_version', {'default_value' => '{{{newValue}}}'})"
+		},
+		{
+			"customType": "regex",
+			"managerFilePatterns": [
 				"/^modules/.+\\.pp$/"
 			],
 			"matchStrings": [
@@ -181,11 +209,20 @@
 		},
 		{
 			"matchDepNames": [
+				"mongodb/mongo"
+			],
+			"groupName": "mongodb",
+			"separateMajorMinor": false,
+			"allowedVersions": "<8.3"
+		},
+		{
+			"matchDepNames": [
 				"saltstack/salt",
 				"matomo-org/matomo",
 				"miraheze/TSPortal",
 				"opensearch-project/OpenSearch",
 				"mattermost/mattermost",
+				"mongodb/mongo",
 				"graylog-server"
 			],
 			"automerge": false,
