@@ -138,14 +138,18 @@
 				"github-actions"
 			],
 			"groupName": "github actions",
-			"separateMajorMinor": false
+			"separateMajorMinor": false,
+			"automerge": true,
+			"automergeType": "branch"
 		},
 		{
 			"matchManagers": [
 				"pip_requirements"
 			],
 			"groupName": "python test tooling",
-			"separateMajorMinor": false
+			"separateMajorMinor": false,
+			"automerge": true,
+			"automergeType": "branch"
 		},
 		{
 			"matchDepNames": [
