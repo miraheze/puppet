@@ -213,7 +213,7 @@
 			],
 			"groupName": "mongodb",
 			"separateMajorMinor": false,
-			"allowedVersions": "<8.3"
+			"allowedVersions": "<8.4"
 		},
 		{
 			"matchDepNames": [
