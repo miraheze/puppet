@@ -24,7 +24,7 @@ define base::safe_service_restart(
         ['networking'],
         $subquery
     ).values().map |$_facts| {
-        $_facts['networking']['fqdn']
+        "${_facts['networking']['hostname']}.fsslc.wtnet"
     }.flatten.sort.unique
 
     $totp_secret = lookup('passwords::haproxy::totp_secret')
