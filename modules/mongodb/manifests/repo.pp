@@ -109,7 +109,8 @@ class mongodb::repo (
           default  => undef
         }
         $_keyring_location = "https://www.mongodb.org/static/pgp/server-${version}.asc"
-        $release     = "${facts['os']['distro']['codename']}/${repo_path}/${version}"
+        # Temporarily use bookworm dist due to trixie dist being unavailable.
+        $release     = "bookworm/${repo_path}/${version}"
         $repos       = $facts['os']['name'] ? {
           'Debian' => 'main',
           'Ubuntu' => 'multiverse',
