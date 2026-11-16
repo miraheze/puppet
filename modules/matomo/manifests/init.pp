@@ -21,13 +21,15 @@ class matomo (
         require => Git::Clone['matomo'],
     }
 
+    # Only runs when the installed packages differ from composer.lock.
     exec { 'matomo_composer':
-        command     => 'composer install --no-dev',
-        creates     => '/srv/matomo/vendor',
+        command     => 'composer install --no-dev --no-interaction',
+        unless      => "composer install --no-dev --no-interaction --dry-run 2>&1 | grep -q 'Nothing to install'",
         cwd         => '/srv/matomo',
-        path        => '/usr/bin',
+        path        => '/usr/bin:/bin',
         environment => 'HOME=/srv/matomo',
         user        => 'www-data',
+        provider    => shell,
         require     => Git::Clone['matomo'],
     }
 
@@ -170,6 +172,18 @@ class matomo (
         owner   => 'www-data',
         group   => 'www-data',
         require => Git::Clone['matomo'],
+    }
+
+    # Runs the database upgrade after the code or packages changed.
+    exec { 'matomo_core_update':
+        command     => '/usr/bin/php /srv/matomo/console core:update --yes --no-interaction && /usr/bin/php /srv/matomo/console core:clear-caches',
+        cwd         => '/srv/matomo',
+        user        => 'www-data',
+        provider    => shell,
+        path        => '/usr/bin:/bin',
+        refreshonly => true,
+        subscribe   => [Exec['git_checkout_matomo'], Exec['matomo_composer']],
+        require     => File['/srv/matomo/config/config.ini.php'],
     }
 
     # Install a systemd timer to run the Archive task periodically.
