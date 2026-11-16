@@ -104,12 +104,19 @@ define git::clone(
                 # Only unshallow when the repository is still shallow, because
                 # git errors out when asked to unshallow a complete repository.
                 $fetch_command = "if [ \"$(${git} rev-parse --is-shallow-repository)\" = true ]; then ${git} fetch --all --tags --unshallow; else ${git} fetch --all --tags; fi"
-                $checkout_command = $revision ? {
-                    ''      => "${git} checkout ${branch}",
-                    default => "${fetch_command} && ${git} checkout ${revision}",
+                # Fetch first so a new tag or branch is known before checking it out.
+                $branch_fetch_command = "${git} fetch --all --tags${deptharg}"
+                $submodule_command = $recurse_submodules ? {
+                    true    => " && ${git} submodule update --init --recursive",
+                    default => '',
                 }
+                $checkout_command = $revision ? {
+                    ''      => "${branch_fetch_command} && ${git} checkout ${branch}${submodule_command}",
+                    default => "${fetch_command} && ${git} checkout ${revision}${submodule_command}",
+                }
+                # A tag checkout is a detached HEAD, so also compare against the tags at HEAD.
                 $is_current_revision = $revision ? {
-                    ''      => "${git} rev-parse --abbrev-ref HEAD | grep ${branch}",
+                    ''      => "${git} rev-parse --abbrev-ref HEAD | grep -qxF ${branch} || ${git} tag --points-at HEAD | grep -qxF ${branch}",
                     default => "${git} rev-parse HEAD | grep -q ^${revision}",
                 }
                 if $ensure == 'latest' {
