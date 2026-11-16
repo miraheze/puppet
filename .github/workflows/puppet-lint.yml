@@ -1,7 +1,7 @@
 name: Puppet Lint
 on:
   push:
-    branches: [ main ]
+    branches: [ main, 'renovate/**' ]
     paths:
       - '**.pp'
       - '**.epp'
@@ -65,11 +65,11 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git checkout -b ${GITHUB_HEAD_REF}
+          git checkout -b "${GITHUB_HEAD_REF}"
           git add .
           git commit -am "CI: lint puppet code to standards" -m "Check commit and GitHub actions for more details"
-          git pull origin ${GITHUB_HEAD_REF} --rebase
-          git push --set-upstream origin ${GITHUB_HEAD_REF}
+          git pull origin "${GITHUB_HEAD_REF}" --rebase
+          git push --set-upstream origin "${GITHUB_HEAD_REF}"
         else
           echo "No changes to commit"
         fi
@@ -80,8 +80,10 @@ jobs:
     if: ${{ always() && github.repository_owner == 'miraheze' && ( github.ref == 'refs/heads/main' || github.event_name == 'pull_request' ) }}
     steps:
       - name: failed
+        continue-on-error: true
         uses: technote-space/workflow-conclusion-action@v3
       - uses: rectalogic/notify-irc@v2
+        continue-on-error: true
         if: env.WORKFLOW_CONCLUSION == 'failure'
         with:
           channel: "#miraheze-tech-ops"
