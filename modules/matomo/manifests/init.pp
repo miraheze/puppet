@@ -27,7 +27,10 @@ class matomo (
         unless      => "composer install --no-dev --no-interaction --dry-run 2>&1 | grep -q 'Nothing to install'",
         cwd         => '/srv/matomo',
         path        => '/usr/bin:/bin',
-        environment => 'HOME=/srv/matomo',
+        environment => [
+            'HOME=/srv/matomo',
+            'HTTP_PROXY=http://bastion.fsslc.wtnet:8080',
+        ],
         user        => 'www-data',
         provider    => shell,
         require     => Git::Clone['matomo'],
@@ -182,7 +185,10 @@ class matomo (
         provider    => shell,
         path        => '/usr/bin:/bin',
         refreshonly => true,
-        subscribe   => [Exec['git_checkout_matomo'], Exec['matomo_composer']],
+        subscribe   => [
+            Exec['git_checkout_matomo'],
+            Exec['matomo_composer'],
+        ],
         require     => File['/srv/matomo/config/config.ini.php'],
     }
 
