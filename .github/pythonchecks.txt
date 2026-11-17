@@ -25,4 +25,4 @@ requests==2.34.2
 filelock==4.2.10
 langcodes==3.5.1
 PyYAML==6.0.3
-internetarchive==5.12.1
+internetarchive==5.13.0
