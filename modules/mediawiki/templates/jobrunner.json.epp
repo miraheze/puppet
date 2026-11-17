@@ -14,6 +14,7 @@
             "exclude": [
                 "AssembleUploadChunks",
                 "DataDumpGenerateJob",
+                "ImportDumpAssembleChunks",
                 "ImportDumpJob",
                 "ImportDumpNotifyJob",
                 "parsoidCachePrewarm",
@@ -68,6 +69,14 @@
             // Job types to include ("*" means "all")
             "include": [
                 "ImportDumpJob"
+            ]
+        },
+        "importdumpassemble": {
+            // Number of runner processes in this group
+            "runners": 2,
+            // Job types to include ("*" means "all")
+            "include": [
+                "ImportDumpAssembleChunks"
             ]
         },
         "importdumpnotify": {
@@ -132,6 +141,7 @@
         "claimTTL": {
             "*": 3600,
             "DataDumpGenerateJob": 86400,
+            "ImportDumpAssembleChunks": 7200,
             "ImportDumpJob": 259200,
             "NamespaceMigrationJob": 9000,
             "webVideoTranscode": 86400,
@@ -142,6 +152,7 @@
             "*": 300,
             "cirrusSearchElasticaWrite": 600,
             "DataDumpGenerateJob": 86400,
+            "ImportDumpAssembleChunks": 3600,
             "ImportDumpJob": 259200,
             "NamespaceMigrationJob": 9000,
             "webVideoTranscode": 86400,
