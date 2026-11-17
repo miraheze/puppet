@@ -10,16 +10,18 @@ class reports {
         group     => 'www-data',
     }
 
+    # Only runs when the installed packages differ from composer.lock.
     exec { 'reports_composer':
-        command     => 'composer install --no-dev',
-        creates     => '/srv/TSPortal/vendor',
+        command     => 'composer install --no-dev --no-interaction',
+        unless      => "composer install --no-dev --no-interaction --dry-run 2>&1 | grep -q 'Nothing to install'",
         cwd         => '/srv/TSPortal',
-        path        => '/usr/bin',
+        path        => '/usr/bin:/bin',
         environment => [
             'HOME=/srv/TSPortal',
-            'HTTP_PROXY=http://bastion.fsslc.wtnet:8080'
+            'HTTP_PROXY=http://bastion.fsslc.wtnet:8080',
         ],
         user        => 'www-data',
+        provider    => shell,
         require     => Git::Clone['TSPortal'],
     }
 
@@ -164,6 +166,21 @@ class reports {
         owner   => 'www-data',
         group   => 'www-data',
         require => Git::Clone['TSPortal'],
+    }
+
+    # Runs the database migrations after the code or packages changed.
+    exec { 'reports_migrate':
+        command     => '/usr/bin/php /srv/TSPortal/artisan migrate --force && /usr/bin/php /srv/TSPortal/artisan config:clear && /usr/bin/php /srv/TSPortal/artisan route:clear && /usr/bin/php /srv/TSPortal/artisan view:clear',
+        cwd         => '/srv/TSPortal',
+        user        => 'www-data',
+        provider    => shell,
+        path        => '/usr/bin:/bin',
+        refreshonly => true,
+        subscribe   => [
+            Exec['git_checkout_TSPortal'],
+            Exec['reports_composer'],
+        ],
+        require     => File['/srv/TSPortal/.env'],
     }
 
     systemd::timer::job { 'task-scheduler':
