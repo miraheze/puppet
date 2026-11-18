@@ -52,7 +52,7 @@ class mediawiki::monitoring {
             http_vhost       => $facts['networking']['fqdn'],
             http_ssl         => true,
             http_ignore_body => true,
-            http_expect      => 'HTTP/2 410',
+            http_expect      => 'HTTP/1.1 410',
         },
     }
 }
