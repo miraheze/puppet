@@ -2,6 +2,8 @@ server {
 	listen 443 ssl deferred;
 	listen [::]:443 ssl deferred;
 
+	http2 off;
+
 	server_name opensearch.wikitide.net opensearch-mw.wikitide.net;
 
 	ssl_certificate /etc/ssl/localcerts/wikitide.net.crt;
