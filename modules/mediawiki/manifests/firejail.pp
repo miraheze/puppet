@@ -6,50 +6,50 @@ class mediawiki::firejail {
 
     file { '/etc/firejail/mediawiki.local':
         source => 'puppet:///modules/mediawiki/firejail/firejail-mediawiki.profile',
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => '0644',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0444',
     }
 
     file { '/etc/firejail/mediawiki-converters.profile':
         source => 'puppet:///modules/mediawiki/firejail/mediawiki-converters.profile',
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => '0644',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0444',
     }
 
     file { '/usr/local/bin/mediawiki-firejail-espeak':
         source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-espeak.sh',
-        owner  => 'www-data',
-        group  => 'www-data',
+        owner  => 'root',
+        group  => 'root',
         mode   => '0555',
     }
 
     file { '/usr/local/bin/mediawiki-firejail-ghostscript':
         source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-ghostscript.sh',
-        owner  => 'www-data',
-        group  => 'www-data',
+        owner  => 'root',
+        group  => 'root',
         mode   => '0555',
     }
 
     file { '/usr/local/bin/mediawiki-firejail-lame':
         source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-lame.sh',
-        owner  => 'www-data',
-        group  => 'www-data',
+        owner  => 'root',
+        group  => 'root',
         mode   => '0555',
     }
 
     file { '/usr/local/bin/mediawiki-firejail-magick':
         source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-magick.sh',
-        owner  => 'www-data',
-        group  => 'www-data',
+        owner  => 'root',
+        group  => 'root',
         mode   => '0555',
     }
 
     file { '/usr/local/bin/rsvg-convert':
         source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-rsvg-convert.sh',
-        owner  => 'www-data',
-        group  => 'www-data',
+        owner  => 'root',
+        group  => 'root',
         mode   => '0555',
     }
 }
