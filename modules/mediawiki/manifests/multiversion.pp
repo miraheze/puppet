@@ -62,8 +62,9 @@ class mediawiki::multiversion (
 
         file { "/srv/mediawiki/cache/${version}":
             ensure => 'directory',
-            owner  => 'www-data',
+            owner  => 'mwdeploy',
             group  => 'www-data',
+            mode   => '0774',
         }
 
         $branch = $params['branch'] ? {
