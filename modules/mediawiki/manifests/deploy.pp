@@ -12,6 +12,15 @@ class mediawiki::deploy {
         before   => Service['nginx'],
         ssh_keys => [],
     }
+    sudo::user { 'mwdeploy_deploy':
+    user       => 'mwdeploy',
+    privileges => [
+        # local rsync into /srv/mediawiki and the MediaWiki maintenance scripts
+        'ALL = (www-data) NOPASSWD: ALL',
+        # mwdeploy.py still wraps git/patch/composer/remote rsync in "sudo -u mwdeploy"
+        'ALL = (mwdeploy) NOPASSWD: ALL',
+    ],
+    }
     if lookup(mediawiki::is_canary) {
         users::user { 'www-data':
             ensure   => present,
