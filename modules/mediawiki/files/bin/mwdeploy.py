@@ -1225,9 +1225,41 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('--new-install', dest='new_install', action='store_true', help='mirror everything currently deployed onto a brand-new server (every version, config/landing/errorpages, and the database cache); ignores every deploy-selection flag, --servers/--batch/--task/--no-log still apply')
     return parser
 
+def ensure_deploy_user() -> None:
+    """Re-run this script as DEPLOYUSER if we were started as anyone else.
+
+    The canary check reads the client key in-process, and every staging
+    operation must run as DEPLOYUSER, so the whole process switches user
+    rather than individual commands.
+    """
+    try:
+        target_uid = pwd.getpwnam(DEPLOYUSER).pw_uid
+    except KeyError:
+        Console.error(f'User {DEPLOYUSER} does not exist on this host.')
+        sys.exit(1)
+
+    if os.geteuid() == target_uid:
+        return
+
+    # Guard against a loop if sudo somehow hands us back the wrong user.
+    if os.environ.get('MWDEPLOY_REEXEC') == '1':
+        Console.error(f'Re-exec as {DEPLOYUSER} did not switch user; refusing to continue.')
+        sys.exit(1)
+
+    script = os.path.abspath(sys.argv[0])
+    # The caller's cwd (e.g. a 0700 home dir) may not be readable by DEPLOYUSER.
+    os.chdir(STAGING_ROOT)
+    os.execvp('sudo', [
+        'sudo', '-u', DEPLOYUSER,
+        'MWDEPLOY_REEXEC=1',
+        '--', script, *sys.argv[1:],
+    ])
+
+
 
 def main() -> None:
     start = time.time()
+    ensure_deploy_user()
     DeploymentRunner(build_parser().parse_args()).run(start)
 
 
