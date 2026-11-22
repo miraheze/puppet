@@ -60,9 +60,9 @@ define mediawiki::extensionsetup (
                 undef   => '',
                 default => $params['commit'],
             },
-            owner              => 'www-data',
+            owner              => 'mwdeploy',
             group              => 'www-data',
-            mode               => '0755',
+            mode               => '0744',
             depth              => '5',
             recurse_submodules => $params['recurse_submodules'] ? {
                 false   => false,
@@ -88,7 +88,7 @@ define mediawiki::extensionsetup (
                         'HTTP_PROXY=http://bastion.fsslc.wtnet:8080',
                         'HTTPS_PROXY=http://bastion.fsslc.wtnet:8080'
                     ],
-                    user        => 'www-data',
+                    user        => 'mwdeploy',
                     require     => Git::Clone["MediaWiki-${branch} ${name}"],
                 }
             }
@@ -98,7 +98,7 @@ define mediawiki::extensionsetup (
                     command     => "/usr/local/bin/mwdeploy --folders=${version}/${params['path']} --servers=${lookup(mediawiki::default_sync)}",
                     cwd         => '/srv/mediawiki-staging',
                     refreshonly => true,
-                    user        => 'www-data',
+                    user        => 'mwdeploy',
                     subscribe   => Git::Clone["MediaWiki-${branch} ${name}"],
                     require     => File['/usr/local/bin/mwdeploy'],
                 }
@@ -108,9 +108,9 @@ define mediawiki::extensionsetup (
 
     file { "${mwpath}/composer.local.json":
         ensure  => present,
-        owner   => 'www-data',
+        owner   => 'mwdeploy',
         group   => 'www-data',
-        mode    => '0664',
+        mode    => '0644',
         source  => 'puppet:///mediawiki-repos/composer.local.json',
         require => Git::Clone["MediaWiki-${branch} core"],
     }
