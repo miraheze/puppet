@@ -26,13 +26,6 @@ class mediawiki::deploy {
         before   => Service['nginx'],
         ssh_keys => [],
         }
-
-        file { '/var/lib/mwbuild':
-        ensure => 'directory',
-        owner  => '',
-        group  => 'www-data',
-        mode   => '0755',
-        }
         
         file { '/srv/mediawiki-staging/deploykey.pub':
             ensure  => present,
