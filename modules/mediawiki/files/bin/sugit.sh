@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo -u www-data git "$@"
+sudo -u mwdeploy git "$@"
