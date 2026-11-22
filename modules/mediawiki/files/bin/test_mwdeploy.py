@@ -581,7 +581,7 @@ class TestPathAndCommandBuilders(unittest.TestCase):
     def test_rsync_local_requires_no_server(self):
         with patch('os.path.exists', return_value=False), patch('glob.glob', return_value=[]):
             assert mwdeploy._rsync_builder.build(False, '/srv/mediawiki-staging', '/srv/mediawiki', ['config']) == \
-                'sudo -u www-data rsync -R --update -r --delete --exclude=".*" /srv/mediawiki-staging/./config /srv/mediawiki/'
+                'sudo -u mwdeploy rsync -R --update -r --delete --exclude=".*" /srv/mediawiki-staging/./config /srv/mediawiki/'
 
     def test_rsync_remote_without_server_raises(self):
         with pytest.raises(Exception, match='Server must be specified for a remote rsync.'):
@@ -590,7 +590,7 @@ class TestPathAndCommandBuilders(unittest.TestCase):
     def test_rsync_local_single_path_update(self):
         with patch('os.path.exists', return_value=False), patch('glob.glob', return_value=[]):
             assert mwdeploy._rsync_builder.build(False, '/srv/mediawiki-staging', '/srv/mediawiki', ['version']) == \
-                'sudo -u www-data rsync -R --update -r --delete --exclude=".*" /srv/mediawiki-staging/./version /srv/mediawiki/'
+                'sudo -u mwdeploy rsync -R --update -r --delete --exclude=".*" /srv/mediawiki-staging/./version /srv/mediawiki/'
 
     def test_rsync_excludes_a_protected_file_only_when_it_actually_exists(self):
         def exists(path):
@@ -661,7 +661,7 @@ class TestPathAndCommandBuilders(unittest.TestCase):
     def test_rsync_local_multiple_paths_in_one_call(self):
         with patch('os.path.exists', return_value=False), patch('glob.glob', return_value=[]):
             assert mwdeploy._rsync_builder.build(False, '/srv/mediawiki-staging', '/srv/mediawiki', ['version/extensions/Foo', 'version/extensions/Bar', 'config']) == \
-                'sudo -u www-data rsync -R --update -r --delete --exclude=".*" ' \
+                'sudo -u mwdeploy rsync -R --update -r --delete --exclude=".*" ' \
                 '/srv/mediawiki-staging/./version/extensions/Foo /srv/mediawiki-staging/./version/extensions/Bar /srv/mediawiki-staging/./config /srv/mediawiki/'
 
     def test_rsync_remote_multiple_paths_in_one_call(self):
@@ -669,65 +669,65 @@ class TestPathAndCommandBuilders(unittest.TestCase):
         domain = '.'.join(fqdn.split('.')[1:])
         with patch('os.path.exists', return_value=False), patch('glob.glob', return_value=[]):
             assert mwdeploy._rsync_builder.build(False, '/srv/mediawiki', '/srv/mediawiki', ['version/extensions/Foo', 'config'], local=False, server='meta') == \
-                f'sudo -u www-data rsync -R --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" ' \
-                f'/srv/mediawiki/./version/extensions/Foo /srv/mediawiki/./config www-data@meta.{domain}:/srv/mediawiki/'
+                f'sudo -u mwdeploy rsync -R --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" ' \
+                f'/srv/mediawiki/./version/extensions/Foo /srv/mediawiki/./config mwdeploy@meta.{domain}:/srv/mediawiki/'
 
     def test_rsync_local_uses_inplace_when_time_is_true(self):
         with patch('os.path.exists', return_value=False), patch('glob.glob', return_value=[]):
             assert mwdeploy._rsync_builder.build(True, '/srv/mediawiki-staging', '/srv/mediawiki', ['config']) == \
-                'sudo -u www-data rsync -R --inplace -r --delete --exclude=".*" /srv/mediawiki-staging/./config /srv/mediawiki/'
+                'sudo -u mwdeploy rsync -R --inplace -r --delete --exclude=".*" /srv/mediawiki-staging/./config /srv/mediawiki/'
 
     def test_rsync_remote_uses_inplace_when_time_is_true(self):
         fqdn = socket.getfqdn()
         domain = '.'.join(fqdn.split('.')[1:])
         with patch('os.path.exists', return_value=False), patch('glob.glob', return_value=[]):
             assert mwdeploy._rsync_builder.build(True, '/srv/mediawiki', '/srv/mediawiki', ['config'], local=False, server='meta') == \
-                f'sudo -u www-data rsync -R --inplace -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/./config www-data@meta.{domain}:/srv/mediawiki/'
+                f'sudo -u mwdeploy rsync -R --inplace -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/./config mwdeploy@meta.{domain}:/srv/mediawiki/'
 
     def test_git_pull(self):
-        assert mwdeploy._git.pull('config') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ pull --quiet'
+        assert mwdeploy._git.pull('config') == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/config/ pull --quiet'
 
     def test_git_pull_branch(self):
-        assert mwdeploy._git.pull('config', branch='myfunbranch') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ pull origin myfunbranch --quiet'
+        assert mwdeploy._git.pull('config', branch='myfunbranch') == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/config/ pull origin myfunbranch --quiet'
 
     def test_git_pull_skin(self):
-        assert mwdeploy._git.pull('skins/Vector', version='version') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull --quiet'
+        assert mwdeploy._git.pull('skins/Vector', version='version') == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/version/skins/Vector pull --quiet'
 
     def test_git_pull_skin_no_quiet(self):
-        assert mwdeploy._git.pull('skins/Vector', quiet=False, version='version') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/version/skins/Vector pull'
+        assert mwdeploy._git.pull('skins/Vector', quiet=False, version='version') == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/version/skins/Vector pull'
 
     def test_git_pull_extension_submodules(self):
-        assert mwdeploy._git.pull('extensions/VisualEditor', submodules=True, version='version') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules --quiet'
+        assert mwdeploy._git.pull('extensions/VisualEditor', submodules=True, version='version') == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules --quiet'
 
     def test_git_pull_extension_submodules_no_quiet(self):
-        assert mwdeploy._git.pull('extensions/VisualEditor', submodules=True, quiet=False, version='version') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules'
+        assert mwdeploy._git.pull('extensions/VisualEditor', submodules=True, quiet=False, version='version') == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/version/extensions/VisualEditor pull --recurse-submodules'
 
     def test_git_pull_branch_submodules(self):
-        assert mwdeploy._git.pull('config', submodules=True, branch='test') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test --quiet'
+        assert mwdeploy._git.pull('config', submodules=True, branch='test') == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test --quiet'
 
     def test_git_pull_branch_submodules_no_quiet(self):
-        assert mwdeploy._git.pull('config', submodules=True, branch='test', quiet=False) == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test'
+        assert mwdeploy._git.pull('config', submodules=True, branch='test', quiet=False) == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test'
 
     def test_git_reset_revert(self):
-        assert mwdeploy._git.reset_revert('extensions/VisualEditor', version='version') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/version/extensions/VisualEditor reset --hard HEAD@{1}'
+        assert mwdeploy._git.reset_revert('extensions/VisualEditor', version='version') == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/version/extensions/VisualEditor reset --hard HEAD@{1}'
 
     def test_git_reset_hard(self):
-        assert mwdeploy._git.reset_hard('vendor', version='version') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/version/vendor reset --hard'
+        assert mwdeploy._git.reset_hard('vendor', version='version') == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/version/vendor reset --hard'
 
     def test_git_fetch_pr(self):
-        assert mwdeploy._git.fetch_pr('config', 42, 'pr-42') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ fetch origin +pull/42/head:pr-42'
+        assert mwdeploy._git.fetch_pr('config', 42, 'pr-42') == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/config/ fetch origin +pull/42/head:pr-42'
 
     def test_git_checkout(self):
-        assert mwdeploy._git.checkout('config', 'pr-42') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ checkout pr-42'
+        assert mwdeploy._git.checkout('config', 'pr-42') == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/config/ checkout pr-42'
 
     def test_git_apply_forward(self):
-        assert mwdeploy._git.apply('config', '/patch.diff') == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ apply --index /patch.diff'
+        assert mwdeploy._git.apply('config', '/patch.diff') == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/config/ apply --index /patch.diff'
 
     def test_git_apply_check(self):
-        assert mwdeploy._git.apply('config', '/patch.diff', check=True) == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ apply --check /patch.diff'
+        assert mwdeploy._git.apply('config', '/patch.diff', check=True) == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/config/ apply --check /patch.diff'
 
     def test_git_apply_check_reverse(self):
-        assert mwdeploy._git.apply('config', '/patch.diff', check=True, reverse=True) == 'sudo -H -u www-data git -C /srv/mediawiki-staging/config/ apply --check --reverse /patch.diff'
+        assert mwdeploy._git.apply('config', '/patch.diff', check=True, reverse=True) == 'sudo -H -u mwdeploy git -C /srv/mediawiki-staging/config/ apply --check --reverse /patch.diff'
 
     def test_git_is_repo(self):
         with patch('os.path.isdir', return_value=True) as mock_isdir:
@@ -766,7 +766,7 @@ class TestPathAndCommandBuilders(unittest.TestCase):
         self.assertIn('Could not resolve host', cleaned)
 
     def test_world_reset_remove_staging(self):
-        assert mwdeploy._world_reset.remove_staging('version') == 'sudo -u www-data rm -rf /srv/mediawiki-staging/version/'
+        assert mwdeploy._world_reset.remove_staging('version') == 'sudo -u mwdeploy rm -rf /srv/mediawiki-staging/version/'
 
     def test_world_reset_run_puppet(self):
         assert mwdeploy._world_reset.run_puppet() == 'sudo puppet agent -tv'
@@ -1652,7 +1652,7 @@ class TestProcess(unittest.TestCase):
 
         commands = [call.args[0] for call in env.shell.call_args_list]
         self.assertTrue(any('RebuildVersionCache' in cmd for cmd in commands))
-        self.assertFalse(any(cmd.startswith('sudo -u www-data rsync -R') for cmd in commands))  # nothing local to copy
+        self.assertFalse(any(cmd.startswith('sudo -u mwdeploy rsync -R') for cmd in commands))  # nothing local to copy
         env.sync.assert_called_once()
         self.assertEqual(env.sync.call_args.args[2], ['cache/version/gitinfo'])
         self.assertEqual(env.sync.call_args.args[3], '/srv/mediawiki')
@@ -1682,14 +1682,16 @@ class TestProcess(unittest.TestCase):
             'rebuildLocalisationCache.php --lang=en,fr',
         )
         self.assertIn(
-            'sudo -u www-data rsync -R --update -r --delete --exclude=".*" '
+            'sudo -u mwdeploy rsync -R --update -r --delete --exclude=".*" '
             '/srv/mediawiki-staging/./version/vendor /srv/mediawiki-staging/./version /srv/mediawiki-staging/./config /srv/mediawiki/',
             commands,
         )
         self.assertIn(
             'sudo -u www-data php /srv/mediawiki/version/maintenance/run.php MirahezeMagic:MergeMessageFileList '
             '--quiet --wiki=testwiki --extensions-dir=/srv/mediawiki/version/extensions:/srv/mediawiki/version/skins '
-            '--output /srv/mediawiki/config/ExtensionMessageFiles-version.php',
+            '--output /srv/mediawiki/cache/ExtensionMessageFiles-version.php '
+            '&& sudo -u mwdeploy cp /srv/mediawiki/cache/ExtensionMessageFiles-version.php '
+            '/srv/mediawiki/config/ExtensionMessageFiles-version.php',
             commands,
         )
         mock_components.assert_called_once_with('extensions', ['Foo'], 'version')
@@ -1713,7 +1715,7 @@ class TestProcess(unittest.TestCase):
 
         commands = [call.args[0] for call in env.shell.call_args_list]
         self.assertEqual(commands, [
-            'sudo -u www-data rsync -R --update -r --delete --exclude=".*" '
+            'sudo -u mwdeploy rsync -R --update -r --delete --exclude=".*" '
             '/srv/mediawiki-staging/./config /srv/mediawiki-staging/./landing /srv/mediawiki-staging/./ErrorPages '
             '/srv/mediawiki-staging/./a.txt /srv/mediawiki-staging/./b.txt /srv/mediawiki-staging/./dir1 /srv/mediawiki-staging/./dir2 /srv/mediawiki/',
         ])
@@ -1958,6 +1960,7 @@ class TestBuildParserAndMain(unittest.TestCase):
         namespace = argparse.Namespace(servers=['mw151'])
         with patch('mwdeploy.build_parser') as mock_build_parser, \
              patch.object(mwdeploy, 'DeploymentRunner') as mock_runner_cls, \
+             patch.object(mwdeploy, 'ensure_deploy_user'), \
              patch('mwdeploy.time.time', return_value=42.0):
             mock_build_parser.return_value.parse_args.return_value = namespace
             mwdeploy.main()
