@@ -8,6 +8,7 @@ import contextlib
 import glob
 import json
 import os
+import pwd
 import re
 import shlex
 import socket
