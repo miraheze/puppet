@@ -15,7 +15,7 @@ flake8-pytest==1.4
 flake8-type-checking==3.3.0
 mypy==2.4.1
 types-requests==2.33.0.20261030
-types-PyYAML==6.0.12.20261113
+types-PyYAML==6.0.12.20261122
 pytest-xdist==3.8.0
 flake8-noqa==1.5.0
 coverage==7.17.4
