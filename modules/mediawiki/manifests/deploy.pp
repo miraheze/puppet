@@ -177,8 +177,8 @@ class mediawiki::deploy {
         ensure => present,
         source => 'puppet:///ssl-keys/mwdeploy.key',
         owner  => 'mwdeploy',
-        group  => 'mwdeploy',
-        mode   => '0440',
+        group  => 'www-data',
+        mode   => '0400',
         before => File['/usr/local/bin/mwdeploy'],
     }
 }
