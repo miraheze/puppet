@@ -2,6 +2,16 @@
 #
 # MediaWiki deploy files
 class mediawiki::deploy {
+    users::user { 'mwdeploy':
+        ensure   => present,
+        uid      => 40,
+        gid      => 33,
+        system   => true,
+        homedir  => '/var/lib/mwbuild',
+        shell    => '/bin/bash',
+        before   => Service['nginx'],
+        ssh_keys => [],
+    }
     if lookup(mediawiki::is_canary) {
         users::user { 'www-data':
             ensure   => present,
@@ -14,17 +24,6 @@ class mediawiki::deploy {
             ssh_keys => [
                 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy',
             ],
-        }
-
-        users::user { 'mwdeploy':
-        ensure   => present,
-        uid      => 40,
-        gid      => 33,
-        system   => true,
-        homedir  => '/var/lib/mwbuild',
-        shell    => '/bin/bash',
-        before   => Service['nginx'],
-        ssh_keys => [],
         }
         
         file { '/srv/mediawiki-staging/deploykey.pub':
@@ -58,7 +57,7 @@ class mediawiki::deploy {
             owner   => 'mwdeploy',
             group   => 'www-data',
             mode    => '0600',
-            require => File['/var/www/.ssh'],
+            require => File['/var/lib/mwbuild/.ssh'],
         }
     }
 
