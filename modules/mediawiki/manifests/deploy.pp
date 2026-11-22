@@ -3,40 +3,6 @@
 # MediaWiki deploy files
 class mediawiki::deploy {
     if lookup(mediawiki::is_canary) {
-        file { '/srv/mediawiki-staging/deploykey.pub':
-            ensure  => present,
-            content => 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy',
-            owner   => 'www-data',
-            group   => 'www-data',
-            mode    => '0400',
-            before  => File['/usr/local/bin/mwdeploy'],
-        }
-
-        file { '/srv/mediawiki-staging/deploykey':
-            ensure => present,
-            source => 'puppet:///private/mediawiki/mediawiki-deploy-key-private',
-            owner  => 'www-data',
-            group  => 'www-data',
-            mode   => '0400',
-            before => File['/usr/local/bin/mwdeploy'],
-        }
-
-        file { '/var/www/.ssh':
-            ensure => directory,
-            owner  => 'www-data',
-            group  => 'www-data',
-            mode   => '0400',
-            before => File['/usr/local/bin/mwdeploy'],
-        }
-
-        file { '/var/www/.ssh/known_hosts':
-            content => epp('mediawiki/mw-user-known-hosts.epp'),
-            owner   => 'www-data',
-            group   => 'www-data',
-            mode    => '0644',
-            require => File['/var/www/.ssh'],
-        }
-
         users::user { 'www-data':
             ensure   => present,
             uid      => 33,
@@ -48,6 +14,58 @@ class mediawiki::deploy {
             ssh_keys => [
                 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy',
             ],
+        }
+
+        users::user { 'mwdeploy':
+        ensure   => present,
+        uid      => 40,
+        gid      => 33,
+        system   => true,
+        homedir  => '/var/lib/mwbuild',
+        shell    => '/bin/bash',
+        before   => Service['nginx'],
+        ssh_keys => [],
+        }
+
+        file { '/var/lib/mwbuild':
+        ensure => 'directory',
+        owner  => '',
+        group  => 'www-data',
+        mode   => '0755',
+        }
+        
+        file { '/srv/mediawiki-staging/deploykey.pub':
+            ensure  => present,
+            content => 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy',
+            owner   => 'mwdeploy,
+            group   => 'www-data',
+            mode    => '0400',
+            before  => File['/usr/local/bin/mwdeploy'],
+        }
+
+        file { '/srv/mediawiki-staging/deploykey':
+            ensure => present,
+            source => 'puppet:///private/mediawiki/mediawiki-deploy-key-private',
+            owner  => 'mwdeploy',
+            group  => 'www-data',
+            mode   => '0400',
+            before => File['/usr/local/bin/mwdeploy'],
+        }
+
+        file { '/var/lib/mwbuild/.ssh':
+            ensure => directory,
+            owner  => 'mwdeploy',
+            group  => 'www-data',
+            mode   => '0400',
+            before => File['/usr/local/bin/mwdeploy'],
+        }
+
+        file { '/var/lib/mwbuild/.ssh/known_hosts':
+            content => epp('mediawiki/mw-user-known-hosts.epp'),
+            owner   => 'mwdeploy',
+            group   => 'www-data',
+            mode    => '0600',
+            require => File['/var/www/.ssh'],
         }
     }
 
@@ -67,22 +85,22 @@ class mediawiki::deploy {
 
     file { '/srv/mediawiki-staging':
         ensure => 'directory',
-        owner  => 'www-data',
+        owner  => 'mwdeploy',
         group  => 'www-data',
-        mode   => '0755',
+        mode   => '0744',
     }
 
     file { '/srv/mediawiki-staging/patches':
         ensure  => 'directory',
-        owner   => 'www-data',
+        owner   => 'mwdeploy',
         group   => 'www-data',
-        mode    => '0755',
+        mode    => '0744',
         require => File['/srv/mediawiki-staging'],
     }
 
     file { '/srv/mediawiki-staging/patches/public.json':
         ensure  => 'file',
-        owner   => 'www-data',
+        owner   => 'mwdeploy',
         group   => 'www-data',
         mode    => '0644',
         source  => 'puppet:///mediawiki-repos/patches/public.json',
@@ -91,7 +109,7 @@ class mediawiki::deploy {
 
     file { '/srv/mediawiki-staging/patches/private.json':
         ensure  => 'file',
-        owner   => 'www-data',
+        owner   => 'mwdeploy',
         group   => 'www-data',
         mode    => '0644',
         source  => 'puppet:///mediawiki-repos/patches/private/private.json',
@@ -100,7 +118,7 @@ class mediawiki::deploy {
 
     file { '/srv/mediawiki-staging/patches/public':
         ensure  => 'directory',
-        owner   => 'www-data',
+        owner   => 'mwdeploy',
         group   => 'www-data',
         mode    => '0755',
         source  => 'puppet:///mediawiki-repos/patches/public',
@@ -111,7 +129,7 @@ class mediawiki::deploy {
 
     file { '/srv/mediawiki-staging/patches/private':
         ensure  => 'directory',
-        owner   => 'www-data',
+        owner   => 'mwdeploy',
         group   => 'www-data',
         mode    => '0755',
         source  => 'puppet:///mediawiki-repos/patches/private/patches',
@@ -132,9 +150,9 @@ class mediawiki::deploy {
         directory => '/srv/mediawiki-staging/config',
         origin    => 'https://github.com/miraheze/mw-config',
         branch    => 'main',
-        owner     => 'www-data',
+        owner     => 'mwdeploy',
         group     => 'www-data',
-        mode      => '0755',
+        mode      => '0744',
         require   => File['/srv/mediawiki-staging'],
     }
 
@@ -143,9 +161,9 @@ class mediawiki::deploy {
         directory => '/srv/mediawiki-staging/landing',
         origin    => 'https://github.com/miraheze/landing',
         branch    => 'main',
-        owner     => 'www-data',
+        owner     => 'mwdeploy',
         group     => 'www-data',
-        mode      => '0755',
+        mode      => '0744',
         require   => File['/srv/mediawiki-staging'],
     }
 
@@ -154,9 +172,9 @@ class mediawiki::deploy {
         directory => '/srv/mediawiki-staging/ErrorPages',
         origin    => 'https://github.com/miraheze/ErrorPages',
         branch    => 'main',
-        owner     => 'www-data',
+        owner     => 'mwdeploy',
         group     => 'www-data',
-        mode      => '0755',
+        mode      => '0744',
         require   => File['/srv/mediawiki-staging'],
     }
 
@@ -168,7 +186,7 @@ class mediawiki::deploy {
         source => 'puppet:///ssl-keys/mwdeploy.key',
         owner  => 'www-data',
         group  => 'www-data',
-        mode   => '0444',
+        mode   => '0440',
         before => File['/usr/local/bin/mwdeploy'],
     }
 }
