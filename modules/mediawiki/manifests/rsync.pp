@@ -14,18 +14,12 @@ class mediawiki::rsync {
     }
 
     file { '/var/www/.ssh':
-        ensure  => directory,
-        owner   => 'www-data',
-        group   => 'www-data',
-        mode    => '0400',
+        ensure  => absent,
         require => File['/var/www'],
     }
 
     file { '/var/www/.ssh/authorized_keys':
-        ensure  => file,
-        owner   => 'www-data',
-        group   => 'www-data',
-        mode    => '0400',
+        ensure  => absent,
         require => File['/var/www/.ssh'],
     }
 }
