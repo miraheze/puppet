@@ -134,7 +134,7 @@ class mediawiki::deploy {
         ensure  => 'directory',
         owner   => 'mwdeploy',
         group   => 'www-data',
-        mode    => '0755',
+        mode    => '0750',
         source  => 'puppet:///mediawiki-repos/patches/private/patches',
         purge   => true,
         recurse => true,
