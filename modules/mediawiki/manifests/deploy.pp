@@ -22,9 +22,7 @@ class mediawiki::deploy {
             homedir  => '/var/www',
             shell    => '/bin/bash',
             before   => Service['nginx'],
-            ssh_keys => [
-                'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy',
-            ],
+            ssh_keys => [],
         }
 
         file { '/srv/mediawiki-staging/deploykey.pub':
