@@ -9,6 +9,7 @@ groups:
     description: sudo on MediaWiki servers
     members: [blankeclair, jenny, macfan, oa, petramagna, skye, waki285]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
+                 'ALL = (mwdeploy) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service apache2 *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mcrouter *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
@@ -52,6 +53,7 @@ groups:
     description: sudo on the MediaWiki test server
     members: [elisapoly, pixldev]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
+                 'ALL = (mwdeploy) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.4-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet agent *',
