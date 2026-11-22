@@ -24,7 +24,7 @@ class mediawiki {
         timer_type        => 'histogram',
         histogram_buckets => lookup('role::prometheus::statsd_exporter::histogram_buckets', { 'default_value' => [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60] }),
     }
-    
+
     users::user { 'mwdeploy':
         ensure   => present,
         uid      => 40,
@@ -37,7 +37,7 @@ class mediawiki {
                 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy',
         ],
     }
-    
+
     git::clone { '3d2png':
         ensure             => 'latest',
         directory          => '/srv/3d2png',
