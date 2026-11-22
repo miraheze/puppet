@@ -23,7 +23,7 @@ import requests
 import urllib3
 from langcodes import tag_is_valid
 
-DEPLOYUSER = 'www-data'
+DEPLOYUSER = 'mwdeploy'
 STAGING_ROOT = '/srv/mediawiki-staging'
 DEPLOYED_ROOT = '/srv/mediawiki'
 COMPONENT_FETCH_BATCH_SIZE = 20
@@ -434,7 +434,7 @@ class RsyncCommandBuilder:
         if server:
             fqdn = socket.getfqdn()
             domain = '.'.join(fqdn.split('.')[1:])
-            return f'sudo -u {self._deploy_user} rsync -R {params} -e "ssh -i {STAGING_ROOT}/deploykey" {sources} {self._deploy_user}@{server}.{domain}:{dest_root}/'
+            return f'sudo -u {self._deploy_user} rsync -R {params} -e "ssh -i {STAGING_ROOT}/deploykey" {sources} www-data@{server}.{domain}:{dest_root}/'
 
         raise Exception('Server must be specified for a remote rsync.')
 
