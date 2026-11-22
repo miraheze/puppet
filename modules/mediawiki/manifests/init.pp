@@ -136,6 +136,9 @@ class mediawiki {
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
+        owner   => 'root',
+        group   => 'www-data',
+        mode    => '0440',
         content => template('mediawiki/PrivateSettings.php'),
         require => File['/srv/mediawiki/config'],
     }
@@ -189,8 +192,10 @@ class mediawiki {
     }
 
     file { '/srv/mediawiki/config/OAuth2.key':
-        ensure  => present,
-        mode    => '0755',
+        ensure  => 'present',
+        owner   => 'root',
+        group   => 'www-data',
+        mode    => '0550',
         source  => 'puppet:///private/mediawiki/OAuth2.key',
         require => File['/srv/mediawiki/config'],
     }
@@ -212,6 +217,9 @@ class mediawiki {
 
     file { '/etc/swift-env.sh':
         ensure  => 'present',
+        owner   => 'root',
+        group   => 'www-data',
+        mode    => '0440',
         content => epp('mediawiki/swift-env.sh.epp', { 'swift_password' => $swift_password }),
         mode    => '0755',
     }
