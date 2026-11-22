@@ -2,16 +2,6 @@
 #
 # MediaWiki deploy files
 class mediawiki::deploy {
-    users::user { 'mwdeploy':
-        ensure   => present,
-        uid      => 40,
-        gid      => 33,
-        system   => true,
-        homedir  => '/var/lib/mwbuild',
-        shell    => '/bin/bash',
-        before   => Service['nginx'],
-        ssh_keys => [],
-    }
     sudo::user { 'mwdeploy_deploy':
     user       => 'mwdeploy',
     privileges => [
