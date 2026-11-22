@@ -19,6 +19,8 @@ class mediawiki::deploy {
         'ALL = (www-data) NOPASSWD: ALL',
         # mwdeploy.py still wraps git/patch/composer/remote rsync in "sudo -u mwdeploy"
         'ALL = (mwdeploy) NOPASSWD: ALL',
+        # allow mwdeploy to run puppet to reset-world
+        'ALL = (ALL) NOPASSWD: /usr/bin/puppet agent -tv',
     ],
     }
     if lookup(mediawiki::is_canary) {
