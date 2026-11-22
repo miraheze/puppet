@@ -96,7 +96,7 @@ class mediawiki {
         ensure => 'directory',
         owner  => 'mwdeploy',
         group  => 'www-data',
-        mode   => '0754',
+        mode   => '0774',
     }
 
     file { '/srv/mediawiki/favicon.php':
