@@ -1226,6 +1226,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('--new-install', dest='new_install', action='store_true', help='mirror everything currently deployed onto a brand-new server (every version, config/landing/errorpages, and the database cache); ignores every deploy-selection flag, --servers/--batch/--task/--no-log still apply')
     return parser
 
+
 def ensure_deploy_user() -> None:
     """Re-run this script as DEPLOYUSER if we were started as anyone else.
 
@@ -1236,7 +1237,7 @@ def ensure_deploy_user() -> None:
     try:
         target_uid = pwd.getpwnam(DEPLOYUSER).pw_uid
     except KeyError:
-        Console.error(f'User {DEPLOYUSER} does not exist on this host.')
+        print(Console.warn(f'User {DEPLOYUSER} does not exist on this host.'))
         sys.exit(1)
 
     if os.geteuid() == target_uid:
@@ -1244,7 +1245,7 @@ def ensure_deploy_user() -> None:
 
     # Guard against a loop if sudo somehow hands us back the wrong user.
     if os.environ.get('MWDEPLOY_REEXEC') == '1':
-        Console.error(f'Re-exec as {DEPLOYUSER} did not switch user; refusing to continue.')
+        print(Console.warn(f'Re-exec as {DEPLOYUSER} did not switch user; refusing to continue.'))
         sys.exit(1)
 
     script = os.path.abspath(sys.argv[0])
@@ -1255,7 +1256,6 @@ def ensure_deploy_user() -> None:
         'MWDEPLOY_REEXEC=1',
         '--', script, *sys.argv[1:],
     ])
-
 
 
 def main() -> None:
