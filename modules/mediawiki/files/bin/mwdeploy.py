@@ -431,12 +431,12 @@ class RsyncCommandBuilder:
         sources = ' '.join(f'{source_root}/./{path}' for path in relative_paths)
 
         if local:
-            return f'sudo -u {RUNTIMEUSER} rsync -R {params} --exclude=".*" {sources} {dest_root}/'
+            return f'sudo -u {DEPLOYUSER} rsync -R {params} --exclude=".*" {sources} {dest_root}/'
 
         if server:
             fqdn = socket.getfqdn()
             domain = '.'.join(fqdn.split('.')[1:])
-            return f'sudo -u {self._deploy_user} rsync -R {params} -e "ssh -i {STAGING_ROOT}/deploykey" {sources} {RUNTIMEUSER}@{server}.{domain}:{dest_root}/'
+            return f'sudo -u {self._deploy_user} rsync -R {params} -e "ssh -i {STAGING_ROOT}/deploykey" {sources} {DEPLOYUSER}@{server}.{domain}:{dest_root}/'
 
         raise Exception('Server must be specified for a remote rsync.')
 
