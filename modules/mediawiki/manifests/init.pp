@@ -219,9 +219,8 @@ class mediawiki {
         ensure  => 'present',
         owner   => 'root',
         group   => 'www-data',
-        mode    => '0440',
+        mode    => '0550',
         content => epp('mediawiki/swift-env.sh.epp', { 'swift_password' => $swift_password }),
-        mode    => '0755',
     }
 
     file { '/tmp/magick-tmp':
