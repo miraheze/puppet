@@ -24,6 +24,7 @@ import urllib3
 from langcodes import tag_is_valid
 
 DEPLOYUSER = 'mwdeploy'
+RUNTIMEUSER = 'www-data'
 STAGING_ROOT = '/srv/mediawiki-staging'
 DEPLOYED_ROOT = '/srv/mediawiki'
 COMPONENT_FETCH_BATCH_SIZE = 20
@@ -429,12 +430,12 @@ class RsyncCommandBuilder:
         sources = ' '.join(f'{source_root}/./{path}' for path in relative_paths)
 
         if local:
-            return f'sudo -u {self._deploy_user} rsync -R {params} --exclude=".*" {sources} {dest_root}/'
+            return f'sudo -u {RUNTIMEUSER} rsync -R {params} --exclude=".*" {sources} {dest_root}/'
 
         if server:
             fqdn = socket.getfqdn()
             domain = '.'.join(fqdn.split('.')[1:])
-            return f'sudo -u {self._deploy_user} rsync -R {params} -e "ssh -i {STAGING_ROOT}/deploykey" {sources} www-data@{server}.{domain}:{dest_root}/'
+            return f'sudo -u {self._deploy_user} rsync -R {params} -e "ssh -i {STAGING_ROOT}/deploykey" {sources} {RUNTIMEUSER}@{server}.{domain}:{dest_root}/'
 
         raise Exception('Server must be specified for a remote rsync.')
 
@@ -818,7 +819,7 @@ class DeploymentRunner:
             # no matter how many extensions, skins, or core itself were upgraded.
             if version and self._needs_version_cache_rebuild:
                 self.rebuild.append(
-                    f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH={STAGING_ROOT}/{version} php {self._runner_staging}'
+                    f'sudo -u {RUNTIMEUSER} MW_INSTALL_PATH={STAGING_ROOT}/{version} php {self._runner_staging}'
                     f'MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} '
                     f'--wiki={envinfo.wikidbname} --conf={STAGING_ROOT}/config/LocalSettings.php',
                 )
@@ -845,7 +846,7 @@ class DeploymentRunner:
                     self.rsync.append(folder)
 
             if args.extension_list and version:  # when adding skins/exts
-                self.rebuild.append(f'sudo -u {DEPLOYUSER} php {self._runner}ManageWiki:RebuildExtensionListCache --wiki={envinfo.wikidbname} --cachedir={DEPLOYED_ROOT}/cache/{version}')
+                self.rebuild.append(f'sudo -u {RUNTIMEUSER} php {self._runner}ManageWiki:RebuildExtensionListCache --wiki={envinfo.wikidbname} --cachedir={DEPLOYED_ROOT}/cache/{version}')
 
             if self.rsync:  # move staged content to live
                 self.exitcodes.append(ShellExecutor.run(_rsync_builder.build(args.ignore_time, STAGING_ROOT, DEPLOYED_ROOT, self.rsync)))
@@ -853,8 +854,8 @@ class DeploymentRunner:
 
             if args.l10n and version:  # setup l10n
                 lang = f'--lang={args.lang}' if args.lang else ''
-                self.postinstall.append(f'sudo -u {DEPLOYUSER} php {self._runner}MirahezeMagic:MergeMessageFileList --quiet --wiki={envinfo.wikidbname} --extensions-dir={DEPLOYED_ROOT}/{version}/extensions:{DEPLOYED_ROOT}/{version}/skins --output {DEPLOYED_ROOT}/config/ExtensionMessageFiles-{version}.php')
-                self.rebuild.append(f'sudo -u {DEPLOYUSER} php {self._runner}{DEPLOYED_ROOT}/{version}/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo.wikidbname}')
+                self.postinstall.append(f'sudo -u {RUNTIMEUSER} php {self._runner}MirahezeMagic:MergeMessageFileList --quiet --wiki={envinfo.wikidbname} --extensions-dir={DEPLOYED_ROOT}/{version}/extensions:{DEPLOYED_ROOT}/{version}/skins --output {DEPLOYED_ROOT}/config/ExtensionMessageFiles-{version}.php')
+                self.rebuild.append(f'sudo -u {RUNTIMEUSER} php {self._runner}{DEPLOYED_ROOT}/{version}/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo.wikidbname}')
 
             for cmd in self.postinstall:  # cmds to run after rsync & install (like mergemessage)
                 self.exitcodes.append(ShellExecutor.run(cmd))
