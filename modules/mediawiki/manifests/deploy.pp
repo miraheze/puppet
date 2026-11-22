@@ -2,16 +2,6 @@
 #
 # MediaWiki deploy files
 class mediawiki::deploy {
-    users::user { 'mwdeploy':
-        ensure   => present,
-        uid      => 40,
-        gid      => 33,
-        system   => true,
-        homedir  => '/var/lib/mwbuild',
-        shell    => '/bin/bash',
-        before   => Service['nginx'],
-        ssh_keys => [],
-    }
     sudo::user { 'mwdeploy_deploy':
     user       => 'mwdeploy',
     privileges => [
@@ -36,7 +26,7 @@ class mediawiki::deploy {
                 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy',
             ],
         }
-        
+
         file { '/srv/mediawiki-staging/deploykey.pub':
             ensure  => present,
             content => 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy',

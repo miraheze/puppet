@@ -25,14 +25,27 @@ class mediawiki {
         histogram_buckets => lookup('role::prometheus::statsd_exporter::histogram_buckets', { 'default_value' => [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60] }),
     }
 
+    users::user { 'mwdeploy':
+        ensure   => present,
+        uid      => 40,
+        gid      => 33,
+        system   => true,
+        homedir  => '/var/lib/mwbuild',
+        shell    => '/bin/bash',
+        before   => Service['nginx'],
+        ssh_keys => [
+                'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy',
+        ],
+    }
+
     git::clone { '3d2png':
         ensure             => 'latest',
         directory          => '/srv/3d2png',
         origin             => 'https://github.com/miraheze/3d2png-deploy',
         branch             => 'main',
-        owner              => 'www-data',
+        owner              => 'mwdeploy',
         group              => 'www-data',
-        mode               => '0755',
+        mode               => '0744',
         recurse_submodules => true,
         require            => Package['libjpeg-dev'],
     }
@@ -70,13 +83,20 @@ class mediawiki {
     file { [
         '/srv/mediawiki',
         '/srv/mediawiki/config',
+    ]:
+        ensure => 'directory',
+        owner  => 'mwdeploy',
+        group  => 'www-data',
+        mode   => '0744',
+    }
+    file { [
         '/srv/mediawiki/cache',
         '/srv/mediawiki/stopforumspam',
     ]:
         ensure => 'directory',
-        owner  => 'www-data',
+        owner  => 'mwdeploy',
         group  => 'www-data',
-        mode   => '0755',
+        mode   => '0774',
     }
 
     file { '/srv/mediawiki/favicon.php':
@@ -250,15 +270,15 @@ class mediawiki {
 
     file { '/srv/python':
         ensure => directory,
-        owner  => 'www-data',
+        owner  => 'mwdeploy',
         group  => 'www-data',
-        mode   => '0775',
+        mode   => '0754',
     }
     exec { 'create python venv':
         command     => '/usr/bin/python3 -m venv /srv/python/env && /srv/python/env/bin/pip3 install Miraheze-PyUtils',
         require     => [Package['python3'], File['/srv/python']],
         cwd         => '/srv',
-        user        => 'www-data',
+        user        => 'mwdeploy',
         onlyif      => 'test ! -d /srv/python/env',
         path        => '/bin:/usr/bin',
         environment => [

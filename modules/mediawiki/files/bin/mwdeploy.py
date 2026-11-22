@@ -431,12 +431,12 @@ class RsyncCommandBuilder:
         sources = ' '.join(f'{source_root}/./{path}' for path in relative_paths)
 
         if local:
-            return f'sudo -u {RUNTIMEUSER} rsync -R {params} --exclude=".*" {sources} {dest_root}/'
+            return f'sudo -u {DEPLOYUSER} rsync -R {params} --exclude=".*" {sources} {dest_root}/'
 
         if server:
             fqdn = socket.getfqdn()
             domain = '.'.join(fqdn.split('.')[1:])
-            return f'sudo -u {self._deploy_user} rsync -R {params} -e "ssh -i {STAGING_ROOT}/deploykey" {sources} {RUNTIMEUSER}@{server}.{domain}:{dest_root}/'
+            return f'sudo -u {self._deploy_user} rsync -R {params} -e "ssh -i {STAGING_ROOT}/deploykey" {sources} {DEPLOYUSER}@{server}.{domain}:{dest_root}/'
 
         raise Exception('Server must be specified for a remote rsync.')
 
@@ -855,7 +855,7 @@ class DeploymentRunner:
 
             if args.l10n and version:  # setup l10n
                 lang = f'--lang={args.lang}' if args.lang else ''
-                self.postinstall.append(f'sudo -u {RUNTIMEUSER} php {self._runner}MirahezeMagic:MergeMessageFileList --quiet --wiki={envinfo.wikidbname} --extensions-dir={DEPLOYED_ROOT}/{version}/extensions:{DEPLOYED_ROOT}/{version}/skins --output {DEPLOYED_ROOT}/config/ExtensionMessageFiles-{version}.php')
+                self.postinstall.append(f'sudo -u {DEPLOYUSER} php {self._runner}MirahezeMagic:MergeMessageFileList --quiet --wiki={envinfo.wikidbname} --extensions-dir={DEPLOYED_ROOT}/{version}/extensions:{DEPLOYED_ROOT}/{version}/skins --output {DEPLOYED_ROOT}/config/ExtensionMessageFiles-{version}.php')
                 self.rebuild.append(f'sudo -u {RUNTIMEUSER} php {self._runner}{DEPLOYED_ROOT}/{version}/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo.wikidbname}')
 
             for cmd in self.postinstall:  # cmds to run after rsync & install (like mergemessage)

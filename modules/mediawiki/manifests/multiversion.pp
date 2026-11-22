@@ -3,14 +3,14 @@ class mediawiki::multiversion (
 ) {
     file { '/srv/mediawiki/femiwiki-deploy':
         ensure => 'directory',
-        owner  => 'www-data',
+        owner  => 'mwdeploy',
         group  => 'www-data',
     }
 
     file { '/srv/mediawiki/w':
         ensure  => 'link',
         target  => '/srv/mediawiki/config/initialise/entrypoints',
-        owner   => 'www-data',
+        owner   => 'mwdeploy',
         group   => 'www-data',
         require => File['/srv/mediawiki/config'],
     }
@@ -18,7 +18,7 @@ class mediawiki::multiversion (
     file { '/srv/mediawiki/index.php':
         ensure  => 'link',
         target  => '/srv/mediawiki/config/initialise/entrypoints/index.php',
-        owner   => 'www-data',
+        owner   => 'mwdeploy',
         group   => 'www-data',
         require => File['/srv/mediawiki/config'],
     }
@@ -27,7 +27,7 @@ class mediawiki::multiversion (
         file { '/srv/mediawiki-staging/w':
             ensure  => 'link',
             target  => '/srv/mediawiki-staging/config/initialise/entrypoints',
-            owner   => 'www-data',
+            owner   => 'mwdeploy',
             group   => 'www-data',
             require => File['/srv/mediawiki-staging/config'],
         }
@@ -56,14 +56,15 @@ class mediawiki::multiversion (
 
         file { "/srv/mediawiki/${version}":
             ensure => 'directory',
-            owner  => 'www-data',
+            owner  => 'mwdeploy',
             group  => 'www-data',
         }
 
         file { "/srv/mediawiki/cache/${version}":
             ensure => 'directory',
-            owner  => 'www-data',
+            owner  => 'mwdeploy',
             group  => 'www-data',
+            mode   => '0774',
         }
 
         $branch = $params['branch'] ? {
@@ -76,7 +77,7 @@ class mediawiki::multiversion (
             directory => "/srv/mediawiki/femiwiki-deploy/${version}",
             origin    => 'https://github.com/miraheze/femiwiki-deploy',
             branch    => $branch,
-            owner     => 'www-data',
+            owner     => 'mwdeploy',
             group     => 'www-data',
             mode      => '0755',
             require   => File['/srv/mediawiki/femiwiki-deploy'],
@@ -85,7 +86,7 @@ class mediawiki::multiversion (
         file { "/srv/mediawiki/${version}/skins/Femiwiki/node_modules":
             ensure  => 'link',
             target  => "/srv/mediawiki/femiwiki-deploy/${version}/node_modules",
-            owner   => 'www-data',
+            owner   => 'mwdeploy',
             group   => 'www-data',
             require => [
                 Git::Clone["femiwiki-deploy-${version}"],
@@ -96,7 +97,7 @@ class mediawiki::multiversion (
         file { "/srv/mediawiki/${version}/LocalSettings.php":
             ensure  => 'link',
             target  => '/srv/mediawiki/config/LocalSettings.php',
-            owner   => 'www-data',
+            owner   => 'mwdeploy',
             group   => 'www-data',
             require => [
                 File["/srv/mediawiki/${version}"],

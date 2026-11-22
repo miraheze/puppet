@@ -2,7 +2,7 @@
 class mediawiki::favicons {
     file { '/srv/mediawiki/favicons':
         ensure  => directory,
-        owner   => 'www-data',
+        owner   => 'mwdeploy',
         group   => 'www-data',
         mode    => '0755',
         require => File['/srv/mediawiki'],
