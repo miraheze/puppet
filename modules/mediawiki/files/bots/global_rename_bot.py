@@ -4,15 +4,18 @@ Miraheze global rename bot. Runs once; use cron for scheduling.
 
 Skips (never declines) requests where:
   - CentralAuth reports the username is too similar to an existing one
-  - CentralAuth reports a previous rename within the past year
+  - CentralAuth reports a previous rename within the last 6 months
+    (or a previous rename whose date can't be determined)
   - The new username violates the Username Policy
 """
 
 import argparse
+import calendar
 import json
 import logging
 import re
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
@@ -25,14 +28,39 @@ API_URL = f"{BASE_URL}/w/api.php"
 
 HUMAN_REVIEW_PHRASES = (
     "the chosen username is too similar to",
-    "previous rename",
 )
+
+PREVIOUS_RENAME_PHRASE = "previous rename"
+
+# MediaWiki display format, e.g. "15:18, 24 April 2026"
+DATE_RE = re.compile(r"\d{1,2}:\d{2},\s+\d{1,2}\s+[A-Za-z]+\s+\d{4}")
 
 COOKIE_FRAGMENTS = (
     "cookies help us",
     "by using our services",
     "we use cookies",
 )
+
+
+def parse_wiki_dates(text: str) -> list[datetime]:
+    dates = []
+    for m in DATE_RE.findall(text):
+        try:
+            dates.append(datetime.strptime(re.sub(r"\s+", " ", m), "%H:%M, %d %B %Y"))
+        except ValueError:
+            pass
+    return dates
+
+
+def six_months_ago() -> datetime:
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    month = now.month - 6
+    year = now.year
+    if month < 1:
+        month += 12
+        year -= 1
+    day = min(now.day, calendar.monthrange(year, month)[1])
+    return now.replace(year=year, month=month, day=day)
 
 
 class RenameBot:
@@ -209,12 +237,27 @@ class RenameBot:
         return entry
 
     def _should_skip(self, entry: dict) -> tuple[bool, str]:
-        for text in entry.get("warnings", []):
+        warnings = entry.get("warnings", [])
+
+        for text in warnings:
             tl = text.lower()
 
             for phrase in HUMAN_REVIEW_PHRASES:
                 if phrase in tl:
                     return True, f"CentralAuth warning: {text[:200]}"
+
+        previous = [t for t in warnings if PREVIOUS_RENAME_PHRASE in t.lower()]
+
+        if previous:
+            dates = [d for t in previous for d in parse_wiki_dates(t)]
+
+            if not dates:
+                return True, "Previous rename warning but no date could be found."
+
+            latest = max(dates)
+
+            if latest > six_months_ago():
+                return True, f"Previous rename on {latest:%d %B %Y} is less than 6 months ago."
 
         new_name = entry.get("new_name", "")
 
