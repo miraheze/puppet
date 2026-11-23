@@ -270,6 +270,10 @@ class RenameBot:
 
             return False
 
+        if soup is None:
+            log.error("No parsed page available for #%s.", rid)
+            return False
+
         form = None
 
         for candidate in soup.find_all("form"):
