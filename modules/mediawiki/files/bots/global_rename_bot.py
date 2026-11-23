@@ -11,6 +11,7 @@ Skips (never declines) requests where:
 
 import argparse
 import calendar
+import contextlib
 import json
 import logging
 import re
@@ -45,10 +46,8 @@ COOKIE_FRAGMENTS = (
 def parse_wiki_dates(text: str) -> list[datetime]:
     dates = []
     for m in DATE_RE.findall(text):
-        try:
+        with contextlib.suppress(ValueError):
             dates.append(datetime.strptime(re.sub(r"\s+", " ", m), "%H:%M, %d %B %Y"))
-        except ValueError:
-            pass
     return dates
 
 
