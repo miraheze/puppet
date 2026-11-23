@@ -21,7 +21,7 @@ from bs4 import BeautifulSoup
 from policy_checker import PolicyChecker
 
 BASE_URL = "https://meta.miraheze.org"
-API_URL  = f"{BASE_URL}/w/api.php"
+API_URL = f"{BASE_URL}/w/api.php"
 
 HUMAN_REVIEW_PHRASES = (
     "the chosen username is too similar to",
@@ -37,9 +37,9 @@ COOKIE_FRAGMENTS = (
 
 class RenameBot:
     def __init__(self, config: dict, dry_run: bool = False):
-        self.cfg     = config
+        self.cfg = config
         self.dry_run = dry_run
-        self.policy  = PolicyChecker(extra_blocked=config.get("extra_blocked_terms", []))
+        self.policy = PolicyChecker(extra_blocked=config.get("extra_blocked_terms", []))
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": (
@@ -85,8 +85,8 @@ class RenameBot:
         r = self.session.get(f"{BASE_URL}/wiki/Special:GlobalRenameQueue/open")
         r.raise_for_status()
 
-        soup  = BeautifulSoup(r.text, "html.parser")
-        seen  = set()
+        soup = BeautifulSoup(r.text, "html.parser")
+        seen = set()
         items = []
 
         for a in soup.find_all("a", href=True):
@@ -118,8 +118,8 @@ class RenameBot:
 
         soup = BeautifulSoup(r.text, "html.parser")
 
-        old_name  = entry["old_name"]
-        new_name  = entry["new_name"]
+        old_name = entry["old_name"]
+        new_name = entry["new_name"]
         page_text = soup.get_text(separator=" ")
 
         m = re.search(
@@ -134,7 +134,7 @@ class RenameBot:
 
         for li in soup.find_all("li"):
             txt = li.get_text(separator=" ", strip=True)
-            tl  = txt.lower()
+            tl = txt.lower()
 
             if not old_name and tl.startswith("current username"):
                 old_name = txt.split(":", 1)[-1].strip()
@@ -143,7 +143,7 @@ class RenameBot:
                 new_name = txt.split(":", 1)[-1].strip()
 
         for dt in soup.find_all(["dt", "th"]):
-            label  = dt.get_text(strip=True).lower()
+            label = dt.get_text(strip=True).lower()
             val_el = dt.find_next_sibling(["dd", "td"])
 
             if not val_el:
@@ -170,7 +170,7 @@ class RenameBot:
         entry["new_name"] = new_name
 
         warnings: list[str] = []
-        seen_txt: set[str]  = set()
+        seen_txt: set[str] = set()
 
         def add_warning(txt):
             txt = txt.strip()
@@ -201,7 +201,7 @@ class RenameBot:
                 add_warning(el.get_text(separator=" ", strip=True))
 
         entry["warnings"] = warnings
-        entry["soup"]     = soup
+        entry["soup"] = soup
 
         if warnings:
             log.debug("Warnings on #%s: %s", rid, warnings)
@@ -229,11 +229,11 @@ class RenameBot:
         return False, ""
 
     def _approve(self, entry: dict) -> bool:
-        log      = logging.getLogger("rename_bot")
-        rid      = entry["id"]
+        log = logging.getLogger("rename_bot")
+        rid = entry["id"]
         old_name = entry.get("old_name", "?")
         new_name = entry.get("new_name", "?")
-        soup     = entry.get("soup")
+        soup = entry.get("soup")
 
         if self.dry_run:
             log.info(
@@ -245,10 +245,10 @@ class RenameBot:
             return True
 
         ACCEPT_NAMES = {"wpaccept", "wpapprove", "approve"}
-        ACCEPT_TEXT  = {"accept rename", "approve", "accept"}
+        ACCEPT_TEXT = {"accept rename", "approve", "accept"}
 
         REJECT_NAMES = {"wpreject", "wpdecline", "reject", "decline"}
-        REJECT_TEXT  = {"reject rename", "reject", "decline", "deny"}
+        REJECT_TEXT = {"reject rename", "reject", "decline", "deny"}
 
         def is_approval_form(f):
             action = (f.get("action") or "").lower()
@@ -284,7 +284,7 @@ class RenameBot:
 
         # Existing form inputs
         for inp in form.find_all("input"):
-            name  = inp.get("name")
+            name = inp.get("name")
             itype = (inp.get("type") or "text").lower()
 
             if not name or itype == "submit":
@@ -303,8 +303,8 @@ class RenameBot:
                 fields[name] = ta.get_text(strip=True)
 
         APPROVAL_REASON = (
-    f"[[Special:GlobalRenameQueue/request/{rid}|Request]] approved."
-)
+            f"[[Special:GlobalRenameQueue/request/{rid}|Request]] approved."
+        )
 
         APPROVAL_COMMENT = (
             "Automatically approved. Please read [[Changing username]] if you ever "
@@ -345,7 +345,7 @@ class RenameBot:
 
         if approve_btn:
             bname = approve_btn.get("name", "")
-            bval  = (
+            bval = (
                 approve_btn.get("value")
                 or approve_btn.get_text(strip=True)
                 or "1"
@@ -356,7 +356,7 @@ class RenameBot:
 
             for el in form.find_all(["input", "button"]):
                 elname = (el.get("name") or "").lower()
-                elval  = (
+                elval = (
                     el.get("value")
                     or el.get_text(strip=True)
                     or ""
@@ -366,7 +366,7 @@ class RenameBot:
                     fields.pop(el.get("name", ""), None)
 
         else:
-            fields["wpAction"]  = "approve"
+            fields["wpAction"] = "approve"
             fields["wpApprove"] = "1"
 
         action = form.get("action", "")
