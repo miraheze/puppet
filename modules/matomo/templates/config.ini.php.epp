@@ -27,6 +27,7 @@ trusted_hosts[] = "analytics.wikitide.net"
 proxy_scheme_headers[] = "HTTP_X_FORWARDED_PROTO"
 proxy_scheme_headers[] = "HTTP_X_FORWARDED_SCHEME"
 proxy_scheme_headers[] = "HTTP_X_URL_SCHEME"
+datatable_archiving_maximum_rows_actions_flat = 10000
 
 [proxy]
 host = bastion.fsslc.wtnet
