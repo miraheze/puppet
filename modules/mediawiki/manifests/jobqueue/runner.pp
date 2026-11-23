@@ -105,6 +105,11 @@ class mediawiki::jobqueue::runner (
                 interval => '*-*-* *:25:00',
             }
 
+            mediawiki::periodic_job { 'expire-import-images':
+                command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php ImportDump:ExpireFiles --wiki metawiki --type=images",
+                interval => '*-*-* 03:15:00',
+            }
+
             stdlib::ensure_packages('python3-internetarchive')
 
             file { '/usr/local/bin/iaupload':
@@ -146,6 +151,11 @@ class mediawiki::jobqueue::runner (
             mediawiki::periodic_job { 'fail-stalled-imports':
                 command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php ImportDump:FailStalledImports --wiki metawikibeta",
                 interval => '*-*-* *:25:00',
+            }
+
+            mediawiki::periodic_job { 'expire-import-images':
+                command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php ImportDump:ExpireFiles --wiki metawikibeta --type=images",
+                interval => '*-*-* 03:15:00',
             }
         }
 
