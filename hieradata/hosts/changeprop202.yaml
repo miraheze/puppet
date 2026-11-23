@@ -178,13 +178,14 @@ changeprop::high_traffic_high_timeout_jobs_config:
     retry_limit: 0
     concurrency: 1
     timeout: 86400000
-  # Checks a large or risky upload in the background. This can take a while
-  # for multi gigabyte archives, which are extracted and read through.
+  # Joins the uploaded parts of an image archive and extracts it, which takes
+  # hours for multi gigabyte archives. Only one runs at a time as it uses a lot
+  # of disk and CPU.
   ImportDumpVerifyDump:
     disable_delayed_execution: true
     retry_limit: 0
-    concurrency: 2
-    timeout: 3600000
+    concurrency: 1
+    timeout: 21600000
   RemovePIIJob:
     disable_delayed_execution: true
     concurrency: 1
