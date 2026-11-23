@@ -7,7 +7,7 @@ class ssl::web (
     stdlib::ensure_packages(['python3-flask', 'python3-filelock'])
 
     file { '/usr/local/bin/wikitiderenewssl.py':
-        ensure => present,
+        ensure => $ensure,
         source => 'puppet:///modules/ssl/wikitiderenewssl.py',
         mode   => '0755',
         notify => Service['wikitiderenewssl'],
