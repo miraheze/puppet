@@ -160,16 +160,18 @@ _BLOCKLIST_PATTERNS = [
     (re.compile(r"y[a4@]ml[a4@]", re.IGNORECASE), "Username impersonates a community member"),
 ]
 
-_LEET = str.maketrans({
-    "0": "o", "1": "i", "3": "e", "4": "a",
-    "5": "s", "6": "g", "7": "t", "8": "b", "@": "a",
-    "$": "s", "!": "i",
-})
+_LEET = str.maketrans(
+    {
+        "0": "o", "1": "i", "3": "e", "4": "a",
+        "5": "s", "6": "g", "7": "t", "8": "b", "@": "a",
+        "$": "s", "!": "i",
+    }
+)
 
 
 class PolicyChecker:
     def __init__(self, extra_blocked: Optional[list[str]] = None):
-        self.extra_blocked = set(t.lower() for t in (extra_blocked or []))
+        self.extra_blocked = {t.lower() for t in (extra_blocked or [])}
 
     def check(self, name: str, light: bool = False) -> tuple[bool, str]:
         if not name or not name.strip():
@@ -178,27 +180,27 @@ class PolicyChecker:
         normalised = self._normalise(name)
 
         checks = [
-            self._check_blacklist,
-            self._check_authority_impersonation,
-            self._check_email,
-            self._check_extra_blocked,
+            lambda: self._check_blacklist(name),
+            lambda: self._check_authority_impersonation(name, normalised),
+            lambda: self._check_email(name),
+            lambda: self._check_extra_blocked(name, normalised),
         ]
 
         if not light:
             checks += [
-                self._check_bot_impersonation,
-                self._check_promotional,
+                lambda: self._check_bot_impersonation(name),
+                lambda: self._check_promotional(name),
             ]
 
         for fn in checks:
-            ok, reason = fn(name, normalised)
+            ok, reason = fn()
             if not ok:
                 return False, reason
 
         return True, ""
 
-    def _check_blacklist(self, name: str, _norm: str) -> tuple[bool, str]:
-        for pattern, reason in _BLACKLIST_PATTERNS:
+    def _check_blacklist(self, name: str) -> tuple[bool, str]:
+        for pattern, reason in _BLOCKLIST_PATTERNS:
             if pattern.search(name):
                 return False, reason
         return True, ""
@@ -211,14 +213,14 @@ class PolicyChecker:
                 return False, f"Username contains '{term}'"
         return True, ""
 
-    def _check_bot_impersonation(self, name: str, _norm: str) -> tuple[bool, str]:
+    def _check_bot_impersonation(self, name: str) -> tuple[bool, str]:
         name_lower = name.lower()
         for term in BOT_TERMS:
             if term in name_lower:
                 return False, f"Username implies an automated account (contains '{term}')"
         return True, ""
 
-    def _check_email(self, name: str, _norm: str) -> tuple[bool, str]:
+    def _check_email(self, name: str) -> tuple[bool, str]:
         if re.search(r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}", name):
             return False, "Username contains an e-mail address"
         return True, ""
@@ -231,7 +233,7 @@ class PolicyChecker:
                 return False, f"Username contains blocked term '{term}'"
         return True, ""
 
-    def _check_promotional(self, name: str, _norm: str) -> tuple[bool, str]:
+    def _check_promotional(self, name: str) -> tuple[bool, str]:
         name_lower = name.lower()
         if re.search(r"https?://|www\.", name_lower):
             return False, "Username contains a URL"
@@ -242,5 +244,5 @@ class PolicyChecker:
     @staticmethod
     def _normalise(name: str) -> str:
         decomposed = unicodedata.normalize("NFKD", name)
-        stripped   = "".join(c for c in decomposed if unicodedata.category(c) != "Mn")
+        stripped = "".join(c for c in decomposed if unicodedata.category(c) != "Mn")
         return stripped.translate(_LEET).lower()
