@@ -158,7 +158,7 @@ _BLOCKLIST_PATTERNS = [
     (re.compile(r"bl[o0]ck.*reason", re.IGNORECASE), "Username matches abuse pattern"),
     (re.compile(r"w[i!1][kc][i!1]p[3e]d[i!1][a@4]", re.IGNORECASE), "Username impersonates Wikipedia"),
     (re.compile(r"y[a4@]ml[a4@]", re.IGNORECASE), "Username impersonates a community member"),
-]
+]  # noqa: JS102
 
 _LEET = str.maketrans(
     {
