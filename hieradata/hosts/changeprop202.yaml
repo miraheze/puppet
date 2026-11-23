@@ -125,6 +125,12 @@ changeprop::high_traffic_jobs_config:
   ImportDumpNotifyJob:
     disable_delayed_execution: true
     concurrency: 2
+  # Stores a part of what the image import printed, so the output of a request
+  # can be read while it runs and afterwards. These are small and quick, but
+  # they should not wait behind other low-volume jobs or the output lags.
+  ImportOutputStoreJob:
+    disable_delayed_execution: true
+    concurrency: 2
   RottenLinksJob:
     concurrency: 6
   GlobalNewFilesDeleteJob:
@@ -165,6 +171,13 @@ changeprop::high_traffic_high_timeout_jobs_config:
     retry_limit: 0
     concurrency: 1
     timeout: 259200000
+  # Imports one chunk of the files of an images request, and then queues the
+  # next chunk itself. It reports its own failures, so it is never retried.
+  ImportImagesJob:
+    disable_delayed_execution: true
+    retry_limit: 0
+    concurrency: 1
+    timeout: 86400000
   # Checks a large or risky upload in the background. This can take a while
   # for multi gigabyte archives, which are extracted and read through.
   ImportDumpVerifyDump:
