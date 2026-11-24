@@ -159,13 +159,6 @@ changeprop::high_traffic_high_timeout_jobs_config:
     concurrency: 1
     retry_limit: 0
     timeout: 86400000
-  # Joins the uploaded chunks of a large dump into one file, which can take
-  # several minutes for multi gigabyte files. The job never allows retries.
-  ImportDumpAssembleChunks:
-    disable_delayed_execution: true
-    retry_limit: 0
-    concurrency: 2
-    timeout: 3600000
   ImportDumpJob:
     disable_delayed_execution: true
     retry_limit: 0
@@ -178,9 +171,10 @@ changeprop::high_traffic_high_timeout_jobs_config:
     retry_limit: 0
     concurrency: 1
     timeout: 86400000
-  # Joins the uploaded parts of an image archive and extracts it, which takes
-  # hours for multi gigabyte archives. Only one runs at a time as it uses a lot
-  # of disk and CPU.
+  # Checks an upload that was too big to check while the request was submitted.
+  # It joins the uploaded parts, then extracts and checks archives of images or
+  # reads the XML dump, which takes hours for multi gigabyte files. Only one runs
+  # at a time as it uses a lot of disk and CPU.
   ImportDumpVerifyDump:
     disable_delayed_execution: true
     retry_limit: 0
