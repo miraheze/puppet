@@ -122,13 +122,13 @@ changeprop::high_traffic_jobs_config:
   CreateWikiJob:
     disable_delayed_execution: true
     concurrency: 1
-  ImportDumpNotifyJob:
+  NotifyRequestJob:
     disable_delayed_execution: true
     concurrency: 2
   # Stores a part of what the image import printed, so the output of a request
   # can be read while it runs and afterwards. These are small and quick, but
   # they should not wait behind other low-volume jobs or the output lags.
-  ImportOutputStoreJob:
+  StoreImportOutputJob:
     disable_delayed_execution: true
     concurrency: 2
   RottenLinksJob:
@@ -159,11 +159,6 @@ changeprop::high_traffic_high_timeout_jobs_config:
     concurrency: 1
     retry_limit: 0
     timeout: 86400000
-  ImportDumpJob:
-    disable_delayed_execution: true
-    retry_limit: 0
-    concurrency: 1
-    timeout: 259200000
   # Imports one chunk of the files of an images request, and then queues the
   # next chunk itself. It reports its own failures, so it is never retried.
   ImportImagesJob:
@@ -171,11 +166,16 @@ changeprop::high_traffic_high_timeout_jobs_config:
     retry_limit: 0
     concurrency: 1
     timeout: 86400000
-  # Checks an upload that was too big to check while the request was submitted.
-  # It joins the uploaded parts, then extracts and checks archives of images or
-  # reads the XML dump, which takes hours for multi gigabyte files. Only one runs
-  # at a time as it uses a lot of disk and CPU.
-  ImportDumpVerifyDump:
+  ImportXmlJob:
+    disable_delayed_execution: true
+    retry_limit: 0
+    concurrency: 1
+    timeout: 259200000
+  # Processes an upload that was too big to handle while the request was
+  # submitted. It joins the uploaded parts, then extracts and checks archives of
+  # images or reads the XML dump, which takes hours for multi gigabyte files.
+  # Only one runs at a time as it uses a lot of disk and CPU.
+  ProcessUploadJob:
     disable_delayed_execution: true
     retry_limit: 0
     concurrency: 1
