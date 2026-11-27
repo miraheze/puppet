@@ -44,7 +44,7 @@ jobs:
         find . -type f -name "*.pp" -exec puppet parser validate {} +
 
     - name: puppet-lint
-      uses: scottbrenner/puppet-lint-action@v1.1.1
+      uses: scottbrenner/puppet-lint-action@v2
       with:
         args: >-
           --no-80chars-check
