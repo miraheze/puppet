@@ -22,7 +22,7 @@ coverage==7.17.5
 setuptools==84.2.1
 ## ACTUAL
 requests==2.34.2
-filelock==4.3.1
+filelock==4.3.2
 langcodes==3.5.1
 PyYAML==6.0.4
 internetarchive==5.13.0
