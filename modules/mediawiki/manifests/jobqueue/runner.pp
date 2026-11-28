@@ -138,7 +138,7 @@ class mediawiki::jobqueue::runner (
             }
 
             mediawiki::periodic_job { 'backup-all-wikis-ia':
-                command  => '/usr/local/bin/backupwikis /srv/mediawiki/cache/public.php',
+                command  => '/usr/local/bin/backupwikis.py --log',
                 interval => 'monthly',
             }
         }
